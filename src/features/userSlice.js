@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
-
+import { addUserToLocalStorage, getUserFromLocalStorage } from "@/utils/localStorage";
 
 const initialState = {
-  user: [],
+  user: getUserFromLocalStorage,
+  isAuthenticated: false,
+  isLoading: false,
 }
 
 
@@ -17,6 +19,7 @@ export const loginUser = createAsyncThunk(
     try {
       const resp = await axios.post('https://dummyjson.com/auth/login', user)
       return resp.data;
+
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data.msg)
     }
@@ -33,7 +36,9 @@ const userSlice = createSlice({
     },
     toggleSidebar: (state) => {
       state.isSidebarOpen = !state.isSidebarOpen;
-    }
+    },
+   
+
   },
   extraReducers: (builder) => {
     builder
@@ -41,10 +46,17 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
+        
+        if(payload.token) {
+          state.isAuthenticated = true;
+        }
+        console.log('This is the login payload')
         console.log(payload)
         const { user } = payload;
+        
         state.isLoading = false;
         state.user = user;
+        addUserToLocalStorage(user)
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.isLoading = false;

@@ -13,16 +13,17 @@ import Divider from '@mui/material/Divider';
 
 const BigSidebar = () => {
   const theme = useTheme();
+  console.log(theme.palette)
 
   return (
     <SidebarWrapper>
       <Box mt={3}>
-        <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '2rem' }} />} label="Dashboard" />
+        <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '18px' }} />} label="Dashboard" />
       </Box>
       <Divider variant="middle" sx={{ my: 2 }} />
       <StyledHeader>ADMIN LAYOUT PAGES</StyledHeader>
-      <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '2rem' }} />} label="Dashboard" />
-      <SidebarItem to="/test" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '2rem' }} />} label="Test" />
+      <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '18px' }} />} label="Dashboard" />
+      <SidebarItem to="/test" icon={<PersonIcon sx={{ color: `${theme.palette.iconColor}`, fontSize: '18px' }} />} label="Test" />
       <Divider variant="middle" sx={{ my: 2 }} />
       <StyledHeader>CHARTS</StyledHeader>
 
@@ -55,7 +56,7 @@ const StyledHeader = styled.h4`
   margin-left: 10px;
   padding-left: 20px;
   margin: 10px 0;
-  font-size: 1.2rem;
+  font-size: 15px;
   letter-spacing: 0.9px;
 `;
 

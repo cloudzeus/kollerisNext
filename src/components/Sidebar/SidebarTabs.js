@@ -30,7 +30,7 @@ const StyledText = styled.span`
   font-weight: 600;
   letter-spacing : 1px;
   margin-left: 5px;
-  font-size: 1.3rem;
+  font-size: 15px;
 `;
 
 

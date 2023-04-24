@@ -1,13 +1,11 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '@/features/userSlice'
 
 
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const dispatch = useDispatch();

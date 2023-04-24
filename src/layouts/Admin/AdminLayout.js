@@ -12,7 +12,7 @@ const AdminLayout = ({ children }) => {
   return (
     <Box sx={{ bgcolor: 'background', minHeight: '100vh', color: 'primary.textMain' }}>
       <AdminNavbar />
-      <Box sx={{ width: '100%', display: 'flex', height: `calc(100vh - 70px)`, }}>
+      <Box sx={{ width: '100%', display: 'flex'}}>
         {smallScreen ? <SmallScreens children={children} /> : <LargeScreens children={children} />}
       </Box>
     </ Box>

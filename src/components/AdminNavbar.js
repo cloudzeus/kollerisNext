@@ -24,7 +24,7 @@ const AdminNavbar = () => {
       dispatch(toggleSidebar())
    }
    return (
-      <Stack sx={{ bgcolor: 'contrastBackground', width: '100%', p: '10px', height: 70, borderBottom: 1, borderColor: 'seperator', position: 'fixed', zIndex: 10 }} direction="row"   >
+      <Stack sx={{ bgcolor: 'white', width: '100%', p: '10px', height: 70, borderBottom: 1, borderColor: 'seperator', position: 'fixed', zIndex: 10 }} direction="row"   >
          <Stack direction="row" alignItems={"center"}>
             <Burger onClick={toggle} />
             {/* <Image
