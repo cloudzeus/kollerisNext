@@ -12,7 +12,7 @@ const AdminLayout = ({ children }) => {
   return (
     <Box sx={{ bgcolor: 'background', minHeight: '100vh', color: 'primary.textMain' }}>
       <AdminNavbar />
-      <Box sx={{ width: '100%', display: 'flex'}}>
+      <Box sx={{ width: '100%', display: 'flex' }}>
         {smallScreen ? <SmallScreens children={children} /> : <LargeScreens children={children} />}
       </Box>
     </ Box>
@@ -20,7 +20,7 @@ const AdminLayout = ({ children }) => {
 }
 
 
-const SmallScreens = ({children}) => {
+const SmallScreens = ({ children }) => {
   return (
     <>
       <BigSidebar />
@@ -38,7 +38,7 @@ const LargeScreens = ({ children }) => {
   return (
     <>
       <BigSidebar />
-      <Box sx={{ width: '100%', p: '10px', marginTop: '70px', marginLeft: isSidebarOpen ? '250px' : null }}>
+      <Box sx={{ width: '100%', p: '10px', marginTop: '70px', marginLeft: isSidebarOpen ? '260px' : null }}>
         {children}
       </Box>
     </>

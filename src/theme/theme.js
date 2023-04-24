@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-       // 50: "#e1f5fe",
+      // 50: "#e1f5fe",
       // 100: "#b3e4fd",
       // 200: "#81d3fc",
       // 300: "#4ec2f9",
@@ -30,7 +30,7 @@ const theme = createTheme({
       main: "#d70023",
       dark: "#c90014"
     },
-     analogous2: {
+    analogous2: {
       ligth: "#f6cf09",
       main: "#f49e00",
       dark: "#f27200"
@@ -64,18 +64,21 @@ const theme = createTheme({
       lightHeaderShade1: "#3d3d3e",
       lightHeaderShade2: "#3d3d3e",
       darkHeader: "#191919",
+      darkHover: '#087EA4',
       dark: "#0b0b0b",
 
     },
     grey: {
       ashGrey: '#B2BEB5',
       charcoalGrey: '#36454F',
+      pewter: '#899499'
     },
     background: '#F8F9FB',
     contrastBackground: '#fff',
     seperator: '#e8e8e8',
     iconColor: '#D5DEE6',
-    iconColor2 : '#444B76'
+    iconColor2: '#444B76',
+    hoverColor: '#E6F7FF'
   },
 }
 );

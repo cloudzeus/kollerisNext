@@ -11,13 +11,13 @@ export const SidebarItem = ({ to, icon, label }) => {
   const theme = useTheme()
   const active = router.pathname === to;
   return (
-      <NextLink href={to} passHref>
-        <StyledSpan  active={active} theme={theme}>
-          {icon}
-          {/* <StyledText active={active} theme={theme}  style={{ marginLeft: 8, fontWeight: 700, color: theme.palette.primary.textMain}}>{label.toUpperCase()}</StyledText >
+    <NextLink href={to} passHref>
+      <StyledSpan active={active} theme={theme}>
+        {icon}
+        {/* <StyledText active={active} theme={theme}  style={{ marginLeft: 8, fontWeight: 700, color: theme.palette.primary.textMain}}>{label.toUpperCase()}</StyledText >
            */}
-           <StyledText>{label}</StyledText>
-        </StyledSpan >
+        <StyledText>{label}</StyledText>
+      </StyledSpan >
     </NextLink>
   );
 };
@@ -26,10 +26,10 @@ export const SidebarItem = ({ to, icon, label }) => {
 
 
 const StyledText = styled.span`
-  color: ${({theme}) => theme.palette.text.lighHeaderShade2};
+  color: ${({ theme }) => theme.palette.text.lighHeaderShade2};
   font-weight: 600;
   letter-spacing : 1px;
-  margin-left: 5px;
+  margin-left: 10px;
   font-size: 15px;
 `;
 
@@ -37,7 +37,7 @@ const StyledText = styled.span`
 const StyledSpan = styled.span`
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 50px;
   padding: 0 16px;
   text-decoration: none;
   color: #333;
@@ -52,7 +52,8 @@ const StyledSpan = styled.span`
     active &&
     `
     border-left-color: ${theme.palette.primary.light};
-    background-color: #fbfbfb;
+    background-color: ${theme.palette.hoverColor};
+    color: ${theme.palette.text.darkHover};
 
   `}
 `;
