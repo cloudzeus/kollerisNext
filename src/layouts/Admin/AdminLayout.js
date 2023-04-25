@@ -3,46 +3,53 @@ import { BigSidebar, AdminNavbar } from 'src/components'
 import { Box } from '@mui/material'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector } from 'react-redux';
-
+import styled from 'styled-components';
 
 
 const AdminLayout = ({ children }) => {
   const smallScreen = useMediaQuery('(max-width:600px)');
+  const { isSidebarOpen } = useSelector((store) => store.user)
 
   return (
-    <Box sx={{ bgcolor: 'background', minHeight: '100vh', color: 'primary.textMain' }}>
+    <Box sx={{ bgcolor: 'background', minHeight: '100vh', color: 'primary.textMain',  }}>
       <AdminNavbar />
-      <Box sx={{ width: '100%', display: 'flex' }}>
-        {smallScreen ? <SmallScreens children={children} /> : <LargeScreens children={children} />}
+      <Box sx={{ width: '100%',  display: 'flex',  minHeight: '100vh' }}>
+        <>
+        <BigSidebar />
+        {isSidebarOpen ? (
+          <SidebarOpenContainer>
+              {children}
+          </SidebarOpenContainer>
+        ) : (
+          <SidebarClosedContainer>
+            {children}
+          </SidebarClosedContainer>
+        )}
+        </>
       </Box>
+     
     </ Box>
   )
 }
 
 
-const SmallScreens = ({ children }) => {
-  return (
-    <>
-      <BigSidebar />
-      <Box sx={{ width: '100%', p: '10px', marginTop: '70px' }}>
-        {children}
-      </Box>
-    </>
-  )
-}
+
+const SidebarOpenContainer = styled.div`
+    position: fixed;
+    top: 70px;
+    left: 260px;
+    width: calc(100% - 260px  );;
+    padding: 10px;
+   
+`
+const SidebarClosedContainer = styled.div`
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+`
 
 
-const LargeScreens = ({ children }) => {
-  const { isSidebarOpen } = useSelector((store) => store.user)
-  console.log(isSidebarOpen)
-  return (
-    <>
-      <BigSidebar />
-      <Box sx={{ width: '100%', p: '10px', marginTop: '70px', marginLeft: isSidebarOpen ? '260px' : null }}>
-        {children}
-      </Box>
-    </>
-  )
-}
 
 export default AdminLayout

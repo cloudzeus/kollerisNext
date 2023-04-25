@@ -28,6 +28,7 @@ const BigSidebar = () => {
       <LightHeader>ADMIN LAYOUT PAGES</LightHeader>
       <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Dashboard" />
       <SidebarItem to="/test" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Test" />
+      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
 
 

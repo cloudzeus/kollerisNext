@@ -9,6 +9,9 @@ import {FormControlLabel, Checkbox, Button} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
+import { NoEncryption } from '@mui/icons-material';
+
+
 
 console.log(theme)
 const LoginForm = () => {
@@ -51,12 +54,13 @@ const LoginForm = () => {
       <h3>{register ? 'Register' : 'Login'}</h3>
 
       <FormControl fullWidth > 
-        {register &&  <TextField  sx={{boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;'}} color={'primary'}  label="Όνομα"   margin="normal" onChange={handleChange}/>}
+        {register &&  <TextField  sx={{boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;'}} color={'primary'} size='Small' label="Όνομα"   margin="normal" onChange={handleChange}/>}
         <TextField  sx={{boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;'}} color={'primary'}  label="Email"   margin="normal" onChange={handleChange}/>
         <TextField sx={{boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;'}} color={'primary'}   id="outlined-basic" label="Κωδικός"  margin="normal" onChange={handleChange} />
+        {/* <CustomTextField id="outlined-basic" label="Κωδικός"/> */}
         <FormControlLabel  control={<Checkbox />} label="Save Password" />
         <Button variant='contained' color='primary' size='large' onClick={handleSubmit}>{register ? 'Εγγραφή' : 'Σύνδεση'}</Button>
-      </FormControl>
+      </FormControl> 
     </LoginBox >
     <BottomDiv>
       {!register && <Button variant="text">Forgot Password</Button>}
@@ -65,6 +69,8 @@ const LoginForm = () => {
    </Container>
   )
 }
+
+
 
 
 

@@ -24,7 +24,6 @@ export const SidebarItem = ({ to, icon, label }) => {
 
 
 
-
 const StyledText = styled.span`
   color: ${({ theme }) => theme.palette.text.lighHeaderShade2};
   font-weight: 600;
