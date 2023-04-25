@@ -27,7 +27,6 @@ const AdminNavbar = () => {
       dispatch(toggleSidebar())
    }
 
-   const URL = isSidebarOpen ? '/static/imgs/dg-small.png' : '/static/imgs/logoDG.png'
    return (
       <Stack sx={{ bgcolor: 'white', width: '100%', p: '10px', height: 70, position: 'fixed', zIndex: 12 }} direction="row"   >
          <Stack direction="row" alignItems={"center"}>
@@ -35,8 +34,8 @@ const AdminNavbar = () => {
             <Image
                src={'/static/imgs/logoDG.png'}
                alt="Picture of the author"
-               width={ 100}
-               height={ 28}
+               width={ 80}
+               height={24}
             />
 
          </Stack>

@@ -25,9 +25,9 @@ export const SidebarItem = ({ to, icon, label }) => {
 
 
 export const SidebarItemNoLink = ({ isOpen, setIsOpen, icon, label }) => {
-  const onClick = () => {
-    setIsOpen(!isOpen)
-  }
+    const onClick = () => {
+      setIsOpen(!isOpen)
+    }
 
   const theme = useTheme()
   return (
@@ -80,6 +80,14 @@ const StyledSpan = styled.span`
 
 const StyledSpanExtend = styled(StyledSpan)`
   justify-content: space-between;
+  ${({ active, theme }) =>
+    active &&
+    `
+
+    background-color: ${theme.palette.hoverColor};
+    color: ${theme.palette.text.darkHover};
+
+  `}
 `
 
 

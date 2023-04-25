@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider'
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme } from '@mui/material/styles';
+import { SidebarItemNoLink, SidebarItem  } from '../Sidebar/SidebarTabs';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 
 const AvatarSettings = () => {
   const theme = useTheme();
+  const [show, setShow] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const onClick = () => {
+    setShow(!show)
+  }
   return (
-    <Container onClick={() => console.log('pressed')}>
+    <>
+      <Container onClick={onClick}>
       <Avatar 
         alt="Remy Sharp" 
         src=''
@@ -15,9 +25,27 @@ const AvatarSettings = () => {
       />
       <Sett  />
     </Container>
+    {show && <HiddenDropdown>
+      <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
+      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Aποσύνδεση" />
+      
+    </HiddenDropdown>}
+    </>
+
   )
 }
 
+
+
+const HiddenDropdown = styled.div`
+  position: absolute;
+  right: 15px;
+  top: 60px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+`
 
 
 
@@ -28,10 +56,6 @@ const Sett = styled(SettingsIcon)`
 `
 
 
-
-
-
-
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -40,6 +64,7 @@ const Container = styled.div`
   border-radius: 30px;
   padding: 5px;
   min-width: 80px;
+  cursor: pointer;
   &:hover {
     background-color: ${({ theme }) => theme.palette.secondary.main};
   }
