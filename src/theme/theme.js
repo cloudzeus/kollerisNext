@@ -69,6 +69,7 @@ const theme = createTheme({
 
     },
     grey: {
+      shade1: '#808080',
       ashGrey: '#B2BEB5',
       charcoalGrey: '#36454F',
       pewter: '#899499'

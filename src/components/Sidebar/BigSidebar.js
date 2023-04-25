@@ -15,22 +15,18 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 
 
+
+
 const BigSidebar = () => {
   const theme = useTheme();
 
   return (
     <SidebarWrapper>
-      <Box mt={3}>
-        <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Dashboard" />
-      </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
-      <LightHeader>ADMIN LAYOUT PAGES</LightHeader>
-      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Test" />
+        <LightHeader>Μενού</LightHeader>
+      <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Πίνακας Ελέγχου" />
+      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Πελάτες" />
       <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Chart" />
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-
-
+      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
     </SidebarWrapper>
 
 
@@ -50,20 +46,6 @@ const SidebarWrapper = ({ children }) => {
   )
 }
 
-
-// const StyledIcon = styled(Avatar)`
-//   ${({ theme }) => `
-//   cursor: pointer;
-//   background-color: ${theme.palette.primary.main};
-//   transition: ${theme.transitions.create(['background-color', 'transform'], {
-//   duration: theme.transitions.duration.standard,
-// })};
-//   &:hover {
-//     background-color: ${theme.palette.secondary.main};
-//     transform: scale(1.3);
-//   }
-//   `}
-// `;
 
 
 

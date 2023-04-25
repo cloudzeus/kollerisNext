@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import NextLink from 'next/link';
 import { useTheme } from '@mui/material/styles';
-
+import Para from '../Text/Para';
 
 
 export const SidebarItem = ({ to, icon, label }) => {
@@ -14,29 +14,26 @@ export const SidebarItem = ({ to, icon, label }) => {
     <NextLink href={to} passHref>
       <StyledSpan active={active} theme={theme}>
         {icon}
-        {/* <StyledText active={active} theme={theme}  style={{ marginLeft: 8, fontWeight: 700, color: theme.palette.primary.textMain}}>{label.toUpperCase()}</StyledText >
-           */}
-        <StyledText>{label}</StyledText>
+        <SidebarText>{label}</SidebarText>
       </StyledSpan >
     </NextLink>
   );
 };
 
 
+const SidebarText = styled.p`
+  font-size: 14px;
+  margin-left: 15px;
+  color: ${({ theme }) => theme.palette.grey.shade1};
+`
 
-const StyledText = styled.span`
-  color: ${({ theme }) => theme.palette.text.lighHeaderShade2};
-  font-weight: 600;
-  letter-spacing : 1px;
-  margin-left: 10px;
-  font-size: 15px;
-`;
+
 
 
 const StyledSpan = styled.span`
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 40px;
   padding: 0 16px;
   text-decoration: none;
   color: #333;
