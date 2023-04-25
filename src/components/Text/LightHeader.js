@@ -13,13 +13,10 @@ const LightHeader = ({ children }) => {
 
 
 const Para = styled.p`
-  color: ${({ theme }) => theme.palette.grey.pewter};
-  font-weight: 300;
+  color: ${({ theme }) => theme.palette.grey.shade2};
+  font-weight: 700;
   font-size: 14px;
-  margin-left: 20px;
-  margin-top: 20px;
-  letter-spacing: 1.4px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-family: 'Roboto Condensed', sans-serif;
 `
 export default LightHeader

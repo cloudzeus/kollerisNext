@@ -18,11 +18,12 @@ export const SidebarItem = ({ to, icon, label }) => {
       <StyledSpan active={active} theme={theme}>
         {icon}
         <SidebarText>{label}</SidebarText>
-        
       </StyledSpan >
     </NextLink>
   );
 };
+
+
 export const SidebarItemNoLink = ({ isOpen, setIsOpen, icon, label }) => {
   const onClick = () => {
     setIsOpen(!isOpen)
@@ -43,9 +44,11 @@ export const SidebarItemNoLink = ({ isOpen, setIsOpen, icon, label }) => {
 
 const SidebarText = styled.p`
   margin-left: 15px;
+  font-weight: 300;
   color: ${({theme}) => theme.palette.text.main};
   font-size: ${props => props.size ? `${props.size}px` : '13px'};
   letter-spacing: 0.9px;
+  font-family: 'Roboto Condensed', sans-serif;
 `
 
 
@@ -58,9 +61,9 @@ const StyledSpan = styled.span`
   padding: 0 16px;
   text-decoration: none;
   color: #333;
-  border-left: 3px solid transparent;
+  /* border-left: 3px solid transparent; */
   width: 100%;
-  
+  border-radius: 10px;
   cursor: pointer;
   &:hover {
     background-color: #f5f5f5;
@@ -68,7 +71,7 @@ const StyledSpan = styled.span`
   ${({ active, theme }) =>
     active &&
     `
-    border-left-color: ${theme.palette.text.darkHover};
+
     background-color: ${theme.palette.hoverColor};
     color: ${theme.palette.text.darkHover};
 

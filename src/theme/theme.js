@@ -3,21 +3,16 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      // 50: "#e1f5fe",
-      // 100: "#b3e4fd",
-      // 200: "#81d3fc",
-      // 300: "#4ec2f9",
-      // 400: "#29b4f8",
-      // 500: "#09a7f6",
-      light: "#0b99e7",
-      main: "#0b75be",
-      dark: "#0a559c",
+      light: "#b5e7ee",
+      main: "#087EA4",
+      dark: "#005d84",
     },
 
     secondary: {
-      light: "#ff840c",
-      main: "#f6580",
-      dark: "#f65809"
+      light: "#EDE7F6",
+      shade100 : "#9a70d7",
+      main: "#6539B5",
+      dark: "#2f08a4",
     },
     analogous1: {
       // 50: "#ffeaef",
@@ -35,30 +30,10 @@ const theme = createTheme({
       main: "#f49e00",
       dark: "#f27200"
     },
-    // triadic1: {
-    //   50: "#f4ffe7",
-    //   100: "#e5fdc3",
-    //   200: "#d4fd9a",
-    //   300: "#c2fb6d",
-    //   400: "#b4f846",
-    //   500: "#a7f609",
-    //   600: "#9ee300",
-    //   700: "#91cb00",
-    //   main: "#85b300",
-    //   900: "#718c00"
-    // },
-    // triadic2: {
-    //   50: "#e9ffea",
-    //   100: "#c8fec9",
-    //   200: "#9efca5",
-    //   300: "#68fa7c",
-    //   400: "#09f658",
-    //   500: "#00f22f",
-    //   600: "#00e027",
-    //   700: "#00ca1b",
-    //   main: "#00b50a",
-    //   900: "#008f00"
-    // },
+    triadic: {
+      light: '#FFF8E1',
+      main: "#FFC107"
+    },
     text: {
       para: "#3d3d3e",
       lightHeaderShade1: "#3d3d3e",
@@ -70,6 +45,7 @@ const theme = createTheme({
     },
     grey: {
       shade1: '#808080',
+      shade2: '#dad9d9',
       ashGrey: '#B2BEB5',
       charcoalGrey: '#36454F',
       pewter: '#899499'

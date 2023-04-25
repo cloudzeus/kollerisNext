@@ -30,7 +30,7 @@ const BigSidebar = () => {
   }
   return (
     <SidebarWrapper>
-        <LightHeader>Μενού</LightHeader>
+      <LightHeader>ΜΕΝΟΥ</LightHeader>
       <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Πίνακας Ελέγχου" />
       <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Πελάτες" />
       <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Chart" />
@@ -69,7 +69,7 @@ const SidebarWrapper = ({ children }) => {
   const { isSidebarOpen } = useSelector((store) => store.user);
   let conditions = matches && isSidebarOpen
   return (
-    <Box className={`${conditions ? styles.fullNavbar : null}  ${!isSidebarOpen && styles.none} ${styles.container}`} sx={{ bgcolor: 'white', width: 260, height: 'calc(100% - 70px)', position: 'fixed', top: '70px', zIndex: 10, overflowY: 'scroll' }}>
+    <Box className={`${conditions ? styles.fullNavbar : null}  ${!isSidebarOpen && styles.none} ${styles.container}`} sx={{ bgcolor: 'white', width: 260, height: 'calc(100% - 70px)', position: 'fixed', top: '70px', zIndex: 10, overflowY: 'auto', p: '8px'  }}>
       {children}
     </Box>
   )
