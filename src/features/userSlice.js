@@ -6,6 +6,7 @@ const initialState = {
   user: getUserFromLocalStorage,
   isAuthenticated: false,
   isLoading: false,
+  isSidebarOpen: true,
 }
 
 

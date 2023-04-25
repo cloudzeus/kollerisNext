@@ -10,6 +10,7 @@ const Para = ({children, size}) => {
 const ParaContainer = Styled.p`
   color: ${({theme}) => theme.palette.text.main};
   font-size: ${props => props.size ? `${props.size}rem` : '15px'};
+  font-weight: 300;
 `
 
 

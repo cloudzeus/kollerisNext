@@ -4,7 +4,7 @@ import styles from '@/styles/Sidebar.module.css'
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
-import { SidebarItem } from './SidebarTabs';
+import { SidebarItem, SidebarItemNoLink } from './SidebarTabs';
 import PersonIcon from '@mui/icons-material/Person';
 import { useTheme } from '@mui/material/styles';
 import styled from 'styled-components';
@@ -12,6 +12,7 @@ import Divider from '@mui/material/Divider';
 import LightHeader from '../Text/LightHeader';
 //ICONS:
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import { useState } from 'react';
 
 
 
@@ -19,7 +20,14 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 const BigSidebar = () => {
   const theme = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
 
+
+  
+
+  const onClick = () => {
+    
+  }
   return (
     <SidebarWrapper>
         <LightHeader>Μενού</LightHeader>
@@ -27,12 +35,33 @@ const BigSidebar = () => {
       <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Πελάτες" />
       <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
+      <SidebarItemNoLink 
+        icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} 
+        label="Efsfee" onClick={onClick} 
+        isOpen={isOpen} 
+        setIsOpen={setIsOpen}/>
+        {isOpen && <SubItem label="subitem"/>}
     </SidebarWrapper>
 
 
   );
 };
 
+
+const SubItem = ({label}) => {
+  return (
+    <>
+      <LeftDash />
+      
+    </>
+  )
+}
+
+const LeftDash = styled.span`
+  width: 10px;
+  height: 3px;
+  background-color: ${({ theme }) => theme.palette.text.darkHover};
+`
 
 
 const SidebarWrapper = ({ children }) => {

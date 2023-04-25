@@ -13,7 +13,7 @@ const LogoutButton= ({ userName }) => {
      <LogoutWrapper onClick={() => console.log('works')}>
         <PersonIcon sx={{ color: `${theme.palette.primary.light}`, fontSize: '18px', marginRight: '5px' }} />
         <Stack direction="row" justifyContent="center" alignItems="center">
-           <Para size="0.9">{userName}</Para>
+           <Para size="0.7">{userName}</Para>
            <KeyboardArrowDownIcon sx={{ color: `${theme.palette.primary.dark}`, fontSize: '17px', marginRight: '5px' }} />
         </Stack>
      </LogoutWrapper>
