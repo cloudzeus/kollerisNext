@@ -33,10 +33,10 @@ const AdminNavbar = () => {
          <Stack direction="row" alignItems={"center"}>
             <Burger onClick={toggle} />
             <Image
-               src={URL}
+               src={'/static/imgs/logoDG.png'}
                alt="Picture of the author"
-               width={isSidebarOpen ? 50 : 100}
-               height={isSidebarOpen ? 50 : 28}
+               width={ 100}
+               height={ 28}
             />
 
          </Stack>
