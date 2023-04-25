@@ -11,10 +11,10 @@ const LogoutButton= ({ userName }) => {
   const theme = useTheme()
   return (
      <LogoutWrapper onClick={() => console.log('works')}>
-        <PersonIcon sx={{ color: `${theme.palette.primary.light}`, fontSize: '19px', marginRight: '5px' }} />
+        <PersonIcon sx={{ color: `${theme.palette.primary.light}`, fontSize: '18px', marginRight: '5px' }} />
         <Stack direction="row" justifyContent="center" alignItems="center">
-           <Para size="1.2">{userName}</Para>
-           <KeyboardArrowDownIcon sx={{ color: `${theme.palette.primary.dark}`, fontSize: '19px', marginRight: '5px' }} />
+           <Para size="0.9">{userName}</Para>
+           <KeyboardArrowDownIcon sx={{ color: `${theme.palette.primary.dark}`, fontSize: '17px', marginRight: '5px' }} />
         </Stack>
      </LogoutWrapper>
   )
@@ -30,7 +30,7 @@ const LogoutWrapper = styled.a`
       border-radius: 5px;
       border: 1px solid ${props => props.theme.palette.primary.light};
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-
+      
 `
 
 

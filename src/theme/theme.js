@@ -77,7 +77,6 @@ const theme = createTheme({
     contrastBackground: '#fff',
     seperator: '#e8e8e8',
     iconColor: '#D5DEE6',
-    iconColor2: '#444B76',
     hoverColor: '#E6F7FF'
   },
 }

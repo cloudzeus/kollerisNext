@@ -17,19 +17,17 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 const BigSidebar = () => {
   const theme = useTheme();
-  console.log(theme.palette)
 
   return (
     <SidebarWrapper>
       <Box mt={3}>
-        <SidebarItem to="/dashboard" icon={<DashboardIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Dashboard" />
+        <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Dashboard" />
       </Box>
-      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
+      <Divider variant="middle" sx={{ my: 2 }} />
       <LightHeader>ADMIN LAYOUT PAGES</LightHeader>
-      <SidebarItem to="/dashboard" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Dashboard" />
-      <SidebarItem to="/test" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Test" />
-      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.hoverText}`, fontSize: '19px' }} />} label="Chart" />
-      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
+      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Test" />
+      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Chart" />
+      <Divider variant="middle" sx={{ my: 2 }} />
 
 
 
@@ -67,16 +65,6 @@ const SidebarWrapper = ({ children }) => {
 //   `}
 // `;
 
-
-const StyledHeader = styled.h4`
-  color: ${({ theme }) => theme.palette.text.lightHeader};
-  font-weight: 700;
-  margin-left: 10px;
-  padding-left: 20px;
-  margin: 10px 0;
-  font-size: 15px;
-  letter-spacing: 0.9px;
-`;
 
 
 

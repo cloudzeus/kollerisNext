@@ -27,12 +27,6 @@ const AdminNavbar = () => {
       <Stack sx={{ bgcolor: 'white', width: '100%', p: '10px', height: 70, borderBottom: 1, borderColor: 'seperator', position: 'fixed', zIndex: 10 }} direction="row"   >
          <Stack direction="row" alignItems={"center"}>
             <Burger onClick={toggle} />
-            {/* <Image
-               src={logo}
-               alt="Picture of the author"
-               width={'auto'}
-               height={50}
-            /> */}
          </Stack>
          <Stack direction="row" justifyContent="flex-end" alignItems="center" width="100%">
             <LogoutButton userName={userName} />

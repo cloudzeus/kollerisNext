@@ -35,19 +35,25 @@ const AdminLayout = ({ children }) => {
 
 
 const SidebarOpenContainer = styled.div`
-    position: fixed;
+  position: absolute;
     top: 70px;
     left: 260px;
-    width: calc(100% - 260px  );;
-    padding: 10px;
+    width: calc(100% - 260px);;
+    padding: 20px;
+    overflow-y:scroll;
+    min-height:100vh;
+
    
 `
 const SidebarClosedContainer = styled.div`
-    position: fixed;
+    position: absolute;
     top: 70px;
     left: 0;
     width: 100%;
     padding: 10px;
+    overflow-y:scroll;
+    min-height:100vh;
+
 `
 
 

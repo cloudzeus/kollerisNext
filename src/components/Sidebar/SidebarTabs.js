@@ -50,7 +50,7 @@ const StyledSpan = styled.span`
   ${({ active, theme }) =>
     active &&
     `
-    border-left-color: ${theme.palette.primary.light};
+    border-left-color: ${theme.palette.text.darkHover};
     background-color: ${theme.palette.hoverColor};
     color: ${theme.palette.text.darkHover};
 
