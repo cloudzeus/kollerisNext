@@ -12,6 +12,8 @@ import { useRouter } from 'next/router';
 import Image from 'next/image'
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import CustomTextField from './FormInput';
+import StyledInput from './FormInput';
 
 
 const LoginForm = () => {
@@ -57,7 +59,7 @@ const LoginForm = () => {
       <LoginBox >
         <Grid container  justifyContent="center" alignItems="center" direction="row" mb='20px'>
           <Grid item xs={8}>
-            <StyledHeader>Καλώς ήρθατε!</StyledHeader>
+            <StyledHeader>ΚΑΛΩΣ ΗΡΘΑΤΕ!</StyledHeader>
             <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
           </Grid>
           <Grid 
@@ -74,8 +76,8 @@ const LoginForm = () => {
           </Grid>
         </Grid>
 
-        <TextField id="outlined-basic" label="Email" variant="outlined" fullWidth sx={{marginBottom: '20px'}}/>
-
+        <TextField id="outlined-basic" label="Email" variant="outlined" fullWidth sx={{marginBottom: '20px'}} size="large"/>
+        
         <FormControl fullWidth variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
           <OutlinedInput
@@ -95,7 +97,7 @@ const LoginForm = () => {
             }
             label="Password"
           />
-          <FormControlLabel control={<Checkbox />} label="Save Password" />
+          <FormControlLabel control={<Checkbox />} label="Aποθήκευση Κωδικού" />
           <Button variant='contained' color='primary' size='large' onClick={handleSubmit}>{'Σuνδεση'}</Button>
 
         </FormControl>
@@ -104,30 +106,22 @@ const LoginForm = () => {
         {!register && <Button variant="text">Forgot Password</Button>}
         <Button variant="text" onClick={handleRegister}>{!register ? 'Δημιουργια λογαριασμου' : 'Συνδεση σε λογαριασμό'}</Button>
       </BottomDiv> */}
+      <StyledInput label="Username" />
     </Container>
   )
 }
 
 
-
-
-// {register && <TextField sx={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;' }} color={'primary'} size='Small' label="Όνομα" margin="normal" onChange={handleChange} />}
-// <TextField sx={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;' }} color={'primary'} label="Email" margin="normal" onChange={handleChange} />
-// <TextField sx={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;' }} color={'primary'} id="outlined-basic" label="Κωδικός" margin="normal" onChange={handleChange} />
-// {/* <CustomTextField id="outlined-basic" label="Κωδικός"/> */}
-// <FormControlLabel control={<Checkbox />} label="Save Password" />
-// <Button variant='contained' color='primary' size='large' onClick={handleSubmit}>{register ? 'Εγγραφή' : 'Σύνδεση'}</Button>
-
-
 const StyledHeader = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: ${theme.palette.primary.main};
   font-weight: 900;
   font-family: 'Roboto Condensed', 'Roboto', sans-serif;
+  margin-bottom: 3px;
 `
 
 const Subheader = styled.h2`
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   color: ${theme.palette.text.light};
   font-weight: 300;
 `
