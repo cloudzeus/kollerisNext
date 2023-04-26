@@ -31,12 +31,12 @@ const BigSidebar = () => {
   return (
     <SidebarWrapper>
       <LightHeader>ΜΕΝΟΥ</LightHeader>
-      <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Πίνακας Ελέγχου" />
-      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.text.darkHover}`,  fontSize: '19px' }} />} label="Πελάτες" />
-      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Chart" />
+      <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Πίνακας Ελέγχου" />
+      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.primary.main}`,  fontSize: '19px' }} />} label="Πελάτες" />
+      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <SidebarItemNoLink 
-        icon={<PersonIcon sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} 
+        icon={<PersonIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} 
         label="Efsfee" onClick={onClick} 
         isOpen={isOpen} 
         setIsOpen={setIsOpen}/>

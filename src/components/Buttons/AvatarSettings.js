@@ -23,11 +23,11 @@ const AvatarSettings = () => {
         src=''
         sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px',width: 25, height: 25 }}
       />
-      <Sett  />
+      <SettingsIconStyled  />
     </Container>
     {show && <HiddenDropdown>
-      <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
-      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.text.darkHover}`, fontSize: '19px' }} />} label="Aποσύνδεση" />
+      <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
+      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Aποσύνδεση" />
       
     </HiddenDropdown>}
     </>
@@ -49,8 +49,8 @@ const HiddenDropdown = styled.div`
 
 
 
-const Sett = styled(SettingsIcon)`
-  color: ${({ theme }) => theme.palette.secondary.shade100};
+const SettingsIconStyled = styled(SettingsIcon)`
+  color: ${({ theme }) => theme.palette.primary.main};
   font-size: 20px;
   margin-right: 2px;
 `
@@ -60,14 +60,14 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${({ theme }) => theme.palette.secondary.light};
+  background-color: ${({ theme }) => theme.palette.primary.light};
   border-radius: 30px;
   padding: 5px;
   min-width: 80px;
   cursor: pointer;
-  &:hover {
-    background-color: ${({ theme }) => theme.palette.secondary.main};
-  }
+  /* &:hover {
+    background-color: ${({ theme }) => theme.palette.primary.main};
+  } */
 `
 
 

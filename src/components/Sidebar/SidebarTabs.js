@@ -34,7 +34,7 @@ export const SidebarItemNoLink = ({ isOpen, setIsOpen, icon, label }) => {
       <StyledSpanExtend onClick={onClick} theme={theme}>
         <Stack direction={'row'}>
           {icon}
-          <SidebarText>{label}</SidebarText>
+          <SidebarText >{label}</SidebarText>
         </Stack>
         {isOpen ?<KeyboardArrowDownIcon fontSize='17px' /> : <KeyboardArrowUpIcon fontSize='17px' />}
       </ StyledSpanExtend  >
@@ -48,12 +48,13 @@ const SidebarText = styled.p`
   color: ${({theme}) => theme.palette.text.main};
   font-size: ${props => props.size ? `${props.size}px` : '13px'};
   letter-spacing: 0.9px;
-  font-family: 'Roboto Condensed', sans-serif;
+  /* font-family: 'Roboto Condensed', sans-serif; */
+ 
 `
 
 
 
-
+//Parent Container for the Sidebar tab:
 const StyledSpan = styled.span`
   display: flex;
   align-items: center;
@@ -67,15 +68,19 @@ const StyledSpan = styled.span`
   cursor: pointer;
   &:hover {
     background-color: #f5f5f5;
+    font-weight: 500;
   }
   ${({ active, theme }) =>
     active &&
     `
-
-    background-color: ${theme.palette.hoverColor};
-    color: ${theme.palette.text.darkHover};
+    background-color: ${theme.palette.primary.light};
+    color: ${theme.palette.primary.main};
+    font-family: 'Roboto', sans-serif;
 
   `}
+  .child {
+      color: ${({theme}) => theme.palette.primary.main};
+    }
 `;
 
 const StyledSpanExtend = styled(StyledSpan)`

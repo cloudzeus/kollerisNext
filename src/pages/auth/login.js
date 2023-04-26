@@ -5,10 +5,16 @@ import styled from 'styled-components'
 import CenterBox from '@/components/Wrappers/CenterBox'
 import ShadowBox from '@/components/Wrappers/ShadowBox'
 
+
+import { InputBase } from '@mui/material'
+
+
+
 const Login = () => {
   return (
     <LoginLayout>
       <LoginForm />
+      <InputBase></InputBase>
     </LoginLayout>
   )
 }
