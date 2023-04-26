@@ -16,7 +16,7 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
     <NextLink href={to} passHref>
       <StyledSpan $extraPad subItem={subItem} active={active} theme={theme}>
         {icon}
-        <SidebarTextExtraPad >{label}</SidebarTextExtraPad>
+        <SidebarTextExtraPad>{label}</SidebarTextExtraPad>
       </StyledSpan >
     </NextLink>
   );
@@ -30,10 +30,15 @@ export const SidebarExpandableItem = ({label, active, children,}) => {
     const onClick = () => {
       setOpen(!open)
     }
+
+    const sx = {
+      fontSize: '20px',
+      color: 'grey'
+    }
     return (
         <>
            <StyledSpan onClick={onClick} active={active} theme={theme}>
-            {open ? <KeyboardArrowDownIcon  /> :<KeyboardArrowRightIcon  />  }
+            {open ? <KeyboardArrowDownIcon sx={sx} /> :<KeyboardArrowRightIcon  sx={sx} />  }
            <SidebarText >{label}</SidebarText>
         </StyledSpan>
         <div>
@@ -53,7 +58,6 @@ export const SidebarText = styled.p`
   font-size: ${props => props.size ? `${props.size}px` : '13px'};
   letter-spacing: 0.9px;
   padding-left: ${props => props.$extraPad ? '10px' : null};
-  
 `
 
 
