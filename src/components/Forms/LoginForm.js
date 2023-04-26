@@ -5,11 +5,14 @@ import ShadowBox from '../Wrappers/ShadowBox'
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import theme from '@/theme/theme';
-import { FormControlLabel, Checkbox, Button } from '@mui/material';
+import { FormControlLabel, Checkbox, Button, InputLabel, FormLabel, InputAdornment, FormHelperText,    OutlinedInput, FilledInput, Input, IconButton} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import Image from 'next/image'
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +24,12 @@ const LoginForm = () => {
     username: 'kminchelle',
     password: '0lelplR',
   })
-  const [register, setRegister] = useState(false)
+
+  // const [register, setRegister] = useState(false)
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const { isAuthenticated } = useSelector(state => state.user)
   const handleChange = (e) => {
@@ -47,7 +55,7 @@ const LoginForm = () => {
   return (
     <Container>
       <LoginBox >
-        <Grid container  justifyContent="center" alignItems="center" direction="row">
+        <Grid container  justifyContent="center" alignItems="center" direction="row" mb='20px'>
           <Grid item xs={8}>
             <StyledHeader>Καλώς ήρθατε!</StyledHeader>
             <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
@@ -66,13 +74,30 @@ const LoginForm = () => {
           </Grid>
         </Grid>
 
-        <FormControl fullWidth >
-            <InputBase>
+        <TextField id="outlined-basic" label="Email" variant="outlined" fullWidth sx={{marginBottom: '20px'}}/>
 
-            </InputBase>
-            <StyledInput>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-password"
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+          />
+          <FormControlLabel control={<Checkbox />} label="Save Password" />
+          <Button variant='contained' color='primary' size='large' onClick={handleSubmit}>{'Σuνδεση'}</Button>
 
-            </StyledInput>
         </FormControl>
       </LoginBox >
       {/* <BottomDiv>
@@ -84,11 +109,7 @@ const LoginForm = () => {
 }
 
 
-const StyledInput = styled(InputBase)`
-  border: 1px solid black;
-  
 
-`
 
 // {register && <TextField sx={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;' }} color={'primary'} size='Small' label="Όνομα" margin="normal" onChange={handleChange} />}
 // <TextField sx={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px;' }} color={'primary'} label="Email" margin="normal" onChange={handleChange} />
@@ -115,7 +136,7 @@ const LoginBox = styled.div`
   padding: 30px;
   /* box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px; */
   background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.1) 5px 5px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 `
 const Container = styled.div`
   width: 500px;
