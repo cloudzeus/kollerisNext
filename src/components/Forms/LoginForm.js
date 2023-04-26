@@ -14,7 +14,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CustomTextField from './FormInput';
 import StyledInput from './FormInput';
-
+import { InputDiv } from './FormInput';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,10 +75,17 @@ const LoginForm = () => {
             />
           </Grid>
         </Grid>
-
-        <TextField id="outlined-basic" label="Email" variant="outlined" fullWidth sx={{marginBottom: '20px'}} size="large"/>
+        <InputDiv>
+          <input className="customInput" name="name" id="my-name" type='text' />
+          <label className="customLabel" htmlFor="my-name">username</label>
+        </InputDiv>
+        <InputDiv>
+          <input className="customInput" name="name" id="my-name" type='text' />
+          <label className="customLabel" htmlFor="my-name">username</label>
+        </InputDiv>
+        {/* <TextField id="outlined-basic" label="Email" variant="outlined" fullWidth sx={{marginBottom: '20px'}} size="large"/> */}
         
-        <FormControl fullWidth variant="outlined">
+        {/* <FormControl fullWidth variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
           <OutlinedInput
             id="outlined-adornment-password"
@@ -100,7 +107,8 @@ const LoginForm = () => {
           <FormControlLabel control={<Checkbox />} label="Aποθήκευση Κωδικού" />
           <Button variant='contained' color='primary' size='large' onClick={handleSubmit}>{'Σuνδεση'}</Button>
 
-        </FormControl>
+        </FormControl> */}
+
       </LoginBox >
       {/* <BottomDiv>
         {!register && <Button variant="text">Forgot Password</Button>}
