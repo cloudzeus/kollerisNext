@@ -29,14 +29,15 @@ export const InputDiv = styled.div`
   input {
     outline: none;
     width: 100%;
+    display: flex;
     padding-top: 25px;
     padding-left: 15px;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
     border: 1px solid #eaeaea;
     border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    height: 60px;
+    font-size: 15px;
+    font-weight: 400;
+    height: 50px;
     background-color: ${props => props.theme.palette.background};
       &:focus {
         outline: none;

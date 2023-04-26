@@ -63,6 +63,7 @@ const LoginForm = () => {
 						<Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
 					</Grid>
 					<Grid
+						item
 						container
 						xs={4}
 						justifyContent="flex-end"
@@ -76,11 +77,11 @@ const LoginForm = () => {
 					</Grid>
 				</Grid>
 				<InputDiv mt={10}>
-					<input className="customInput" name="name" id="my-name" type='text' />
+					<input className="customInput" placeholder='example@gmail.com' name="name" id="my-name" type='text' />
 					<label className="customLabel" htmlFor="my-name">Email/Username</label>
 				</InputDiv>
 				<InputDiv mt={20}>
-					<input className="customInput" name="name" id="passwordid" type='text' />
+					<input className="customInput" placeholder='******' name="name" id="passwordid" type='text' />
 					<label className="customLabel" htmlFor="passwordid">Password</label>
 				</InputDiv>
 				{/* Checkbox row */}
