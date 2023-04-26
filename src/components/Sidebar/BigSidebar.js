@@ -11,36 +11,32 @@ import styled from 'styled-components';
 import Divider from '@mui/material/Divider';
 import LightHeader from '../Text/LightHeader';
 //ICONS:
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useState } from 'react';
-
-
-
+import { SidebarExpandableItem } from './SidebarTabs';
 
 
 const BigSidebar = () => {
   const theme = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
-
-
-  
-
+  const [open, setOpen] = useState(false);
   const onClick = () => {
-    
-  }
+    setOpen(true)
+  } 
   return (
     <SidebarWrapper>
       <LightHeader>ΜΕΝΟΥ</LightHeader>
-      <SidebarItem to="/dashboard" icon={<DashboardIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Πίνακας Ελέγχου" />
-      <SidebarItem to="/test" icon={<PersonIcon color="secondary" sx={{color: `${theme.palette.primary.main}`,  fontSize: '19px' }} />} label="Πελάτες" />
-      <SidebarItem to="/chart" icon={<PersonIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Chart" />
+      <SidebarItem to="/dashboard"  label="Πίνακας Ελέγχου" />
+      <SidebarItem to="/test"  label="Πελάτες" />
+      <SidebarItem to="/chart"  label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
-      <SidebarItemNoLink 
-        icon={<PersonIcon sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} 
-        label="Efsfee" onClick={onClick} 
-        isOpen={isOpen} 
-        setIsOpen={setIsOpen}/>
-        {isOpen && <SubItem label="subitem"/>}
+      <SidebarExpandableItem label="Accordion" open={open} setOpen={onClick}>
+        <SidebarItem to="/fake/page1"  label="Page1" />
+        <SidebarItem to="/fake/page2"  label="Page2" />
+      </SidebarExpandableItem>
+      <SidebarExpandableItem label="Accordion2" open={open} setOpen={onClick}>
+        <SidebarItem to="/fake/page1"  label="Page1" />
+        <SidebarItem to="/fake/page2"  label="Page2" />
+      </SidebarExpandableItem>
+     
     </SidebarWrapper>
 
 
@@ -48,20 +44,8 @@ const BigSidebar = () => {
 };
 
 
-const SubItem = ({label}) => {
-  return (
-    <>
-      <LeftDash />
-      
-    </>
-  )
-}
 
-const LeftDash = styled.span`
-  width: 10px;
-  height: 3px;
-  background-color: ${({ theme }) => theme.palette.text.darkHover};
-`
+
 
 
 const SidebarWrapper = ({ children }) => {
@@ -69,7 +53,7 @@ const SidebarWrapper = ({ children }) => {
   const { isSidebarOpen } = useSelector((store) => store.user);
   let conditions = matches && isSidebarOpen
   return (
-    <Box className={`${conditions ? styles.fullNavbar : null}  ${!isSidebarOpen && styles.none} ${styles.container}`} sx={{ bgcolor: 'white', width: 260, height: 'calc(100% - 70px)', position: 'fixed', top: '70px', zIndex: 10, overflowY: 'auto', p: '8px'  }}>
+    <Box className={`${conditions ? styles.fullNavbar : null}  ${!isSidebarOpen && styles.none} ${styles.container}`} sx={{ bgcolor: 'white', width: 260, height: 'calc(100% - 70px)', position: 'fixed', top: '70px', zIndex: 10, overflowY: 'auto', }}>
       {children}
     </Box>
   )

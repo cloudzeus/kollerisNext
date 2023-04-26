@@ -1,71 +1,79 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import NextLink from 'next/link';
 import { useTheme } from '@mui/material/styles';
-import Para from '../Text/Para';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Stack } from '@mui/material';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 
-export const SidebarItem = ({ to, icon, label }) => {
+export const SidebarItem = ({ to, icon, label, subItem }) => {
   const router = useRouter();
   const theme = useTheme()
   const active = router.pathname === to;
+
   return (
     <NextLink href={to} passHref>
-      <StyledSpan active={active} theme={theme}>
+      <StyledSpan $extraPad subItem={subItem} active={active} theme={theme}>
         {icon}
-        <SidebarText>{label}</SidebarText>
+        <SidebarTextExtraPad >{label}</SidebarTextExtraPad>
       </StyledSpan >
     </NextLink>
   );
 };
 
 
-export const SidebarItemNoLink = ({ isOpen, setIsOpen, icon, label }) => {
-    const onClick = () => {
-      setIsOpen(!isOpen)
-    }
-
+export const SidebarExpandableItem = ({label, active, children,}) => {
+  const [open , setOpen] = useState(false)
   const theme = useTheme()
-  return (
-      <StyledSpanExtend onClick={onClick} theme={theme}>
-        <Stack direction={'row'}>
-          {icon}
-          <SidebarText >{label}</SidebarText>
-        </Stack>
-        {isOpen ?<KeyboardArrowDownIcon fontSize='17px' /> : <KeyboardArrowUpIcon fontSize='17px' />}
-      </ StyledSpanExtend  >
-  );
-};
+
+    const onClick = () => {
+      setOpen(!open)
+    }
+    return (
+        <>
+           <StyledSpan onClick={onClick} active={active} theme={theme}>
+            {open ? <KeyboardArrowDownIcon  /> :<KeyboardArrowRightIcon  />  }
+           <SidebarText >{label}</SidebarText>
+        </StyledSpan>
+        <div>
+         {open && children}
+        </div>
+        </>
+      
+    )
+}
 
 
-const SidebarText = styled.p`
-  margin-left: 15px;
+
+
+export const SidebarText = styled.p`
   font-weight: 300;
   color: ${({theme}) => theme.palette.text.main};
   font-size: ${props => props.size ? `${props.size}px` : '13px'};
   letter-spacing: 0.9px;
-  /* font-family: 'Roboto Condensed', sans-serif; */
- 
+  padding-left: ${props => props.$extraPad ? '10px' : null};
+  
 `
 
 
+const SidebarTextExtraPad = styled(SidebarText)`
+  padding-left: 10px;
+`
+
 
 //Parent Container for the Sidebar tab:
-const StyledSpan = styled.span`
+const StyledSpan = styled.div`
   display: flex;
   align-items: center;
   height: 40px;
-  padding: 0 16px;
+  padding: ${props => props.subItem ? '0 40px' : '0 16px'};
   text-decoration: none;
   color: #333;
   /* border-left: 3px solid transparent; */
   width: 100%;
-  border-radius: 10px;
   cursor: pointer;
+
   &:hover {
     background-color: #f5f5f5;
     font-weight: 500;
@@ -78,21 +86,10 @@ const StyledSpan = styled.span`
     font-family: 'Roboto', sans-serif;
 
   `}
-  .child {
-      color: ${({theme}) => theme.palette.primary.main};
-    }
+
+ 
 `;
 
-const StyledSpanExtend = styled(StyledSpan)`
-  justify-content: space-between;
-  ${({ active, theme }) =>
-    active &&
-    `
 
-    background-color: ${theme.palette.hoverColor};
-    color: ${theme.palette.text.darkHover};
-
-  `}
-`
 
 
