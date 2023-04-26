@@ -1,45 +1,13 @@
 import React from 'react'
 import styled from 'styled-components';
-// import TextField from '@mui/material/TextField';
-// const CustomTextField = styled(TextField)`
-//   & .MuiInputBase-input {
-//     color: #333;
-//     padding:10px ;
-//   }
 
-//   & .MuiInputLabel-root {
-//     color: #555;
-//   }
-
-//   & .MuiOutlinedInput-root {
-//     /* border-radius: 4px;
-//     height: 40px;
-//     align-items: center;
-//     justify-content: center; */
-//     padding: 0;
-
-//   }
-
-//   & .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-//     border-color: #aaa;
-//   }
-
-//   & .MuiOutlinedInput-notchedOutline {
-//     border-color: #ccc;
-//   }
-
-//   & .MuiFormHelperText-root {
-//     color: #aaa;
-//   }
-// `;
-
-// export default CustomTextField;
 
 const StyledInput = ({label}) => {
   return (
     <Div>
-      <label className="customLabel" htmlFor="my-name">{label}</label>
       <input className="customInput" name="name" id="my-name" type="text" />
+      <label className="customLabel" htmlFor="my-name">{label}</label>
+     
     </Div>
   )
 }
@@ -52,31 +20,39 @@ const Div = styled.div`
   position: relative;
   height: 40px;
   font-weight: 600;
-  & .customInput {
-    /* outline: none; */
-    /* height: 45px; */
+  input {
+    outline: none;
     width: 100%;
     display: block;
-    /* padding: 10px; */
-    padding-top: 30px;
-    padding-left: 10px;
+    padding-top: 25px;
+    padding-left: 15px;
     padding-bottom: 10px;
-    border: 1px solid grey;
+    border: 1px solid #eaeaea;
     border-radius: 5px;
     font-size: 16px;
     font-weight: 500;
-    
-  }
-  & .customLabel {
+      &:focus {
+        outline: none;
+        border: 2px solid ${props => props.theme.palette.primary.main};
+        box-shadow: 0 0 3px ${props => props.theme.palette.primary.main};
+      }
+      
+    }
+  
+  label {
     position: absolute;
-    top: 5px;
-    font-size: 13px;
+    top: 10px;
+    font-size: 11px;
     letter-spacing: 0.8px;
     color: grey;
-    left: 10px;
+    left: 15px;
+    font-weight: 600;
+
+
   }
-
-
+  input:focus + label {
+    color: ${props => props.theme.palette.primary.main};
+  }
 
 `
 
