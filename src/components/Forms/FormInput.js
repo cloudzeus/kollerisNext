@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 
 
-const StyledInput = ({label}) => {
+const StyledInput = ({ label }) => {
   return (
     <InputDiv>
       <input className="customInput" name="name" id="my-name" type='text' />
@@ -23,7 +23,9 @@ export const InputDiv = styled.div`
   position: relative;
   font-weight: 600;
   margin-bottom: 10px;
+  margin-top: ${props => props.mt ? `${props.mt}px` : '0px'};
   display: flex;
+  font-family: 'Roboto', sans-serif;
   input {
     outline: none;
     width: 100%;
@@ -33,28 +35,30 @@ export const InputDiv = styled.div`
     border: 1px solid #eaeaea;
     border-radius: 5px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
+    height: 60px;
+    background-color: ${props => props.theme.palette.background};
       &:focus {
         outline: none;
-        border: 2px solid ${props => props.theme.palette.primary.main};
-        /* box-shadow: 0 0 3px ${props => props.theme.palette.primary.main}; */
+        border: 2px solid ${props => props.theme.palette.primary.light};
       }
       
     }
-  
-    label {
-      position: absolute;
-      top: 10px;
-      font-size: 11px;
-      letter-spacing: 0.8px;
-      color: grey;
-      left: 15px;
-      font-weight: 600;
 
-    }
-    input:focus + label {
-      color: ${props => props.theme.palette.primary.main};
-    }
+  
+  label {
+    position: absolute;
+    top: 12px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: ${props => props.theme.palette.grey.light};
+    left: 15px;
+    font-weight: 300;
+  }
+
+  input:focus + label {
+  color: ${props => props.theme.palette.primary.main};
+  }
 
 `
 

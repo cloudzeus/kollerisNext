@@ -20,23 +20,22 @@ const BigSidebar = () => {
   const [open, setOpen] = useState(false);
   const onClick = () => {
     setOpen(true)
-  } 
+  }
   return (
     <SidebarWrapper>
       <LightHeader>ΜΕΝΟΥ</LightHeader>
-      <SidebarItem to="/dashboard"  label="Πίνακας Ελέγχου" />
-      <SidebarItem to="/test"  label="Πελάτες" />
-      <SidebarItem to="/chart"  label="Chart" />
+      <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
+      <SidebarItem to="/test" label="Πελάτες" />
+      <SidebarItem to="/chart" label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <SidebarExpandableItem label="Accordion" open={open} setOpen={onClick}>
-        <SidebarItem to="/fake/page1"  label="Page1" />
-        <SidebarItem to="/fake/page2"  label="Page2" />
+        <SidebarItem to="/fake/page1" label="Page1" />
+        <SidebarItem to="/fake/page2" label="Page2" />
       </SidebarExpandableItem>
       <SidebarExpandableItem label="Accordion2" open={open} setOpen={onClick}>
-        <SidebarItem to="/fake/page1"  label="Page1" />
-        <SidebarItem to="/fake/page2"  label="Page2" />
+        <SidebarItem to="/fake/page1" label="Page1" />
+        <SidebarItem to="/fake/page2" label="Page2" />
       </SidebarExpandableItem>
-     
     </SidebarWrapper>
 
 
