@@ -6,7 +6,7 @@ import styled from "styled-components";
 export const Btn = styled.button`
   width: 100%;
   background-color: ${props => props.theme.palette.primary.main};
-  height: 40px;
+  height: 45px;
   border-radius: 4px;
   outline: none;
   border-style: none;

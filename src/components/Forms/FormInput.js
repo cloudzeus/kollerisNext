@@ -2,21 +2,6 @@ import React from 'react'
 import styled from 'styled-components';
 
 
-const StyledInput = ({ label }) => {
-  return (
-    <InputDiv>
-      <input className="customInput" name="name" id="my-name" type='text' />
-      <label className="customLabel" htmlFor="my-name">{label}</label>
-    </InputDiv>
-  )
-}
-
-
-
-
-export default StyledInput;
-
-
 
 export const InputDiv = styled.div`
   width: 100%;
@@ -30,9 +15,9 @@ export const InputDiv = styled.div`
     outline: none;
     width: 100%;
     display: flex;
-    padding-top: 25px;
+    padding-top: 20px;
     padding-left: 15px;
-    /* padding-bottom: 10px; */
+    /* padding-bottom: 5px; */
     border: 1px solid #eaeaea;
     border-radius: 5px;
     font-size: 15px;
@@ -46,10 +31,18 @@ export const InputDiv = styled.div`
       
     }
 
+  .showPassIcon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+
+  }
   
   label {
     position: absolute;
-    top: 12px;
+    top: 8px;
     font-size: 11px;
     letter-spacing: 0.8px;
     color: ${props => props.theme.palette.grey.light};
@@ -60,7 +53,6 @@ export const InputDiv = styled.div`
   input:focus + label {
   color: ${props => props.theme.palette.primary.main};
   }
-
 `
 
 

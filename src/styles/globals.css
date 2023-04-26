@@ -13,7 +13,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
- 
+
 }
 
 * {
@@ -36,6 +36,8 @@ body {
   font-size: 16px;
   height: 100%;
   font-family: 'Roboto', sans-serif;
+  color: #575353;
+  font-weight: 300;
 }
 
 
@@ -64,8 +66,13 @@ h6 {
 }
 
 
+h2 {
+  font-size: 25px;
+}
 
-
+h3 {
+  font-size: 20px;
+}
 
 /* Custom ScrollBar */
 
@@ -80,6 +87,14 @@ h6 {
 ::-webkit-scrollbar-thumb {
   background: #cdcdcda7;
   border-radius: 10px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.mb10 {
+  margin-bottom: 10px;
 }
 
 /* ::-webkit-scrollbar-thumb:hover {

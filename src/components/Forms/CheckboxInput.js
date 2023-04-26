@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckBoxDiv } from './styles';
+import { CheckBoxDiv } from './formStyles';
 
 
 
