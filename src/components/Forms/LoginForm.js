@@ -108,7 +108,6 @@ const LoginForm = () => {
 						Δημιουργία Λογαριασμού
 					</Link>
 				</TextBtn >
-				<Button>TEST</Button>
 			</CenterDiv>
 		</Container >
 	)
