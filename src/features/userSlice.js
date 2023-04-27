@@ -3,11 +3,12 @@ import axios from 'axios';
 import { addUserToLocalStorage, getUserFromLocalStorage } from "@/utils/localStorage";
 
 const initialState = {
-  user: getUserFromLocalStorage,
+  user: [],
   isAuthenticated: false,
   isLoading: false,
   isSidebarOpen: true,
 }
+
 
 
 
@@ -18,7 +19,7 @@ export const loginUser = createAsyncThunk(
   async (user, thunkApi) => {
     console.log(`Login User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.post('https://dummyjson.com/auth/login', user)
+      const resp = await axios.post('/', user)
       return resp.data;
 
     } catch (error) {
@@ -27,14 +28,26 @@ export const loginUser = createAsyncThunk(
   })
 
 
+export const registerUser = createAsyncThunk(
+  //action:
+  'user/registerUser',
+  async (user, thunkApi) => {
+    console.log(`Register User: ${JSON.stringify(user)}`)
+    try {
+      const resp = await axios.post('/api/registerUser', user)
+      return resp.data;
+
+    } catch (error) {
+      console.log(error)
+      // return thunkApi.rejectWithValue(error.response.data)
+    }
+  })
+
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logoutUser: (state) => {
-      state.user = null;
-      state.isSidebarOpen = false;
-    },
     toggleSidebar: (state) => {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
@@ -47,21 +60,33 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
-        
-        if(payload.token) {
-          state.isAuthenticated = true;
-        }
+       
         console.log('This is the login payload')
         console.log(payload)
         const { user } = payload;
         
         state.isLoading = false;
         state.user = user;
-        addUserToLocalStorage(user)
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.isLoading = false;
       })
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUser.fulfilled, (state, { payload }) => {
+      
+        console.log('Register Payload')
+        console.log(payload)
+        // const { user } = payload;
+        state.isLoading = false;
+        // state.user = user;
+      })
+      .addCase(registerUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
+      })
+      
+      
 
   }
 })

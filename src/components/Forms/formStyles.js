@@ -41,4 +41,21 @@ const CheckBoxDiv = styled.div`
       font-size: 14px;
     }
 `
-export { TextBtn, CheckBoxDiv, Container }
+
+
+const StyledHeader = styled.h1`
+  font-size: 1.2rem;
+  color: ${props => props.theme.palette.primary.main};
+  font-weight: 900;
+  font-family: 'Roboto Condensed', 'Roboto', sans-serif;
+  margin-bottom: 3px;
+`
+
+const Subheader = styled.h2`
+  font-size: 0.9rem;
+  color: ${props => props.theme.palette.text.light};
+  font-weight: 300;
+`
+
+
+export { TextBtn, CheckBoxDiv, Container, StyledHeader, Subheader  }

@@ -12,6 +12,7 @@ export const InputDiv = styled.div`
   display: flex;
   font-family: 'Roboto', sans-serif;
   input {
+    position: relative;
     outline: none;
     width: 100%;
     display: flex;
@@ -24,10 +25,12 @@ export const InputDiv = styled.div`
     font-weight: 400;
     height: 50px;
     background-color: ${props => props.theme.palette.background};
-      &:focus {
-        outline: none;
-        border: 2px solid ${props => props.theme.palette.primary.light};
+    &:focus {
+      outline: none;
+      border: 2px solid ${props => props.theme.palette.primary.main};
       }
+
+    
       
     }
 
@@ -53,6 +56,25 @@ export const InputDiv = styled.div`
   input:focus + label {
   color: ${props => props.theme.palette.primary.main};
   }
+  
+  /* .error::after {
+        content: "field is required";
+        color: #ff3333;
+        position: absolute;
+        font-size: 11px;
+        bottom : -44px;
+        left: 2px;
+        width: 40px;
+        height: 40px;
+        width: 100%;
+        font-weight: 400;
+      }
+    .test {
+      background-color: red
+    } */
+   
+
+  
 `
 
 

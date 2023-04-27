@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { Grid, IconButton } from '@mui/material'
-import styled from 'styled-components'
-import theme from '@/theme/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
@@ -11,7 +9,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { InputDiv } from './FormInput';
 import CheckboxInput from './CheckboxInput';
 import Link from 'next/link';
-import { TextBtn, Container } from './formStyles';
+import { TextBtn, Container, StyledHeader, Subheader } from './formStyles';
 import { Btn } from '../Buttons/styles';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '../styles';
@@ -28,9 +26,9 @@ const LoginForm = () => {
 
 	// const [register, setRegister] = useState(false)
 	const handleShowPass = () => setShowPass((show) => !show);
-	const handleMouseDownPassword = (event) => {
-		event.preventDefault();
-	};
+	// const handleMouseDownPassword = (event) => {
+	// 	event.preventDefault();
+	// };
 
 	const { isAuthenticated } = useSelector(state => state.user)
 	const handleChange = (e) => {
@@ -41,11 +39,14 @@ const LoginForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// dispatch(loginUser({email: values.email, password: values.password}))
 		dispatch(loginUser({ username: values.username, password: values.password }))
-		if (isAuthenticated && !register) {
+		
+		if(values.username && values.password) {
 			router.push('/dashboard')
 		}
+		// if (isAuthenticated && !register) {
+		// 	router.push('/dashboard')
+		// }
 	}
 
 	const handleRegister = () => {
@@ -75,7 +76,7 @@ const LoginForm = () => {
 				</Grid>
 			</Grid>
 			<InputDiv mt={10}>
-				<input className="customInput" placeholder='example@gmail.com' name="name" id="my-name" type='text' />
+				<input className="customInput " placeholder='example@gmail.com' name="name" id="my-name" type='text' />
 				<label className="customLabel" htmlFor="my-name">Email/Username</label>
 			</InputDiv>
 			<InputDiv mt={20}>
@@ -95,7 +96,7 @@ const LoginForm = () => {
 				</TextBtn >
 			</FlexBetween>
 			{/* Login Button */}
-			<Btn>Σύνδεση</Btn>
+			<Btn onClick={handleSubmit}>Σύνδεση</Btn>
 			<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
 			<CenterDiv>
@@ -110,19 +111,8 @@ const LoginForm = () => {
 }
 
 
-const StyledHeader = styled.h1`
-  font-size: 1.2rem;
-  color: ${theme.palette.primary.main};
-  font-weight: 900;
-  font-family: 'Roboto Condensed', 'Roboto', sans-serif;
-  margin-bottom: 3px;
-`
 
-const Subheader = styled.h2`
-  font-size: 0.9rem;
-  color: ${theme.palette.text.light};
-  font-weight: 300;
-`
+
 
 
 

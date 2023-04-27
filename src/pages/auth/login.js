@@ -14,7 +14,6 @@ const Login = () => {
   return (
     <LoginLayout>
       <LoginForm />
-      <InputBase></InputBase>
     </LoginLayout>
   )
 }
