@@ -29,10 +29,12 @@ export const InputDiv = styled.div`
       outline: none;
       border: 2px solid ${props => props.theme.palette.primary.main};
       }
-
+     
     
       
     }
+
+  
 
   .showPassIcon {
     position: absolute;
