@@ -6,15 +6,26 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme } from '@mui/material/styles';
 import { SidebarItemNoLink, SidebarItem  } from '../Sidebar/SidebarTabs';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import removeItemFromLocalStorage from '@/utils/localStorage';
+import { useRouter } from 'next/router';
+import { logoutUser } from '@/features/userSlice';
+import { useDispatch } from 'react-redux';
 
 const AvatarSettings = () => {
   const theme = useTheme();
   const [show, setShow] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const route = useRouter();
+  const dispatch = useDispatch();
   const onClick = () => {
     setShow(!show)
   }
+
+  const onPress = () => {
+    dispatch(logoutUser())
+    route.push('/')
+  }
+
   return (
     <>
       <Container onClick={onClick}>
@@ -26,9 +37,9 @@ const AvatarSettings = () => {
       <SettingsIconStyled  />
     </Container>
     {show && <HiddenDropdown>
-      <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
-      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Aποσύνδεση" />
-      
+      {/* <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
+      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Aποσύνδεση" /> */}
+      <button onClick={onPress} >Logout</button>
     </HiddenDropdown>}
     </>
 

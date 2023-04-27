@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
-import { addUserToLocalStorage, getUserFromLocalStorage } from "@/utils/localStorage";
+import { addUserToLocalStorage, getUserFromLocalStorage, removerFromLocalStorage } from "@/utils/localStorage";
 
 const initialState = {
-  user: [],
+  user: null,
   isAuthenticated: false,
   isLoading: false,
   isSidebarOpen: true,
@@ -17,13 +17,11 @@ export const loginUser = createAsyncThunk(
   //action:
   'user/loginUser',
   async (user, thunkApi) => {
-    console.log(`Login User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.post('/', user)
+      const resp = await axios.post('/api/user/loguser', user)
       return resp.data;
-
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data.msg)
+      return thunkApi.rejectWithValue(error.response.data)
     }
   })
 
@@ -34,12 +32,11 @@ export const registerUser = createAsyncThunk(
   async (user, thunkApi) => {
     console.log(`Register User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.post('/api/registerUser', user)
+      const resp = await axios.post('/api/user', user)
       return resp.data;
 
     } catch (error) {
       console.log(error)
-      // return thunkApi.rejectWithValue(error.response.data)
     }
   })
 
@@ -51,6 +48,11 @@ const userSlice = createSlice({
     toggleSidebar: (state) => {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
+    logoutUser: (state) => {
+      state.user = null;
+      state.isLoading = false;
+      removerFromLocalStorage();
+    }
    
 
   },
@@ -60,27 +62,26 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
-       
-        console.log('This is the login payload')
-        console.log(payload)
-        const { user } = payload;
-        
-        state.isLoading = false;
+        const {user} = payload;
         state.user = user;
+        if(user) {
+        addUserToLocalStorage(user)
+        }
+        state.isLoading = false;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
+        console.log('rejected')
         state.isLoading = false;
+        
       })
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
-      
-        console.log('Register Payload')
-        console.log(payload)
-        // const { user } = payload;
+        const {user} = payload;
         state.isLoading = false;
-        // state.user = user;
+        state.user = user;
+        addUserToLocalStorage(user)
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;

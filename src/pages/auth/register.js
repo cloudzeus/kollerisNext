@@ -1,4 +1,6 @@
-import Reac, { useState } from 'react'
+'use client';
+
+import React, { useState } from 'react'
 import { Grid, IconButton } from '@mui/material'
 import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
@@ -13,10 +15,12 @@ import { FlexBetween, CenterDiv } from '@/components/styles';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
+import { useRouter } from 'next/router';
 
 const registerPage = () => {
 	const [showPass, setShowPass] = useState(false);
 	const dispatch = useDispatch();
+    const router  = useRouter()
 	const handleShowPass = () => setShowPass((show) => !show);
     const [values, setValues] = useState({
         firstName: '',
@@ -28,15 +32,14 @@ const registerPage = () => {
 
     const handleChange = (e) => {
         const name = e.target.name;
-        console.log(name)
         const value = e.target.value;
-        console.log(value)
         setValues({ ...values, [name]: value });
     }
 
     const onSubmit = (e) => {
         e.preventDefault();
         dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
+        router.push('/test')
     }
 	return (
 		<LoginLayout>
@@ -79,7 +82,7 @@ const registerPage = () => {
 					<label htmlFor="email">Email/Username</label>
 				</InputDiv>
 				<InputDiv mt={20}>
-					<input  placeholder='******' name="password" id="password" type={showPass ? 'text' : 'password'} onChange={handleChange}/>
+					<input required  placeholder='******' name="password" id="password" type={showPass ? 'text' : 'password'} onChange={handleChange}/>
 					<label  htmlFor="password">Password</label>
 					<IconButton className='showPassIcon' onClick={handleShowPass}>
 						{showPass ? <VisibilityOff /> : <Visibility />}
@@ -87,15 +90,10 @@ const registerPage = () => {
 				</InputDiv>
 				{/* Checkbox row */}
 				<FlexBetween>
-					<CheckboxInput label={'Αποθήκευση κωδικού'} />
-					<TextBtn >
-						<Link href="/auth/reset-password" >
-							Αλλαγή κωδικού
-						</Link>
-					</TextBtn >
+					<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
 				</FlexBetween>
 				{/* Login Button */}
-				<Btn onClick={onSubmit}>Σύνδεση</Btn>
+				<Btn onClick={onSubmit}>Εγγραφή</Btn>
 				<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
 				<CenterDiv>

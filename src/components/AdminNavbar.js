@@ -6,10 +6,8 @@ import { logoutUser, toggleSidebar } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 // import logo from '../../assets/imgs/logo.png'
 import Stack from '@mui/material/Stack';
-import LogoutButton from './Buttons/LogoutButton';
 import AvatarSettings from './Buttons/AvatarSettings';
 import Image from 'next/image'
-import { store } from '@/store';
 
 
 

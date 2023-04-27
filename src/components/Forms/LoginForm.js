@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, IconButton } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/features/userSlice';
@@ -14,44 +14,47 @@ import { Btn } from '../Buttons/styles';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '../styles';
 
+
+import Button from '../Buttons/Button';
+
+
 const LoginForm = () => {
 	const [showPass, setShowPass] = useState(false);
 	const dispatch = useDispatch();
 	const router = useRouter();
-
+	const {user} = useSelector(state => state.user)
 	const [values, setValues] = useState({
-		username: 'kminchelle',
-		password: '0lelplR',
+		email: '',
+		password: '',
 	})
 
-	// const [register, setRegister] = useState(false)
 	const handleShowPass = () => setShowPass((show) => !show);
-	// const handleMouseDownPassword = (event) => {
-	// 	event.preventDefault();
-	// };
 
-	const { isAuthenticated } = useSelector(state => state.user)
+
+	useEffect(() => {
+		console.log('user is:' + user)
+	}, [user])
+
+	// const { isAuthenticated } = useSelector(state => state.user)
 	const handleChange = (e) => {
 		const name = e.target.name;
 		const value = e.target.value;
 		setValues({ ...values, [name]: value });
 	};
 
+		console.log(values)
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatch(loginUser({ username: values.username, password: values.password }))
-		
-		if(values.username && values.password) {
-			router.push('/dashboard')
+		dispatch(loginUser({ email: values.email, password: values.password }))
+		if(user !== null) {
+			router.push('/test')
+			console.log('user is:' + user)
 		}
-		// if (isAuthenticated && !register) {
-		// 	router.push('/dashboard')
-		// }
+
+		
 	}
 
-	const handleRegister = () => {
-		setRegister((prev) => !prev.register)
-	}
+
 
 
 	return (
@@ -76,12 +79,12 @@ const LoginForm = () => {
 				</Grid>
 			</Grid>
 			<InputDiv mt={10}>
-				<input className="customInput " placeholder='example@gmail.com' name="name" id="my-name" type='text' />
+				<input className="customInput " placeholder='example@gmail.com' name="email" id="my-name" type='text' onChange={handleChange} />
 				<label className="customLabel" htmlFor="my-name">Email/Username</label>
 			</InputDiv>
 			<InputDiv mt={20}>
-				<input className="customInput" placeholder='******' name="name" id="passwordid" type={showPass ? 'text' : 'password'} />
-				<label className="customLabel" htmlFor="passwordid">Password</label>
+				<input className="customInput" placeholder='******' name="password" id="password" type={showPass ? 'text' : 'password'} onChange={handleChange} />
+				<label className="customLabel" htmlFor="password">Password</label>
 				<IconButton className='showPassIcon' onClick={handleShowPass}>
 					{showPass ? <VisibilityOff /> : <Visibility />}
 				</IconButton>
@@ -105,6 +108,7 @@ const LoginForm = () => {
 						Δημιουργία Λογαριασμού
 					</Link>
 				</TextBtn >
+				<Button>TEST</Button>
 			</CenterDiv>
 		</Container >
 	)

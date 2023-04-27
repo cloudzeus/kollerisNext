@@ -1,15 +1,21 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { loginUser } from '@/features/userSlice'
-
+import { useEffect, useState } from 'react'
+import {  useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+import { getUserFromLocalStorage } from '@/utils/localStorage'
 
 
 export default function Home() {
-  const dispatch = useDispatch();
-
+  const router = useRouter()
+   
   useEffect(() => {
-    dispatch(loginUser({ username: 'kminchelle', password: '0lelplR' }))
+    let user = getUserFromLocalStorage(); 
+    console.log('user in index is:' + user)
+    if(user != null) {
+      router.push('/test')
+    } else {
+      router.push('/auth/login')
+    }
   }, [])
   return (
     <>
@@ -20,7 +26,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <h1>Login</h1>
+        {/* <h1>Login</h1>
+        <p>{JSON.stringify(user)}</p>
+        <h1>Local Storage User</h1>
+        <p>{local}</p> */}
       </main>
     </>
   )
