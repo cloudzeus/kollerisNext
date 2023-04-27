@@ -1,15 +1,45 @@
 import { Schema, model, models } from 'mongoose';
 import mongoose from 'mongoose';
 
-const testSchema = new Schema({
-  name: String,
-  email: {
+
+
+const phoneSchema = new mongoose.Schema({
+  mobile: {
     type: String,
-    required: true,
-    unique: true,
   },
-  
+  phone: {
+    type: String,
+  }
 });
+
+
+
+const addressSchema = new mongoose.Schema({
+  coutry: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  province: {
+    type: String,
+  },
+  postcode: {
+    type: String,
+  },
+  shippingAddress: {
+    type: String,
+  },
+
+});
+
+
+
+
+
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -19,6 +49,7 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     required: true
+
   },
   email: {
     type: String,
@@ -45,40 +76,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const phoneSchema = new mongoose.Schema({
-  mobile: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  }
-});
-
-
-
-const addressSchema = new mongoose.Schema({
-  mainAddress: {
-    type: String,
-    required: true
-  },
-  city: {
-    type: String,
-    required: true
-  },
-  province: {
-    type: String,
-    required: true
-  },
-  postcode: {
-    type: String,
-    required: true
-  },
-  shippingAddress: {
-    type: String,
-    required: true
-  },
-
-});
 
 
 
