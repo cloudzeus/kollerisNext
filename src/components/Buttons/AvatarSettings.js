@@ -40,10 +40,10 @@ const AvatarSettings = () => {
             < div className='topDiv'  onClick={onClick}>
                 <Avatar
                     alt="Remy Sharp"
-                    src=''
-                    sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px', width: 25, height: 25 }}
+                    src='/static/imgs/avatar.jpg'
+                    sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px', width: 35, height: 35 }}
                 />
-                <SettingsIconStyled />
+                {/* <SettingsIconStyled /> */}
             </ div >
             {show && (
                 <div className='hiddenDropDown'>
@@ -80,10 +80,11 @@ const Container = styled.div`
         justify-content: space-between;
         background-color: ${({ theme }) => theme.palette.primary.light};
         border-radius: 30px;
-        min-width: 80px;
-        padding: 5px;
+        /* min-width: 90px; */
+        padding: 4px;
     }
     .hiddenDropDown {
+        border-top: 2px solid ${({ theme }) => theme.palette.primary.light};
         position: absolute;
         top: 80px;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
