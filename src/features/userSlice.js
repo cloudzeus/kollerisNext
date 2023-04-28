@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 import { addUserToLocalStorage, getUserFromLocalStorage, removerFromLocalStorage } from "@/utils/localStorage";
+import {toast} from 'react-toastify';
+
 
 const initialState = {
   user: null,
@@ -58,6 +60,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //LOGIN USER:
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -66,14 +69,18 @@ const userSlice = createSlice({
         state.user = user;
         if(user) {
         addUserToLocalStorage(user)
+        toast.success(`Welcome back ${user.firstName} ${user.lastName}` );
         }
         state.isLoading = false;
+       
+
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         console.log('rejected')
         state.isLoading = false;
         
       })
+      //REGISTER USER:
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })

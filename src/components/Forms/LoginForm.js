@@ -31,29 +31,26 @@ const LoginForm = () => {
 	const handleShowPass = () => setShowPass((show) => !show);
 
 
-	useEffect(() => {
-		console.log('user is:' + user)
-	}, [user])
 
-	// const { isAuthenticated } = useSelector(state => state.user)
 	const handleChange = (e) => {
 		const name = e.target.name;
 		const value = e.target.value;
 		setValues({ ...values, [name]: value });
 	};
 
-		console.log(values)
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		dispatch(loginUser({ email: values.email, password: values.password }))
-		if(user !== null) {
-			router.push('/test')
-			console.log('user is:' + user)
-		}
-
-		
+	}
+	const redirect = () => {
+		router.push('/test')
 	}
 
+	useEffect(() => {
+		if(user !== null) {
+			redirect();
+		}
+	}, [user])
 
 
 
