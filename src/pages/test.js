@@ -21,7 +21,6 @@ const Test = () => {
     <AdminLayout>
       <div>
         <p>Test</p>
-        <p>{local}</p>
       </div>
     </AdminLayout>
   )

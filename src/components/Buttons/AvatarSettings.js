@@ -4,58 +4,139 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider'
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme } from '@mui/material/styles';
-import { SidebarItemNoLink, SidebarItem  } from '../Sidebar/SidebarTabs';
+import { SidebarItemNoLink, SidebarItem } from '../Sidebar/SidebarTabs';
 import LogoutIcon from '@mui/icons-material/Logout';
 import removeItemFromLocalStorage from '@/utils/localStorage';
 import { useRouter } from 'next/router';
 import { logoutUser } from '@/features/userSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { SidebarText } from '../Sidebar/SidebarTabs';
+import { StyledSpan } from '../Sidebar/SidebarTabs';
+
+const sx = {
+    fontSize: '17px',
+    color: 'primary.main'
+}
 
 const AvatarSettings = () => {
-  const theme = useTheme();
-  const [show, setShow] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const route = useRouter();
-  const dispatch = useDispatch();
-  const onClick = () => {
-    setShow(!show)
-  }
+    const theme = useTheme();
+    const [show, setShow] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const route = useRouter();
+    const dispatch = useDispatch();
+    const { user } = useSelector(state => state.user)
 
-  const onPress = () => {
-    dispatch(logoutUser())
-    route.push('/')
-  }
+    const onClick = () => {
+        setShow(!show)
+    }
 
-  return (
-    <>
-      <Container onClick={onClick}>
-      <Avatar 
-        alt="Remy Sharp" 
-        src=''
-        sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px',width: 25, height: 25 }}
-      />
-      <SettingsIconStyled  />
-    </Container>
-    {show && <HiddenDropdown>
-      {/* <SidebarItem to="/dashboard" icon={<SettingsIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Ρυθμίσεις" />
-      <SidebarItem to="/dashboard" icon={<LogoutIcon color="hoverText" sx={{ color: `${theme.palette.primary.main}`, fontSize: '19px' }} />} label="Aποσύνδεση" /> */}
-      <button onClick={onPress} >Logout</button>
-    </HiddenDropdown>}
-    </>
+    const onPressLogout = () => {
+        dispatch(logoutUser())
+        route.push('/')
+    }
 
-  )
+    return (
+        <Container>
+            < div className='topDiv'  onClick={onClick}>
+                <Avatar
+                    alt="Remy Sharp"
+                    src=''
+                    sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px', width: 25, height: 25 }}
+                />
+                <SettingsIconStyled />
+            </ div >
+            {show && (
+                <div className='hiddenDropDown'>
+                    <div className="hiddenTopDiv">
+                        <p>
+                            Γειά σου,
+                            <span className='name'> {user ? user.firstName : '<User>'}</span>
+                        </p>
+                    </div>
+                    <div className="hiddenBottomDiv">
+                        <button className="btn">
+                            <SettingsIcon sx={sx} />
+                            <ButtonText >Ρυθμίσεις</ButtonText>
+                        </button>
+                        <button className="btn" onClick={onPressLogout}>
+                            <LogoutIcon sx={sx} />
+                            <ButtonText >Aποσύνδεση</ButtonText>
+                        </button>
+                    </div>
+                </div>
+            )}
+
+        </Container>
+
+    )
 }
 
 
 
-const HiddenDropdown = styled.div`
-  position: absolute;
-  right: 15px;
-  top: 60px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
+const Container = styled.div`
+    .topDiv {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${({ theme }) => theme.palette.primary.light};
+        border-radius: 30px;
+        min-width: 80px;
+        padding: 5px;
+    }
+    .hiddenDropDown {
+        position: absolute;
+        top: 80px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+        background-color: white;
+        border-radius: 4px;
+        min-width: 200px;
+        right: 10px;
+    }
+
+    .hiddenTopDiv {
+        border-bottom: 1px solid #f5f5f5;
+        padding: 10px;
+    }
+    .hiddenTopDiv p {
+        font-size: 14px;
+        font-weight: 300;
+    }
+    .hiddenBottomDiv {
+        padding: 10px;
+    }
+    .btn {
+        display: flex;
+        align-items: center;
+        margin-bottom: ${props => props.mb ? `${props.mg}px` : '0px'};
+        margin-top: ${props => props.mt ? `${props.mg}px` : '0px'};
+        height: 40px;
+        border-radius: 4px;
+        padding-left: 10px;
+        outline: none;
+        border: none;
+        background-color: transparent;
+        width: 100%;
+        cursor: pointer;
+        &:hover {
+            background-color: #f5f5f5;
+            font-weight: 500;
+        }
+    }
+    .name {
+        font-weight: 600;
+        color: ${({ theme }) => theme.palette.primary.main};
+    }
+    
+`
+
+
+
+
+
+
+const ButtonText = styled.p`
+  margin-left: 10px;
+  font-size: 14px;
 `
 
 
@@ -67,19 +148,7 @@ const SettingsIconStyled = styled(SettingsIcon)`
 `
 
 
-const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: ${({ theme }) => theme.palette.primary.light};
-  border-radius: 30px;
-  padding: 5px;
-  min-width: 80px;
-  cursor: pointer;
-  /* &:hover {
-    background-color: ${({ theme }) => theme.palette.primary.main};
-  } */
-`
+
 
 
 export default AvatarSettings

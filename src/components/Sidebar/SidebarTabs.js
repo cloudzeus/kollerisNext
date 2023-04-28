@@ -6,7 +6,6 @@ import { useTheme } from '@mui/material/styles';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-
 export const SidebarItem = ({ to, icon, label, subItem }) => {
   const router = useRouter();
   const theme = useTheme()
@@ -67,7 +66,7 @@ const SidebarTextExtraPad = styled(SidebarText)`
 
 
 //Parent Container for the Sidebar tab:
-const StyledSpan = styled.div`
+export const StyledSpan = styled.div`
   display: flex;
   align-items: center;
   height: 40px;
