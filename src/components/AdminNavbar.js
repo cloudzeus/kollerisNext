@@ -38,7 +38,6 @@ const AdminNavbar = () => {
 
          </Stack>
          <Stack direction="row" justifyContent="flex-end" alignItems="center" width="100%">
-            {/* <LogoutButton userName={userName} /> */}
             <AvatarSettings />
          </Stack>
          

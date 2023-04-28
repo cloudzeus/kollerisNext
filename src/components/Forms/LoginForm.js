@@ -13,6 +13,7 @@ import { TextBtn, Container, StyledHeader, Subheader } from './formStyles';
 import { Btn } from '../Buttons/styles';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '../styles';
+import {toast} from 'react-toastify';
 
 
 import Button from '../Buttons/Button';
@@ -40,6 +41,13 @@ const LoginForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		if(values.email === '' || values.password === '') {
+			toast.error('Συμπληρώστε τα στοιχεία');
+
+		}
+		if(user === null && values.email !== '' && values.password !== '') {
+			toast.error('Δεν βρέθηκε χρήστης');
+		}
 		dispatch(loginUser({ email: values.email, password: values.password }))
 	}
 	const redirect = () => {
@@ -51,7 +59,6 @@ const LoginForm = () => {
 			redirect();
 		}
 	}, [user])
-
 
 
 	return (
