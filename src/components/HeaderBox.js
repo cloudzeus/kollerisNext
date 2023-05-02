@@ -12,9 +12,9 @@ export const HeaderBox = ({ children, title }) => {
   )
 
 }
-export const HeaderBoxShadow = ({ children, title }) => {
+export const HeaderBoxShadow = ({ children, title, align}) => {
   return (
-    <ContainerShadow>
+    <ContainerShadow align={align}>
       <div className="top_div">
         <h3 className="subheader_text">{title}</h3>
       </div>
@@ -56,7 +56,7 @@ const Container = styled.div`
 `
 
 const ContainerShadow = styled.div`
-   border-radius: 8px;
+  border-radius: 8px;
   background-color: white;
   margin-top: 10px;
   border: 1px solid #e8e8e7;
@@ -72,12 +72,15 @@ const ContainerShadow = styled.div`
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #e8e8e7;
+    height: 20%;
   }
   .bottom_div {
     display: flex;
-    align-items: center;
-    padding: 10px;
+    padding: 20px;
     flex-direction: column;
+    justify-content: center;
+    height: 80%;
+    align-items: ${props => props.align  ? props.align : "flex-start"};
   }
 
   .subheader_text {

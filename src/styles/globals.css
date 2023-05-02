@@ -74,6 +74,9 @@ h3 {
   font-size: 20px;
 }
 
+p {
+  color: #77848E;
+}
 /* Custom ScrollBar */
 
 ::-webkit-scrollbar {
