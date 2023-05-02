@@ -78,7 +78,7 @@ export const StyledSpan = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${({ theme }) => theme.palette.primary.light};
     font-weight: 500;
   }
   ${({ active, theme }) =>
