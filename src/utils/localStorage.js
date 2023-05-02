@@ -9,7 +9,7 @@ export const getUserFromLocalStorage = () => {
   if (typeof window !== 'undefined') {
     let item = localStorage.getItem('user');
     if(item) {
-      const user = item
+      const user = JSON.parse(item)
       return user;
     } else {
       const user = null;

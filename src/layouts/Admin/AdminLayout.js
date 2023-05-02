@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 const AuthWrapper = ({ children }) => {
     const { user } = useSelector(state => state.user)
     const router = useRouter();
-
+    console.log('Admin - AdminLayout - authUser:' + JSON.stringify(user))
     useEffect(() => {
         if (!user) {
             router.push('/auth/login');

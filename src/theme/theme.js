@@ -31,7 +31,7 @@ const theme = createTheme({
       main: "#FFC107"
     },
     text: {
-      light: '#B78B86',
+      light: '#697586',
       para: "#3d3d3e",
       lightHeaderShade1: "#3d3d3e",
       lightHeaderShade2: "#3d3d3e",

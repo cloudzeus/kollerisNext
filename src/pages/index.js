@@ -7,9 +7,9 @@ import { getUserFromLocalStorage } from '@/utils/localStorage'
 
 export default function Home() {
   const router = useRouter()
-   
+   const {user} = useSelector(state => state.user)
   useEffect(() => {
-    let user = getUserFromLocalStorage(); 
+    // let user = getUserFromLocalStorage(); 
     console.log('user in index is:' + user)
     if(user != null) {
       router.push('/test')
@@ -26,10 +26,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {/* <h1>Login</h1>
-        <p>{JSON.stringify(user)}</p>
-        <h1>Local Storage User</h1>
-        <p>{local}</p> */}
+        <div></div>
       </main>
     </>
   )

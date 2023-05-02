@@ -5,7 +5,7 @@ import {toast} from 'react-toastify';
 
 
 const initialState = {
-  user: null,
+  user: getUserFromLocalStorage(),
   isAuthenticated: false,
   isLoading: false,
   isSidebarOpen: true,
@@ -20,7 +20,7 @@ export const loginUser = createAsyncThunk(
   'user/loginUser',
   async (user, thunkApi) => {
     try {
-      const resp = await axios.post('/api/user/loguser', user)
+      const resp = await axios.post('/api/user/login', user)
       return resp.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data)
@@ -34,7 +34,21 @@ export const registerUser = createAsyncThunk(
   async (user, thunkApi) => {
     console.log(`Register User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.post('/api/user', user)
+      const resp = await axios.post('/api/registerUser', user)
+      return resp.data;
+
+    } catch (error) {
+      console.log(error)
+    }
+  })
+export const updateUser = createAsyncThunk(
+  //action:
+  'user/updateUser',
+  async (user, thunkApi) => {
+    console.log('2')
+    console.log(`Update User: ${JSON.stringify(user)}`)
+    try {
+      const resp = await axios.put('/api/user/update', user)
       return resp.data;
 
     } catch (error) {
@@ -72,8 +86,6 @@ const userSlice = createSlice({
         toast.success(`Welcome back ${user.firstName} ${user.lastName}` );
         }
         state.isLoading = false;
-       
-
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         console.log('rejected')
@@ -93,9 +105,20 @@ const userSlice = createSlice({
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;
       })
-      
-      
-
+      //UPDATE USER:
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        console.log(payload)
+        const {user} = payload;
+        state.isLoading = false;
+        console.log(user)
+        // addUserToLocalStorage(user)
+      })
+      .addCase(updateUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
+      })
   }
 })
 

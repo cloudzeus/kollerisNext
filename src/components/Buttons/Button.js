@@ -3,7 +3,7 @@ import { Btn } from "./styles"
 
 const Button = ({children}) => {
   return (
-    <Btn>
+    <Btn >
       {children}
     </Btn>
   )
