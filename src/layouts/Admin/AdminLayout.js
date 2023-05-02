@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import { BigSidebar, AdminNavbar } from 'src/components'
 import { Box } from '@mui/material'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -10,27 +11,34 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const AuthWrapper = ({ children }) => {
     const { user } = useSelector(state => state.user)
+    const [hydrated, setHydrated] = useState(false)
     const router = useRouter();
-    console.log('Admin - AdminLayout - authUser:' + JSON.stringify(user))
+    
     useEffect(() => {
-        if (!user) {
-            router.push('/auth/login');
-        }
-
+        setHydrated(true)
     }, [])
+   
+   if(!hydrated) {
+        return null
+   }
+
+
 
     return (
-        <>
+        <div>
             {!user ? (
-                <SpinnerDiv>
+                <div>
+                      <SpinnerDiv>
                     <CircularProgress />
                 </SpinnerDiv>
+                </div>
+
             ) : (
-                <>
+                <div>
                     {children}
-                </>
+            </div>
             )}
-        </>
+        </div>
     )
 }
 
