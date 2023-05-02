@@ -4,14 +4,14 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider'
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme } from '@mui/material/styles';
-import { SidebarItemNoLink, SidebarItem } from '../Sidebar/SidebarTabs';
 import LogoutIcon from '@mui/icons-material/Logout';
 import removeItemFromLocalStorage from '@/utils/localStorage';
 import { useRouter } from 'next/router';
 import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { SidebarText } from '../Sidebar/SidebarTabs';
-import { StyledSpan } from '../Sidebar/SidebarTabs';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+
 
 const sx = {
     fontSize: '17px',
@@ -37,7 +37,7 @@ const AvatarSettings = () => {
 
     return (
         <Container>
-            < div className='topDiv'  onClick={onClick}>
+            < div className='topDiv' onClick={onClick}>
                 <Avatar
                     alt="Remy Sharp"
                     src='/static/imgs/avatar.jpg'
@@ -54,14 +54,20 @@ const AvatarSettings = () => {
                         </p>
                     </div>
                     <div className="hiddenBottomDiv">
+                        <button className="btn" onClick={() => route.push('/dashboard/profile')}>
+                            <AccountCircleIcon sx={sx} />
+                            <ButtonText >Προφίλ</ButtonText>
+                        </button>
                         <button className="btn">
                             <SettingsIcon sx={sx} />
                             <ButtonText >Ρυθμίσεις</ButtonText>
                         </button>
+
                         <button className="btn" onClick={onPressLogout}>
                             <LogoutIcon sx={sx} />
                             <ButtonText >Aποσύνδεση</ButtonText>
                         </button>
+
                     </div>
                 </div>
             )}
