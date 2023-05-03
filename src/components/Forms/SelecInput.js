@@ -4,18 +4,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
 
-const SelectInput = ({items, label, onChange, id}) => {
+const SelectInput = ({items, label, onChange, id, value}) => {
   const [show, setShow] = useState(false)
-  const [chosen , setChosen] = useState(null)
 
   const handleChange = (item) => {
     onChange(id, item)
-    setChosen(item)
   }
   return (
     <ContainerUl onClick={() => setShow(prev => !prev)}>
       <span>{label}</span>
-      <span>{chosen}</span>
+      <span>{value}</span>
       {show && (
          <ul>
          { items.map((item) => {
@@ -49,6 +47,7 @@ const ContainerUl = styled.div`
     margin-bottom: 10px;
     position: relative;
     height: 54px;
+    margin-top: 10px;
     span {
       display: block;
     }
@@ -65,6 +64,7 @@ const ContainerUl = styled.div`
     font-size: 14px;
     letter-spacing: 0.8px;
     font-weight: 600;
+    color: #373737;
    
     }
 
@@ -86,6 +86,7 @@ const ContainerUl = styled.div`
       font-size: 14px;
       border-bottom: 1px solid #eaeaea ;
       padding: 10px;
+
       cursor: pointer;
     }
 

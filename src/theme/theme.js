@@ -47,7 +47,7 @@ const theme = createTheme({
       charcoalGrey: '#36454F',
       pewter: '#899499',
       light: '#697586',
-      main: '#575353',
+      main: '#605c5c',
     },
     // background: '#F8F9FB',
     background: '#EEF2F6',

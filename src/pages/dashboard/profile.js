@@ -99,7 +99,7 @@ const Profile = () => {
                                         label="Email"
                                     />
                                     <Grid container columnSpacing={2}>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="firstName"
                                                 type="text"
@@ -108,7 +108,7 @@ const Profile = () => {
                                                 label="Όνομα"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="lastName"
                                                 type="text"
@@ -117,7 +117,7 @@ const Profile = () => {
                                                 label="Επώνυμο"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="landline"
                                                 type="text"
@@ -126,7 +126,7 @@ const Profile = () => {
                                                 label="Σταθερό"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="mobile"
                                                 type="text"
@@ -135,16 +135,16 @@ const Profile = () => {
                                                 label="Κινητό"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
-                                            <Input
-                                                id="country"
-                                                type="text"
+                                        <Grid item xs={12} md={6}>
+                                            <SelectInput 
+                                                id='country' 
+                                                items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} 
+                                                label="Xώρα" 
+                                                onChange={handleSelect} 
                                                 value={state?.country}
-                                                onChange={handleChange}
-                                                label="Χώρα"
-                                            />
+                                                />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="address"
                                                 type="text"
@@ -153,7 +153,7 @@ const Profile = () => {
                                                 label="Διεύθυνση"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="city"
                                                 type="text"
@@ -162,7 +162,7 @@ const Profile = () => {
                                                 label="Πόλη"
                                             />
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} md={6}>
                                             <Input
                                                 id="postalcode"
                                                 type="text"
@@ -171,9 +171,7 @@ const Profile = () => {
                                                 label="T.K"
                                             />
                                         </Grid>
-                                        <Grid item xs={12}>
-                                            <SelectInput id='country' items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} label="Xώρα" onChange={handleSelect} />
-                                        </Grid>
+                                       
                                     </Grid>
                                     <Button onClick={handleUpdateUser}>
                                         Αποθήκευση
