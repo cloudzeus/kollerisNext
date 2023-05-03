@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '@/features/userSlice';
 import Button from '@/components/Buttons/Button';
+import SelectInput from '@/components/Forms/SelecInput';
+import { Input } from '@/components/Forms/FormInput';
 
 
 const Profile = () => {
@@ -25,25 +27,41 @@ const Profile = () => {
         email: '',
         mobile: '',
         landline: '',
-        address: {
-            country: '',
-            address: '',
-            city: '',
-            province: '',
-        },
-
+        country: '',
+        address: '',
+        city: '',
+        postalcode: '',
     })
 
     useEffect(() => {
-        setState({ ...state, _id: user?._id, firstName: user?.firstName, lastName: user?.lastName, email: user?.email, landline: user?.phones.landline, mobile: user?.phones.mobile})
+        setState({
+            ...state,
+            _id: user?._id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            email: user?.email,
+            landline: user?.phones?.landline,
+            mobile: user?.phones?.mobile,
+            country: user?.address?.country,
+            city: user?.address?.city,
+            address: user?.address?.address,
+            postalcode: user?.address?.postalcode,
+        })
     }, [])
 
+    useEffect(() => {
+        console.log(state)
+    }, [state])
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
         setState({ ...state, [name]: value });
     };
 
+    
+    const handleSelect = (name, value) => {
+        setState({ ...state, [name]: value })
+    }
 
     const dispatch = useDispatch()
 
@@ -71,54 +89,100 @@ const Profile = () => {
                         {/* RIGTH SIDE */}
                         <Grid item xs={12} lg={8} >
                             <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>
-                                
+
                                 <form>
-                                    <InputDiv mt={10}>
-                                        <input name="email" id="email" type='text' value={state?.email} onChange={handleChange} />
-                                        <label htmlFor="my-name">Email</label>
-                                    </InputDiv>
+                                    <Input
+                                        id="email"
+                                        type="text"
+                                        value={state?.email}
+                                        onChange={handleChange}
+                                        label="Email"
+                                    />
                                     <Grid container columnSpacing={2}>
                                         <Grid item xs={6}>
-                                            <InputDiv mt={10}>
-                                                <input name="firstName" id="firstName" type='text' value={state?.firstName} onChange={handleChange}/>
-                                                <label htmlFor="firstName">Όνομα</label>
-                                            </InputDiv>
+                                            <Input
+                                                id="firstName"
+                                                type="text"
+                                                value={state?.firstName}
+                                                onChange={handleChange}
+                                                label="Όνομα"
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <InputDiv mt={10}>
-                                                <input name="lastName" id="lastName" type='text' value={state?.lastName} onChange={handleChange} />
-                                                <label htmlFor="lastName">Επώνυμο</label>
-                                            </InputDiv>
+                                            <Input
+                                                id="lastName"
+                                                type="text"
+                                                value={state?.lastName}
+                                                onChange={handleChange}
+                                                label="Επώνυμο"
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <InputDiv mt={10}>
-                                                <input name="landline" id="landline" type='text' value={state?.landline} onChange={handleChange}/>
-                                                <label htmlFor="landline">Σταθερό</label>
-                                            </InputDiv>
+                                            <Input
+                                                id="landline"
+                                                type="text"
+                                                value={state?.landline}
+                                                onChange={handleChange}
+                                                label="Σταθερό"
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <InputDiv mt={10}>
-                                                <input name="mobile" id="mobile" type='text' value={state?.mobile} onChange={handleChange} />
-                                                <label htmlFor="mobile">Κινητό</label>
-                                            </InputDiv>
+                                            <Input
+                                                id="mobile"
+                                                type="text"
+                                                value={state?.mobile}
+                                                onChange={handleChange}
+                                                label="Κινητό"
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-                                           
+                                            <Input
+                                                id="country"
+                                                type="text"
+                                                value={state?.country}
+                                                onChange={handleChange}
+                                                label="Χώρα"
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-
+                                            <Input
+                                                id="address"
+                                                type="text"
+                                                value={state?.address}
+                                                onChange={handleChange}
+                                                label="Διεύθυνση"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Input
+                                                id="city"
+                                                type="text"
+                                                value={state?.city}
+                                                onChange={handleChange}
+                                                label="Πόλη"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Input
+                                                id="postalcode"
+                                                type="text"
+                                                value={state?.postalcode}
+                                                onChange={handleChange}
+                                                label="T.K"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <SelectInput id='country' items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} label="Xώρα" onChange={handleSelect} />
                                         </Grid>
                                     </Grid>
-                                    <div>
-                                        <Button
-                                            onClick={handleUpdateUser}
-                                            >Αποθήκευση</Button>
-                                    </div>
+                                    <Button onClick={handleUpdateUser}>
+                                        Αποθήκευση
+                                    </Button>
                                 </form>
                             </HeaderBoxShadow>
                         </Grid>
                     </Grid>
-                
+
                 </Div>
             </HeaderBox>
         </AdminLayout>

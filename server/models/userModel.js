@@ -15,7 +15,7 @@ const phoneSchema = new mongoose.Schema({
 
 
 const addressSchema = new mongoose.Schema({
-  coutry: {
+  country: {
     type: String,
   },
   address: {
@@ -24,10 +24,7 @@ const addressSchema = new mongoose.Schema({
   city: {
     type: String,
   },
-  province: {
-    type: String,
-  },
-  postcode: {
+  postalcode: {
     type: String,
   },
   shippingAddress: {
