@@ -55,7 +55,8 @@ const theme = createTheme({
     contrastBackground: '#fff',
     seperator: '#e8e8e8',
     iconColor: '#b71c1c',
-    hoverColor: '#E6F7FF'
+    hoverColor: '#E6F7FF',
+    white: '#ffffff'
   },
 }
 );

@@ -47,6 +47,7 @@ export const updateUser = createAsyncThunk(
   //action:
   'user/updateUser',
   async (user, thunkApi) => {
+    console.log(`Update User: ${JSON.stringify(user)}`)
     try {
       const resp = await axios.post('/api/user/update', user)
       return resp.data;

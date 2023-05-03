@@ -7,7 +7,7 @@ const phoneSchema = new mongoose.Schema({
   mobile: {
     type: String,
   },
-  phone: {
+  landline: {
     type: String,
   }
 });

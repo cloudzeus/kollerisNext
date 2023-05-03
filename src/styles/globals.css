@@ -79,6 +79,11 @@ p {
 }
 /* Custom ScrollBar */
 
+form {
+  width: 100%;
+}
+
+
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -99,6 +104,8 @@ p {
 .mb10 {
   margin-bottom: 10px;
 }
+
+
 
 /* ::-webkit-scrollbar-thumb:hover {
   background: #555; 

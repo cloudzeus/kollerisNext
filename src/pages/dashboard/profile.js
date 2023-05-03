@@ -11,21 +11,20 @@ import { Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '@/features/userSlice';
+import Button from '@/components/Buttons/Button';
+
 
 const Profile = () => {
 
-
-    const { user } = useSelector(state => state.user)
+    const { user, isLoading } = useSelector(state => state.user)
     console.log('user' + JSON.stringify(user))
     const [state, setState] = useState({
         _id: '',
         firstName: '',
         lastName: '',
         email: '',
-        phones: {
-            mobile: '',
-            phones: ''
-        },
+        mobile: '',
+        landline: '',
         address: {
             country: '',
             address: '',
@@ -36,12 +35,11 @@ const Profile = () => {
     })
 
     useEffect(() => {
-        setState({ ...state, _id: user?._id, firstName: user?.firstName, lastName: user?.lastName, email: user?.email })
+        setState({ ...state, _id: user?._id, firstName: user?.firstName, lastName: user?.lastName, email: user?.email, landline: user?.phones.landline, mobile: user?.phones.mobile})
     }, [])
 
     const handleChange = (e) => {
         const name = e.target.name;
-        console.log(name)
         const value = e.target.value;
         setState({ ...state, [name]: value });
     };
@@ -73,6 +71,7 @@ const Profile = () => {
                         {/* RIGTH SIDE */}
                         <Grid item xs={12} lg={8} >
                             <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>
+                                
                                 <form>
                                     <InputDiv mt={10}>
                                         <input name="email" id="email" type='text' value={state?.email} onChange={handleChange} />
@@ -87,8 +86,20 @@ const Profile = () => {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <InputDiv mt={10}>
-                                                <input name="lastName" id="lastName" type='text' value={user?.lastName} onChange={handleChange} />
+                                                <input name="lastName" id="lastName" type='text' value={state?.lastName} onChange={handleChange} />
                                                 <label htmlFor="lastName">Επώνυμο</label>
+                                            </InputDiv>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <InputDiv mt={10}>
+                                                <input name="landline" id="landline" type='text' value={state?.landline} onChange={handleChange}/>
+                                                <label htmlFor="landline">Σταθερό</label>
+                                            </InputDiv>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <InputDiv mt={10}>
+                                                <input name="mobile" id="mobile" type='text' value={state?.mobile} onChange={handleChange} />
+                                                <label htmlFor="mobile">Κινητό</label>
                                             </InputDiv>
                                         </Grid>
                                         <Grid item xs={6}>
@@ -99,15 +110,15 @@ const Profile = () => {
                                         </Grid>
                                     </Grid>
                                     <div>
-                                        <Btn
+                                        <Button
                                             onClick={handleUpdateUser}
-                                            className="btn">Αποθήκευση</Btn>
+                                            >Αποθήκευση</Button>
                                     </div>
                                 </form>
                             </HeaderBoxShadow>
                         </Grid>
                     </Grid>
-
+                
                 </Div>
             </HeaderBox>
         </AdminLayout>
@@ -131,12 +142,7 @@ const Div = styled.div`
         height: 40px;
         margin-top: 10px;
     }
-
-    
-
- 
 `
-
 
 
 export default Profile

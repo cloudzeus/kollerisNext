@@ -1,5 +1,5 @@
 export const addUserToLocalStorage = (user) => {
-    console.log('local storage')
+    // console.log('local storage')
     localStorage.setItem('user', JSON.stringify(user));
   
 }
