@@ -2,19 +2,18 @@ import User from '../../../../server/models/userModel';
 import connectMongo from '../../../../server/utils/connection'
 
 export default async function handler(req, res) {
-  console.log('req body' + JSON.stringify(req.body))
+  console.log('are we here?')
+  const {body} = req
+
   try {
     await connectMongo();
-    const user = await User.findByIdAndUpdate({ _id: req.body._id}, {firstName: req.firstName, lastName: req.lastName, email: req.email});
-    console.log('updated user' + JSON.stringify(user))
-    if(user) {
-      res.status(200).json({ success: true, user });
-    } else {
-      res.status(200).json({ success: false, user: null });
-    }
+    await User.updateOne({ _id: body._id},  {firstName: body.firstName});
+    const user = await User.findOne({ _id: body._id});
+    res.status(200).json({ success: true, user });
     
     
   } catch (error) {
     res.status(400).json({ success: false });
-  }
+
+ }
 }

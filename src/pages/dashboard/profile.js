@@ -16,6 +16,7 @@ const Profile = () => {
 
 
     const { user } = useSelector(state => state.user)
+    console.log('user' + JSON.stringify(user))
     const [state, setState] = useState({
         _id: '',
         firstName: '',
@@ -35,7 +36,7 @@ const Profile = () => {
     })
 
     useEffect(() => {
-        setState({ ...state, firstName: user?.firstName, lastName: user?.lastName, email: user?.email })
+        setState({ ...state, _id: user?._id, firstName: user?.firstName, lastName: user?.lastName, email: user?.email })
     }, [])
 
     const handleChange = (e) => {
@@ -52,7 +53,6 @@ const Profile = () => {
         e.preventDefault()
         dispatch(updateUser(state))
     }
-    console.log(user)
     return (
         <AdminLayout >
             <HeaderBox title={'Profile'}>

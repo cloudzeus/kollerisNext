@@ -13,14 +13,14 @@ const AuthWrapper = ({ children }) => {
     const { user } = useSelector(state => state.user)
     const [hydrated, setHydrated] = useState(false)
     const router = useRouter();
-    
+
     useEffect(() => {
         setHydrated(true)
     }, [])
-   
-   if(!hydrated) {
+
+    if (!hydrated) {
         return null
-   }
+    }
 
 
 
@@ -28,15 +28,15 @@ const AuthWrapper = ({ children }) => {
         <div>
             {!user ? (
                 <div>
-                      <SpinnerDiv>
-                    <CircularProgress />
-                </SpinnerDiv>
+                    <SpinnerDiv>
+                        <CircularProgress />
+                    </SpinnerDiv>
                 </div>
 
             ) : (
                 <div>
                     {children}
-            </div>
+                </div>
             )}
         </div>
     )
@@ -77,11 +77,10 @@ const AdminLayout = ({ children }) => {
 
 const SidebarOpenContainer = styled.div`
   position: absolute;
-  
     top: 70px;
     left: 260px;
     width: calc(100% - 260px);;
-    padding: 20px;
+    padding: 40px;
     overflow-y:scroll;
     min-height:100vh;
 

@@ -41,14 +41,14 @@ export const registerUser = createAsyncThunk(
       console.log(error)
     }
   })
+
+//UPDATE USER:
 export const updateUser = createAsyncThunk(
   //action:
   'user/updateUser',
   async (user, thunkApi) => {
-    console.log('2')
-    console.log(`Update User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.put('/api/user/update', user)
+      const resp = await axios.post('/api/user/update', user)
       return resp.data;
 
     } catch (error) {
@@ -110,11 +110,10 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
-        console.log(payload)
         const {user} = payload;
+        state.user = user;
         state.isLoading = false;
-        console.log(user)
-        // addUserToLocalStorage(user)
+        addUserToLocalStorage(user)
       })
       .addCase(updateUser.rejected, (state, { payload }) => {
         state.isLoading = false;

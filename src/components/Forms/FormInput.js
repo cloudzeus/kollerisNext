@@ -16,14 +16,16 @@ export const InputDiv = styled.div`
     outline: none;
     width: 100%;
     display: flex;
-    padding-top: 20px;
+    padding-top: 13px;
     padding-left: 15px;
     /* padding-bottom: 5px; */
     border: 1px solid #eaeaea;
     border-radius: 5px;
-    font-size: 15px;
-    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0.3px;
     height: 50px;
+    font-weight: 600;
+    color: #373737;
     background-color: ${props => props.theme.palette.background};
     &:focus {
       outline: none;
@@ -47,7 +49,7 @@ export const InputDiv = styled.div`
   
   label {
     position: absolute;
-    top: 8px;
+    top: 10px;
     font-size: 11px;
     letter-spacing: 0.8px;
     color: ${props => props.theme.palette.grey.light};
@@ -59,21 +61,6 @@ export const InputDiv = styled.div`
   color: ${props => props.theme.palette.primary.main};
   }
   
-  /* .error::after {
-        content: "field is required";
-        color: #ff3333;
-        position: absolute;
-        font-size: 11px;
-        bottom : -44px;
-        left: 2px;
-        width: 40px;
-        height: 40px;
-        width: 100%;
-        font-weight: 400;
-      }
-    .test {
-      background-color: red
-    } */
    
 
   
