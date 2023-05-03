@@ -183,6 +183,118 @@ const Profile = () => {
 
                 </Div>
             </HeaderBox>
+            <HeaderBox title={'Profile'}>
+                <Div>
+                    <Grid container >
+                        {/* LEFT SIDE */}
+                        <Grid item xs={12} lg={4}>
+                            <HeaderBoxShadow align="center" title={'Eικόνα Προφίλ'}>
+                                <Avatar
+                                    alt="Remy Sharp"
+                                    src='/static/imgs/avatar.jpg'
+                                    sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px', width: 100, height: 100 }}
+                                />
+                                <p>Αλλάξτε την Εικόνα Προφίλ σας</p>
+                                <Btn className="btn"> Αλλαγή Avatar</Btn>
+                            </HeaderBoxShadow>
+                        </Grid>
+                        {/* RIGTH SIDE */}
+                        <Grid item xs={12} lg={8} >
+                            <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>
+
+                                <form>
+                                    <Input
+                                        id="email"
+                                        type="text"
+                                        value={state?.email}
+                                        onChange={handleChange}
+                                        label="Email"
+                                    />
+                                    <Grid container columnSpacing={2}>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="firstName"
+                                                type="text"
+                                                value={state?.firstName}
+                                                onChange={handleChange}
+                                                label="Όνομα"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="lastName"
+                                                type="text"
+                                                value={state?.lastName}
+                                                onChange={handleChange}
+                                                label="Επώνυμο"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="landline"
+                                                type="text"
+                                                value={state?.landline}
+                                                onChange={handleChange}
+                                                label="Σταθερό"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="mobile"
+                                                type="text"
+                                                value={state?.mobile}
+                                                onChange={handleChange}
+                                                label="Κινητό"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <SelectInput 
+                                                id='country' 
+                                                items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} 
+                                                label="Xώρα" 
+                                                onChange={handleSelect} 
+                                                value={state?.country}
+                                                />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="address"
+                                                type="text"
+                                                value={state?.address}
+                                                onChange={handleChange}
+                                                label="Διεύθυνση"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="city"
+                                                type="text"
+                                                value={state?.city}
+                                                onChange={handleChange}
+                                                label="Πόλη"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Input
+                                                id="postalcode"
+                                                type="text"
+                                                value={state?.postalcode}
+                                                onChange={handleChange}
+                                                label="T.K"
+                                            />
+                                        </Grid>
+                                       
+                                    </Grid>
+                                    <Button onClick={handleUpdateUser}>
+                                        Αποθήκευση
+                                    </Button>
+                                </form>
+                            </HeaderBoxShadow>
+                        </Grid>
+                    </Grid>
+
+                </Div>
+            </HeaderBox>
         </AdminLayout>
     )
 }

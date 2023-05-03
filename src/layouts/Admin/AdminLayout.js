@@ -1,12 +1,9 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { BigSidebar, AdminNavbar } from 'src/components'
-import { Box } from '@mui/material'
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import Spinner from '@/components/Spinner';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const AuthWrapper = ({ children }) => {
@@ -46,15 +43,13 @@ const AuthWrapper = ({ children }) => {
 
 
 const AdminLayout = ({ children }) => {
-    const smallScreen = useMediaQuery('(max-width:600px)');
     const { isSidebarOpen } = useSelector((store) => store.user)
 
     return (
         <AuthWrapper>
-            <Box sx={{ bgcolor: 'background', minHeight: '100vh' }}>
-                <AdminNavbar />
-                <Box sx={{ width: '100%', display: 'flex', height: '100vh' }}>
-                    <>
+            <Container>
+            <AdminNavbar />
+                <div className="main-box">
                         <BigSidebar />
                         {isSidebarOpen ? (
                             <SidebarOpenContainer>
@@ -65,24 +60,32 @@ const AdminLayout = ({ children }) => {
                                 {children}
                             </SidebarClosedContainer>
                         )}
-                    </>
-                </Box>
-
-            </ Box>
+                </div>
+               
+            </Container>
         </AuthWrapper>
     )
 }
 
 
 
+const Container = styled.div`
+   
+    .main-box {
+        width: 100%;
+    }
+
+`
+
 const SidebarOpenContainer = styled.div`
-  position: absolute;
+    position: absolute;
     top: 70px;
     left: 260px;
     width: calc(100% - 260px);;
     padding: 40px;
     overflow-y:scroll;
-    min-height:100vh;
+    background-color: ${({ theme }) => theme.palette.background};
+    height: calc(100vh - 70px);
 `
 
 
@@ -95,7 +98,9 @@ const SidebarClosedContainer = styled.div`
     padding: 10px;
     overflow-y:scroll;
     min-height:100vh;
-
+    background-color: ${({ theme }) => theme.palette.background};
+    padding: 40px;
+    height: calc(100vh - 70px);
 `
 
 const SpinnerDiv = styled.div`
@@ -104,7 +109,6 @@ const SpinnerDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content:center;
-   
 
 `
 
