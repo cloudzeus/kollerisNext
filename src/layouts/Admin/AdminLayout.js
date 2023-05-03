@@ -51,9 +51,9 @@ const AdminLayout = ({ children }) => {
 
     return (
         <AuthWrapper>
-            <Box sx={{ bgcolor: 'background', minHeight: '100vh', color: 'primary.textMain', }}>
+            <Box sx={{ bgcolor: 'background', minHeight: '100vh' }}>
                 <AdminNavbar />
-                <Box sx={{ width: '100%', display: 'flex', minHeight: '100vh' }}>
+                <Box sx={{ width: '100%', display: 'flex', height: '100vh' }}>
                     <>
                         <BigSidebar />
                         {isSidebarOpen ? (
@@ -83,9 +83,10 @@ const SidebarOpenContainer = styled.div`
     padding: 40px;
     overflow-y:scroll;
     min-height:100vh;
-
-   
 `
+
+
+
 const SidebarClosedContainer = styled.div`
     position: absolute;
     top: 70px;
