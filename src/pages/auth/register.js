@@ -16,31 +16,32 @@ import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
+import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 const registerPage = () => {
 	const [showPass, setShowPass] = useState(false);
 	const dispatch = useDispatch();
-    const router  = useRouter()
+	const router = useRouter()
 	const handleShowPass = () => setShowPass((show) => !show);
-    const [values, setValues] = useState({
-        firstName: '',
+	const [values, setValues] = useState({
+		firstName: '',
 		lastName: '',
-        password: '',
-        email: ''
+		password: '',
+		email: ''
 
-    })
+	})
 
-    const handleChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setValues({ ...values, [name]: value });
-    }
+	const handleChange = (e) => {
+		const name = e.target.name;
+		const value = e.target.value;
+		setValues({ ...values, [name]: value });
+	}
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
-        router.push('/test')
-    }
+	const onSubmit = (e) => {
+		e.preventDefault();
+		dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
+		router.push('/test')
+	}
 	return (
 		<LoginLayout>
 			<Container>
@@ -65,29 +66,41 @@ const registerPage = () => {
 				</Grid>
 				<Grid container justifyContent="center" alignItems="center" direction="row" columnSpacing={2}>
 					<Grid item xs={6}>
-						<InputDiv mt={10}>
-							<input placeholder='john' name="firstName" id="firstName" type='text' onChange={handleChange} />
-							<label className="" htmlFor="lastName">Όνομα</label>
-						</InputDiv>
+						<Input
+							id="firstName"
+							type="text"
+							onChange={handleChange}
+							label="Όνομα"
+							placeholder='john'
+						/>
+
 					</Grid>
 					<Grid item xs={6}>
-						<InputDiv  mt={10}>
-							<input placeholder='doe' name="lastName" id="lastName" type='text' onChange={handleChange}/>
-							<label htmlFor="lastName">Επώνυμο</label>
-						</InputDiv>
+						<Input
+							id="lastName"
+							type="text"
+							onChange={handleChange}
+							label="Επώνυμο"
+							placeholder='Doe'
+						/>
+
 					</Grid>
 				</Grid>
-				<InputDiv  mt={10}>
-					<input placeholder='example@gmail.com' name="email" id="email" type='email' onChange={handleChange} />
-					<label htmlFor="email">Email/Username</label>
-				</InputDiv>
-				<InputDiv mt={20}>
-					<input required  placeholder='******' name="password" id="password" type={showPass ? 'text' : 'password'} onChange={handleChange}/>
-					<label  htmlFor="password">Password</label>
-					<IconButton className='showPassIcon' onClick={handleShowPass}>
-						{showPass ? <VisibilityOff /> : <Visibility />}
-					</IconButton>
-				</InputDiv>
+
+				<Input
+					id="email"
+					type="text"
+					onChange={handleChange}
+					label="Email"
+					placeholder='example@gmail.com'
+				/>
+				<InputPassword
+					id="password"
+					label="Password"
+					onChange={handleChange}
+					placeholder='******'
+				/>
+
 				{/* Checkbox row */}
 				<FlexBetween>
 					<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
@@ -99,7 +112,7 @@ const registerPage = () => {
 				<CenterDiv>
 					<TextBtn className='black'>
 						<Link href="/auth/login" >
-                            Έχετε ήδη λογαριασμό
+							Έχετε ήδη λογαριασμό
 						</Link>
 					</TextBtn >
 				</CenterDiv>

@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 import { addUserToLocalStorage, getUserFromLocalStorage, removerFromLocalStorage } from "@/utils/localStorage";
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 
 
 const initialState = {
-  user: getUserFromLocalStorage(),
+  user: null,
   isAuthenticated: false,
   isLoading: false,
   isSidebarOpen: true,
@@ -70,7 +70,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       removerFromLocalStorage();
     }
-   
+
 
   },
   extraReducers: (builder) => {
@@ -80,25 +80,25 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
-        const {user} = payload;
+        const { user } = payload;
         state.user = user;
-        if(user) {
-        addUserToLocalStorage(user)
-        toast.success(`Welcome back ${user.firstName} ${user.lastName}` );
+        if (user) {
+          addUserToLocalStorage(user)
+          toast.success(`Welcome back ${user.firstName} ${user.lastName}`);
         }
         state.isLoading = false;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         console.log('rejected')
         state.isLoading = false;
-        
+
       })
       //REGISTER USER:
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
-        const {user} = payload;
+        const { user } = payload;
         state.isLoading = false;
         state.user = user;
         addUserToLocalStorage(user)
@@ -111,7 +111,7 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
-        const {user} = payload;
+        const { user } = payload;
         state.user = user;
         state.isLoading = false;
         addUserToLocalStorage(user)

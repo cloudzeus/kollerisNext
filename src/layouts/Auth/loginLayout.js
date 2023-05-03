@@ -1,14 +1,12 @@
-import CenterBox from "@/components/Wrappers/CenterBox"
 import styled from "styled-components"
-import { ToastContainer } from "react-toastify"
 
-const LoginLayout = ({children}) => {
+const LoginLayout = ({ children }) => {
   return (
-      <Box>
-       
-        {children}
-      </Box>
-     
+    <Box>
+
+      {children}
+    </Box>
+
   )
 }
 
