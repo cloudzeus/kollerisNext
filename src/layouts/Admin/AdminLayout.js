@@ -5,38 +5,57 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSession } from "next-auth/react"
 
+
+
+// const AuthWrapper = ({ children }) => {
+//     const { user } = useSelector(state => state.user)
+//     const [hydrated, setHydrated] = useState(false)
+//     const router = useRouter();
+
+//     useEffect(() => {
+//         setHydrated(true)
+//     }, [])
+
+//     if (!hydrated) {
+//         return null
+//     }
+
+
+
+//     return (
+//         <div>
+//             {!user ? (
+//                 <div>
+//                     <SpinnerDiv>
+//                         <CircularProgress />
+//                     </SpinnerDiv>
+//                 </div>
+
+//             ) : (
+//                 <div>
+//                     {children}
+//                 </div>
+//             )}
+//         </div>
+//     )
+// }
 const AuthWrapper = ({ children }) => {
-    const { user } = useSelector(state => state.user)
-    const [hydrated, setHydrated] = useState(false)
-    const router = useRouter();
-
+    const { data: session, status } = useSession()
     useEffect(() => {
-        setHydrated(true)
+        console.log(session)
     }, [])
 
-    if (!hydrated) {
-        return null
-    }
+    if (status !== "authenticated") {
+         return (
+            <>
+                <p>You can access this page!</p>
+            </>
+         )
+      }
 
-
-
-    return (
-        <div>
-            {!user ? (
-                <div>
-                    <SpinnerDiv>
-                        <CircularProgress />
-                    </SpinnerDiv>
-                </div>
-
-            ) : (
-                <div>
-                    {children}
-                </div>
-            )}
-        </div>
-    )
+      return <>{children}</>
 }
 
 
@@ -46,7 +65,7 @@ const AdminLayout = ({ children }) => {
     const { isSidebarOpen } = useSelector((store) => store.user)
 
     return (
-        <>
+        <AuthWrapper>
             <Container>
             <AdminNavbar />
                 <div className="main-box">
@@ -63,7 +82,7 @@ const AdminLayout = ({ children }) => {
                 </div>
                
             </Container>
-        </>
+        </AuthWrapper>
     
     )
 }

@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import { signOut } from 'next-auth/react';
 
 
 const sx = {
@@ -63,7 +63,7 @@ const AvatarSettings = () => {
                             <ButtonText >Ρυθμίσεις</ButtonText>
                         </button>
 
-                        <button className="btn" onClick={onPressLogout}>
+                        <button className="btn" onClick={() => signOut()}>
                             <LogoutIcon sx={sx} />
                             <ButtonText >Aποσύνδεση</ButtonText>
                         </button>

@@ -24,8 +24,6 @@ export const authOptions = {
         credentials: {},
        
         async authorize(credentials, req) {
-          console.log('----------------------------- CREDENTIALS ------------------------------')
-          console.log(credentials)
             const res = await fetch("http://localhost:3000/api/user/login", {
               method: "POST",
               body: JSON.stringify(credentials),
@@ -33,10 +31,7 @@ export const authOptions = {
             });
             const resJson = await res.json();
             const user = resJson.user;
-            console.log('this is the user from credentials provider')
-            console.log(user)
             if (user) {
-              console.log('yes yes it is res success')
               return user;
             } else {
               return null;
