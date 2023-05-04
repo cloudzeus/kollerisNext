@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   console.log('reqbody' + JSON.stringify(req.body))
   try {
     await connectMongo();
-    const user = await User.findOne({email: req.body.email, password: req.body.password });
+    const user = await User.findOne({username: req.body.username, password: req.body.password });
     if(user) {
       res.status(200).json({ success: true, user });
     } else {

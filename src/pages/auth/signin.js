@@ -1,37 +1,36 @@
+'use client';
 import React, { useEffect, useState } from 'react'
+import LoginLayout from '@/layouts/Auth/loginLayout'
 import { Grid, IconButton } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import Image from 'next/image'
 
-import { InputDiv } from './FormInput';
-import CheckboxInput from './CheckboxInput';
+import CheckboxInput from '@/components/Forms/CheckboxInput';
 import Link from 'next/link';
-import { TextBtn, Container, StyledHeader, Subheader } from './formStyles';
-import { Btn } from '../Buttons/styles';
+import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/formStyles';
+import { Btn } from '@/components/Buttons/styles';
 import Divider from '@mui/material/Divider';
-import { FlexBetween, CenterDiv } from '../styles';
+import { FlexBetween, CenterDiv } from '@/components/styles';
 import { toast } from 'react-toastify';
-import { Input, InputPassword } from './FormInput';
+import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 import { useSession, signIn, signOut } from "next-auth/react"
+import { getCsrfToken } from "next-auth/react"
 
 
-const LoginForm = () => {
-	const [showPass, setShowPass] = useState(false);
+const LoginForm = ({ csrfToken}) => {
+    console.log(csrfToken)
 	const session = useSession();
-	console.log(session)
+    const router =  useRouter();
 
 	const dispatch = useDispatch();
-	const router = useRouter();
 	const { user } = useSelector(state => state.user)
 	const [values, setValues] = useState({
-		email: '',
+		username: '',
 		password: '',
 	})
-
-
 
 
 	const handleChange = (e) => {
@@ -40,34 +39,31 @@ const LoginForm = () => {
 		setValues({ ...values, [name]: value });
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (values.email === '' || values.password === '') {
-			toast.error('Συμπληρώστε τα στοιχεία');
+        const res = await signIn("credentials", 
+        { 
+            username: values.username, 
+            password: values.password,
+            callbackUrl: `http://localhost:3000/dashboard/profile`,
+            redirect: false,
+        })
+        console.log('this is the response form the credentials provider')
+        console.log(res)
+        if(res.ok == true && res.status == 200) {
+            toast.success('Εγω ειμαι χρήστης');
+            router.push('/dashboard/profile')
+        } else {
+            toast.error('Δεν βρέθηκε χρήστης');
+        }
+        
+	}   
 
-		}
-
-		if (user === null && values.email !== '' && values.password !== '') {
-			toast.error('Δεν βρέθηκε χρήστης');
-		}
-		signIn();
-		dispatch(loginUser({ email: values.email, password: values.password }))
-	}
-
-	// const redirect = () => {
-	// 	router.push('/pr')
-	// }
-
-	// useEffect(() => {
-	// 	if (user !== null) {
-	// 		redirect();
-	// 	}
-
-	// }, [user])
 
 
 	return (
-		<Container >
+        <LoginLayout>
+       <Container >
 			<Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
 
 				<Grid item xs={8}>
@@ -89,12 +85,13 @@ const LoginForm = () => {
 					/>
 				</Grid>
 			</Grid>
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 			<Input
-				id="email"
+				id="username"
 				type="text"
 				// value={state?.lastName}
 				onChange={handleChange}
-				label="Email"
+				label="Username"
 				placeholder={'example@gmail.com'}
 			/>
 			<InputPassword
@@ -130,16 +127,20 @@ const LoginForm = () => {
 				</div>
 			</CenterDiv>
 		</Container >
+      </LoginLayout>
+		
 	)
 }
 
 
+export async function getServerSideProps(context) {
+    return {
+      props: {
+        csrfToken: await getCsrfToken(context),
+      },
+    }
+  }
 
 
 
-
-
-
-
-
-export default LoginForm
+export default LoginForm;
