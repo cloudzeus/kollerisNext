@@ -22,9 +22,9 @@ import { getCsrfToken } from "next-auth/react"
 
 const LoginForm = ({ csrfToken}) => {
     console.log(csrfToken)
-	const session = useSession();
-    const router =  useRouter();
 
+    const router =  useRouter();
+    console.log('this is the session')
 	const dispatch = useDispatch();
 	const { user } = useSelector(state => state.user)
 	const [values, setValues] = useState({
@@ -45,14 +45,14 @@ const LoginForm = ({ csrfToken}) => {
         { 
             username: values.username, 
             password: values.password,
-            callbackUrl: `http://localhost:3000/dashboard/profile`,
+            callbackUrl: `http://localhost:3000/dashboard`,
             redirect: false,
         })
         console.log('this is the response form the credentials provider')
         console.log(res)
         if(res.ok == true && res.status == 200) {
             toast.success('Εγω ειμαι χρήστης');
-            router.push('/dashboard/profile')
+            router.push('/dashboard')
         } else {
             toast.error('Δεν βρέθηκε χρήστης');
         }

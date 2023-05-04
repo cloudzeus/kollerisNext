@@ -8,31 +8,39 @@ export const authOptions = {
         // The name to display on the sign in form (e.g. 'Sign in with...')
         name: 'Credentials',
         credentials: {},
+       
         async authorize(credentials, req) {
-        
-            console.log('100')
-            let user = {id: '323jjoi43', firstName: 'John', lastName: 'Rambo', username: 'rambo'}
-
-            const {username, password} = credentials
-            console.log(username, password)
-            if(username !== 'rambo' && password !== '12345') {
-                return  null
-            } 
-
-            if(username == 'rambo'      && password == '12345') return user;
+            const res = await fetch("http://localhost:3000/api/user/login", {
+              method: "POST",
+              body: JSON.stringify(credentials),
+              headers: { "Content-Type": "application/json" },
+            });
+            const user = await res.json();
+            console.log('this is the user from credentials provider')
+            console.log(user)
+            if (user) {
+              console.log('yes yes it is res success')
+              return user;
+            } else {
+              return null;
+            }
+            
+            
             
     }
 })
     // ...add more providers here
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
-      user && (token.user = user);
-      return token;
-    },
-    session: async ({ session, token }) => {
-      session.user = token.user;  // Setting token in session
+    async session({ session, token }) {
+      session.user = token.user;
       return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user;
+      }
+      return token;
     },
   },
   pages: {
