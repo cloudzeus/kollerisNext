@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react'
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -13,14 +14,12 @@ import Image from 'next/image'
 
 
 
-const userName = "John Smith"
-
-
-
 
 const AdminNavbar = () => {
    const {isSidebarOpen} = useSelector(store => store.user)
    const dispatch = useDispatch();
+
+
    const toggle = () => {
       dispatch(toggleSidebar())
    }

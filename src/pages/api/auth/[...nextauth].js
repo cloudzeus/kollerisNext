@@ -33,7 +33,6 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-   
     async session({ session, token }) {
       session.user = token.user;
       return session;

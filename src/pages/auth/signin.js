@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import LoginLayout from '@/layouts/Auth/loginLayout'
 import { Grid, IconButton } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import Image from 'next/image'
+import { fetchUser } from '@/features/userSlice';
 
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import Link from 'next/link';
@@ -18,13 +18,15 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
-
+import { saveUser } from '@/features/userSlice';
 
 const LoginForm = ({ csrfToken}) => {
 
     const router =  useRouter();
-	// const dispatch = useDispatch();
-	const { user } = useSelector(state => state.user)
+	const dispatch = useDispatch();
+	const session = useSession();
+	const user = session?.data?.user;
+	console.log('user', JSON.stringify(user))
 	const [values, setValues] = useState({
 		username: '',
 		password: '',
@@ -43,14 +45,12 @@ const LoginForm = ({ csrfToken}) => {
         { 
             username: values.username, 
             password: values.password,
-            callbackUrl: `http://localhost:3000/dashboard`,
             redirect: false,
         })
-        console.log('this is the response form the credentials provider')
-        console.log(res)
-
+		
         if(res.ok == true && res.status == 200) {
             toast.success('Εγω ειμαι χρήστης');
+			dispatch(fetchUser({username: values.username, password: values.password}))
             router.push('/dashboard')
         } else {
             toast.error('Δεν βρέθηκε χρήστης');

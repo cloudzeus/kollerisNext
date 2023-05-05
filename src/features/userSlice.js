@@ -5,8 +5,7 @@ import { toast } from 'react-toastify';
 
 
 const initialState = {
-  user: null,
-  isAuthenticated: false,
+  user: getUserFromLocalStorage(),
   isLoading: false,
   isSidebarOpen: true,
 }
@@ -15,12 +14,12 @@ const initialState = {
 
 
 
-export const loginUser = createAsyncThunk(
+export const fetchUser = createAsyncThunk(
   //action:
-  'user/loginUser',
+  'user/fetchUser',
   async (user, thunkApi) => {
     try {
-      const resp = await axios.post('/api/user/login', user)
+      const resp = await axios.post('/api/user/fetchuser', user)
       return resp.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data)
@@ -69,27 +68,33 @@ const userSlice = createSlice({
       state.user = null;
       state.isLoading = false;
       removerFromLocalStorage();
+    },
+    saveUser: (state, { payload }) => {
+      console.log('saved payload')
+      console.log(payload)
+      state.user = payload;
+      addUserToLocalStorage(payload)
     }
 
 
   },
   extraReducers: (builder) => {
     builder
-      //LOGIN USER:
-      .addCase(loginUser.pending, (state) => {
+      // LOGIN USER:
+      .addCase(fetchUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(loginUser.fulfilled, (state, { payload }) => {
+      .addCase(fetchUser.fulfilled, (state, { payload }) => {
         const { user } = payload;
+        console.log('user from fetch user');
+        console.log(user);
         state.user = user;
         if (user) {
           addUserToLocalStorage(user)
-          toast.success(`Welcome back ${user.firstName} ${user.lastName}`);
         }
         state.isLoading = false;
       })
-      .addCase(loginUser.rejected, (state, { payload }) => {
-        console.log('rejected')
+      .addCase(fetchUser.rejected, (state, { payload }) => {
         state.isLoading = false;
 
       })
@@ -111,6 +116,7 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
+        console.log(payload)
         const { user } = payload;
         state.user = user;
         state.isLoading = false;
@@ -123,7 +129,7 @@ const userSlice = createSlice({
 })
 
 
-export const { logoutUser, toggleSidebar } = userSlice.actions;
+export const { logoutUser, toggleSidebar, saveUser } = userSlice.actions;
 export default userSlice.reducer;
 
 

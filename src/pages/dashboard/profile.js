@@ -6,7 +6,6 @@ import { HeaderBox, HeaderBoxShadow } from '@/components/HeaderBox';
 import { Avatar } from '@mui/material';
 import { Btn } from '@/components/Buttons/styles';
 import styled from 'styled-components';
-import { InputDiv } from '@/components/Forms/FormInput';
 import { Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -15,47 +14,45 @@ import Button from '@/components/Buttons/Button';
 import SelectInput from '@/components/Forms/SelecInput';
 import { Input } from '@/components/Forms/FormInput';
 
-import { useSession, signIn, signOut } from "next-auth/react"
-
 const Profile = () => {
 
-    const session = useSession();
-    console.log('session user')
-    console.log(session?.data?.user)
-    const user = session?.data?.user;
+    const dispatch = useDispatch();
+    const { user } = useSelector(state => state.user)
 
     const [state, setState] = useState({
         _id: '',
-        firstName: '',
-        lastName: '',
+        firstName:  '',
+        lastName:'',
         email: '',
-        mobile: '',
-        landline: '',
-        country: '',
-        address: '',
+        landline:  '',
+        mobile:  '',
+        country:  '',
         city: '',
-        postalcode: '',
+        address:  '',
+        postalcode:  '',
     })
 
+  
+
     useEffect(() => {
-        setState({
+            console.log(user)
+          setState({
             ...state,
             _id: user?._id,
             firstName: user?.firstName,
             lastName: user?.lastName,
             email: user?.email,
-            landline: user?.phones?.landline,
-            mobile: user?.phones?.mobile,
-            country: user?.address?.country,
-            city: user?.address?.city,
-            address: user?.address?.address,
-            postalcode: user?.address?.postalcode,
+            landline: user?.phones.landline,
+            mobile: user?.phones.mobile,
+            country: user?.address.country,
+            city: user?.address.city,
+            address: user?.address.address,
+            postalcode: user?.address.postalcode,
         })
     }, [user])
 
-    // useEffect(() => {
-    //     console.log(state)
-    // }, [state])
+   
+
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -67,11 +64,11 @@ const Profile = () => {
         setState({ ...state, [name]: value })
     }
 
-    const dispatch = useDispatch()
 
-    const handleUpdateUser = (e) => {
+    const handleUpdateUser = async (e) => {
         e.preventDefault()
-        dispatch(updateUser(state))
+        dispatch(updateUser(state));
+        
     }
     return (
         <AdminLayout >
@@ -98,7 +95,7 @@ const Profile = () => {
                                     <Input
                                         id="email"
                                         type="text"
-                                        value={state?.email}
+                                        value={state.email}
                                         onChange={handleChange}
                                         label="Email"
                                     />
@@ -107,7 +104,7 @@ const Profile = () => {
                                             <Input
                                                 id="firstName"
                                                 type="text"
-                                                value={state?.firstName}
+                                                value={state.firstName}
                                                 onChange={handleChange}
                                                 label="Όνομα"
                                             />
@@ -116,7 +113,7 @@ const Profile = () => {
                                             <Input
                                                 id="lastName"
                                                 type="text"
-                                                value={state?.lastName}
+                                                value={state.lastName}
                                                 onChange={handleChange}
                                                 label="Επώνυμο"
                                             />
@@ -125,7 +122,7 @@ const Profile = () => {
                                             <Input
                                                 id="landline"
                                                 type="text"
-                                                value={state?.landline}
+                                                value={state.landline}
                                                 onChange={handleChange}
                                                 label="Σταθερό"
                                             />
@@ -134,7 +131,7 @@ const Profile = () => {
                                             <Input
                                                 id="mobile"
                                                 type="text"
-                                                value={state?.mobile}
+                                                value={state.mobile}
                                                 onChange={handleChange}
                                                 label="Κινητό"
                                             />
@@ -145,14 +142,14 @@ const Profile = () => {
                                                 items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} 
                                                 label="Xώρα" 
                                                 onChange={handleSelect} 
-                                                value={state?.country}
+                                                value={state.country}
                                                 />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
                                             <Input
                                                 id="address"
                                                 type="text"
-                                                value={state?.address}
+                                                value={state.address}
                                                 onChange={handleChange}
                                                 label="Διεύθυνση"
                                             />
@@ -161,7 +158,7 @@ const Profile = () => {
                                             <Input
                                                 id="city"
                                                 type="text"
-                                                value={state?.city}
+                                                value={state.city}
                                                 onChange={handleChange}
                                                 label="Πόλη"
                                             />
@@ -170,7 +167,7 @@ const Profile = () => {
                                             <Input
                                                 id="postalcode"
                                                 type="text"
-                                                value={state?.postalcode}
+                                                value={state.postalcode}
                                                 onChange={handleChange}
                                                 label="T.K"
                                             />

@@ -14,6 +14,7 @@ export const Input = ({ id, type, value, onChange, label, placeholder }) => {
     </InputDiv>
   )
 }
+
 export const InputPassword = ({ id, value, onChange, label, placeholder, }) => {
   const [showPass, setShowPass] = React.useState(false);
   return (

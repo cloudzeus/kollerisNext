@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+'use client';
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider'
@@ -11,7 +12,7 @@ import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
-
+import { useSession } from 'next-auth/react';
 
 const sx = {
     fontSize: '17px',
@@ -19,13 +20,13 @@ const sx = {
 }
 
 const AvatarSettings = () => {
-    const theme = useTheme();
     const [show, setShow] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
     const route = useRouter();
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.user)
 
+    const session = useSession();
+    const user = session?.data?.user;
+    const [name, setName] = useState('')
     const onClick = () => {
         setShow(!show)
     }
@@ -35,6 +36,13 @@ const AvatarSettings = () => {
         route.push('/')
     }
 
+    useEffect(() => {
+        if (user) {
+            setName(user.firstName)
+        }
+    }, [name])
+
+    
     return (
         <Container>
             < div className='topDiv' onClick={onClick}>
@@ -50,7 +58,7 @@ const AvatarSettings = () => {
                     <div className="hiddenTopDiv">
                         <p>
                             Γειά σου,
-                            <span className='name'> {user ? user.firstName : '<User>'}</span>
+                            <span className='name'> {name? name : '<User>'}</span>
                         </p>
                     </div>
                     <div className="hiddenBottomDiv">
