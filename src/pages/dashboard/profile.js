@@ -51,7 +51,7 @@ const Profile = () => {
             address: user?.address?.address,
             postalcode: user?.address?.postalcode,
         })
-    }, [])
+    }, [user])
 
     // useEffect(() => {
     //     console.log(state)
