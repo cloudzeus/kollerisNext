@@ -15,11 +15,15 @@ import Button from '@/components/Buttons/Button';
 import SelectInput from '@/components/Forms/SelecInput';
 import { Input } from '@/components/Forms/FormInput';
 
+import { useSession, signIn, signOut } from "next-auth/react"
 
 const Profile = () => {
 
-    const { user, isLoading } = useSelector(state => state.user)
-    console.log('user' + JSON.stringify(user))
+    const session = useSession();
+    console.log('session user')
+    console.log(session?.data?.user)
+    const user = session?.data?.user;
+
     const [state, setState] = useState({
         _id: '',
         firstName: '',
@@ -49,9 +53,9 @@ const Profile = () => {
         })
     }, [])
 
-    useEffect(() => {
-        console.log(state)
-    }, [state])
+    // useEffect(() => {
+    //     console.log(state)
+    // }, [state])
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;

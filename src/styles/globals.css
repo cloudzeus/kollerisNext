@@ -41,6 +41,10 @@ body {
 
 }
 
+input {
+  font-family: 'Roboto', sans-serif;
+
+}
 
 a {
   color: inherit;
@@ -75,8 +79,11 @@ h3 {
   font-size: 20px;
 }
 
-p {
-  color: #77848E;
+
+p,
+input,
+span {
+  color: #373737;
 }
 /* Custom ScrollBar */
 

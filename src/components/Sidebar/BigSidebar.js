@@ -16,27 +16,29 @@ import { SidebarExpandableItem } from './SidebarTabs';
 
 
 const BigSidebar = () => {
-  const theme = useTheme();
+
   const [open, setOpen] = useState(false);
+  const { isSidebarOpen } = useSelector((store) => store.user);
+  console.log(isSidebarOpen)
   const onClick = () => {
     setOpen(true)
   }
   return (
-    <SidebarWrapper>
+    <Wrapper isSidebarOpen={isSidebarOpen} >
       <LightHeader>ΜΕΝΟΥ</LightHeader>
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
-      <SidebarItem to="/test" label="Πελάτες" />
-      <SidebarItem to="/chart" label="Chart" />
+      <SidebarItem to="/dashboard/test" label="Πελάτες" />
+      <SidebarItem to="/dashboard/chart" label="Chart" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <SidebarExpandableItem label="Accordion" open={open} setOpen={onClick}>
-        <SidebarItem to="/fake/page1" label="Page1" />
-        <SidebarItem to="/fake/page2" label="Page2" />
+        <SidebarItem to="/dashboard/page1" label="Page1" />
+        <SidebarItem to="/dashboard/fake/page2" label="Page2" />
       </SidebarExpandableItem>
       <SidebarExpandableItem label="Accordion2" open={open} setOpen={onClick}>
-        <SidebarItem to="/fake/page1" label="Page1" />
-        <SidebarItem to="/fake/page2" label="Page2" />
+        <SidebarItem to="/dashboard/fake/page1" label="Page1" />
+        <SidebarItem to="/dashboard/fake/page2" label="Page2" />
       </SidebarExpandableItem>
-    </SidebarWrapper>
+    </Wrapper>
 
 
   );
@@ -44,22 +46,24 @@ const BigSidebar = () => {
 
 
 
+const Wrapper = styled.div`
+    display: ${props => props.isSidebarOpen ? 'block' : 'none'};
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 260px;
+    z-index: 3;
+    padding: 10px;
+    background-color: white;
+    height: 100%;
+    @media (max-width: 768px) {
+        width: 100%;
 
+    }
+ 
+  
 
-
-const SidebarWrapper = ({ children }) => {
-  const matches = useMediaQuery('(max-width:600px)');
-  const { isSidebarOpen } = useSelector((store) => store.user);
-  let conditions = matches && isSidebarOpen
-  return (
-    <Box className={`${conditions ? styles.fullNavbar : null}  ${!isSidebarOpen && styles.none} ${styles.container}`} sx={{ bgcolor: 'white', width: 260, height: 'calc(100% - 70px)', position: 'fixed', top: '70px', zIndex: 10, overflowY: 'auto', }}>
-      {children}
-    </Box>
-  )
-}
-
-
-
+`
 
 
 

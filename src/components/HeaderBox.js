@@ -84,8 +84,8 @@ const ContainerShadow = styled.div`
   }
 
   .subheader_text {
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 600;
     color: ${({ theme }) => theme.palette.text.main};
     letter-spacing: 0.8px;
   }

@@ -93,6 +93,7 @@ const Container = styled.div`
    
     .main-box {
         width: 100%;
+       
     }
 
 `
@@ -106,6 +107,11 @@ const SidebarOpenContainer = styled.div`
     overflow-y:scroll;
     background-color: ${({ theme }) => theme.palette.background};
     height: calc(100vh - 70px);
+
+    @media (max-width: 768px) {
+        width: 100%;
+        left: 0;
+    }
 `
 
 
@@ -121,6 +127,7 @@ const SidebarClosedContainer = styled.div`
     background-color: ${({ theme }) => theme.palette.background};
     padding: 40px;
     height: calc(100vh - 70px);
+    
 `
 
 const SpinnerDiv = styled.div`

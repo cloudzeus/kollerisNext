@@ -55,16 +55,15 @@ const ContainerUl = styled.div`
     font-size: 11px;
     letter-spacing: 0.8px;
     color: ${props => props.theme.palette.grey.light};
-    font-weight: 400;
-    margin-bottom: 1px;
+    font-weight: 600;
+    margin-bottom: 2px;
     }
 
     span:nth-child(2) {
     bottom: 0px;
     font-size: 14px;
     letter-spacing: 0.8px;
-    font-weight: 600;
-    color: #373737;
+    font-weight: 400;
    
     }
 
@@ -78,7 +77,6 @@ const ContainerUl = styled.div`
       background-color: white;
       box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
       border-radius: 4px;
-      /* border: 1px solid ${props => props.theme.palette.primary.main}; */
     } 
 
     li {

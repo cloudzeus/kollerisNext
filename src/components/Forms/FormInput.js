@@ -44,24 +44,21 @@ export const InputDiv = styled.div`
   padding: 10px;
   border: 2px solid transparent;
   
-
+  //change the border color when the input is focused
   &.focusDiv:focus-within{
     border-color: ${props => props.theme.palette.primary.main };
   }
+  //change the label when the input is focused
   &.focusDiv:focus-within label{
     color: ${props => props.theme.palette.primary.main };
   }
 
-  input:focus + label {
-  color: ${props => props.theme.palette.primary.main};
-  font-size: 30px;
-  }
-
+  
   label {
       font-size: 10px;
       letter-spacing: 0.9px;
       color: ${props => props.theme.palette.grey.light};
-      font-weight: 400;
+      font-weight: 600;
       margin-bottom: 1px;
     
 
@@ -73,10 +70,10 @@ export const InputDiv = styled.div`
     border-style: none;
     font-size: 14px;
     letter-spacing: 0.3px;
-    font-weight: 600;
-    color: #373737;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
     background-color: ${props => props.theme.palette.background};
-    /* margin-top: 1px; */
+    margin-top: 2px;
     height: 100%;
     }
   
