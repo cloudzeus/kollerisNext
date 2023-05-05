@@ -64,7 +64,6 @@ const LoginForm = ({ csrfToken}) => {
         <LoginLayout>
        <Container >
 			<Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
-
 				<Grid item xs={8}>
 					<StyledHeader>ΚΑΛΩΣ ΗΡΘΑΤΕ!</StyledHeader>
 					<Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>

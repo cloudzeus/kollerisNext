@@ -63,7 +63,7 @@ const AvatarSettings = () => {
                             <ButtonText >Ρυθμίσεις</ButtonText>
                         </button>
 
-                        <button className="btn" onClick={() => signOut()}>
+                        <button className="btn" onClick={() => signOut({callbackUrl: 'http://localhost:3000/auth/signin'})}>
                             <LogoutIcon sx={sx} />
                             <ButtonText >Aποσύνδεση</ButtonText>
                         </button>
