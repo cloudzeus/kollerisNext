@@ -19,10 +19,11 @@ import { useRouter } from 'next/router';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 const registerPage = () => {
+
+	
 	const [showPass, setShowPass] = useState(false);
 	const dispatch = useDispatch();
 	const router = useRouter()
-	const handleShowPass = () => setShowPass((show) => !show);
 	const [values, setValues] = useState({
 		firstName: '',
 		lastName: '',
@@ -40,7 +41,7 @@ const registerPage = () => {
 	const onSubmit = (e) => {
 		e.preventDefault();
 		dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
-		router.push('/test')
+		// router.push('/dashboard')
 	}
 	return (
 		<LoginLayout>
@@ -111,7 +112,7 @@ const registerPage = () => {
 
 				<CenterDiv>
 					<TextBtn className='black'>
-						<Link href="/auth/login" >
+						<Link href="/auth/signin" >
 							Έχετε ήδη λογαριασμό
 						</Link>
 					</TextBtn >

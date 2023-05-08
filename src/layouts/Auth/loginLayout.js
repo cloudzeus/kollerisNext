@@ -3,7 +3,6 @@ import styled from "styled-components"
 const LoginLayout = ({ children }) => {
   return (
     <Box>
-
       {children}
     </Box>
 

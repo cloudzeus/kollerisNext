@@ -1,13 +1,11 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import {  useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { getUserFromLocalStorage } from '@/utils/localStorage'
 
 
 export default function Home() {
   const router = useRouter()
-  
+
   useEffect(() => {
     router.push('/auth/signin')
   }, [])

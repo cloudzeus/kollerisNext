@@ -13,13 +13,17 @@ import LightHeader from '../Text/LightHeader';
 //ICONS:
 import { useState } from 'react';
 import { SidebarExpandableItem } from './SidebarTabs';
+import { useSession, signIn, signOut } from "next-auth/react"
 
 
 const BigSidebar = () => {
 
   const [open, setOpen] = useState(false);
   const { isSidebarOpen } = useSelector((store) => store.user);
-  
+  const {data } = useSession();
+  console.log('session in sidebar')
+  console.log(data.user.role)
+
   const onClick = () => {
     setOpen(true)
   }
@@ -38,6 +42,12 @@ const BigSidebar = () => {
         <SidebarItem to="/dashboard/fake/page1" label="Page1" />
         <SidebarItem to="/dashboard/fake/page2" label="Page2" />
       </SidebarExpandableItem>
+      {data?.user.role === 'admin' && (
+         <SidebarExpandableItem label="Admin Pages" open={open} setOpen={onClick}>
+         <SidebarItem to="/dashboard/admin" label="Page1" />
+         <SidebarItem to="/dashboard/admin/page" label="Page2" />
+       </SidebarExpandableItem>
+      )}
     </Wrapper>
 
 

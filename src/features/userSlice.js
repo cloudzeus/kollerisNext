@@ -33,7 +33,7 @@ export const registerUser = createAsyncThunk(
   async (user, thunkApi) => {
     console.log(`Register User: ${JSON.stringify(user)}`)
     try {
-      const resp = await axios.post('/api/registerUser', user)
+      const resp = await axios.post('/api/user/registeruser', user)
       return resp.data;
 
     } catch (error) {
@@ -69,12 +69,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       removerFromLocalStorage();
     },
-    saveUser: (state, { payload }) => {
-      console.log('saved payload')
-      console.log(payload)
-      state.user = payload;
-      addUserToLocalStorage(payload)
-    }
+    
 
 
   },
@@ -86,8 +81,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, { payload }) => {
         const { user } = payload;
-        console.log('user from fetch user');
-        console.log(user);
+       
         state.user = user;
         if (user) {
           addUserToLocalStorage(user)
@@ -103,10 +97,12 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
-        const { user } = payload;
-        state.isLoading = false;
-        state.user = user;
-        addUserToLocalStorage(user)
+        // const { user } = payload;
+        console.log('are we here')
+        console.log(payload)
+        // state.isLoading = false;
+        // state.user = user;
+        // addUserToLocalStorage(user)
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -129,7 +125,7 @@ const userSlice = createSlice({
 })
 
 
-export const { logoutUser, toggleSidebar, saveUser } = userSlice.actions;
+export const { logoutUser, toggleSidebar } = userSlice.actions;
 export default userSlice.reducer;
 
 

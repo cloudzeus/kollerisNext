@@ -30,7 +30,7 @@ const LoginForm = ({ csrfToken}) => {
 		username: '',
 		password: '',
 	})
-
+	
 
 	const handleChange = (e) => {
 		const name = e.target.name;
@@ -41,7 +41,8 @@ const LoginForm = ({ csrfToken}) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
         const res = await signIn("credentials", 
-        { 
+        { 	
+			//here usename will be the email of the use, because NextAUth need a username attribute
             username: values.username, 
             password: values.password,
             redirect: false,
@@ -49,7 +50,7 @@ const LoginForm = ({ csrfToken}) => {
 		
         if(res.ok == true && res.status == 200) {
             toast.success('Εγω ειμαι χρήστης');
-			dispatch(fetchUser({username: values.username, password: values.password}))
+			dispatch(fetchUser({username: values.email, password: values.password}))
             router.push('/dashboard')
         } else {
             toast.error('Δεν βρέθηκε χρήστης');
@@ -89,7 +90,7 @@ const LoginForm = ({ csrfToken}) => {
 				type="text"
 				// value={state?.lastName}
 				onChange={handleChange}
-				label="Username"
+				label="Email"
 				placeholder={'example@gmail.com'}
 			/>
 			<InputPassword
