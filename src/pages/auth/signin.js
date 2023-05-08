@@ -26,7 +26,6 @@ const LoginForm = ({ csrfToken}) => {
 	const dispatch = useDispatch();
 	const session = useSession();
 	const user = session?.data?.user;
-	console.log('user', JSON.stringify(user))
 	const [values, setValues] = useState({
 		username: '',
 		password: '',
@@ -58,6 +57,7 @@ const LoginForm = ({ csrfToken}) => {
         
 	}   
 
+	
 
 
 	return (

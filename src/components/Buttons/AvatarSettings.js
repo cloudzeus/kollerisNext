@@ -4,11 +4,8 @@ import styled from 'styled-components'
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider'
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useTheme } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
-import removeItemFromLocalStorage from '@/utils/localStorage';
 import { useRouter } from 'next/router';
-import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
@@ -22,7 +19,6 @@ const sx = {
 const AvatarSettings = () => {
     const [show, setShow] = useState(false);
     const route = useRouter();
-    const dispatch = useDispatch();
 
     const session = useSession();
     const user = session?.data?.user;
@@ -32,8 +28,10 @@ const AvatarSettings = () => {
     }
 
     const onPressLogout = () => {
-        dispatch(logoutUser())
-        route.push('/')
+        signOut({
+            redirect: false
+        })
+        route.push('/auth/signin')
     }
 
     useEffect(() => {
@@ -71,7 +69,7 @@ const AvatarSettings = () => {
                             <ButtonText >Ρυθμίσεις</ButtonText>
                         </button>
 
-                        <button className="btn" onClick={() => signOut({callbackUrl: 'http://localhost:3000/auth/signin'})}>
+                        <button className="btn" onClick={onPressLogout}>
                             <LogoutIcon sx={sx} />
                             <ButtonText >Aποσύνδεση</ButtonText>
                         </button>

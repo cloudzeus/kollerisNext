@@ -19,7 +19,7 @@ const BigSidebar = () => {
 
   const [open, setOpen] = useState(false);
   const { isSidebarOpen } = useSelector((store) => store.user);
-  console.log(isSidebarOpen)
+  
   const onClick = () => {
     setOpen(true)
   }

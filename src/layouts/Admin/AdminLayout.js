@@ -50,7 +50,7 @@ const AuthWrapper = ({ children }) => {
     if (status !== "authenticated") {
          return (
             <>
-                <p>You can access this page!</p>
+                <p>You cannot access this page!</p>
             </>
          )
       }
