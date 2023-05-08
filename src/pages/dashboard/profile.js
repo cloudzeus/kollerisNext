@@ -42,12 +42,12 @@ const Profile = () => {
             firstName: user?.firstName,
             lastName: user?.lastName,
             email: user?.email,
-            landline: user?.phones.landline,
-            mobile: user?.phones.mobile,
-            country: user?.address.country,
-            city: user?.address.city,
-            address: user?.address.address,
-            postalcode: user?.address.postalcode,
+            landline: user?.phones?.landline,
+            mobile: user?.phones?.mobile,
+            country: user?.address?.country,
+            city: user?.address?.city,
+            address: user?.address?.address,
+            postalcode: user?.address?.postalcode,
         })
     }, [user])
 

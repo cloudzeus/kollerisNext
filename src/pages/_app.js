@@ -40,7 +40,7 @@ export default function App({ Component, pageProps: {session, pageProps} }) {
                                     pauseOnHover
                                     theme="light"
                                 />
-                                <Component {...pageProps} />
+                                <Component {...pageProps} />\
                             </SessionProvider>
                            
                         </ThemeProvider>

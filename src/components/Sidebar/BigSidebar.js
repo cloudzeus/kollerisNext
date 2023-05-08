@@ -22,7 +22,7 @@ const BigSidebar = () => {
   const { isSidebarOpen } = useSelector((store) => store.user);
   const {data } = useSession();
   console.log('session in sidebar')
-  console.log(data.user.role)
+  console.log(data?.user?.role)
 
   const onClick = () => {
     setOpen(true)

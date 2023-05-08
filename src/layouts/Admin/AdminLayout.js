@@ -65,7 +65,7 @@ const AdminLayout = ({ children }) => {
     const { isSidebarOpen } = useSelector((store) => store.user)
 
     return (
-        <AuthWrapper>
+        // <AuthWrapper>
             <Container>
             <AdminNavbar />
                 <div className="main-box">
@@ -82,7 +82,7 @@ const AdminLayout = ({ children }) => {
                 </div>
                
             </Container>
-        </AuthWrapper>
+        // </AuthWrapper>
     
     )
 }
