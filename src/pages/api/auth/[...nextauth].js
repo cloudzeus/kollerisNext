@@ -4,8 +4,8 @@ import CredentialsProvider from "next-auth/providers/credentials"
 export default NextAuth({
   session: {
     strategy: "jwt",
-    async encode() {},
-    async decode() {},
+    // async encode() {},
+    // async decode() {},
   },
   providers: [
     CredentialsProvider({
@@ -36,16 +36,23 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      // console.log('session', session)
-      // console.log('token', token)
-      session.user = token.user;
-      session.accessToken = token;
+      console.log('session', session)
+      console.log('token', token)
+      console.log('token', token)
+        // console.log('session', session)
+    // console.log('token', token)
+    session.user = token.user;
+    session.accessToken = token.accessToken;
+
+
       return session;
     },
     async jwt({ token, user}) {
-      // console.log('Inside jwt' + JSON.stringify(user) + JSON.stringify(token))
+      console.log('Inside jwt' + JSON.stringify(user) + JSON.stringify(token))
       if (user) {
         token.user = user;
+        // Assuming the accessToken is a property in the user object, update this line:
+        token.accessToken = user.accessToken;
       }
       return token;
     },

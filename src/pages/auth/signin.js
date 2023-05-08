@@ -49,7 +49,7 @@ const LoginForm = ({ csrfToken}) => {
         })
 		
         if(res.ok == true && res.status == 200) {
-            toast.success('Εγω ειμαι χρήστης');
+            // toast.success('Εγω ειμαι χρήστης');
 			dispatch(fetchUser({username: values.email, password: values.password}))
             router.push('/dashboard')
         } else {
