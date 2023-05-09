@@ -19,7 +19,7 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
-
+import { logoutUser } from '@/features/userSlice';
 const LoginForm = ({ csrfToken}) => {
 
     const router =  useRouter();
@@ -64,8 +64,8 @@ const LoginForm = ({ csrfToken}) => {
         
 	}   
 
-	
 
+	
 
 	return (
         <LoginLayout>

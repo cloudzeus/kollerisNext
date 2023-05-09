@@ -13,7 +13,7 @@ export default withAuth(
 
        const token = await getToken({req}) 
        if(token) {
-        console.log("JSON Web Token", JSON.stringify(token, null, 2))
+        // console.log("JSON Web Token", JSON.stringify(token, null, 2))
        }
        
     }
