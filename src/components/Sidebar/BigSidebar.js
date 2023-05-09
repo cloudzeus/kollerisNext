@@ -42,7 +42,7 @@ const BigSidebar = () => {
         <SidebarItem to="/dashboard/fake/page1" label="Page1" />
         <SidebarItem to="/dashboard/fake/page2" label="Page2" />
       </SidebarExpandableItem>
-      {data?.user.role === 'admin' && (
+      {data?.user?.role === 'admin' && (
          <SidebarExpandableItem label="Admin Pages" open={open} setOpen={onClick}>
          <SidebarItem to="/dashboard/admin" label="Page1" />
          <SidebarItem to="/dashboard/admin/page" label="Page2" />

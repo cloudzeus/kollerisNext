@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import jwt from 'jsonwebtoken';
 
 export default NextAuth({
   session: {
@@ -49,11 +50,27 @@ export default NextAuth({
     },
     async jwt({ token, user}) {
       console.log('Inside jwt' + JSON.stringify(user) + JSON.stringify(token))
-      if (user) {
-        token.user = user;
-        // Assuming the accessToken is a property in the user object, update this line:
-        token.accessToken = user.accessToken;
-      }
+	  if(token) {
+		const payload = {
+			sub: token?.user?.email,
+			name: token?.user?.firstName,
+			iat: parseInt(token?.iat), // issued at timestamp in seconds
+			exp: parseInt(token?.exp), // expiration timestamp in seconds
+			jti: token?.jti, // unique identifier for the token
+		  };
+		  const secret = process.env.NEXTAUTH_SECRET;
+		  const jwtToken = jwt.sign(payload, secret, { algorithm: 'HS256' });
+		  console.log('----------------------------- Token -------------------------------------')
+		  console.log(jwtToken);
+		  token.accessToken = jwtToken;
+	
+		  // Decode a JWT
+		//   const decoded = jwt.verify(jwtToken, secret);
+		//   console.log('----------------------------- decoded -------------------------------------')
+		//   console.log(decoded);
+	  }
+	 
+      
       return token;
     },
     

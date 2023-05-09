@@ -27,8 +27,8 @@ const LoginForm = ({ csrfToken}) => {
 	const session = useSession();
 	const user = session?.data?.user;
 	const [values, setValues] = useState({
-		username: '',
-		password: '',
+		username: 'johnrambo@gmail.com',
+		password: '12345',
 	})
 	
 
@@ -88,13 +88,14 @@ const LoginForm = ({ csrfToken}) => {
 			<Input
 				id="username"
 				type="text"
-				// value={state?.lastName}
+				value={values.username}
 				onChange={handleChange}
 				label="Email"
 				placeholder={'example@gmail.com'}
 			/>
 			<InputPassword
 				id="password"
+				value={values.password}
 				label="Password"
 				onChange={handleChange}
 				placeholder='******'
