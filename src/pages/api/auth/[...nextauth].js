@@ -42,14 +42,13 @@ export default NextAuth({
       console.log('token', token)
         // console.log('session', session)
     // console.log('token', token)
-    session.user = token.user;
-    session.accessToken = token.accessToken;
-
-
+		session.user = token.user;
+		session.accessToken = token.accessToken;
       return session;
     },
     async jwt({ token, user}) {
       console.log('Inside jwt' + JSON.stringify(user) + JSON.stringify(token))
+	
 	  if(token) {
 		const payload = {
 			sub: token?.user?.email,
@@ -62,16 +61,14 @@ export default NextAuth({
 		  const jwtToken = jwt.sign(payload, secret, { algorithm: 'HS256' });
 		  console.log('----------------------------- Token -------------------------------------')
 		  console.log(jwtToken);
-		  token.accessToken = jwtToken;
-	
-		  // Decode a JWT
-		//   const decoded = jwt.verify(jwtToken, secret);
-		//   console.log('----------------------------- decoded -------------------------------------')
-		//   console.log(decoded);
+		  token.accessToken = jwtToken
+		 
 	  }
-	 
-      
-      return token;
+	  if(user) {
+		token.user = user;
+	  }
+	  
+	  return token;
     },
     
   },

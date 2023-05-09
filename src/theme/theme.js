@@ -49,6 +49,7 @@ const theme = createTheme({
       light: '#697586',
       main: '#605c5c',
     },
+    white: '#fff',
     // background: '#F8F9FB',
     background: '#EEF2F6',
     // background: '#fbfcfd',

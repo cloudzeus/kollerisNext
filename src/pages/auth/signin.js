@@ -10,7 +10,8 @@ import { fetchUser } from '@/features/userSlice';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import Link from 'next/link';
 import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/formStyles';
-import { Btn } from '@/components/Buttons/styles';
+// import { Btn } from '@/components/Buttons/styles';
+import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '@/components/styles';
 import { toast } from 'react-toastify';
@@ -18,19 +19,20 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
-import { saveUser } from '@/features/userSlice';
 
 const LoginForm = ({ csrfToken}) => {
 
     const router =  useRouter();
 	const dispatch = useDispatch();
 	const session = useSession();
+
 	const user = session?.data?.user;
 	const [values, setValues] = useState({
 		username: 'johnrambo@gmail.com',
 		password: '12345',
 	})
 	
+	const [loading, setLoading] = useState(false);
 
 	const handleChange = (e) => {
 		const name = e.target.name;
@@ -39,6 +41,7 @@ const LoginForm = ({ csrfToken}) => {
 	};
 
 	const handleSubmit = async (e) => {
+		setLoading(true);
 		e.preventDefault();
         const res = await signIn("credentials", 
         { 	
@@ -51,9 +54,12 @@ const LoginForm = ({ csrfToken}) => {
         if(res.ok == true && res.status == 200) {
             // toast.success('Εγω ειμαι χρήστης');
 			dispatch(fetchUser({username: values.email, password: values.password}))
+			
             router.push('/dashboard')
+			setLoading(false);
         } else {
             toast.error('Δεν βρέθηκε χρήστης');
+			setLoading(false);
         }
         
 	}   
@@ -111,7 +117,8 @@ const LoginForm = ({ csrfToken}) => {
 				</TextBtn >
 			</FlexBetween>
 			{/* Login Button */}
-			<Btn onClick={handleSubmit}>Σύνδεση</Btn>
+			<Button size={'100%'} loading={loading} onClick={handleSubmit}>Σύνδεση</Button>
+			{/* <Btn onClick={handleSubmit}>Σύνδεση</Btn> */}
 			<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
 			<CenterDiv>

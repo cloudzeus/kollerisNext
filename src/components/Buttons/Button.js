@@ -1,13 +1,11 @@
 import React from "react"
 import { CircularProgress } from "@mui/material"
-import { useSelector } from "react-redux"
 import styled from "styled-components";
 
-const Button = ({children, onClick}) => {
-  const {isLoading} = useSelector(store => store.user)
+const Button = ({children, onClick, loading, size}) => {
   return (
-    <Btn onClick={onClick}>
-      {isLoading ? <CircularProgress color={'white'} size={'25px'}/>  : <>{children}</>}
+    <Btn size={size} onClick={onClick} disabled={loading}>
+      {loading ? <CircularProgress color='#fff'  size={'20px'}/>  : <>{children}</>}
     </Btn>
   )
 }
@@ -19,7 +17,8 @@ const Button = ({children, onClick}) => {
 
 
 export const Btn = styled.button`
-  width: ${props => props.size ? `${props.size}px` : '140px'};
+
+  width: ${props => props.size ? `${props.size}` : '140px'};
   margin-top: ${props => props.mt ? `${mt}px` : '0'};
   margin-top: ${props => props.bt ? `${mb}px` : '0'};
   background-color: ${props => props.theme.palette.primary.main};
@@ -38,6 +37,11 @@ export const Btn = styled.button`
   &:active {
     transform: scale(0.90);
   }
+  &:disabled {
+    background-color: #7cbef4;
+  }
+
+ 
 `
 
 
