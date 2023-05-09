@@ -7,19 +7,24 @@ export default async function handler(req, res) {
   console.log('reqbody' + JSON.stringify(req.body))
   try {
     await connectMongo();
-    const user = await User.findOne({email: req.body.username , password: req.body.password });
-    
-    if(user) {
+    const result = await User.findOne({email: req.body.username , password: req.body.password });
+
+    console.log('Connect to database and fetch user: ' +   JSON.stringify(result))
+    if(result) {
       const payload = {
         sub: user?.email,
         jti: user?._id,
       }
-
       const accessToken = signJwtAccessToken(payload);
-      res.status(200).json({ success: true, ...user, accessToken: accessToken});
+      const user = {
+        ...result,
+        accessToken
+      }
+   
+     res.status(200).json({ success: false, user: user});
     } 
     else {
-      res.status(200).json({ success: false, user: null });
+      res.status(200).json({ success: false, user: null});
     }
   
     

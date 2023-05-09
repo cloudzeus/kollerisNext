@@ -20,7 +20,7 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
 import { logoutUser } from '@/features/userSlice';
-const LoginForm = ({ csrfToken}) => {
+const LoginForm = () => {
 
     const router =  useRouter();
 	const dispatch = useDispatch();
@@ -90,7 +90,7 @@ const LoginForm = ({ csrfToken}) => {
 					/>
 				</Grid>
 			</Grid>
-            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+            {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
 			<Input
 				id="username"
 				type="text"

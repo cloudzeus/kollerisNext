@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import jwt from 'jsonwebtoken';
 
 export default NextAuth({
   session: {
@@ -22,9 +21,13 @@ export default NextAuth({
               headers: { "Content-Type": "application/json" },
             });
             const res = await resJSON.json();
-			console.log(res);
-            if (res) {
-              return res;
+			console.log('------------------------- USER --------------------------')
+			console.log(res)
+			const user = res;
+			
+			console.log(user)
+            if (user) {
+              return user;
             } else {
               return null;
             }
@@ -35,18 +38,20 @@ export default NextAuth({
 })
     // ...add more providers here
   ],
-  callbacks: {
-    async session({ session, token }) {
-		session.user = token;
-		console.log('------------------------- TOKEN USER --------------------------')
-		console.log(token)
-      return session;
-    },
-    async jwt({ token, user}) {
-	  return {...token, ...user};
-    },
+//   callbacks: {
+//     async session({ session, token }) {
+// 		session.user = token;
+// 		// console.log('------------------------- TOKEN USER --------------------------')
+// 		// console.log(token)
+//       return session;
+//     },
+//     async jwt({ token, user}) {
+// 		console.log('------------------------- TOKEN USER --------------------------')
+// 		console.log(user)
+// 	  return token;
+//     },
     
-  },
+//   },
   pages: {
     signIn: '/auth/signin',
   }
