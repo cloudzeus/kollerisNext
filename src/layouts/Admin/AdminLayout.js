@@ -10,87 +10,42 @@ import { useSession } from "next-auth/react"
 
 
 // const AuthWrapper = ({ children }) => {
-//     const { user } = useSelector(state => state.user)
-//     const [hydrated, setHydrated] = useState(false)
-//     const router = useRouter();
-
+//     const { data: session, status } = useSession()
 //     useEffect(() => {
-//         setHydrated(true)
+//         console.log(session)
 //     }, [])
 
-//     if (!hydrated) {
-//         return null
-//     }
+//     if (status !== "authenticated") {
+//          return (
+//             <>
+//                 <p>You cannot access this page!</p>
+//             </>
+//          )
+//       }
 
-
-
-//     return (
-//         <div>
-//             {!user ? (
-//                 <div>
-//                     <SpinnerDiv>
-//                         <CircularProgress />
-//                     </SpinnerDiv>
-//                 </div>
-
-//             ) : (
-//                 <div>
-//                     {children}
-//                 </div>
-//             )}
-//         </div>
-//     )
+//       return <>{children}</>
 // }
-const AuthWrapper = ({ children }) => {
-    const { data: session, status } = useSession()
-    useEffect(() => {
-        console.log(session)
-    }, [])
-
-    if (status !== "authenticated") {
-         return (
-            <>
-                <p>You cannot access this page!</p>
-            </>
-         )
-      }
-
-      return <>{children}</>
-}
 
 
 
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = ({children}) => {
     const { isSidebarOpen } = useSelector((store) => store.user)
-
     return (
-        // <AuthWrapper>
             <Container>
-            <AdminNavbar />
+                <AdminNavbar />
                 <div className="main-box">
-                        <BigSidebar />
-                        {isSidebarOpen ? (
-                            <SidebarOpenContainer>
-                                {children}
-                            </SidebarOpenContainer>
-                        ) : (
-                            <SidebarClosedContainer>
-                                {children}
-                            </SidebarClosedContainer>
-                        )}
+                    <BigSidebar />
+                    <SidebarContainer isSidebarOpen={isSidebarOpen}>
+                        {children}
+                    </SidebarContainer>
                 </div>
-               
             </Container>
-        // </AuthWrapper>
-    
     )
 }
 
 
-
 const Container = styled.div`
-   
     .main-box {
         width: 100%;
        
@@ -98,11 +53,12 @@ const Container = styled.div`
 
 `
 
-const SidebarOpenContainer = styled.div`
+
+const SidebarContainer = styled.div`
     position: absolute;
     top: 70px;
-    left: 260px;
-    width: calc(100% - 260px);;
+    left: ${({ isSidebarOpen }) => isSidebarOpen ? '260px' : '0'};
+    width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 260px)' : '100%'};
     padding: 40px;
     overflow-y:scroll;
     background-color: ${({ theme }) => theme.palette.background};
@@ -112,31 +68,6 @@ const SidebarOpenContainer = styled.div`
         width: 100%;
         left: 0;
     }
-`
-
-
-
-const SidebarClosedContainer = styled.div`
-    position: absolute;
-    top: 70px;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    overflow-y:scroll;
-    min-height:100vh;
-    background-color: ${({ theme }) => theme.palette.background};
-    padding: 40px;
-    height: calc(100vh - 70px);
-    
-`
-
-const SpinnerDiv = styled.div`
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content:center;
-
 `
 
 
