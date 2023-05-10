@@ -7,21 +7,18 @@ export default async function handler(req, res) {
   console.log('reqbody' + JSON.stringify(req.body))
   try {
     await connectMongo();
-    const result = await User.findOne({email: req.body.username , password: req.body.password });
+    // const result = await User.findOne({email: req.body.username , password: req.body.password });
+    const user = await User.findOne({email: req.body.username , password: req.body.password });
 
-    console.log('Connect to database and fetch user: ' +   JSON.stringify(result))
-    if(result) {
-      const payload = {
-        sub: user?.email,
-        jti: user?._id,
-      }
-      const accessToken = signJwtAccessToken(payload);
-      const user = {
-        ...result,
-        accessToken
-      }
-   
-     res.status(200).json({ success: false, user: user});
+    // console.log('Connect to database and fetch user: ' +   JSON.stringify(result))
+      
+    if(user) {
+		const payload = {
+			sub: user?.email,
+			jti: user?._id,
+		  }
+		  const accessToken = signJwtAccessToken(payload);
+     	res.status(200).json({success: false, accessToken: accessToken, user});
     } 
     else {
       res.status(200).json({ success: false, user: null});
@@ -29,7 +26,7 @@ export default async function handler(req, res) {
   
     
   } catch (error) {
-    res.status(400).json({ success: false });
+    res.status(400).json({ success: false, error: 'failed to fetch user' });
   }
 
 }

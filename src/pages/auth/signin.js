@@ -50,9 +50,9 @@ const LoginForm = () => {
             password: values.password,
             redirect: false,
         })
-		
+		console.log('Signin Page: res: ' + res)
         if(res.ok == true && res.status == 200) {
-            // toast.success('Εγω ειμαι χρήστης');
+            toast.success('Επιτυχής σύνδεση');
 			dispatch(fetchUser({username: values.email, password: values.password}))
 			
             router.push('/dashboard')
