@@ -22,24 +22,9 @@ registerLicense('ORg4AjUWIQA/Gnt2VFhhQlJBfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5
 
 function App({ Component, pageProps: {session, pageProps} }) {
 
-    console.log('session in _app.js')
-    console.log(session)
-    // const router = useRouter();
-    // useEffect(() => {
-    //     // Check if we're on the client side
-    //     if (typeof window !== 'undefined') {
-    //       // Check if the user is authenticated on every page load
-    //       if (router.pathname === '/' && session) {
-    //         // If the user is authenticated and hits the root URL, redirect to dashboard
-    //         router.push('/dashboard');
-    //       } else if (router.pathname !== '/auth/signin' && !session) {
-    //         if (router.pathname !== '/auth/signin') {
-    //             router.push('/auth/signin');
-    //           }
-    //         // If the user is not authenticated and not on the login page, redirect to login
-    //       }
-    //     }
-    //   }, [session, router.pathname]);
+
+
+   
     
     return (
         <>
