@@ -18,6 +18,7 @@ export const fetchUser = createAsyncThunk(
   //action:
   'user/fetchUser',
   async (user, thunkApi) => {
+    console.log(`Fetch User: ${JSON.stringify(user)}`)
     try {
       const resp = await axios.post('/api/user/fetchuser', user)
       return resp.data;
@@ -81,6 +82,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, { payload }) => {
         const { user } = payload;
+        console.log('User in reducers' + JSON.stringify(user))
        
         state.user = user;
         if (user) {
@@ -97,12 +99,12 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
-        // const { user } = payload;
-        console.log('are we here')
-        console.log(payload)
-        // state.isLoading = false;
-        // state.user = user;
-        // addUserToLocalStorage(user)
+        const { user } = payload;
+        // console.log('are we here')
+        // console.log(payload)
+        state.isLoading = false;
+        state.user = user;
+        addUserToLocalStorage(user)
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;

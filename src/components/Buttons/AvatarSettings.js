@@ -22,12 +22,14 @@ const AvatarSettings = () => {
     const route = useRouter();
     const dispatch = useDispatch();
     const session = useSession();
-    const user = session?.data?.user;
+    const  user = session?.data?.user;
+
     const [name, setName] = useState('')
     const onClick = () => {
         setShow(!show)
     }
-
+    
+    
     const onPressLogout = () => {
         signOut({
             redirect: false
@@ -37,9 +39,10 @@ const AvatarSettings = () => {
         dispatch(logoutUser())
     }
 
+    //load name on the welcome bar:
     useEffect(() => {
         if (user) {
-            setName(user.firstName)
+            setName(user.user.firstName)
         }
     }, [name])
 

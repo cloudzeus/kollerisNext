@@ -19,7 +19,11 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
-import { logoutUser } from '@/features/userSlice';
+
+
+
+
+
 const LoginForm = () => {
 
     const router =  useRouter();
@@ -50,7 +54,7 @@ const LoginForm = () => {
         })
 		// console.log('Signin Page: res: ' + JSON.stringify(res))
         if(res.ok == true && res.status == 200 && res.error == null) {
-			dispatch(fetchUser({username: values.email, password: values.password}))
+			dispatch(fetchUser({username: values.username, password: values.password}))
             router.push('/dashboard')
 			setLoading(false);
 			toast.success('Επιτυχής σύνδεση');

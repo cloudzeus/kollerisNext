@@ -8,8 +8,7 @@ export default function Home() {
     const session = useSession();
     const router = useRouter();
         useEffect(() => {
-            console.log('session in index.js')
-            console.log(session)
+            console.log('session in index.js:' + JSON.stringify(session))
             if (session.status === "unauthenticated") {
                 router.push('/auth/signin');
             }

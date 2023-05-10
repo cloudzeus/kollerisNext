@@ -8,7 +8,7 @@ export const getUserFromLocalStorage = () => {
   if (typeof window !== 'undefined') {
     if(localStorage.getItem('user') !== 'undefined') {
       let user = JSON.parse(localStorage.getItem('user') || null)
-      console.log('Utils -> Local Storage -> USER: ' + user)
+      console.log('Utils -> Local Storage -> USER: ' + JSON.stringify(user))
       return user;
     }
    

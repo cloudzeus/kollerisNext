@@ -21,22 +21,22 @@ const Profile = () => {
 
     const [state, setState] = useState({
         _id: '',
-        firstName:  '',
-        lastName:'',
+        firstName: '',
+        lastName: '',
         email: '',
-        landline:  '',
-        mobile:  '',
-        country:  '',
+        landline: '',
+        mobile: '',
+        country: '',
         city: '',
-        address:  '',
-        postalcode:  '',
+        address: '',
+        postalcode: '',
     })
 
-  
+
 
     useEffect(() => {
-            console.log(user)
-          setState({
+        console.log('user in profile: ' + JSON.stringify(user))
+        setState({
             ...state,
             _id: user?._id,
             firstName: user?.firstName,
@@ -51,7 +51,7 @@ const Profile = () => {
         })
     }, [user])
 
-   
+
 
     const handleChange = (e) => {
         const name = e.target.name;
@@ -59,7 +59,7 @@ const Profile = () => {
         setState({ ...state, [name]: value });
     };
 
-    
+
     const handleSelect = (name, value) => {
         setState({ ...state, [name]: value })
     }
@@ -68,7 +68,7 @@ const Profile = () => {
     const handleUpdateUser = async (e) => {
         e.preventDefault()
         dispatch(updateUser(state));
-        
+
     }
     return (
         <AdminLayout >
@@ -137,13 +137,13 @@ const Profile = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <SelectInput 
-                                                id='country' 
-                                                items={['Eλλάδα', 'Αγγλία', 'Ισπανία']} 
-                                                label="Xώρα" 
-                                                onChange={handleSelect} 
+                                            <SelectInput
+                                                id='country'
+                                                items={['Eλλάδα', 'Αγγλία', 'Ισπανία']}
+                                                label="Xώρα"
+                                                onChange={handleSelect}
                                                 value={state.country}
-                                                />
+                                            />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
                                             <Input
@@ -172,7 +172,7 @@ const Profile = () => {
                                                 label="T.K"
                                             />
                                         </Grid>
-                                       
+
                                     </Grid>
                                     <Button onClick={handleUpdateUser}>
                                         Αποθήκευση
