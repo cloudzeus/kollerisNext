@@ -18,10 +18,10 @@ export default async function handler(req, res) {
 			jti: user?._id,
 		  }
 		  const accessToken = signJwtAccessToken(payload);
-     	res.status(200).json({success: false, accessToken: accessToken, user});
+     	res.status(200).json({success: true, accessToken: accessToken, user});
     } 
     else {
-      res.status(200).json({ success: false, user: null});
+      res.status(200).json({success: false, user: null});
     }
   
     

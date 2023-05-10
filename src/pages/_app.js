@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../store';
-import { useEffect, useState } from 'react';
 import { ThemeProvider as ThemeStyledComponentsProvider } from 'styled-components';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { registerLicense } from '@syncfusion/ej2-base';
@@ -11,7 +11,8 @@ import theme from '@/theme/theme';
 
 import { SessionProvider } from "next-auth/react"
 
-
+import { getSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 registerLicense('ORg4AjUWIQA/Gnt2VFhhQlJBfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5XdEBjWnxZc3FWTmhe');
 
@@ -19,8 +20,27 @@ registerLicense('ORg4AjUWIQA/Gnt2VFhhQlJBfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5
 
 
 
-export default function App({ Component, pageProps: {session, pageProps} }) {
+function App({ Component, pageProps: {session, pageProps} }) {
 
+    console.log('session in _app.js')
+    console.log(session)
+    // const router = useRouter();
+    // useEffect(() => {
+    //     // Check if we're on the client side
+    //     if (typeof window !== 'undefined') {
+    //       // Check if the user is authenticated on every page load
+    //       if (router.pathname === '/' && session) {
+    //         // If the user is authenticated and hits the root URL, redirect to dashboard
+    //         router.push('/dashboard');
+    //       } else if (router.pathname !== '/auth/signin' && !session) {
+    //         if (router.pathname !== '/auth/signin') {
+    //             router.push('/auth/signin');
+    //           }
+    //         // If the user is not authenticated and not on the login page, redirect to login
+    //       }
+    //     }
+    //   }, [session, router.pathname]);
+    
     return (
         <>
             <Provider store={store}>
@@ -49,3 +69,9 @@ export default function App({ Component, pageProps: {session, pageProps} }) {
         </>
     )
 }
+
+
+
+  
+
+  export default App;

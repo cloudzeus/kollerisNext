@@ -7,8 +7,8 @@ export const addUserToLocalStorage = (user) => {
 export const getUserFromLocalStorage = () => {
   if (typeof window !== 'undefined') {
     if(localStorage.getItem('user') !== 'undefined') {
-      console.log('Utils -> Local Storage -> ' + localStorage.getItem('user'))
       let user = JSON.parse(localStorage.getItem('user') || null)
+      console.log('Utils -> Local Storage -> USER: ' + user)
       return user;
     }
    

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
+import { logoutUser } from '@/features/userSlice';
 
 const sx = {
     fontSize: '17px',
@@ -19,7 +20,7 @@ const sx = {
 const AvatarSettings = () => {
     const [show, setShow] = useState(false);
     const route = useRouter();
-
+    const dispatch = useDispatch();
     const session = useSession();
     const user = session?.data?.user;
     const [name, setName] = useState('')
@@ -31,7 +32,9 @@ const AvatarSettings = () => {
         signOut({
             redirect: false
         })
+
         route.push('/auth/signin')
+        dispatch(logoutUser())
     }
 
     useEffect(() => {
@@ -92,7 +95,6 @@ const Container = styled.div`
         justify-content: space-between;
         background-color: ${({ theme }) => theme.palette.primary.light};
         border-radius: 30px;
-        /* min-width: 90px; */
         padding: 4px;
     }
     .hiddenDropDown {

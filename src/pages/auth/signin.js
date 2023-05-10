@@ -26,10 +26,9 @@ const LoginForm = () => {
 	const dispatch = useDispatch();
 	const session = useSession();
 
-	const user = session?.data?.user;
 	const [values, setValues] = useState({
-		username: 'johnrambo@gmail.com',
-		password: '12345',
+		username: '',
+		password: '',
 	})
 	
 	const [loading, setLoading] = useState(false);
@@ -45,18 +44,16 @@ const LoginForm = () => {
 		e.preventDefault();
         const res = await signIn("credentials", 
         { 	
-			//here usename will be the email of the use, because NextAUth need a username attribute
             username: values.username, 
             password: values.password,
             redirect: false,
         })
-		console.log('Signin Page: res: ' + res)
-        if(res.ok == true && res.status == 200) {
-            toast.success('Επιτυχής σύνδεση');
+		// console.log('Signin Page: res: ' + JSON.stringify(res))
+        if(res.ok == true && res.status == 200 && res.error == null) {
 			dispatch(fetchUser({username: values.email, password: values.password}))
-			
             router.push('/dashboard')
 			setLoading(false);
+			toast.success('Επιτυχής σύνδεση');
         } else {
             toast.error('Δεν βρέθηκε χρήστης');
 			setLoading(false);

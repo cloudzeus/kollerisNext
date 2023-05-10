@@ -1,14 +1,14 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
+import { useSession } from 'next-auth/react'
 
 export default function Home() {
-  const router = useRouter()
+  // const router = useRouter()
 
-  useEffect(() => {
-    router.push('/auth/signin')
-  }, [])
+  // useEffect(() => {
+  //   router.push('/auth/signin')
+  // }, [])
 
   return (
     <>

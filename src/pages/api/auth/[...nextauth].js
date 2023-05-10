@@ -22,7 +22,7 @@ export default NextAuth({
             });
             const user = await res.json();
 			
-            if (user) {
+            if (user && user.success == true) {
               return user;
             } else {
               return null;
