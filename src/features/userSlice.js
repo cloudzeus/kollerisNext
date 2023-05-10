@@ -28,6 +28,7 @@ export const fetchUser = createAsyncThunk(
   })
 
 
+//REGISTER USER:
 export const registerUser = createAsyncThunk(
   //action:
   'user/registerUser',
@@ -98,13 +99,18 @@ const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, { payload }) => {
-        const { user } = payload;
+      .addCase(registerUser.fulfilled, (state,  {payload} ) => {
+        // const { user } = payload;
+        console.log('Payload in register user: ' + JSON.stringify(payload))
         // console.log('are we here')
         // console.log(payload)
-        state.isLoading = false;
-        state.user = user;
-        addUserToLocalStorage(user)
+        // state.isLoading = false;
+        // state.user = user;
+        // addUserToLocalStorage(user)
+        if(payload?.success == false && payload?.error) {
+          toast.error(payload.error)
+        }
+        
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;

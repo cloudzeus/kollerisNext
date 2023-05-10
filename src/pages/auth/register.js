@@ -1,16 +1,15 @@
 'use client';
 
 import React, { useState } from 'react'
-import { Grid, IconButton } from '@mui/material'
+import { Grid } from '@mui/material'
 import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
 import { Btn } from '@/components/Buttons/styles';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
-import { InputDiv } from '@/components/Forms/FormInput';
 import { useDispatch } from 'react-redux';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { toast } from 'react-toastify';
+
 import { FlexBetween, CenterDiv } from '@/components/styles';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
@@ -20,8 +19,6 @@ import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 const registerPage = () => {
 
-	
-	const [showPass, setShowPass] = useState(false);
 	const dispatch = useDispatch();
 	const router = useRouter()
 	const [values, setValues] = useState({
@@ -39,16 +36,23 @@ const registerPage = () => {
 	}
 
 	const onSubmit = (e) => {
-		e.preventDefault();
-		dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
-		// router.push('/dashboard')
+		if(values.firstName !== '' && values.lastName !== '' && values.password !== '' && values.email !== '' ) {
+			dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
+			// router.push('/dashboard/profile')
+			
+		} else {
+			toast.error('Συμπληρώστε τα απαραίτητα πεδία');
+
+		}
+		
+		
 	}
 	return (
 		<LoginLayout>
 			<Container>
 				<Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
 					<Grid item xs={8}>
-						<StyledHeader>EΓΓΤΡΑΦΗ ΧΡΗΣΤΗ!</StyledHeader>
+						<StyledHeader>EΓΓΡΑΦΗ ΧΡΗΣΤΗ!</StyledHeader>
 						<Subheader>Συμπληρώστε τη φόρμα εγγραφής </Subheader>
 					</Grid>
 					<Grid
@@ -72,7 +76,7 @@ const registerPage = () => {
 							type="text"
 							onChange={handleChange}
 							label="Όνομα"
-							placeholder='john'
+							// placeholder='john'
 						/>
 
 					</Grid>
@@ -82,7 +86,7 @@ const registerPage = () => {
 							type="text"
 							onChange={handleChange}
 							label="Επώνυμο"
-							placeholder='Doe'
+							// placeholder='Doe'
 						/>
 
 					</Grid>
@@ -93,13 +97,13 @@ const registerPage = () => {
 					type="text"
 					onChange={handleChange}
 					label="Email"
-					placeholder='example@gmail.com'
+					// placeholder='example@gmail.com'
 				/>
 				<InputPassword
 					id="password"
 					label="Password"
 					onChange={handleChange}
-					placeholder='******'
+					// placeholder='******'
 				/>
 
 				{/* Checkbox row */}
