@@ -15,17 +15,13 @@ export default NextAuth({
         credentials: {},
        
         async authorize(credentials, req) {
-            const resJSON = await fetch("http://localhost:3000/api/user/login", {
+            const res = await fetch("http://localhost:3000/api/user/login", {
               method: "POST",
               body: JSON.stringify(credentials),
               headers: { "Content-Type": "application/json" },
             });
-            const res = await resJSON.json();
-			console.log('------------------------- USER --------------------------')
-			console.log(res)
-			const user = res.user;
+            const user = await res.json();
 			
-			console.log(user)
             if (user) {
               return user;
             } else {
@@ -38,20 +34,21 @@ export default NextAuth({
 })
     // ...add more providers here
   ],
-//   callbacks: {
-//     async session({ session, token }) {
-// 		session.user = token;
-// 		// console.log('------------------------- TOKEN USER --------------------------')
-// 		// console.log(token)
-//       return session;
-//     },
-//     async jwt({ token, user}) {
-// 		console.log('------------------------- TOKEN USER --------------------------')
-// 		console.log(user)
-// 	  return token;
-//     },
+  callbacks: {
+	async jwt({ token, user}) {
+		console.log('------------------------- TOKEN --------------------------')
+		console.log(token)
+		console.log('------------------------- USER --------------------------')
+		console.log(user)
+	  return {...token, ...user};
+    },
+    async session({ session, token }) {
+		session.user = token;
+      return session;
+    },
+   
     
-//   },
+  },
   pages: {
     signIn: '/auth/signin',
   }
