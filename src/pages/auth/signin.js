@@ -1,62 +1,60 @@
 'use client';
 import React, { useEffect, useState } from 'react'
-import LoginLayout from '@/layouts/Auth/loginLayout'
-import { Grid, IconButton } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import Image from 'next/image'
-import { fetchUser } from '@/features/userSlice';
-
-import CheckboxInput from '@/components/Forms/CheckboxInput';
 import Link from 'next/link';
+//REDUX:
+import { fetchUser } from '@/features/userSlice';
+//TOAST:
+import { toast } from 'react-toastify';
+//COMPONENTS- LAYOYTS: 
+import LoginLayout from '@/layouts/Auth/loginLayout'
+import { Grid } from '@mui/material'
+import Image from 'next/image'
+import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/formStyles';
-// import { Btn } from '@/components/Buttons/styles';
 import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '@/components/styles';
-import { toast } from 'react-toastify';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
-
 import { useSession, signIn, signOut } from "next-auth/react"
 import { getCsrfToken } from "next-auth/react"
-
+//FORMIK:
+import { useFormik } from 'formik';
 
 
 
 
 const LoginForm = () => {
-
     const router =  useRouter();
 	const dispatch = useDispatch();
-	const session = useSession();
 
-	const [values, setValues] = useState({
-		username: '',
-		password: '',
-	})
-	
 	const [loading, setLoading] = useState(false);
 
-	const handleChange = (e) => {
-		const name = e.target.name;
-		const value = e.target.value;
-		setValues({ ...values, [name]: value });
-	};
+	const {values, handleChange} = useFormik({
+		initialValues: {
+			username: '',
+			password: '',
+		}
+	})
 
 	const handleSubmit = async (e) => {
 		setLoading(true);
 		e.preventDefault();
+
+		//Use nextAuth authentificator: 
         const res = await signIn("credentials", 
         { 	
             username: values.username, 
             password: values.password,
             redirect: false,
         })
-		// console.log('Signin Page: res: ' + JSON.stringify(res))
+
+		//if next auth response  is ok:
         if(res.ok == true && res.status == 200 && res.error == null) {
-			dispatch(fetchUser({username: values.username, password: values.password}))
-            router.push('/dashboard')
 			setLoading(false);
+            router.push('/dashboard')
+			dispatch(fetchUser({username: values.username, password: values.password}))
 			toast.success('Επιτυχής σύνδεση');
         } else {
             toast.error('Δεν βρέθηκε χρήστης');
@@ -66,7 +64,6 @@ const LoginForm = () => {
 	}   
 
 
-	
 
 	return (
         <LoginLayout>
@@ -91,7 +88,6 @@ const LoginForm = () => {
 					/>
 				</Grid>
 			</Grid>
-            {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
 			<Input
 				id="username"
 				type="text"
@@ -128,11 +124,6 @@ const LoginForm = () => {
 						Δημιουργία Λογαριασμού
 					</Link>
 				</TextBtn >
-				<div>
-
-
-
-				</div>
 			</CenterDiv>
 		</Container >
       </LoginLayout>
@@ -140,14 +131,6 @@ const LoginForm = () => {
 	)
 }
 
-
-export async function getServerSideProps(context) {
-    return {
-      props: {
-        csrfToken: await getCsrfToken(context),
-      },
-    }
-  }
 
 
 

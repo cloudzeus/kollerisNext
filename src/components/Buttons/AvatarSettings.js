@@ -2,15 +2,16 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider'
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
+
+
+
 
 const sx = {
     fontSize: '17px',
@@ -21,8 +22,7 @@ const AvatarSettings = () => {
     const [show, setShow] = useState(false);
     const route = useRouter();
     const dispatch = useDispatch();
-    const session = useSession();
-    const  user = session?.data?.user;
+    const {user} = useSelector(state => state.user)
 
     const [name, setName] = useState('')
     const onClick = () => {
@@ -42,7 +42,7 @@ const AvatarSettings = () => {
     //load name on the welcome bar:
     useEffect(() => {
         if (user) {
-            setName(user.user.firstName)
+            setName(user.firstName)
         }
     }, [name])
 

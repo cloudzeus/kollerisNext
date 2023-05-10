@@ -1,19 +1,10 @@
-import { Container, Box } from '@mui/material';
-// import styles from 'styles/Sidebar.module.css'
-import styles from '@/styles/Sidebar.module.css'
-
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useSelector, useDispatch } from 'react-redux';
-import { SidebarItem, SidebarItemNoLink } from './SidebarTabs';
-import PersonIcon from '@mui/icons-material/Person';
-import { useTheme } from '@mui/material/styles';
+import { useSelector} from 'react-redux';
+import { SidebarItem } from './SidebarTabs';
 import styled from 'styled-components';
-import Divider from '@mui/material/Divider';
 import LightHeader from '../Text/LightHeader';
-//ICONS:
 import { useState } from 'react';
 import { SidebarExpandableItem } from './SidebarTabs';
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession} from "next-auth/react"
 
 
 const BigSidebar = () => {
