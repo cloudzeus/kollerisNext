@@ -5,7 +5,6 @@ const theme = createTheme({
     primary: {
       light: "#f3f8f9",
       light50: "#e3e6ed",
-    
       // main: "#1b356a",
       // main: "#4fa9ca",
       main: "#2090ED",
@@ -47,7 +46,7 @@ const theme = createTheme({
       charcoalGrey: '#36454F',
       pewter: '#899499',
       light: '#697586',
-      main: '#605c5c',
+      main: '#484848',
     },
     white: '#fff',
     // background: '#F8F9FB',
