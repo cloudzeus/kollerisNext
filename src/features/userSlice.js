@@ -35,9 +35,7 @@ export const registerUser = createAsyncThunk(
 	async (user, thunkApi) => {
 		console.log(`Register User: ${JSON.stringify(user)}`)
 		try {
-			const resp = await axios.post('/api/user/registeruser', {
-
-			}, user)
+			const resp = await axios.post('/api/user/registeruser', user)
 			return resp.data;
 
 		} catch (error) {
@@ -102,13 +100,16 @@ const userSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
+			
 				const { user } = payload;
+				console.log('register user payload:' + JSON.stringify(payload))
 				state.isLoading = false;
-				state.user = user;
-				addUserToLocalStorage(user)
-				// if(payload?.success == false && payload?.error) {
-				//   toast.error(payload.error)
-				// }
+			
+				if(payload.success == true && payload.error == null) {
+					state.user = user;
+					addUserToLocalStorage(user)
+				  	toast.success('Eπιτυχής εγγραφή! Συνδεθείτε τώρα!')
+				}
 
 			})
 			.addCase(registerUser.rejected, (state, { payload }) => {

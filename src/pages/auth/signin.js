@@ -18,7 +18,6 @@ import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '@/components/styles';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
 import { useSession, signIn, signOut } from "next-auth/react"
-import { getCsrfToken } from "next-auth/react"
 //FORMIK:
 import { useFormik } from 'formik';
 
@@ -115,9 +114,7 @@ const LoginForm = () => {
 			</FlexBetween>
 			{/* Login Button */}
 			<Button size={'100%'} loading={loading} onClick={handleSubmit}>Σύνδεση</Button>
-			{/* <Btn onClick={handleSubmit}>Σύνδεση</Btn> */}
 			<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
-
 			<CenterDiv>
 				<TextBtn className='black'>
 					<Link href="/auth/register" >

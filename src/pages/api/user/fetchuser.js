@@ -1,6 +1,6 @@
 
 import User from "../../../../server/models/userModel";
-import connectMongo from "../../../../server/utils/connection";
+import connectMongo from "../../../../server/config";
 export default async function handler(req, res) {
   try {
     await connectMongo();

@@ -1,6 +1,5 @@
 
-import {toast} from 'react-toastify'
-import connectMongo from "../../../../server/utils/connection";
+import connectMongo from '../../../../server/config';
 import User from "../../../../server/models/userModel";
 // 
 
