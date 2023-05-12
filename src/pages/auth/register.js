@@ -44,7 +44,7 @@ const registerPage = () => {
 		}
 	}
 
-	//hook to navigate to the next page after submit -> user object becomes not null from empty object
+	// hook to navigate to the next page after submit -> user object becomes not null from empty object
 	useEffect(() => {
 		console.log('user in register ' + JSON.stringify(user))
 		if(user !== null) {

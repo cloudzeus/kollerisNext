@@ -104,7 +104,7 @@ const userSlice = createSlice({
 				const { user } = payload;
 				state.isLoading = false;
 				state.user = user;
-				state.response = response;
+				state.response = payload;
 				
 			
 			})

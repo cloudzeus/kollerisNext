@@ -1,31 +1,33 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { BasicContainer } from '@/components/styles'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const thanksRegister = () => {
+const ThanksRegister = () => {
     const { user } = useSelector((state) => state.user);
+        const [apiCalled, setApiCalled] = useState(false);
+        
+        // const handleApi = async () => {
+        //     const res = fetch('/api/user/userVerificationViaEmail', {
+        //         method: 'POST',
+        //         body: JSON.stringify(emailBody(user)),
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        // }
 
 
-        const handleApi = async () => {
-        const res = fetch('/api/user/userVerificationViaEmail', {
-            method: 'POST',
-            body: JSON.stringify(emailBody(user)),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-    }
-
-
-    useEffect(() => {
-        if(user !== null) {
-            handleApi(emailBody);
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if(user !== null && !apiCalled && count < 1) {
+    //         handleApi(emailBody);
+    //         setApiCalled(true)
+    //         setCount((prev) => prev + 1)
+    //     }
+    // }, [user, apiCalled])
 
     return (
         <Container>
@@ -35,7 +37,7 @@ const thanksRegister = () => {
                 </div>
                 <div>
                     <h1>Ευχαριστούμε για την εγγραφή σας!</h1>
-                    <p>Ελέγξε το email σας </p>
+                    <p>Μόλις εγγριθεί ο λογαριασμός σας θα σας αποσταλεί email</p>
                 </div>
 
             </MessageBoard >
@@ -43,7 +45,7 @@ const thanksRegister = () => {
     )
 }
 
-export default thanksRegister
+export default ThanksRegister
 
 
 
@@ -62,14 +64,16 @@ const Container = styled.div`
 
 const MessageBoard = styled(BasicContainer)`
     padding: 20px;
+
     display: grid;
     grid-template-columns: 25px 1fr;
     grid-gap: 10px;
 
     
     h1 {
-        font-size: 20px;
-        margin-bottom: 10px;
+        font-size: 18px;
+        margin-bottom: 5px;
+        margin-right: 20px;
     }
     p {
         font-size: 14px;
@@ -77,8 +81,8 @@ const MessageBoard = styled(BasicContainer)`
 
 `
 
-const emailBody = (user) => `
-<p>O χρήστης <strong>${user?.firstName} ${user?.lastName}</strong> έχει ζητήσει εγγραφή στον ιστότοπο σας</p> 
-<p>Πατήστε τον παρακάτω σύνδεσμο για να επιβεβαιώσετε την εγγραφή του</p>
-<a href="http://localhost:3000/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
-`
+// const emailBody = (user) => `
+// <p>O χρήστης <strong>${user?.firstName} ${user?.lastName}</strong> έχει ζητήσει εγγραφή στον ιστότοπο σας</p> 
+// <p>Πατήστε τον παρακάτω σύνδεσμο για να επιβεβαιώσετε την εγγραφή του</p>
+// <a href="http://localhost:3000/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
+// `
