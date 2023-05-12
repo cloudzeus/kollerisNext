@@ -8,27 +8,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ThanksRegister = () => {
     const { user } = useSelector((state) => state.user);
-        const [apiCalled, setApiCalled] = useState(false);
         
-        // const handleApi = async () => {
-        //     const res = fetch('/api/user/userVerificationViaEmail', {
-        //         method: 'POST',
-        //         body: JSON.stringify(emailBody(user)),
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     })
-        // }
-
-
-    // useEffect(() => {
-    //     if(user !== null && !apiCalled && count < 1) {
-    //         handleApi(emailBody);
-    //         setApiCalled(true)
-    //         setCount((prev) => prev + 1)
-    //     }
-    // }, [user, apiCalled])
-
     return (
         <Container>
             <MessageBoard >

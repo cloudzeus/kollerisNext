@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 const registerPage = () => {
-	const {user, isLoading} = useSelector((state) => state.user);
+	const {user, isLoading, error} = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
 	const [values, setValues] = useState({
@@ -50,7 +50,11 @@ const registerPage = () => {
 		if(user !== null) {
 			router.push('/auth/thankyouregistration')
 		} 
-	}, [user])
+
+		if(error !== null) {
+			toast.error(error)
+		}
+	}, [user, error])
 
 
 

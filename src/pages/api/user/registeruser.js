@@ -41,19 +41,25 @@ export default async function handler(req, res) {
 
 
 
+
+
+
+//Call the api to send the email and create the email template:
 const handleApi = async ({user}) => {
-  const res = fetch('http://localhost:3000/api/user/userVerificationViaEmail', {
+  const res = fetch(`${process.env.BASE_URL}/api/user/userVerificationViaEmail`, {
       method: 'POST',
       body: JSON.stringify(emailBody(user)),
       headers: {
           'Content-Type': 'application/json',
       }
   })
+
+
+  const emailBody =`
+  <p>O χρήστης <strong>${user?.firstName} ${user?.lastName}</strong> έχει ζητήσει εγγραφή στον ιστότοπο σας</p> 
+  <p>Πατήστε τον παρακάτω σύνδεσμο για να επιβεβαιώσετε την εγγραφή του</p>
+  <a href="http://localhost:3000/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
+  `
 }
 
 
-const emailBody = (user) => `
-<p>O χρήστης <strong>${user?.firstName} ${user?.lastName}</strong> έχει ζητήσει εγγραφή στον ιστότοπο σας</p> 
-<p>Πατήστε τον παρακάτω σύνδεσμο για να επιβεβαιώσετε την εγγραφή του</p>
-<a href="http://localhost:3000/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
-`

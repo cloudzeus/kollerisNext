@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const initialState = {
 	user: getUserFromLocalStorage(),
-	response: null,
+	error: null,
 	isLoading: false,
 	isSidebarOpen: true,
 }
@@ -101,9 +101,10 @@ const userSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
-				const { user } = payload;
+				const { user, error } = payload;
 				state.isLoading = false;
 				state.user = user;
+				state.error = error;
 				state.response = payload;
 				
 			
@@ -117,7 +118,7 @@ const userSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(updateUser.fulfilled, (state, { payload }) => {
-				const { user } = payload;
+				const { user,} = payload;
 				state.user = user;
 			
 				addUserToLocalStorage(user)
