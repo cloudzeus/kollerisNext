@@ -2,41 +2,30 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import Button from '@/components/Buttons/Button'
-import { useRouter } from 'next/router'
+
 import { BasicContainer } from '@/components/styles'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const thanksRegister = () => {
-    const route = useRouter();
     const { user } = useSelector((state) => state.user);
 
 
+        const handleApi = async () => {
+        const res = fetch('/api/user/userVerificationViaEmail', {
+            method: 'POST',
+            body: JSON.stringify(emailBody(user)),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+    }
 
 
-
-    //     const handleApi = async () => {
-    //     const res = fetch('/api/user/userVerificationViaEmail', {
-    //         method: 'POST',
-    //         body: JSON.stringify(emailBody(user)),
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     })
-    // }
-
-
-    // useEffect(() => {
-    //     if(user && user.role === 'employee') {
-    //         route.push('/auth/login')
-    //     }
-    //     console.log('does user change: ' + user)
-    // }, [user])
-
-
-    // useEffect(() => {
-    //     handleApi(emailBody);
-    // }, [user])
+    useEffect(() => {
+        if(user !== null) {
+            handleApi(emailBody);
+        }
+    }, [user])
 
     return (
         <Container>

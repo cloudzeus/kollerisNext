@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 const initialState = {
 	user: getUserFromLocalStorage(),
+	response: null,
 	isLoading: false,
 	isSidebarOpen: true,
 }
@@ -100,32 +101,32 @@ const userSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
-			
 				const { user } = payload;
-				console.log('register user payload:' + JSON.stringify(payload))
 				state.isLoading = false;
+				state.user = user;
+				state.response = response;
+				
 			
-				if(payload.success == true && payload.error == null) {
-					state.user = user;
-					addUserToLocalStorage(user)
-				  	toast.success('Eπιτυχής εγγραφή! Συνδεθείτε τώρα!')
-				}
-
 			})
 			.addCase(registerUser.rejected, (state, { payload }) => {
 				state.isLoading = false;
+				console.log('rejected in reducers')
 			})
 			//UPDATE USER:
 			.addCase(updateUser.pending, (state) => {
 				state.isLoading = true;
 			})
 			.addCase(updateUser.fulfilled, (state, { payload }) => {
-				console.log(payload)
 				const { user } = payload;
 				state.user = user;
-				state.isLoading = false;
+			
 				addUserToLocalStorage(user)
+
+				if(payload.error) {
+					toast.error = payload.error
+				}
 			})
+		
 			.addCase(updateUser.rejected, (state, { payload }) => {
 				state.isLoading = false;
 			})

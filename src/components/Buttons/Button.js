@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Button = ({children, onClick, loading, size}) => {
   return (
     <Btn size={size} onClick={onClick} disabled={loading}>
-      {loading ? <CircularProgress color='#fff'  size={'20px'}/>  : <>{children}</>}
+      {loading ? <CircularProgress  size={'20px'}/>  : <>{children}</>}
     </Btn>
   )
 }

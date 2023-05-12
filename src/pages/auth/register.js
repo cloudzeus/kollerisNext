@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-
+import Button from '@/components/Buttons/Button';
 import { FlexBetween, CenterDiv } from '@/components/styles';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
 
 const registerPage = () => {
-	const {user} = useSelector((state) => state.user);
+	const {user, isLoading} = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
 	const [values, setValues] = useState({
@@ -36,20 +36,24 @@ const registerPage = () => {
 	}
 
 	const onSubmit = (e) => {
+		e.preventDefault();
 		if(values.firstName !== '' && values.lastName !== '' && values.password !== '' && values.email !== '' ) {
 			dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
-			if(user) {
-				router.push('/auth/thankyouregistration')
-			}
-			
-			
 		} else {
 			toast.error('Συμπληρώστε τα απαραίτητα πεδία');
-
 		}
-		
-		
 	}
+
+	//hook to navigate to the next page after submit -> user object becomes not null from empty object
+	useEffect(() => {
+		console.log('user in register ' + JSON.stringify(user))
+		if(user !== null) {
+			router.push('/auth/thankyouregistration')
+		} 
+	}, [user])
+
+
+
 	return (
 		<LoginLayout>
 			<Container>
@@ -114,7 +118,8 @@ const registerPage = () => {
 					<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
 				</FlexBetween>
 				{/* Login Button */}
-				<Btn onClick={onSubmit}>Εγγραφή</Btn>
+				<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
+
 				<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
 				<CenterDiv>
