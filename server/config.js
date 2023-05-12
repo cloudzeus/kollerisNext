@@ -4,7 +4,3 @@ const connectMongo = async () => mongoose.connect('mongodb+srv://giannischiout:c
 export default connectMongo;
 
 
-const db = mongoose.connection;
-
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Connected to database'));

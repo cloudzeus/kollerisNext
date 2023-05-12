@@ -7,7 +7,6 @@ import { BasicContainer } from '@/components/styles'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ThanksRegister = () => {
-    const { user } = useSelector((state) => state.user);
         
     return (
         <Container>

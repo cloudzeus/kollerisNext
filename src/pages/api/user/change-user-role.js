@@ -1,9 +1,6 @@
 import User from '../../../../server/models/userModel';
 import connectMongo from '../../../../server/config';
-import { addUserToLocalStorage } from '@/utils/localStorage';
 import nodemailer from 'nodemailer';
-import { render } from "@react-email/render";
-import NewUserLogin from '@/emails/NewUserLogin';
 
 const email = 'johnchiout.dev@gmail.com'
 const pass = 'ypbytdbjwumhepop'
@@ -49,7 +46,7 @@ export default async function handler(req, res) {
             await transporter.sendMail({
                 ...mailOptions,
                 subject: `Επιβεβαίωση Εγγραφής`,
-                text: "Ένας νέος χρήστης έχει ζητήσει να εγγραφεί στην ιστοσελίδα σας.",
+                text: "Mπορείτε πλέον να συνδεθείτε κανονικά στην ιστοσελίδα μας.",
                 html: emailTemplate(user)
             })
 

@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
-import { addUserToLocalStorage, getUserFromLocalStorage, removerFromLocalStorage } from "@/utils/localStorage";
+import { addUserToLocalStorage, getUserFromLocalStorage, removeFromLocalStorage } from "@/utils/localStorage";
 import { toast } from 'react-toastify';
+import { remove } from "@syncfusion/ej2-base";
 
 
 const initialState = {
 	user: getUserFromLocalStorage(),
 	error: null,
+	response: null,
 	isLoading: false,
 	isSidebarOpen: true,
 }
@@ -70,7 +72,7 @@ const userSlice = createSlice({
 		logoutUser: (state) => {
 			state.user = null;
 			state.isLoading = false;
-			removerFromLocalStorage();
+			removeFromLocalStorage();
 		},
 
 
@@ -96,23 +98,23 @@ const userSlice = createSlice({
 				state.isLoading = false;
 
 			})
+
+
 			//REGISTER USER:
 			.addCase(registerUser.pending, (state) => {
 				state.isLoading = true;
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
-				const { user, error } = payload;
 				state.isLoading = false;
-				state.user = user;
-				state.error = error;
+				state.user = payload.user;
 				state.response = payload;
-				
-			
 			})
 			.addCase(registerUser.rejected, (state, { payload }) => {
 				state.isLoading = false;
 				console.log('rejected in reducers')
 			})
+
+
 			//UPDATE USER:
 			.addCase(updateUser.pending, (state) => {
 				state.isLoading = true;

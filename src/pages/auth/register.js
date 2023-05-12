@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
-import { Btn } from '@/components/Buttons/styles';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,29 +15,29 @@ import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
+import { useFormik } from 'formik';
+
 
 const registerPage = () => {
-	const {user, isLoading, error} = useSelector((state) => state.user);
+	const {isLoading,response} = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
-	const [values, setValues] = useState({
-		firstName: '',
-		lastName: '',
-		password: '',
-		email: ''
+	
 
+	const {values, handleChange} = useFormik({
+		initialValues: {
+			firstName: '',
+			lastName: '',
+			password: '',
+			email: ''
+		}
 	})
-
-	const handleChange = (e) => {
-		const name = e.target.name;
-		const value = e.target.value;
-		setValues({ ...values, [name]: value });
-	}
 
 	const onSubmit = (e) => {
 		e.preventDefault();
 		if(values.firstName !== '' && values.lastName !== '' && values.password !== '' && values.email !== '' ) {
 			dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
+			router.push('/auth/thankyouregistration')
 		} else {
 			toast.error('Συμπληρώστε τα απαραίτητα πεδία');
 		}
@@ -46,15 +45,15 @@ const registerPage = () => {
 
 	// hook to navigate to the next page after submit -> user object becomes not null from empty object
 	useEffect(() => {
-		console.log('user in register ' + JSON.stringify(user))
-		if(user !== null) {
-			router.push('/auth/thankyouregistration')
-		} 
-
-		if(error !== null) {
-			toast.error(error)
+		console.log('response in register ' + JSON.stringify(response))
+		if(response && response.error !== null) {
+			toast.error(response.error)
 		}
-	}, [user, error])
+		if(response && response.register === true) {
+			
+		}
+
+	}, [response])
 
 
 
