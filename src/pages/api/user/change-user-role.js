@@ -50,7 +50,9 @@ export default async function handler(req, res) {
                 html: emailTemplate(user)
             })
 
-            return res.status(200).json({ success: true, user });
+            // return res.status(200).json({ success: true, user });
+            res.redirect('/auth/admin-email-confirmation');
+
         } else {
             return res.status(200).json({ success: true, error: 'Δεν έγινε η αλλαγή του ρόλου του χρήστη' })
         }

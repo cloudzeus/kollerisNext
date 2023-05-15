@@ -60,7 +60,7 @@ const registerPage = () => {
 	return (
 		<LoginLayout>
 			<Container>
-				<Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
+				<Grid container justifyContent="center" alignItems="center" direction="row" mb='30px'>
 					<Grid item xs={8}>
 						<StyledHeader>EΓΓΡΑΦΗ ΧΡΗΣΤΗ!</StyledHeader>
 						<Subheader>Συμπληρώστε τη φόρμα εγγραφής </Subheader>
@@ -101,7 +101,6 @@ const registerPage = () => {
 
 					</Grid>
 				</Grid>
-
 				<Input
 					id="email"
 					type="text"
