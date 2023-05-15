@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 import { addUserToLocalStorage, getUserFromLocalStorage, removeFromLocalStorage } from "@/utils/localStorage";
 import { toast } from 'react-toastify';
-import { remove } from "@syncfusion/ej2-base";
 
 
 const initialState = {
@@ -29,7 +28,6 @@ export const fetchUser = createAsyncThunk(
 			return thunkApi.rejectWithValue(error.response.data)
 		}
 	})
-
 
 //REGISTER USER:
 export const registerUser = createAsyncThunk(
@@ -133,6 +131,8 @@ const userSlice = createSlice({
 			.addCase(updateUser.rejected, (state, { payload }) => {
 				state.isLoading = false;
 			})
+
+		
 	}
 })
 

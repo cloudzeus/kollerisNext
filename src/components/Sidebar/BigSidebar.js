@@ -23,6 +23,7 @@ const BigSidebar = () => {
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
       <SidebarItem to="/dashboard/test" label="Πελάτες" />
       <SidebarItem to="/dashboard/chart" label="Chart" />
+      <SidebarItem to="/dashboard/admin/admin-panel-users" label="Χρήστες" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <SidebarExpandableItem label="Accordion" open={open} setOpen={onClick}>
         <SidebarItem to="/dashboard/page1" label="Page1" />

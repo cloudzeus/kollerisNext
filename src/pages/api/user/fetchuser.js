@@ -4,7 +4,7 @@ import connectMongo from "../../../../server/config";
 export default async function handler(req, res) {
   try {
     await connectMongo();
-  
+    console.log('reqbody' + JSON.stringify(req.body));
     const user = await User.findOne({email: req.body.username, password: req.body.password });
     console.log('Connect to database and fetch user: ' +   JSON.stringify(user))
     if(user) {
