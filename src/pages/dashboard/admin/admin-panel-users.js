@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter} from '@syncfusion/ej2-react-grids';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useDispatch } from 'react-redux';
+import { DataManager, WebApiAdaptor,  RemoteSaveAdaptor  } from '@syncfusion/ej2-data';
 
 
 function DialogEdit() {
@@ -15,7 +16,7 @@ function DialogEdit() {
 
 const GridTable = () => {
     const [data, setData] = useState([])
-
+    const [hide, show] = useState(false);
 
 
 
@@ -26,6 +27,8 @@ const GridTable = () => {
     const orderidRules = { required: true, number: true };
     const pageSettings = { pageCount: 5 };
     let grid;
+
+
     const handleAdd = async (user) => {
         const resp = await axios.post('/api/admin/users', { action: 'add', ...user })
     }
@@ -45,12 +48,17 @@ const GridTable = () => {
         handleFetchUser();
     }, [])
 
-
+    const dataSource = new DataManager({
+        adaptor: new RemoteSaveAdaptor,
+        insertUrl: '/Home/Insert',
+        json: data,
+        removeUrl: '/Home/Delete',
+        updateUrl: '/Home/Update'
+    });
     
     const actionBegin = (args) => {
         //Function to hide/show columns:
-        console.log(args)
-
+        // console.log(args)
 
         let hideShowCol = (colName, boolean) => {
             let cols = grid.columns;
@@ -68,6 +76,7 @@ const GridTable = () => {
         }
         if ((args.requestType === 'add')) {
             hideShowCol('password', true)
+
         }
 
       
@@ -76,7 +85,10 @@ const GridTable = () => {
     const actionComplete = (args) => {
         if ((args.requestType === 'save')) {
             console.log('new user added')
-            handleAdd(args.data)
+            let saveUser =  handleAdd(args.data)
+            if(saveUser) {
+                console.log(args)
+            }
            
         }
     }
@@ -99,11 +111,10 @@ const GridTable = () => {
                 >
                     <ColumnsDirective>
                         <ColumnDirective allowEditing={false} allowAdding={false} isPrimaryKey={true} field='_id' headerText='Id' width='150'></ColumnDirective>
-                   
                         <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={validationRules} visible='false' ></ColumnDirective>
+                        <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={validationRules} visible={false}></ColumnDirective>
                         <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}></ColumnDirective>
                     </ColumnsDirective>
                     <Inject services={[Page, Edit, Toolbar, Filter]} />
