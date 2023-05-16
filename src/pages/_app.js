@@ -19,7 +19,6 @@ function App({ Component, pageProps: {session, pageProps} }) {
 
     
     return (
-        <>
             <Provider store={store}>
                     <ThemeStyledComponentsProvider theme={theme}>
                         <ThemeProvider theme={theme}>
@@ -43,7 +42,6 @@ function App({ Component, pageProps: {session, pageProps} }) {
                         </ThemeProvider>
                     </ThemeStyledComponentsProvider>
             </Provider>
-        </>
     )
 }
 

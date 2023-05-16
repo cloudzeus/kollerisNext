@@ -87,13 +87,8 @@ export const InputDiv = styled.div`
 
   }
   
-
-
  
-  
-   
 
   
 `
-
 
