@@ -15,12 +15,13 @@ export default async function handler(req, res) {
             let password = req.body.password;
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
+
             console.log('hassPassword' + JSON.stringify(hashPassword ))
             const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: req.body.role })
             console.log('user: ' + JSON.stringify(user)) 
             if(user) {
                 res.status(200).json({success: true, user: user});
-            }
+            } 
             else {
             res.status(200).json({success: false, user: null});
             }
@@ -67,6 +68,7 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const user = await User.find({});
+            // console.log('------------ Request to the database to fetch all users: ' + JSON.stringify(user))
         
             if(user) {
                 res.status(200).json({success: true, user: user});

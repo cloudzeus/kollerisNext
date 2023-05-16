@@ -1,9 +1,10 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter} from '@syncfusion/ej2-react-grids';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { useDispatch } from 'react-redux';
-import { DataManager, WebApiAdaptor,  RemoteSaveAdaptor  } from '@syncfusion/ej2-data';
+
 
 
 function DialogEdit() {
@@ -16,8 +17,8 @@ function DialogEdit() {
 
 const GridTable = () => {
     const [data, setData] = useState([])
-    const [hide, show] = useState(false);
-
+    const [visible, setVisible] = useState(true)
+    const [action, setAction] = useState(true)
 
 
     const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
@@ -31,6 +32,8 @@ const GridTable = () => {
 
     const handleAdd = async (user) => {
         const resp = await axios.post('/api/admin/users', { action: 'add', ...user })
+        setAction(prev => !prev)
+        setVisible(prev => !prev)
     }
 
 
@@ -46,54 +49,53 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-    }, [])
+    }, [action])
 
-    const dataSource = new DataManager({
-        adaptor: new RemoteSaveAdaptor,
-        insertUrl: '/Home/Insert',
-        json: data,
-        removeUrl: '/Home/Delete',
-        updateUrl: '/Home/Update'
-    });
     
+    // let hideShowCol = (colName, boolean) => {
+    //     let cols = grid?.columns;
+    //     for (const col of cols) {
+
+    //         if (col.field === colName) {
+    //             col.visible = boolean;
+    //         }
+    //     }
+    // }
+    
+
     const actionBegin = (args) => {
-        //Function to hide/show columns:
-        // console.log(args)
-
-        let hideShowCol = (colName, boolean) => {
-            let cols = grid.columns;
-            for (const col of cols) {
-
-                if (col.field === colName) {
-                    col.visible = boolean;
-                }
-            }
-        }
-      
-
+        
         if ((args.requestType === 'beginEdit' || args.requestType === 'add')) {
-            hideShowCol('_id', false)
+            console.log('arguments type')
+            console.log(args)
+         
         }
         if ((args.requestType === 'add')) {
-            hideShowCol('password', true)
-
+            // hideShowCol('password', true)
+            // setVisible(prev => !prev)
+            setVisible(prev => !prev)
         }
 
       
     };
 
+
+    //Αdd and save user
     const actionComplete = (args) => {
+
+        
         if ((args.requestType === 'save')) {
-            console.log('new user added')
-            let saveUser =  handleAdd(args.data)
-            if(saveUser) {
-                console.log(args)
+            let added = handleAdd(args.data)
+            if(added) {
+                args.cancel = false;
             }
-           
+            if(!added) {
+                args.cancel = true;
+            }
         }
     }
 
-
+   
 
 
     return (
@@ -110,12 +112,12 @@ const GridTable = () => {
                     ref={g => grid = g}
                 >
                     <ColumnsDirective>
-                        <ColumnDirective allowEditing={false} allowAdding={false} isPrimaryKey={true} field='_id' headerText='Id' width='150'></ColumnDirective>
+                        <ColumnDirective allowEditing={false} allowAdding={false} isPrimaryKey={true} field='_id' headerText='Id' width='150' visible={visible}></ColumnDirective>
                         <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={validationRules} visible={false}></ColumnDirective>
-                        <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}></ColumnDirective>
+                        <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={validationRules} visible={!visible} ></ColumnDirective>
+                        <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}  validationRules={validationRules}></ColumnDirective>
                     </ColumnsDirective>
                     <Inject services={[Page, Edit, Toolbar, Filter]} />
                 </GridComponent>
@@ -125,6 +127,7 @@ const GridTable = () => {
     )
 
 }
+
 
 
 export default DialogEdit;
