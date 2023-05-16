@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,165 +6,95 @@ import styled from "styled-components";
 import { IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import LoginLayout from '@/layouts/Auth/loginLayout'
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+//REDUX:
+import { fetchUser } from '@/features/userSlice';
+//TOAST:
+import { toast } from 'react-toastify';
+//COMPONENTS- LAYOYTS: 
+import { Grid } from '@mui/material'
+import Image from 'next/image'
+import CheckboxInput from '@/components/Forms/CheckboxInput';
+import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/formStyles';
+import Button from '@/components/Buttons/Button';
+import Divider from '@mui/material/Divider';
+import { FlexBetween, CenterDiv } from '@/components/styles';
+import { useSession, signIn, signOut } from "next-auth/react"
+//FORMIK:
+
+import { InputStyled, InputPass } from "@/components/Forms/FormInput";
+
 
 const schema = yup.object().shape({
     email: yup.string().email('Λάθος format email').required('Το email είναι υποχρεωτικό'),
-    password: yup.string().min(8).max(32).required(),
-    firstName: yup.string().required('Το όνομα είναι υποχρεωτικό'),
+    password: yup.string().min(5).max(32).required(),
 });
 
 const Form = () => {
+    const [loading, setLoading] = useState(false);
+    const router =  useRouter();
+    const dispatch = useDispatch();
+
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(schema),
     });
 
-    const onSubmit = (data) => {
-        console.log({ data });
+    const onSubmit = async (data, event) => {
+        event.preventDefault();
+        console.log(data)
+            const res = await signIn("credentials", 
+            { 	
+                username: data.email, 
+                password: data.password,
+                redirect: false,
+            })
+            console.log(res)
+            // //if next auth response  is ok:
+            if(res.ok == true && res.status == 200 && res.error == null) {
+                setLoading(false);
+                router.push('/dashboard')
+                dispatch(fetchUser({username: data.email, password: data.password}))
+                toast.success('Επιτυχής σύνδεση');
+            } else {
+
+                toast.error('Δεν βρέθηκε χρήστης');
+                setLoading(false);
+            }
         reset();
+      
     };
 
-    const [showPass, setShowPass] = React.useState(false);
     return (
-        <Wrapper>
-            <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                <Input
-                    label="Name"
-                    name="firstName"
-                    type="text"
-                    register={register}
-                    error={errors.firstName}
-                />
-                <Input
+        < LoginLayout >
+         <Container >
+         <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                <InputStyled
                     label="email"
                     name="email"
                     type="email"
                     register={register}
                     error={errors.email}
                 />
-                {/* <InputPass
+                <InputPass
                     label="Κωδικός"
                     name="password"
                     register={register}
-                    error={errors.email}
-                /> */}
+                    error={errors.password}
+                />
                 <button type="submit">Sign in</button>
             </form>
-        </Wrapper>
+         </Container>
+         
+        </LoginLayout>
+        
+         
     );
 };
 
 
-export const InputPass = ({error, name , label, placeholder, }) => {
-    const [showPass, setShowPass] = React.useState(false);
-    return (
-        <Container>
-            <div  className="input" error={error}  >
-                <label htmlFor={name}>{label}</label>
-                <input name={name}  type={showPass ? 'text' : 'password'} placeholder={placeholder} />
-                <IconButton className='showPassIcon' onClick={() => setShowPass(prev => !prev)}>
-                    {showPass ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-            </div>
-        </Container>
-    )
-}
 
-
-export const Input = ({ name, type, label, placeholder, register, error, mt }) => {
-    return (
-        <Container error={error}>
-            <div mt={mt} className="input" error={error}  >
-                <label htmlFor={name}>{label}</label>
-                <input name={name} type={type} placeholder={placeholder}  {...register(name)} />
-            </div>
-            {error && <span className="error-text">! {error.message}</span>}
-        </Container>
-    )
-}
-
-
-const errorColor = '#ff0033'
-
-const Wrapper = styled.div`
-    padding: 10px;
-
-`
-
-export const Container = styled.div`
-  min-height: 65px;
- 
-  /* background-color: lightblue; */
-  margin-bottom: 2px;
-  .input {
-    display: flex;
-  flex-direction: column;
-  width: 100%;
-  position: relative;
-  font-weight: 600;
-  margin-bottom: 2px;
-  margin-top: ${props => props.mt ? `${props.mt}px` : '0px'};
-  background-color: ${props => props.theme.palette.background};
-  /* border: 1px solid #eaeaea ; */
-  border-radius: 5px;
-  padding: 10px;
-  border: 2px solid ${props => props.error ? errorColor : ' transparent'};
-  }
-
-  //change the border color when the input is focused
-  & .input:focus-within{
-    border-color:${props => props.error ? errorColor : props.theme.palette.primary.main};
-  }
-  //change the label when the input is focused
-  & .input:focus-within label{
-    color: ${props => props.error ? errorColor : props.theme.palette.primary.main};
-  }
-  
-  & .focusDiv label:valid {
-    border-color: pink;
-  }
-  
-  
-  label {
-      font-size: 10px;
-      letter-spacing: 0.9px;
-      font-weight: 600;
-      margin-bottom: 1px;
-        color: ${props => props.error ? errorColor : props.theme.palette.text.light};
-
-  }
-  input {
-    outline: none;
-    width: 100%;
-    display: flex;
-    border-style: none;
-    font-size: 14px;
-    letter-spacing: 0.3px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    margin-top: 2px;
-    height: 100%;
-    background-color: ${props => props.theme.palette.background};
-
-    }
- 
-  .showPassIcon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-
-  }
-  
-  .error-text {
-    color: red;
-    margin-left: 5px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-  
-
-  
-`
 
 export default Form;
