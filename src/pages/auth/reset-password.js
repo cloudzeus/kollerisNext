@@ -1,25 +1,49 @@
 import React from 'react'
-import { Container } from '@/components/Forms/formStyles'
 import LoginLayout from '@/layouts/Auth/loginLayout'
 import { InputDiv } from '@/components/Forms/FormInput'
 import { Btn } from '@/components/Buttons/styles'
 import styled, { useTheme } from 'styled-components'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+import { InputStyled } from '@/components/Forms/FormInput'
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = yup.object().shape({
+	email: yup.string().required('Συμπληρώστε το email').email('Λάθος format email'),
+});
+
 const ResetPassword = () => {
   const [submit, setSubmit] = React.useState(false)
+  const [email, setEmail] = React.useState('')
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+		resolver: yupResolver(schema),
+	});
+
+  const ResetPassword = async (event , data) => {
+    setSubmit(prev => !prev)
+  } 
+
   return (
     <LoginLayout>
-      <Container>
+      <Container className='box'>
         {!submit ? (
           <>
             <Header>
               Εισάγετε την διεύθυνση email σας και θα σας στείλουμε έναν σύνδεσμο για την επαναφορά του κωδικού πρόσβασης.
             </Header>
-            <InputDiv mt={10}>
-              <input className="customInput" placeholder='example@gmail.com' name="name" id="my-name" type='text' />
-              <label className="customLabel" htmlFor="my-name">Διεύθυνση Email</label>
-            </InputDiv>
-            <Btn onClick={() => setSubmit(prev => !prev)}>Αποστολή συνδέσμου στο Email</Btn>
+				    <form noValidate onSubmit={handleSubmit(ResetPassword)}>
+
+            </form>
+							<InputStyled
+								label="Email"
+								name="email"
+								type="email"
+								register={register}
+								error={errors.email}
+							/>
+            <Btn >Αποστολή συνδέσμου στο Email</Btn>
           </>
         ) : (
           <SuccessMessage />
@@ -51,4 +75,9 @@ const Header = styled.h1`
   margin-bottom: 30px;
 `
 
+
+const Container = styled.div`
+  max-width: 500px;
+  border-top: ;
+`
 export default ResetPassword

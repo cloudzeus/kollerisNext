@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import NextLink from 'next/link';
@@ -10,10 +10,15 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
   const router = useRouter();
   const theme = useTheme()
   const active = router.pathname === to;
+  const [count, setCount] = useState(0)
+
+  useEffect(() => { setCount((prev) => prev + 1)}, [])
+
+  console.log('count in SidebarTabs: ' + count)
 
   return (
     <NextLink href={to} passHref>
-      <StyledSpan $extraPad subItem={subItem} active={active} theme={theme}>
+      <StyledSpan  subItem={subItem} active={active} theme={theme}>
         {icon}
         <SidebarTextExtraPad>{label}</SidebarTextExtraPad>
       </StyledSpan >

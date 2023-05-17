@@ -7,6 +7,7 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 
+import { DataManager, RemoteSaveAdaptor } from '@syncfusion/ej2-data';
 
 function DialogEdit() {
     return (
@@ -37,7 +38,13 @@ const GridTable = () => {
         minLength: [5, 'Τουλάχιστον 5 χαρακτήρες'],
     }
    
-
+    const dataSource = new DataManager({
+        adaptor: new RemoteSaveAdaptor,
+        insertUrl: 'http://localhost:3000/api/admin/users/insert',
+        json: data,
+        // removeUrl: '/Home/Delete',
+        // updateUrl: '/Home/Update'
+    });
 
     const handleCRUD = async (data, action) => {
         console.log(`Action is: ${action}, data: ${JSON.stringify(data)}`)
@@ -107,12 +114,13 @@ const GridTable = () => {
            <div className='control-pane'>
             <div className='control-section'>
                 <GridComponent
-                    dataSource={data}
+                    // dataSource={data}
+                    dataSource={dataSource}
                     toolbar={toolbarOptions}
                     allowPaging={true}
                     editSettings={editSettings}
                     pageSettings={pageSettings}
-                    actionComplete={actionComplete}
+                    // actionComplete={actionComplete}
                     
                 >
                     <ColumnsDirective  >
