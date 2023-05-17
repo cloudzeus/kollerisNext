@@ -1,6 +1,11 @@
 'use client';
-
 import React, { useEffect, useState } from 'react'
+//Yup and useForm
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+
 import { Grid } from '@mui/material'
 import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
@@ -16,44 +21,52 @@ import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import { Input, InputPassword } from '@/components/Forms/FormInput';
 import { useFormik } from 'formik';
+import { InputStyled, InputPass } from "@/components/Forms/FormInput";
+
+
+const registerSchema = yup.object().shape({
+	firstName: yup.string().required('Συμπληρώστε το όνομα'),
+	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
+	email: yup.string().required('Συμπληρώστε το email').email('Λάθος format email'),
+	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες'),
+});
+
+
 
 
 const registerPage = () => {
-	const {isLoading,response} = useSelector((state) => state.user);
+	const { isLoading, response } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
-	
 
-	const {values, handleChange} = useFormik({
-		initialValues: {
-			firstName: '',
-			lastName: '',
-			password: '',
-			email: ''
-		}
-	})
 
-	const onSubmit = (e) => {
-		e.preventDefault();
-		if(values.firstName !== '' && values.lastName !== '' && values.password !== '' && values.email !== '' ) {
-			dispatch(registerUser({ firstName: values.firstName, password: values.password, lastName: values.lastName, email: values.email }))
+	const { register, handleSubmit, formState: { errors }, reset } = useForm({
+		resolver: yupResolver(registerSchema),
+	});
+
+
+	const onSubmit = async (data) => {
+
+		console.log(data)
+		if (data?.firstName && data?.lastName && data?.email && data?.password) {
+			dispatch(registerUser({ firstName: data.firstName, password: data.password, lastName: data.lastName, email: data.email }))
 			router.push('/auth/thankyouregistration')
-		} else {
-			toast.error('Συμπληρώστε τα απαραίτητα πεδία');
 		}
+
+		// toast.error('Συμπληρώστε τα απαραίτητα πεδία');
 	}
 
 	// hook to navigate to the next page after submit -> user object becomes not null from empty object
-	useEffect(() => {
-		console.log('response in register ' + JSON.stringify(response))
-		if(response && response.error !== null) {
-			toast.error(response.error)
-		}
-		if(response && response.register === true) {
-			
-		}
+	// useEffect(() => {
+	// 	console.log('response in register ' + JSON.stringify(response))
+	// 	if(response && response.error !== null) {
+	// 		toast.error(response.error)
+	// 	}
+	// 	if(response && response.register === true) {
 
-	}, [response])
+	// 	}
+
+	// }, [response])
 
 
 
@@ -79,48 +92,55 @@ const registerPage = () => {
 						/>
 					</Grid>
 				</Grid>
-				<Grid container justifyContent="center" alignItems="center" direction="row" columnSpacing={2}>
-					<Grid item xs={6}>
-						<Input
-							id="firstName"
-							type="text"
-							onChange={handleChange}
-							label="Όνομα"
-							// placeholder='john'
-						/>
 
+				<form noValidate onSubmit={handleSubmit(onSubmit)}>
+					<Grid container justifyContent="center" alignItems="center" direction="row" columnSpacing={2}>
+						<Grid item xs={6}>
+						
+							<InputStyled
+								label="Όνομα"
+								name="firstName"
+								type="text"
+								register={register}
+								error={errors.firstName}
+							/>
+
+						</Grid>
+						<Grid item xs={6}>
+						
+							<InputStyled
+								label="Επώνυμο"
+								name="lastName"
+								type="text"
+								register={register}
+								error={errors.lastName}
+							/>
+
+						</Grid>
 					</Grid>
-					<Grid item xs={6}>
-						<Input
-							id="lastName"
-							type="text"
-							onChange={handleChange}
-							label="Επώνυμο"
-							// placeholder='Doe'
-						/>
+					
+					<InputStyled
+						label="email"
+						name="email"
+						type="email"
+						register={register}
+						error={errors.email}
+					/>
+					<InputPass
+						label="Κωδικός"
+						name="password"
+						register={register}
+						error={errors.password}
+					/>
 
-					</Grid>
-				</Grid>
-				<Input
-					id="email"
-					type="text"
-					onChange={handleChange}
-					label="Email"
-					// placeholder='example@gmail.com'
-				/>
-				<InputPassword
-					id="password"
-					label="Password"
-					onChange={handleChange}
-					// placeholder='******'
-				/>
+					{/* Checkbox row */}
+					<FlexBetween>
+						<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
+					</FlexBetween>
+					{/* Login Button */}
+					<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
+				</form>
 
-				{/* Checkbox row */}
-				<FlexBetween>
-					<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
-				</FlexBetween>
-				{/* Login Button */}
-				<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
 
 				<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
