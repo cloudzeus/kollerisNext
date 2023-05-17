@@ -15,6 +15,13 @@ function DialogEdit() {
     );
 }
 
+
+const validatePassword = (args) => {
+    if (args.value.length < 6) {
+      args.hasError = true;
+      args.error = 'Password must be at least 6 characters long.';
+    }
+  };
 const GridTable = () => {
     const [data, setData] = useState([])
     const [visible, setVisible] = useState(true)
@@ -27,7 +34,9 @@ const GridTable = () => {
     const validationRules = { required: true };
     const orderidRules = { required: true, number: true };
     const pageSettings = { pageCount: 5 };
-    let grid;
+    const passwordValidation = {
+        minLength: [5, 'Τουλάχιστον 5 χαρακτήρες'],
+    }
 
 
     const handleAdd = async (user) => {
@@ -49,42 +58,21 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-    }, [action])
+    }, [])
 
     
-    // let hideShowCol = (colName, boolean) => {
-    //     let cols = grid?.columns;
-    //     for (const col of cols) {
-
-    //         if (col.field === colName) {
-    //             col.visible = boolean;
-    //         }
-    //     }
-    // }
+   
     
-
     const actionBegin = (args) => {
-        
-        if ((args.requestType === 'beginEdit' || args.requestType === 'add')) {
-            console.log('arguments type')
-            console.log(args)
-         
-        }
-        if ((args.requestType === 'add')) {
-            // hideShowCol('password', true)
-            // setVisible(prev => !prev)
-            setVisible(prev => !prev)
-        }
-
       
     };
 
 
     //Αdd and save user
     const actionComplete = (args) => {
-
-        
+        console.log(args)
         if ((args.requestType === 'save')) {
+          
             let added = handleAdd(args.data)
             if(added) {
                 args.cancel = false;
@@ -109,15 +97,13 @@ const GridTable = () => {
                     pageSettings={pageSettings}
                     actionBegin={actionBegin}
                     actionComplete={actionComplete}
-                    ref={g => grid = g}
                 >
                     <ColumnsDirective>
-                        <ColumnDirective allowEditing={false} allowAdding={false} isPrimaryKey={true} field='_id' headerText='Id' width='150' visible={visible}></ColumnDirective>
                         <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={validationRules} visible={!visible} ></ColumnDirective>
-                        <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}  validationRules={validationRules}></ColumnDirective>
+                        <ColumnDirective field='password' headerText='Kωδικός' width='100'  validationRules={passwordValidation}  template={rowData => '••••••••••'}  ></ColumnDirective>
+                        <ColumnDirective field='role'  headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}  validationRules={validationRules}></ColumnDirective>
                     </ColumnsDirective>
                     <Inject services={[Page, Edit, Toolbar, Filter]} />
                 </GridComponent>

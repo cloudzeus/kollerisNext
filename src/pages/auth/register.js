@@ -28,7 +28,7 @@ const registerSchema = yup.object().shape({
 	firstName: yup.string().required('Συμπληρώστε το όνομα'),
 	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
 	email: yup.string().required('Συμπληρώστε το email').email('Λάθος format email'),
-	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες'),
+	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες').max(15, 'Μέχρι 15 χαρακτήρες'),
 });
 
 
