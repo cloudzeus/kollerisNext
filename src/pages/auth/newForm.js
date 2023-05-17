@@ -70,6 +70,26 @@ const Form = () => {
     return (
         < LoginLayout >
          <Container >
+         <Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
+				<Grid item xs={8}>
+					<StyledHeader>ΚΑΛΩΣ ΗΡΘΑΤΕ!</StyledHeader>
+					<Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
+				</Grid>
+				<Grid
+					item
+					container
+					xs={4}
+					justifyContent="flex-end"
+					alignItems="center"
+				>
+					<Image
+						src="/static/imgs/logoDG.png"
+						alt="Picture of the author"
+						width={100}
+						height={28}
+					/>
+				</Grid>
+			</Grid>
          <form noValidate onSubmit={handleSubmit(onSubmit)}>
                 <InputStyled
                     label="email"
@@ -84,7 +104,27 @@ const Form = () => {
                     register={register}
                     error={errors.password}
                 />
-                <button type="submit">Sign in</button>
+                {/* <button type="submit">Sign in</button> */}
+                
+                {/* Checkbox row */}
+                <FlexBetween>
+                    <CheckboxInput label={'Αποθήκευση κωδικού'} />
+                    <TextBtn >
+                        <Link href="/auth/reset-password" >
+                            Αλλαγή κωδικού
+                        </Link>
+                    </TextBtn >
+                </FlexBetween>
+                {/* Login Button */}
+                <Button size={'100%'} type="submit" loading={loading} onClick={handleSubmit}>Σύνδεση</Button>
+                <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
+                <CenterDiv>
+                    <TextBtn className='black'>
+                        <Link href="/auth/register" >
+                            Δημιουργία Λογαριασμού
+                        </Link>
+                    </TextBtn >
+                </CenterDiv>
             </form>
          </Container>
          
