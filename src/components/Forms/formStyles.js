@@ -32,7 +32,7 @@ const CheckBoxDiv = styled.div`
     label {
       display: flex;
       align-items: center;
-      height: 50px;
+      height: 40px;
     }
     span {
       margin-left: 10px;

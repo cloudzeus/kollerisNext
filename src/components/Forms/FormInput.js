@@ -93,8 +93,8 @@ export const InputDiv = styled.div`
 export const InputPass = ({error, name , label, placeholder, register}) => {
   const [showPass, setShowPass] = React.useState(false);
   return (
-      <Container>
-          <div className="input" error={error}  >
+      <Container  error={error}>
+          <div className="input"  >
               <label htmlFor={name}>{label}</label>
               <input name={name}  type={showPass ? 'text' : 'password'} placeholder={placeholder}  {...register(name)}/>
               <IconButton className='showPassIcon' onClick={() => setShowPass(prev => !prev)}>

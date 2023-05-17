@@ -29,8 +29,8 @@ import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 
 
 const schema = yup.object().shape({
-    email: yup.string().email('Λάθος format email').required('Το email είναι υποχρεωτικό'),
-    password: yup.string().min(5).max(32).required(),
+    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
+    password: yup.string().required('Συμπληρώστε τον κωδικό'),
 });
 
 const Form = () => {
@@ -133,6 +133,8 @@ const Form = () => {
          
     );
 };
+
+
 
 
 
