@@ -22,7 +22,7 @@ import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/
 import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '@/components/styles';
-import { useSession, signIn, signOut } from "next-auth/react"
+import { signIn, } from "next-auth/react"
 //FORMIK:
 
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
