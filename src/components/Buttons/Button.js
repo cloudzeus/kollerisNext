@@ -24,7 +24,7 @@ export const Btn = styled.button`
   background-color: ${props => props.theme.palette.primary.main};
   border-radius: 4px;
   outline: none;
-  height: 40px;
+  height: 50px;
   border-style: none;
   color: white;
   letter-spacing: 0.7px;

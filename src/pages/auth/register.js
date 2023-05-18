@@ -38,7 +38,7 @@ const registerPage = () => {
 	const { isLoading, response } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
-
+	
 
 	const { register, handleSubmit, formState: { errors }, reset } = useForm({
 		resolver: yupResolver(registerSchema),
@@ -56,17 +56,7 @@ const registerPage = () => {
 		// toast.error('Συμπληρώστε τα απαραίτητα πεδία');
 	}
 
-	// hook to navigate to the next page after submit -> user object becomes not null from empty object
-	// useEffect(() => {
-	// 	console.log('response in register ' + JSON.stringify(response))
-	// 	if(response && response.error !== null) {
-	// 		toast.error(response.error)
-	// 	}
-	// 	if(response && response.register === true) {
-
-	// 	}
-
-	// }, [response])
+	
 
 
 
@@ -75,7 +65,7 @@ const registerPage = () => {
 			<Container>
 				<Grid container justifyContent="center" alignItems="center" direction="row" mb='30px'>
 					<Grid item xs={8}>
-						<StyledHeader>EΓΓΡΑΦΗ ΧΡΗΣΤΗ!</StyledHeader>
+						<h1 className="primaryHeader">EΓΓΡΑΦΗ ΧΡΗΣΤΗ</h1>
 						<Subheader>Συμπληρώστε τη φόρμα εγγραφής </Subheader>
 					</Grid>
 					<Grid

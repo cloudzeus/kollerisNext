@@ -91,6 +91,7 @@ export const InputDiv = styled.div`
 
 
 export const InputPass = ({error, name , label, placeholder, register}) => {
+;
   const [showPass, setShowPass] = React.useState(false);
   return (
       <Container  error={error}>
@@ -125,7 +126,7 @@ const errorColor = '#ff0033'
 
 
 export const Container = styled.div`
-min-height: 76px;
+min-height: 65px;
 /* background-color: lightblue; */
 margin-bottom: 5px;
 .input {

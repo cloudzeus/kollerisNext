@@ -3,7 +3,7 @@ import React from 'react'
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from '../Buttons/Button';
-const FormWrapper = ({ children, onSubmit, btnSize, btnText }) => {
+const Form = ({ children, onSubmit, btnSize, btnText, schema }) => {
    
     const {
         register,
@@ -29,4 +29,4 @@ const FormWrapper = ({ children, onSubmit, btnSize, btnText }) => {
     
 }
 
-export default FormWrapper
+export default Form;

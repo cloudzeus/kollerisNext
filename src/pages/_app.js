@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../store';
-import { ThemeProvider as ThemeStyledComponentsProvider } from 'styled-components';
+import styled, { ThemeProvider as ThemeStyledComponentsProvider } from 'styled-components';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { ToastContainer, toast } from 'react-toastify';
@@ -36,7 +36,10 @@ function App({ Component, pageProps: {session, pageProps} }) {
                                     pauseOnHover
                                     theme="light"
                                 />
-                                <Component {...pageProps} />\
+                                <GeneralContainer>
+                                    <Component {...pageProps} />
+                                </GeneralContainer>
+                       
                             </SessionProvider>
                            
                         </ThemeProvider>
@@ -46,7 +49,22 @@ function App({ Component, pageProps: {session, pageProps} }) {
 }
 
 
+const GeneralContainer = styled.div`
+    .box {
+        background-color: white;
+        border-radius: 5px;     
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        padding: 20px;
+        
+    }
 
+    .primaryHeader {
+        color: ${props => props.theme.palette.primary.main};
+        font-size: 25px;
+        font-weight: 900;
+        font-family: 'Roboto Condensed', 'Roboto', sans-serif;
+    }
+`
   
 
   export default App;

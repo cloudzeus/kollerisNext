@@ -47,8 +47,6 @@ const StyledHeader = styled.h1`
   font-size: 1.2rem;
   color: ${props => props.theme.palette.primary.main};
   font-weight: 900;
-  font-family: 'Roboto Condensed', 'Roboto', sans-serif;
-  margin-bottom: 3px;
 `
 
 const Subheader = styled.h2`

@@ -16,12 +16,7 @@ function DialogEdit() {
 }
 
 
-const validatePassword = (args) => {
-    if (args.value.length < 6) {
-      args.hasError = true;
-      args.error = 'Password must be at least 6 characters long.';
-    }
-  };
+
 const GridTable = () => {
     const [data, setData] = useState([])
     const [visible, setVisible] = useState(true)
