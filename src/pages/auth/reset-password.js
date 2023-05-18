@@ -11,6 +11,7 @@ import axios from 'axios'
 
 const ResetPassword = () => {
   const [submit, setSubmit] = useState(false)
+  const [error, setError] = useState(false)
   
   const [loading, setLoading] = useState(false);
 

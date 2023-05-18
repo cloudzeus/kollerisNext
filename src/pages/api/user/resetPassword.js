@@ -10,24 +10,30 @@ export default async function handler(req, res) {
         let action = req.body?.action
         if(action ==='sendResetEmail') {
             const emailTo = req.body.email
-            const emailBody = `
-            <p>Kαλησπέρα σας, πατήστε τον παρακάτω σύνδεσμο για αλλαγή Κωδικού</p> 
-            <a href="${process.env.BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού 2</a>
-            `
-            try {
-                await transporter.sendMail({
-                    from: email,
-                    to: emailTo,
-                    subject: 'Αλλαγή Κωδικού',
-                    html: emailBody
-                })
+            await connectMongo();
+            let user = await User.findOne({email: emailTo})
+            console.log(user)
+            if(user) {
+                    const emailBody = `
+                    <p>Kαλησπέρα σας, πατήστε τον παρακάτω σύνδεσμο για αλλαγή Κωδικού</p> 
+                    <a href="${process.env.BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού 2</a>
+                    `
+                    try {
+                        await transporter.sendMail({
+                            from: email,
+                            to: emailTo,
+                            subject: 'Αλλαγή Κωδικού',
+                            html: emailBody
+                        })
 
-                return  res.status(200).json({ success: true, error: null })
+                        return  res.status(200).json({ success: true, error: null })
 
-            } catch (error) {
-                console.log(error)
-                return res.status(400).json({ success: false, error: error })
+                    } catch (error) {
+                        console.log(error)
+                        return res.status(400).json({ success: false, error: error })
+                    }
             }
+            
         }
     
         if(action === 'finalReset') {
