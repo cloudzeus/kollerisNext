@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InputStyled } from '@/components/Forms/FormInput'
 import Button from '@/components/Buttons/Button'
 import axios from 'axios'
+import {toast} from 'react-toastify'
 
 const ResetPassword = () => {
   const [submit, setSubmit] = useState(false)
@@ -25,10 +26,20 @@ const { register, handleSubmit, formState: { errors }, reset } = useForm({
   const onSubmit = async (data) => {
     setLoading(true)
     const resp = await axios.post('/api/user/resetPassword', {email: data.email, action: 'sendResetEmail'})
-    if(resp.data)
+    console.log(resp)
+    
+    if(resp.data.success === true) {
+      setLoading(false)
       setSubmit(prev => !prev)
       setLoading(false)
     }
+    if(resp.data.success === false) {
+      setLoading(false)
+      console.log('error')
+      toast.error(resp.data.error)
+    }
+    reset();
+  }
   return (
     <LoginLayout>
       <Container  className="box">

@@ -29,10 +29,12 @@ export default async function handler(req, res) {
                         return  res.status(200).json({ success: true, error: null })
 
                     } catch (error) {
-                        console.log(error)
                         return res.status(400).json({ success: false, error: error })
                     }
+            }else {
+                return res.status(200).json({success: false, error: 'Δεν υπάρχει χρήστης με αυτό το email', user: null})    
             }
+            
             
         }
     
