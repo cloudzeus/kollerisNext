@@ -60,7 +60,7 @@ const GeneralContainer = styled.div`
 
     .primaryHeader {
         color: ${props => props.theme.palette.primary.main};
-        font-size: 25px;
+        font-size: 22px;
         font-weight: 900;
         font-family: 'Roboto Condensed', 'Roboto', sans-serif;
     }
