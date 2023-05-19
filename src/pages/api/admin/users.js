@@ -12,8 +12,10 @@ export default async function handler(req, res) {
 
     //iNSERT NEW USER
     if(action === 'add') {
-      console.log(req.body)
+     
         try {
+        
+
            
 
             await connectMongo();
@@ -24,8 +26,7 @@ export default async function handler(req, res) {
 
 
             const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: req.body.role })
-            let fake = false;
-            if(user && fake === true) {
+            if(user) {
               return  res.status(200).json({success: true, user: user});
             } 
             else {

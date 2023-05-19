@@ -10,8 +10,19 @@ import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   const password = req.body.password;
+  Object.keys(req.body).forEach(key => {
+  
+    console.log('keyA: ' + JSON.stringify(key) + '\n')
+      if(key !== 'password' || key !== 'email' || key !== 'firstName' || key !== 'lastName' || key !== 'role') {
+        console.log('inside ' + JSON.stringify(key))
+        return res.status(200).json({success: false,  error: 'Missing Parameter', user: null})
+      }
+  })
+
+
   try {
     await connectMongo();
+    
     //DATABASE LOOKUP FOR EXISTING EMAIL:
     const alreadyEmailCheck = await User.findOne({ email: req.body.email })
     if(alreadyEmailCheck) {
@@ -19,8 +30,7 @@ export default async function handler(req, res) {
     } 
 
     // HASH THE PASSWORD:
-
-
+   
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
     console.log('hassPassword' + JSON.stringify(hashPassword ))

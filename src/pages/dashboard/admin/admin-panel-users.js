@@ -20,15 +20,12 @@ function DialogEdit() {
 
 const GridTable = () => {
     const [data, setData] = useState([])
-    const [visible, setVisible] = useState(true)
     const [refresh, setRefresh] = useState(true)
-    const [count, setCount] = useState(0)
-
+    const [flag, setFlag]  =useState(false)     
     const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
     const editparams = { params: { popupHeight: '300px' } };
     const validationRules = { required: true };
-    const orderidRules = { required: true, number: true };
     const pageSettings = { pageCount: 5 };
 
 
@@ -38,10 +35,15 @@ const GridTable = () => {
     }
    
 
-
     const handleCRUD = async (data, action) => {
         console.log(`Action is: ${action}, data: ${JSON.stringify(data)}`)
         const resp = await axios.post('/api/admin/users', { action: action, ...data })
+        console.log('response')
+        console.log(resp)
+        return resp.data;
+    }
+    const handleAdd = async (data) => {
+        const resp = await axios.post('/api/user/registeruser', data )
         console.log('response')
         console.log(resp)
         return resp.data;
@@ -53,6 +55,8 @@ const GridTable = () => {
         try {
             const resp = await axios.post('/api/admin/users', { action: 'findAll' })
             setData(resp.data.user)
+            console.log('resp')
+            console.log(resp.data   )
         } catch (error) {
             console.log(error)
         }
@@ -60,44 +64,60 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-    }, [refresh])
-
-
-    useEffect(() => {
-        console.log('GridTable')
-        setCount((prev) => prev + 1)
-       
     }, [])
-    
-    console.log('effect run ' + count + ' times' )
 
-    const actionBegin = (args) => {
-     
-    };
+    let grid;
+    const actionBegin = async (e) => {
+        console.log('actionBegin')
+        console.log(grid)
+        if(!flag) {
+            if (e.requestType == 'save' && (e.action == 'edit' || e.action == 'add')) {
+                e.cancel = true;
+                let editedData = e.data;
+                console.log('editedData' + JSON.stringify(editedData))
+                // let res = await handleCRUD(editedData, 'add')
+                let res = await handleAdd(editedData);
+                if(res.success) {
+                    setFlag(true)
+                    console.log('res')
+                    console.log(JSON.stringify(res))
+                    grid?.endEdit();
+                } 
+                if(res.success == false) {
+                    
+                    toast.error(res.error)
+                    setFlag(false)
+                }
+                }   
+
+            }
+        }
 
 
     //Αdd and save user
     const actionComplete = async (args) => {
-        console.log(args)
-       
-        if(args.requestType === 'save') {
-            console.log('args after save')
-            console.log(args)
+        // console.log(args)
+        console.log(grid)
+        // if(args.requestType === 'save' && args.action === 'add') {
+        setFlag(false)
+        // if(args.requestType === 'save') {
+        //     console.log('args after save')
+        //     console.log(args)
           
-        }
-        if(args.requestType === 'save' && args.action === 'edit') {}  
-        //ADD NEW
-        if(args.requestType === 'save' && args.action === 'add') {
-            let res = await handleCRUD(args.data, 'add')
-            if(res && res.success === true) {
-                res && toast.success('Επιτυχής ενημέρωση')
-            }
-            if(res && res.success === false) {
-                res && toast.success(`Αποτυχία ενημέρωσης: ${res.error}`)
-            }
+        // }
+        // if(args.requestType === 'save' && args.action === 'edit') {}  
+        // //ADD NEW
+        // if(args.requestType === 'save' && args.action === 'add') {
+        //     let res = await handleCRUD(args.data, 'add')
+        //     if(res && res.success === true) {
+        //         res && toast.success('Επιτυχής ενημέρωση')
+        //     }
+        //     if(res && res.success === false) {
+        //         res && toast.success(`Αποτυχία ενημέρωσης: ${res.error}`)
+        //     }
             
           
-        }  
+        // }  
 
     }
    
@@ -112,8 +132,10 @@ const GridTable = () => {
                     allowPaging={true}
                     editSettings={editSettings}
                     pageSettings={pageSettings}
+                    actionBegin={actionBegin}
                     actionComplete={actionComplete}
-                    
+                    ref={g => grid = g}
+                  
                 >
                     <ColumnsDirective  >
                         <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
