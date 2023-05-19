@@ -62,7 +62,7 @@ const registerPage = () => {
 
 	return (
 		<LoginLayout>
-			<Container>
+			<Container className="box">
 				<Grid container justifyContent="center" alignItems="center" direction="row" mb='30px'>
 					<Grid item xs={8}>
 						<h1 className="primaryHeader">EΓΓΡΑΦΗ ΧΡΗΣΤΗ</h1>
@@ -134,13 +134,11 @@ const registerPage = () => {
 
 				<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
-				<CenterDiv>
-					<TextBtn className='black'>
-						<Link href="/auth/signin" >
+				<div className="center-div">
+						<Link className="linkBtn" href="/auth/signin">
 							Έχετε ήδη λογαριασμό
 						</Link>
-					</TextBtn >
-				</CenterDiv>
+				</div>
 			</Container >
 		</LoginLayout>
 

@@ -69,7 +69,7 @@ const CreateNewPassword = () => {
 
 const Container = styled.div`
     padding: 20px;
-    min-width: 600px;
+    min-width: 450px;
     h1 {
         font-size: 20px;
         margin-bottom: 20px;

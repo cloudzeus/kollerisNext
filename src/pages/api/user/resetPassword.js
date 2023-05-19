@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 
 
 export default async function handler(req, res) {
-    console.log(req.body)
 
     let action = req.body?.action
     if (action === 'sendResetEmail') {
@@ -17,11 +16,13 @@ export default async function handler(req, res) {
             console.log(user)
            
             if (user) {
+
+                const {firstName, lastName } = user
                 await transporter.sendMail({
                     from: email,
                     to: emailTo,
                     subject: 'Αλλαγή Κωδικού',
-                    html: emailBody(emailTo)
+                    html: emailBody(emailTo , firstName , lastName)
                 })
 
                 return res.status(200).json({ success: true, error: null })
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
             }
 
         } catch (error) {
-
+            return res.status(500).json({ success: false, error: 'Aποτυχία σύνδεσης', user: null })
         }
 
 
@@ -60,5 +61,5 @@ export default async function handler(req, res) {
 
 
 
-const emailBody = (emailTo) => `<p>Kαλησπέρα σας, πατήστε τον παρακάτω σύνδεσμο για αλλαγή Κωδικού</p> 
-<a href="${process.env.BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού 2</a>`
+const emailBody = (emailTo, firstName, lastName) => `<p>Kαλησπέρα σας, πατήστε τον παρακάτω σύνδεσμο για αλλαγή Κωδικού</p> 
+<a href="${process.env.BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού</a>`
