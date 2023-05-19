@@ -8,6 +8,7 @@ import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 import Button from "@/components/Buttons/Button";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const registerSchema = yup.object().shape({
 	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες').max(15, 'Μέχρι 15 χαρακτήρες'),
@@ -24,16 +25,22 @@ const CreateNewPassword = () => {
 		resolver: yupResolver(registerSchema),
 	});
     const [loading, setLoading] = useState(false)
-    const [passwordNoMatch, setPasswordNomatch] = useState(false)
     const router = useRouter();
     console.log(router.query)
     console.log(router)
     const onSubmit = async (data) => {
+        setLoading(true)
         if(data) {
 
         }
         const resp = await axios.post('/api/user/resetPassword', {password: data.password, email: router.query.email , action: 'finalReset'})
-        
+        if(resp.data.success) {
+            setLoading(false)
+            router.push('/auth/login')
+        } else {
+            setLoading(false)
+            toast.error('Κάτι πήγε στραβά')
+        }
 
 
     }
