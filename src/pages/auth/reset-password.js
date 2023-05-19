@@ -1,31 +1,72 @@
-import React from 'react'
-import { Container } from '@/components/Forms/formStyles'
+import React,  {useState} from 'react'
 import LoginLayout from '@/layouts/Auth/loginLayout'
-import { InputDiv } from '@/components/Forms/FormInput'
-import { Btn } from '@/components/Buttons/styles'
 import styled, { useTheme } from 'styled-components'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { InputStyled } from '@/components/Forms/FormInput'
+import Button from '@/components/Buttons/Button'
+import axios from 'axios'
+import {toast} from 'react-toastify'
+
 const ResetPassword = () => {
-  const [submit, setSubmit] = React.useState(false)
+  const [submit, setSubmit] = useState(false)
+  const [error, setError] = useState(false)
+  
+  const [loading, setLoading] = useState(false);
+
+  const schema = yup.object().shape({
+    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
+});
+const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  resolver: yupResolver(schema),
+});
+
+  const onSubmit = async (data) => {
+    setLoading(true)
+    const resp = await axios.post('/api/user/resetPassword', {email: data.email, action: 'sendResetEmail'})
+    console.log(resp)
+    
+    if(resp.data.success === true) {
+      setLoading(false)
+      setSubmit(prev => !prev)
+      setLoading(false)
+    }
+    if(resp.data.success === false) {
+      setLoading(false)
+      console.log('error')
+      toast.error(resp.data.error)
+    }
+    reset();
+  }
   return (
     <LoginLayout>
-      <Container>
-        {!submit ? (
+      <Container  className="box">
+      {!submit ? (
           <>
             <Header>
               Εισάγετε την διεύθυνση email σας και θα σας στείλουμε έναν σύνδεσμο για την επαναφορά του κωδικού πρόσβασης.
             </Header>
-            <InputDiv mt={10}>
-              <input className="customInput" placeholder='example@gmail.com' name="name" id="my-name" type='text' />
-              <label className="customLabel" htmlFor="my-name">Διεύθυνση Email</label>
-            </InputDiv>
-            <Btn onClick={() => setSubmit(prev => !prev)}>Αποστολή συνδέσμου στο Email</Btn>
+            <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                <InputStyled
+                    label="email"
+                    name="email"
+                    type="email"
+                    register={register}
+                    error={errors.email}
+                    placeholder={'example@gmail.com'}
+                />
+                <Button size={'100%'} type="submit" loading={loading}>Αποστολή συνδέσμου στο Email</Button>
+            </form>
+            
           </>
         ) : (
           <SuccessMessage />
 
         )}
-      </Container>
+      </Container >
+      
     </LoginLayout>
 
   )
@@ -35,10 +76,11 @@ const SuccessMessage = () => {
   const theme = useTheme();
   return (
     <>
-      <CheckCircleOutlineRoundedIcon sx={{ fontSize: '35px', color: `${theme.palette.primary.main}`, mb: '10px' }} />
-      <h3 className='mb10'>
-        Το email στάλθηκε
-      </h3>
+      <div className="success">
+        <CheckCircleOutlineRoundedIcon sx={{ fontSize: '25px', color: `${theme.palette.success.main}` }} />
+        <h3>Το email στάλθηκε</h3>
+      </div>
+      
       <p>Ελέγξτε το email σας και πατήστε τον σύνδεσμο αλλαγής κωδικού</p>
     </>
   )
@@ -49,6 +91,22 @@ const Header = styled.h1`
   font-weight: 300;
   line-height: 1.6;
   margin-bottom: 30px;
+  
 `
+
+const Container = styled.div`
+  max-width: 600px;
+
+  h3 {
+    margin-left: 10px;
+  }
+  .success {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+`
+
 
 export default ResetPassword
