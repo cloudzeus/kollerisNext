@@ -5,20 +5,23 @@ import connectMongo from '../../../../server/config';
 export default async function handler(req, res) {
 
     
- 
+  
 
     let action = req.body.action
-    console.log( '\n action: ' + JSON.stringify(action) + '\n')
+    let body = req.body
+    console.log( 'action: ' + JSON.stringify(action) + '\n')
+    console.log( 'req body: ' + JSON.stringify(body) + '\n')
 
     //iNSERT NEW USER
     if(action === 'add') {
-     
+
         try {
-        
-
-           
-
             await connectMongo();
+            const alreadyEmailCheck = await User.findOne({ email: req.body.email })
+            if(alreadyEmailCheck) {
+            return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', user: null})
+            } 
+
             let password = req.body.password;
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
@@ -27,6 +30,7 @@ export default async function handler(req, res) {
 
             const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: req.body.role })
             if(user) {
+              console.log(user)
               return  res.status(200).json({success: true, user: user});
             } 
             else {
@@ -40,33 +44,35 @@ export default async function handler(req, res) {
     }
 
     //UPDATE SELECTED USER:
-    if(action === 'save') { 
+    if(action === 'edit') { 
+      console.log('Update selected user')
         try {
             await connectMongo();
             await User.updateOne(
-              { _id: body._id},  
+              { _id: body?._id},  
               {
-                firstName: body.firstName, 
-                lastName: body.lastName,
-                email: body.email,
+                firstName: body?.firstName, 
+                lastName: body?.lastName,
+                email: body?.email,
                 phones: {
-                  landline: body.landline, 
-                  mobile: body.mobile
+                  landline: body?.landline, 
+                  mobile: body?.mobile
                 }, 
                 address: {
-                  address: body.address, 
-                  country:body.country,
-                  city: body.city,
-                  postalcode: body.postalcode,
+                  address: body?.address, 
+                  country:body?.country,
+                  city: body?.city,
+                  postalcode: body?.postalcode,
                 }
               });
         
             const user = await User.findOne({ _id: body._id});
-            res.status(200).json({ success: true, user });
+            console.log('------------ Request to the database to update user: ' + JSON.stringify(user))
+            return res.status(200).json({ success: true, user: user });
             
             
           } catch (error) {
-            res.status(400).json({ success: false });
+            return  res.status(400).json({ success: false, user: null, error: '500: failed to update user'});
         
          }
     }
@@ -75,7 +81,6 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const user = await User.find({});
-            // console.log('------------ Request to the database to fetch all users: ' + JSON.stringify(user))
         
             if(user) {
                 res.status(200).json({success: true, user: user});
@@ -95,10 +100,4 @@ export default async function handler(req, res) {
 }
 
 
-const addUserValidation = (req) => {
-  console.log('are we here')
-  if(req.body.password === '') {
-    console.log('are we here `100')
-    return  res.status(200).json({success: false, user: null, error: 'Missing parameters'});
-  }
-}
+

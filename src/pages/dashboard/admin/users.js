@@ -151,7 +151,6 @@ const GridTable = () => {
                 <div className='control-section'>
                     <GridComponent
                         dataSource={data}
-                        toolbar={toolbarOptions}
                         allowPaging={true}
                         editSettings={editSettings}
                         pageSettings={pageSettings}
