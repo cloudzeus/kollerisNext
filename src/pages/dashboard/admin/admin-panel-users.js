@@ -30,6 +30,7 @@ const GridTable = () => {
     const editparams = { params: { popupHeight: '300px' } };
     const validationRules = { required: true };
     const pageSettings = { pageCount: 5 };
+    const loadingIndicator = { indicatorType: 'Shimmer' };
 
 
     const passwordValidation = {
@@ -61,10 +62,15 @@ const GridTable = () => {
 
 
     const actionBegin = (e) => {
-        console.log(flag)
+        // console.log('e.row')
+        console.log(e)
+        // console.log('Initial Events: ' )
+        // console.log(e)
+        // console.log('flag is: '  + flag)
         if (!flag && grid) {
-            console.log(grid)
+            // console.log(grid)
             if (e.requestType == 'save' && e.action == 'edit') {
+                
                 e.cancel = true;
                 let editedData = e.data;
                 const handleCRUD = async (data, action) => {
@@ -74,8 +80,6 @@ const GridTable = () => {
                         if (res.data.success == true) {
                             console.log(res.data)
                             grid.endEdit();
-                            console.log(grid)
-                            console.log('is there a gridendEdit ' + grid.endEdit())
                             setFlag(() => true)
                         }
                         if (res.data.success == false) {
@@ -94,28 +98,26 @@ const GridTable = () => {
 
             //ADD USER:
             if (e.requestType == 'save' && e.action == 'add') {
-               
-                e.cancel = true;
+                console.log('----------------------------------------------------------------------------------------')
                 let editedData = e.data;
-
+                console.log('editedData' + JSON.stringify(editedData))
+            
                 const handleCrud = async (data, action) => {
+                    e.cancel = true;
+
                     try {
                         const res = await axios.post('/api/admin/users', { action: action, ...data })
-                      
+                        console.log(res);
+                        e.cancel = false;
                         if (res.data.success) {
-                            console.log('are we here?')
-                            setFlag(true)
-                            console.log(grid)
-
-                            grid.endAdd();
-                           
+                            
+                            console.log('are we here')
+                            
                         }
 
 
                         if (res.data.success == false) {
-                
                             toast.error(res.data.error)
-                            setFlag(false)
 
                         }
                     } catch (e) {
@@ -132,12 +134,12 @@ const GridTable = () => {
 
     //Αdd and save user
     const actionComplete = (e) => {
+        console.log('on Action Complete')
         console.log(e)
-        setFlag(false)
+        // setFlag(false)
         if(e.requestType === 'save') {
-            console.log('--------------------------------------------')
-            console.log(e)
-            setFlag(false)
+            console.log('On action complete: SAVE')
+            // setFlag(false)
         }
     }
 
@@ -155,6 +157,7 @@ const GridTable = () => {
                         allowPaging={true}
                         editSettings={editSettings}
                         pageSettings={pageSettings}
+                        loadingIndicator={loadingIndicator}
                         actionBegin={actionBegin}
                         actionComplete={actionComplete}
                         ref={g => handleGrid(g)}

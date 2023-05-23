@@ -38,8 +38,9 @@ const GridTable = () => {
 
     const handleFetchUser = async () => {
         try {
-            const resp = await axios.post('/api/admin/fetchSoftone',)
-            setData(resp?.data?.rows)
+            const resp = await axios.post('/api/admin/fetchSoftone')
+            console.log(resp.data.response)
+            setData(resp.data.response)
 
         } catch (error) {
             console.log(error)
@@ -48,94 +49,91 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-       
     }, [])
 
-    useEffect(() => {
-        console.log(data)
-    }, [data])
+   
 
-    const actionBegin = async (e) => {
+    // const actionBegin = async (e) => {
 
-        if(!flag && grid) {
-            console.log('We should be able to enter')
-            if(e.requestType == 'save' && e.action == 'edit') {
-                console.log('Edit a row from the dataGrid')
-                e.cancel = true;
-                let editedData = e.data;
-                console.log('editedData' + JSON.stringify(editedData))
+    //     if(!flag && grid) {
+    //         console.log('We should be able to enter')
+    //         if(e.requestType == 'save' && e.action == 'edit') {
+    //             console.log('Edit a row from the dataGrid')
+    //             e.cancel = true;
+    //             let editedData = e.data;
+    //             console.log('editedData' + JSON.stringify(editedData))
                
-                let res = await handleCRUD(editedData, 'edit');
-                if(res.success == true) {
-                    // setFlag(true)
-                    this.flag = true;
+    //             let res = await handleCRUD(editedData, 'edit');
+    //             if(res.success == true) {
+    //                 // setFlag(true)
+    //                 this.flag = true;
 
 
-                    console.log('res')
-                    console.log(JSON.stringify(res))
-                    grid.endEdit();
-                } 
-                if(res.success == false) {
+    //                 console.log('res')
+    //                 console.log(JSON.stringify(res))
+    //                 grid.endEdit();
+    //             } 
+    //             if(res.success == false) {
                     
-                    toast.error(res.error)
-                    // setFlag(false)
-                    this.flag = false;
+    //                 toast.error(res.error)
+    //                 // setFlag(false)
+    //                 this.flag = false;
 
-                }
-            }
-            if(e.requestType == 'save' && e.action == 'add') {
-                e.cancel = true;
-                let editedData = e.data;
-                console.log('editedData' + JSON.stringify(editedData))
-                let res = await handleAdd(editedData);
-                if(res.success) {
-                    setFlag(true)
-                    console.log('res')
-                    console.log(JSON.stringify(res))
-                    grid.endEdit();
-                    setFlag(false)
+    //             }
+    //         }
+    //         if(e.requestType == 'save' && e.action == 'add') {
+    //             e.cancel = true;
+    //             let editedData = e.data;
+    //             console.log('editedData' + JSON.stringify(editedData))
+    //             let res = await handleAdd(editedData);
+    //             if(res.success) {
+    //                 setFlag(true)
+    //                 console.log('res')
+    //                 console.log(JSON.stringify(res))
+    //                 grid.endEdit();
+    //                 setFlag(false)
 
-                } 
-                if(res.success == false) {
+    //             } 
+    //             if(res.success == false) {
                     
-                    toast.error(res.error)
-                    setFlag(false)
-                }
-            }
-            // if (e.requestType == 'save' && (e.action == 'edit' || e.action == 'add')) {
-            //     e.cancel = true;
-            //     let editedData = e.data;
-            //     console.log('editedData' + JSON.stringify(editedData))
-            //     // let res = await handleCRUD(editedData, 'add')
-            //     let res = await handleAdd(editedData);
-            //     if(res.success) {
-            //         setFlag(true)
-            //         console.log('res')
-            //         console.log(JSON.stringify(res))
-            //         grid?.endEdit();
-            //     } 
-            //     if(res.success == false) {
+    //                 toast.error(res.error)
+    //                 setFlag(false)
+    //             }
+    //         }
+    //         // if (e.requestType == 'save' && (e.action == 'edit' || e.action == 'add')) {
+    //         //     e.cancel = true;
+    //         //     let editedData = e.data;
+    //         //     console.log('editedData' + JSON.stringify(editedData))
+    //         //     // let res = await handleCRUD(editedData, 'add')
+    //         //     let res = await handleAdd(editedData);
+    //         //     if(res.success) {
+    //         //         setFlag(true)
+    //         //         console.log('res')
+    //         //         console.log(JSON.stringify(res))
+    //         //         grid?.endEdit();
+    //         //     } 
+    //         //     if(res.success == false) {
                     
-            //         toast.error(res.error)
-            //         setFlag(false)
-            //     }
-            // }   
+    //         //         toast.error(res.error)
+    //         //         setFlag(false)
+    //         //     }
+    //         // }   
 
-        }
-    }
+    //     }
+    // }
 
 
-    //Αdd and save user
-    const actionComplete = async (e) => {
+    // //Αdd and save user
+    // const actionComplete = async (e) => {
       
-        if (e.requestType === 'save' || e.requestType === 'delete') {
-            console.log('on Action Complete')
-            // setFlag(false)
-            console.log('flag ' + flag)
-            this.flag = false;
+    //     if (e.requestType === 'save' || e.requestType === 'delete') {
+    //         console.log('on Action Complete')
+    //         // setFlag(false)
+    //         console.log('flag ' + flag)
+    //         this.flag = false;
 
-        }
-    }
+    //     }
+    // }
    
 
     return (
@@ -156,7 +154,7 @@ const GridTable = () => {
                     <ColumnsDirective  >
                         <ColumnDirective field='mtrl' headerText='Mtrl' width='100' validationRules={validationRules}></ColumnDirective>
                         <ColumnDirective field='name' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='Code' headerText='Code' width='100' validationRules={validationRules}></ColumnDirective>
+                        <ColumnDirective field='code' headerText='Code' width='100' validationRules={validationRules}></ColumnDirective>
                     </ColumnsDirective>
                     <Inject services={[Page, Edit, Toolbar, Filter]} />
                 </GridComponent>

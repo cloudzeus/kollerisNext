@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
         try {
             await connectMongo();
-            const alreadyEmailCheck = await User.findOne({ email: req.body.email })
+              const alreadyEmailCheck = await User.findOne({ email: req.body.email })
             if(alreadyEmailCheck) {
             return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', user: null})
             } 
