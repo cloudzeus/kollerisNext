@@ -76,7 +76,7 @@ const Profile = () => {
                 <Div>
                     <Grid container >
                         {/* LEFT SIDE */}
-                        <Grid item xs={12} lg={4}>
+                        {/* <Grid item xs={12} lg={4}>
                             <HeaderBoxShadow align="center" title={'Eικόνα Προφίλ'}>
                                 <Avatar
                                     alt="Remy Sharp"
@@ -86,7 +86,7 @@ const Profile = () => {
                                 <p>Αλλάξτε την Εικόνα Προφίλ σας</p>
                                 <Btn className="btn"> Αλλαγή Avatar</Btn>
                             </HeaderBoxShadow>
-                        </Grid>
+                        </Grid> */}
                         {/* RIGTH SIDE */}
                         <Grid item xs={12} lg={8} >
                             <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>

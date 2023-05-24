@@ -83,6 +83,8 @@ const userSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(fetchUser.fulfilled, (state, { payload }) => {
+				console.log('--------100 ')
+				console.log(payload)
 				const { user } = payload;
 				console.log('User in reducers' + JSON.stringify(user))
 
