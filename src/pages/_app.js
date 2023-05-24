@@ -41,6 +41,7 @@ function App({ Component, pageProps: {session, pageProps} }) {
                                 <GeneralContainer>
                                     <Component {...pageProps} />
                                 </GeneralContainer>
+
                             </SessionProvider>
                            
                         </ThemeProvider>
@@ -59,6 +60,7 @@ const GeneralContainer = styled.div`
         padding: 20px;
         
     }
+
 
     .primaryHeader {
         color: ${props => props.theme.palette.primary.main};
