@@ -11,7 +11,6 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
   const theme = useTheme()
   const active = router.pathname === to;
 
-  useEffect(() => { setCount((prev) => prev + 1)}, [])
 
 
   return (
