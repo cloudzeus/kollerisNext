@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { InputContainer } from './FormInput';
+import { Input } from '@mui/material';
 import { disabledColor } from './FormInput';
 
 const SelectInput = ({items, label, onChange, id, value, edit}) => {
@@ -60,15 +61,15 @@ const ContainerUl = styled.div`
     letter-spacing: 0.9px;
     font-weight: 600;
     margin-bottom: 1px;
-    color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
+    color: ${props => props.edit? disabledColor : null};
     }
 
     span:nth-child(2) {
     bottom: 0px;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: ${props => props.edit? '300' : '400'};;
     margin-top: 2px;
-    color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
+    color: ${props => props.edit? disabledColor : null};
 
     }
 
@@ -98,8 +99,6 @@ const ContainerUl = styled.div`
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
-
     }
 
  

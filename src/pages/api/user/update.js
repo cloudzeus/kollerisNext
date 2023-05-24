@@ -2,7 +2,7 @@ import User from '../../../../server/models/userModel';
 import connectMongo from '../../../../server/config';
 
 export default async function handler(req, res) {
-  console.log('are we here?')
+  console.log('Update user')
   const {body} = req
   console.log(body)
 

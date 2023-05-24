@@ -16,7 +16,9 @@ import { useDispatch } from 'react-redux';
 import Button from '@/components/Buttons/Button';
 import SelectInput from '@/components/Forms/SelecInput';
 import { Input, InputStyled } from '@/components/Forms/FormInput';
-
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { updateUser } from '@/features/userSlice';
 
 const registerSchema = yup.object().shape({
     firstName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -33,31 +35,13 @@ const Profile = () => {
     const { user } = useSelector(state => state.user)
 
     const [state, setState] = useState({
-        _id: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        landline: '',
-        mobile: '',
         country: '',
-        city: '',
-        address: '',
-        postalcode: '',
-      
     })
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
-
-    });
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [edit, setEdit] = useState(true);
-
-    useEffect(() => {
-        console.log('user in profile: ' + JSON.stringify(user))
-        setState({
-            ...state,
+    const { register, handleSubmit, formState: { errors }, setValue ,watch } = useForm({
+        defaultValues: {
             _id: user?._id,
+            email: user?.email,
             firstName: user?.firstName,
             lastName: user?.lastName,
             email: user?.email,
@@ -67,10 +51,18 @@ const Profile = () => {
             city: user?.address?.city,
             address: user?.address?.address,
             postalcode: user?.address?.postalcode,
-        })
-    }, [user])
+        }
+    });
 
-    console.log(edit)
+    const [isLoading, setIsLoading] = useState(false);
+    const [edit, setEdit] = useState(true);
+
+    useEffect(() => {
+        setState({
+            country: user?.address?.country,
+        })
+       
+    }, [user])
 
 
  
@@ -80,24 +72,24 @@ const Profile = () => {
     }
 
 
+
     // const handleUpdateUser = async (e) => {
     //     e.preventDefault()
     //     dispatch(updateUser(state));
 
     // }
-    const handleButton = (e) => {
-        e.preventDefault();
-        console.log('edit')
+
+
+    const onSubmit = async (data) => {
+
+       
         setEdit((prev) => !prev)
-
-
-    }
-
-    const onSubmit = (data) => {
-        console.log('edit')
-        setEdit((prev) => !prev)
-        if(edit) {
-            dispatch(updateUser(data));
+        if(!edit) {
+            setIsLoading(true)
+            let res = await dispatch(updateUser({...data, ...state}))
+            if(!res) toast.error('Aνεπιτυχής ενημέρωση')
+            toast.success('Επιτυχής ενημέρωση')
+            setIsLoading(false)
         }
    
       
@@ -122,13 +114,13 @@ const Profile = () => {
                         {/* RIGTH SIDE */}
                         <Grid item xs={12} lg={8} >
                             <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>
-                                <form noValidate onSubmit={() => handleSubmit(onSubmit)}>
+                                <form noValidate onSubmit={handleSubmit(onSubmit)}>
                                     <InputStyled
                                         label="email"
                                         name="email"
                                         type="email"
                                         register={register}
-                                        defaultValue={state.email}
+                                        // defaultValue={state.email}
                                         disabled={edit}
                                     />
                                     <Grid container columnSpacing={2}>
@@ -138,7 +130,7 @@ const Profile = () => {
                                                 name="firstName"
                                                 type="text"
                                                 register={register}
-                                                defaultValue={state.firstName}
+                                                // defaultValue={state.firstName}
                                                 disabled={edit}
                                             // error={errors.firstName}
                                             />
@@ -150,7 +142,7 @@ const Profile = () => {
                                                 name="lastName"
                                                 type="text"
                                                 register={register}
-                                                defaultValue={state.lastName}
+                                                // defaultValue={state.lastName}
                                                 disabled={edit}
                                             // error={errors.firstName}
                                             />
@@ -179,7 +171,7 @@ const Profile = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <SelectInput
+                                        <SelectInput
                                                 id='country'
                                                 items={['Eλλάδα', 'Αγγλία', 'Ισπανία']}
                                                 label="Xώρα"
@@ -195,7 +187,6 @@ const Profile = () => {
                                                 name="address"
                                                 type="text"
                                                 register={register}
-                                                defaultValue={state.address}
                                                 disabled={edit}
                                             // error={errors.firstName}
                                             />
@@ -228,7 +219,6 @@ const Profile = () => {
                                     <Button 
                                         edit={edit}
                                         loading={isLoading} 
-                                        onClick={handleButton}
                                         type="submit"
                                         >{edit ? 'Επεξεργασία' : 'Αποθήκευση'}
                                     </Button>

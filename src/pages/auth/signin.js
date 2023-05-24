@@ -113,7 +113,7 @@ const LoginForm = () => {
                         </Link>
                 </FlexBetween>
                 {/* Login Button */}
-                <Button size={'100%'} type="submit" loading={loading} onClick={handleSubmit}>Σύνδεση</Button>
+                <Button size={'100%'} type="submit" loading={loading} >Σύνδεση</Button>
                 <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
                 <CenterDiv>
                         <Link className="linkBtn" href="/auth/register" >
