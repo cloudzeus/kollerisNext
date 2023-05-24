@@ -23,6 +23,7 @@ const GridTable = () => {
     const [data, setData] = useState([])
     const [grid, setGrid] = useState(null);
     const [flag, setFlag] = useState(false)
+    const [error, setError] = useState(false)
 
 
     const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
@@ -30,15 +31,11 @@ const GridTable = () => {
     const editparams = { params: { popupHeight: '300px' } };
     const validationRules = { required: true };
     const pageSettings = { pageCount: 5 };
-    const loadingIndicator = { indicatorType: 'Shimmer' };
-
+    const loadingIndicator = { indicatorType: 'Shimmer' }
 
     const passwordValidation = {
         minLength: [5, 'Τουλάχιστον 5 χαρακτήρες'],
     }
-
-
-
 
 
 
@@ -55,36 +52,32 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-    }, [])
+        console.log('it should refresh')
+    }, [error])
 
 
 
 
 
     const actionBegin = (e) => {
-        // console.log('e.row')
-        console.log(e)
-        // console.log('Initial Events: ' )
-        // console.log(e)
-        // console.log('flag is: '  + flag)
+        
         if (!flag && grid) {
-            // console.log(grid)
             if (e.requestType == 'save' && e.action == 'edit') {
-                
                 e.cancel = true;
                 let editedData = e.data;
                 const handleCRUD = async (data, action) => {
                     try {
                         const res = await axios.post('/api/admin/users', { action: action, ...data })
                         console.log(res)
+                        console.log('res success is: ' + res.data.success)
                         if (res.data.success == true) {
-                            console.log(res.data)
                             grid.endEdit();
                             setFlag(() => true)
                         }
                         if (res.data.success == false) {
                             toast.error(res.data.error)
                             setFlag(false)
+                            
 
                         }
 
@@ -98,27 +91,20 @@ const GridTable = () => {
 
             //ADD USER:
             if (e.requestType == 'save' && e.action == 'add') {
-                console.log('----------------------------------------------------------------------------------------')
-                let editedData = e.data;
-                console.log('editedData' + JSON.stringify(editedData))
-            
-                const handleCrud = async (data, action) => {
-                    e.cancel = true;
 
+                let editedData = e.data;
+                e.cancel = true
+                const handleCrud = async (data, action) => {
                     try {
                         const res = await axios.post('/api/admin/users', { action: action, ...data })
-                        console.log(res);
-                        e.cancel = false;
                         if (res.data.success) {
-                            
-                            console.log('are we here')
-                            
+                            grid.endEdit();
                         }
 
-
                         if (res.data.success == false) {
+                      ;
                             toast.error(res.data.error)
-
+                            setError(res.data.error)
                         }
                     } catch (e) {
                         console.log(e)
@@ -136,10 +122,9 @@ const GridTable = () => {
     const actionComplete = (e) => {
         console.log('on Action Complete')
         console.log(e)
-        // setFlag(false)
-        if(e.requestType === 'save') {
+        setFlag(false)
+        if(e.requestType === 'save' && e.action === 'add') {
             console.log('On action complete: SAVE')
-            // setFlag(false)
         }
     }
 
@@ -147,6 +132,7 @@ const GridTable = () => {
         setGrid(g)
     }
 
+   
     return (
         <>
             <div className='control-pane'>
@@ -161,7 +147,7 @@ const GridTable = () => {
                         actionBegin={actionBegin}
                         actionComplete={actionComplete}
                         ref={g => handleGrid(g)}
-
+                        // autoFit ={true}
                     >
                         <ColumnsDirective  >
                             <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
@@ -184,10 +170,5 @@ const GridTable = () => {
 
 
 
-const CustomGrid = styled(GridComponent).attrs(props => ({
-    className: props.className // Pass the className prop from styled component to Syncfusion Button
-}))`
-
-`;
 
 export default DialogEdit;

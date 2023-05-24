@@ -115,18 +115,42 @@ form {
 }
 
 
-/* Style the synfusion grid */
-/* .e-grid td.e-active {
-  background-color: #f9920b;
-} */
 
 .e-grid {
   border: none;
 }
 
+/* .e-grid .e-gridpager {
+  background-color: red;
+  
+} */
 
+/* .e-grid .e-gridpager .e-prevpagedisabled,
+.e-grid .e-gridpager .e-prevpage,
+.e-grid .e-gridpager .e-nextpage,
+.e-grid .e-gridpager .e-nextpagedisabled,
+.e-grid .e-gridpager .e-lastpagedisabled,
+.e-grid .e-gridpager .e-lastpage,
+.e-grid .e-gridpager .e-firstpage,
+.e-grid .e-gridpager .e-firstpagedisabled {
+    background-color: #deecf9;
+} */
 
+/* .e-grid .e-gridpager .e-numericitem {
+} */
+.e-grid .e-gridpager .e-currentitem {
+  background-color: #0078d7;
+  color: white;
+}
 
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+.e-active {
+  background-color: #0078d7;
+}
+.e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+  background-color: #0078d7;
+  background: #0078d7 !important;
+}
+
+/* .e-grid .e-gridpager {
+  border-radius: 30px;
 } */
