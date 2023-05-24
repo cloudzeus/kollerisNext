@@ -10,11 +10,9 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
   const router = useRouter();
   const theme = useTheme()
   const active = router.pathname === to;
-  const [count, setCount] = useState(0)
 
   useEffect(() => { setCount((prev) => prev + 1)}, [])
 
-  console.log('count in SidebarTabs: ' + count)
 
   return (
     <NextLink href={to} passHref>
