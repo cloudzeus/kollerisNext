@@ -40,7 +40,7 @@ function App({ Component, pageProps: {session, pageProps} }) {
                                 />
                                 <GeneralContainer>
                                     <Component {...pageProps} />
-                                </ GeneralContainer >
+                                </GeneralContainer>
                             </SessionProvider>
                            
                         </ThemeProvider>
@@ -52,11 +52,19 @@ function App({ Component, pageProps: {session, pageProps} }) {
 
 const GeneralContainer = styled.div`
     .box {
-        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-        border-radius: 4px;
+
         background-color: white;
+        border-radius: 5px;     
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         padding: 20px;
         
+    }
+
+    .primaryHeader {
+        color: ${props => props.theme.palette.primary.main};
+        font-size: 22px;
+        font-weight: 900;
+        font-family: 'Roboto Condensed', 'Roboto', sans-serif;
     }
 `
   

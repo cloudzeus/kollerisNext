@@ -18,11 +18,11 @@ import { toast } from 'react-toastify';
 import { Grid } from '@mui/material'
 import Image from 'next/image'
 import CheckboxInput from '@/components/Forms/CheckboxInput';
-import { TextBtn, Container, StyledHeader, Subheader } from '@/components/Forms/formStyles';
+import { StyledHeader, Subheader, Container } from '@/components/Forms/formStyles';
 import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
 import { FlexBetween, CenterDiv } from '@/components/styles';
-import { signIn, } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 //FORMIK:
 
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
@@ -69,7 +69,7 @@ const LoginForm = () => {
 
     return (
         < LoginLayout >
-         <Container >
+         <Container className="box">
          <Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
 				<Grid item xs={8}>
 					<StyledHeader>ΚΑΛΩΣ ΗΡΘΑΤΕ!</StyledHeader>
@@ -104,26 +104,21 @@ const LoginForm = () => {
                     register={register}
                     error={errors.password}
                 />
-                {/* <button type="submit">Sign in</button> */}
                 
                 {/* Checkbox row */}
                 <FlexBetween>
                     <CheckboxInput label={'Αποθήκευση κωδικού'} />
-                    <TextBtn >
-                        <Link href="/auth/reset-password" >
+                        <Link className="linkBtn" href="/auth/reset-password" >
                             Αλλαγή κωδικού
                         </Link>
-                    </TextBtn >
                 </FlexBetween>
                 {/* Login Button */}
                 <Button size={'100%'} type="submit" loading={loading} onClick={handleSubmit}>Σύνδεση</Button>
                 <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
                 <CenterDiv>
-                    <TextBtn className='black'>
-                        <Link href="/auth/register" >
+                        <Link className="linkBtn" href="/auth/register" >
                             Δημιουργία Λογαριασμού
                         </Link>
-                    </TextBtn >
                 </CenterDiv>
             </form>
          </Container>
@@ -133,6 +128,9 @@ const LoginForm = () => {
          
     );
 };
+
+
+
 
 
 export default LoginForm;

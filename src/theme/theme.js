@@ -10,6 +10,7 @@ const theme = createTheme({
       main: "#2090ED",
       dark: "#02153d",
     },
+   
     secondary: {
       light: "#ffcdd2",
       main: "#b71c1c",
@@ -56,7 +57,11 @@ const theme = createTheme({
     seperator: '#e8e8e8',
     iconColor: '#b71c1c',
     hoverColor: '#E6F7FF',
-    white: '#ffffff'
+    white: '#ffffff',
+   
+  },
+  success: {
+    main: '#21e51a',
   },
 }
 );
