@@ -4,23 +4,20 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-
+//Rest imports:
 import { Grid } from '@mui/material'
-import { StyledHeader, TextBtn, Container, Subheader } from '@/components/Forms/formStyles'
+import { Container, Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import Button from '@/components/Buttons/Button';
-import { FlexBetween, CenterDiv } from '@/components/styles';
+import { FlexBetween } from '@/components/styles';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
-import { Input, InputPassword } from '@/components/Forms/FormInput';
-import { useFormik } from 'formik';
+
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 
 
@@ -129,6 +126,7 @@ const registerPage = () => {
 					</FlexBetween>
 					{/* Login Button */}
 					<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
+
 				</form>
 
 

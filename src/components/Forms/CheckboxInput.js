@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { CheckBoxDiv } from './formStyles';
-
-
+import styled from 'styled-components';
 
 const CheckboxInput = ({ label }) => {
   const [isChecked, setIsChecked] = useState(false);
@@ -26,6 +24,19 @@ const CheckboxInput = ({ label }) => {
   );
 }
 
+const CheckBoxDiv = styled.div`
+    label {
+      display: flex;
+      align-items: center;
+      height: 40px;
+    }
+    span {
+      margin-left: 10px;
+      color: ${props => props.theme.palette.grey.main};
+      font-weight: 300;
+      font-size: 14px;
+    }
+`
 
 
 

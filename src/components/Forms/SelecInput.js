@@ -1,22 +1,23 @@
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { InputContainer } from './FormInput';
+import { disabledColor } from './FormInput';
 
-
-
-const SelectInput = ({items, label, onChange, id, value}) => {
+const SelectInput = ({items, label, onChange, id, value, edit}) => {
   const [show, setShow] = useState(false)
 
   const handleChange = (item) => {
     onChange(id, item)
   }
   return (
-    <ContainerUl onClick={() => setShow(prev => !prev)}>
+    <InputContainer >
+      <ContainerUl edit={edit}  onClick={() => setShow(prev => !prev)}>
       <span>{label}</span>
       <span>{value}</span>
-      {show && (
+      {show && !edit && (
          <ul>
-         { items.map((item) => {
+         {items.map((item) => {
            return (
             <li 
             key={item}
@@ -29,6 +30,8 @@ const SelectInput = ({items, label, onChange, id, value}) => {
       )}
       <KeyboardArrowDownIcon className={'dropIcon'} />
     </ContainerUl>
+    </InputContainer>
+    
   )
 }
 
@@ -38,33 +41,35 @@ const SelectInput = ({items, label, onChange, id, value}) => {
 
 
 const ContainerUl = styled.div`
+    margin-bottom: 5px;
+    height: 56px;
     background-color: ${props => props.theme.palette.background};
     width: 100%;
     outline: none;
     border: 1px solid #eaeaea;
     border-radius: 5px;
     padding: 10px;
-    margin-bottom: 10px;
     position: relative;
-    height: 54px;
-    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
     span {
       display: block;
     }
     span:first-child {
-    font-size: 11px;
-    letter-spacing: 0.8px;
-    color: ${props => props.theme.palette.grey.light};
+    font-size: 10px;
+    letter-spacing: 0.9px;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
+    color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
     }
 
     span:nth-child(2) {
     bottom: 0px;
     font-size: 14px;
-    letter-spacing: 0.8px;
     font-weight: 400;
-   
+    margin-top: 2px;
+    color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
+
     }
 
     ul {
@@ -93,6 +98,8 @@ const ContainerUl = styled.div`
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
+      color: ${props => props.edit ? disabledColor : props.theme.palette.text.light};
+
     }
 
  

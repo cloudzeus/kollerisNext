@@ -3,7 +3,6 @@ import axios from 'axios';
 import { addUserToLocalStorage, getUserFromLocalStorage, removeFromLocalStorage } from "@/utils/localStorage";
 import { toast } from 'react-toastify';
 
-
 const initialState = {
 	user: getUserFromLocalStorage(),
 	error: null,

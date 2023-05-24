@@ -1,18 +1,31 @@
 
 'use client';
 import React, { useEffect, useState } from 'react'
+
+//Form inmports:
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from 'react-hook-form';
+//Rest imports:
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { HeaderBox, HeaderBoxShadow } from '@/components/HeaderBox';
-import { Avatar } from '@mui/material';
-import { Btn } from '@/components/Buttons/styles';
 import styled from 'styled-components';
 import { Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { updateUser } from '@/features/userSlice';
 import Button from '@/components/Buttons/Button';
 import SelectInput from '@/components/Forms/SelecInput';
-import { Input } from '@/components/Forms/FormInput';
+import { Input, InputStyled } from '@/components/Forms/FormInput';
+
+
+const registerSchema = yup.object().shape({
+    firstName: yup.string().required('Συμπληρώστε το όνομα'),
+    lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
+    email: yup.string().required('Συμπληρώστε το email').email('Λάθος format email'),
+    password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες').max(15, 'Μέχρι 15 χαρακτήρες'),
+});
+
+
 
 const Profile = () => {
 
@@ -21,18 +34,24 @@ const Profile = () => {
 
     const [state, setState] = useState({
         _id: '',
+        email: '',
         firstName: '',
         lastName: '',
-        email: '',
         landline: '',
         mobile: '',
         country: '',
         city: '',
         address: '',
         postalcode: '',
+      
     })
 
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
 
+    });
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [edit, setEdit] = useState(true);
 
     useEffect(() => {
         console.log('user in profile: ' + JSON.stringify(user))
@@ -51,24 +70,37 @@ const Profile = () => {
         })
     }, [user])
 
+    console.log(edit)
 
 
-    const handleChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setState({ ...state, [name]: value });
-    };
-
+ 
 
     const handleSelect = (name, value) => {
         setState({ ...state, [name]: value })
     }
 
 
-    const handleUpdateUser = async (e) => {
-        e.preventDefault()
-        dispatch(updateUser(state));
+    // const handleUpdateUser = async (e) => {
+    //     e.preventDefault()
+    //     dispatch(updateUser(state));
 
+    // }
+    const handleButton = (e) => {
+        e.preventDefault();
+        console.log('edit')
+        setEdit((prev) => !prev)
+
+
+    }
+
+    const onSubmit = (data) => {
+        console.log('edit')
+        setEdit((prev) => !prev)
+        if(edit) {
+            dispatch(updateUser(data));
+        }
+   
+      
     }
     return (
         <AdminLayout >
@@ -90,50 +122,60 @@ const Profile = () => {
                         {/* RIGTH SIDE */}
                         <Grid item xs={12} lg={8} >
                             <HeaderBoxShadow title={'Αλλαγή Πληροφοριών Προφίλ'}>
-
-                                <form>
-                                    <Input
-                                        id="email"
-                                        type="text"
-                                        value={state.email}
-                                        onChange={handleChange}
-                                        label="Email"
+                                <form noValidate onSubmit={() => handleSubmit(onSubmit)}>
+                                    <InputStyled
+                                        label="email"
+                                        name="email"
+                                        type="email"
+                                        register={register}
+                                        defaultValue={state.email}
+                                        disabled={edit}
                                     />
                                     <Grid container columnSpacing={2}>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="firstName"
-                                                type="text"
-                                                value={state.firstName}
-                                                onChange={handleChange}
+                                            <InputStyled
                                                 label="Όνομα"
+                                                name="firstName"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.firstName}
+                                                disabled={edit}
+                                            // error={errors.firstName}
                                             />
+
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="lastName"
-                                                type="text"
-                                                value={state.lastName}
-                                                onChange={handleChange}
+                                            <InputStyled
                                                 label="Επώνυμο"
+                                                name="lastName"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.lastName}
+                                                disabled={edit}
+                                            // error={errors.firstName}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="landline"
+
+                                            <InputStyled
+                                                label="landline"
+                                                name="landline"
                                                 type="text"
-                                                value={state.landline}
-                                                onChange={handleChange}
-                                                label="Σταθερό"
+                                                register={register}
+                                                defaultValue={state.landline}
+                                                disabled={edit}
+                                            // error={errors.firstName}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="mobile"
-                                                type="text"
-                                                value={state.mobile}
-                                                onChange={handleChange}
+
+                                            <InputStyled
                                                 label="Κινητό"
+                                                name="mobile"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.mobile}
+                                                disabled={edit}                                            // error={errors.firstName}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
@@ -143,39 +185,52 @@ const Profile = () => {
                                                 label="Xώρα"
                                                 onChange={handleSelect}
                                                 value={state.country}
+                                                edit={edit}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="address"
-                                                type="text"
-                                                value={state.address}
-                                                onChange={handleChange}
+
+                                            <InputStyled
                                                 label="Διεύθυνση"
+                                                name="address"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.address}
+                                                disabled={edit}
+                                            // error={errors.firstName}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="city"
-                                                type="text"
-                                                value={state.city}
-                                                onChange={handleChange}
+
+                                            <InputStyled
                                                 label="Πόλη"
+                                                name="city"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.city}
+                                                disabled={edit}
+                                            // error={errors.firstName}
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            <Input
-                                                id="postalcode"
-                                                type="text"
-                                                value={state.postalcode}
-                                                onChange={handleChange}
+
+                                            <InputStyled
                                                 label="T.K"
+                                                name="postalcode"
+                                                type="text"
+                                                register={register}
+                                                defaultValue={state.postalcode}
+                                                disabled={edit}
                                             />
                                         </Grid>
 
                                     </Grid>
-                                    <Button onClick={handleUpdateUser}>
-                                        Αποθήκευση
+                                    <Button 
+                                        edit={edit}
+                                        loading={isLoading} 
+                                        onClick={handleButton}
+                                        type="submit"
+                                        >{edit ? 'Επεξεργασία' : 'Αποθήκευση'}
                                     </Button>
                                 </form>
                             </HeaderBoxShadow>
