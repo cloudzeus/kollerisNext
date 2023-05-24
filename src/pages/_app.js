@@ -62,6 +62,8 @@ const GeneralContainer = styled.div`
         font-weight: 900;
         font-family: 'Roboto Condensed', 'Roboto', sans-serif;
     }
+
+   
 `
   
 
