@@ -1,137 +1,158 @@
-import React, { useRef, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-import { SpreadsheetComponent, SheetsDirective, SheetDirective, RangesDirective, RowsDirective, RowDirective, CellDirective, CellsDirective } from '@syncfusion/ej2-react-spreadsheet';
-import { RangeDirective, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-spreadsheet';
-import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
-import { RadioButtonComponent, ButtonComponent } from '@syncfusion/ej2-react-buttons';
-import { DropDownListComponent, MultiSelectComponent } from '@syncfusion/ej2-react-dropdowns';
+/**
+ * Sample for column series with rounded corner
+ */
 
-function Spread() {
-    const spreadsheetRef = useRef(null);
-    const scrollSettings = { isFinite: true };
-    const selectionSettings = { mode: 'None' };
-    const boldCenter = {
-        fontWeight: 'bold', textAlign: 'center', fontSize: '12pt', verticalAlign: 'middle',
-        textDecoration: 'underline'
-    };
-    const nameTextbox = () => {
-        return (<TextBoxComponent placeholder="Name"></TextBoxComponent>);
-    };
-    const dobTextbox = () => {
-        return (<TextBoxComponent placeholder="DOB"></TextBoxComponent>);
-    };
-    const genderRadioButton = () => {
-        return (<div>
-            <RadioButtonComponent name="gender" value="male" label="Male"></RadioButtonComponent>
-            <RadioButtonComponent name="gender" value="female" label="Female"></RadioButtonComponent>
-        </div>);
-    };
-    const dropDownList = () => {
-        let experience = ['0 - 1 year', '1 - 3 years', '3 - 5 years', '5 - 10 years'];
-        return (<DropDownListComponent placeholder="Experience" dataSource={experience}></DropDownListComponent>);
-    };
-    const multiSelect = () => {
-        let languages = ['JAVA', 'C#', 'SQL'];
-        return (<MultiSelectComponent placeholder="Areas of Interest" showClearButton={false} dataSource={languages}></MultiSelectComponent>);
-    };
-    const mobileNoTextbox = () => {
-        return (<TextBoxComponent placeholder="Mobile Number"></TextBoxComponent>);
-    };
-    const emailTextbox = () => {
-        return (<TextBoxComponent placeholder="Email"></TextBoxComponent>);
-    };
-    const textArea = () => {
-        return (<TextBoxComponent multiline={true}></TextBoxComponent>);
-    };
-    const button = () => {
-        return (<ButtonComponent content="Add" style={{ float: "right" }} cssClass="e-flat"></ButtonComponent>);
-    };
-    useEffect(() => {
-        let spreadsheet = spreadsheetRef.current;
-        if (spreadsheet) {
-            spreadsheet.cellFormat({ fontWeight: 'bold' }, 'B2:B9');
-            // Merges B1 and C1 cells
-            spreadsheet.merge('B1:C1');
-        }
-    }, []);
+import * as React from "react";
+import AdminLayout from "@/layouts/Admin/AdminLayout";
+import { ChartComponent, SeriesCollectionDirective, SeriesDirective, Inject, Category, ColumnSeries, DataLabel, Tooltip } from '@syncfusion/ej2-react-charts';
+import { Browser } from '@syncfusion/ej2-base';
+import styled from "styled-components";
+const SAMPLE_CSS = `
+     .control-fluid {
+         padding: 0px !important;
+     }`;
 
-    return (
-        <div className='control-pane'>
-          <div> 
-            <button onClick={handleSavet}>Save to database</button>
-          </div>
-            <div className='control-section spreadsheet-control'>
-                <SpreadsheetComponent  ref={spreadsheetRef} showRibbon={false} showFormulaBar={false} allowOpen={false} allowSave={false} name={'Candidates List'} scrollSettings={scrollSettings} allowEditing={false} selectionSettings={selectionSettings}>
-                    <SheetsDirective>
-                        <SheetDirective name='Registration Form' rowCount={40} colCount={30} showGridLines={false}>
-                            <RowsDirective>
-                                <RowDirective height={55}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Interview Registration Form' style={boldCenter}></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Name:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Date of Birth:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Gender:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Year of Experience:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Areas of Interest:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Mobile Number:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={45}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Email:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                                <RowDirective height={82}>
-                                    <CellsDirective>
-                                        <CellDirective index={1} value='Address:'></CellDirective>
-                                    </CellsDirective>
-                                </RowDirective>
-                            </RowsDirective>
-                            <ColumnsDirective>
-                                <ColumnDirective index={1} width={190}></ColumnDirective>
-                                <ColumnDirective width={350}></ColumnDirective>
-                            </ColumnsDirective>
-                            <RangesDirective>
-                                <RangeDirective template={nameTextbox} address='C2'></RangeDirective>
-                                <RangeDirective template={dobTextbox} address='C3'></RangeDirective>
-                                <RangeDirective template={genderRadioButton} address='C4'></RangeDirective>
-                                <RangeDirective template={dropDownList} address='C5'></RangeDirective>
-                                <RangeDirective template={multiSelect} address='C6'></RangeDirective>
-                                <RangeDirective template={mobileNoTextbox} address='C7'></RangeDirective>
-                                <RangeDirective template={emailTextbox} address='C8'></RangeDirective>
-                                <RangeDirective template={textArea} address='C9'></RangeDirective>
-                                <RangeDirective template={button} address='C11'></RangeDirective>
-                            </RangesDirective>
-                        </SheetDirective>
-                    </SheetsDirective>
-                </SpreadsheetComponent>
-            </div>
-        </div>
-    );
+
+export let data1 = [
+    { x: 'Niger', y: 19.1, Rate: 100, text: "19.1%" },
+    { x: 'Sierra Leone', y: 48.1, Rate: 100, text: "48.1%" },
+    { x: 'South Sudan', y: 26.8, Rate: 100, text: "26.8%" },
+    { x: 'Nepal', y: 64.7, Rate: 100, text: "64.7%" },
+    { x: 'Gambia', y: 55.5, Rate: 100, text: "55.5%" },
+    { x: 'Gyana', y: 88.5, Rate: 100, text: "88.5%" },
+    { x: 'Kenya', y: 78.0, Rate: 100, text: "78.0%" },
+    { x: 'Singapore', y: 96.8, Rate: 100, text: "96.8%" }
+];
+export let pointRender = (args) => {
+    let selectedTheme = location.hash.split('/')[1];
+    selectedTheme = selectedTheme ? selectedTheme : 'material';
+    if (selectedTheme && selectedTheme.indexOf('fabric-dark') > -1) {
+        if (args.series.yName == "Rate")
+            args.fill = "f9fafb";
+    }
+    else if (selectedTheme && selectedTheme.indexOf('fabric') > -1) {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else if (selectedTheme === 'material-dark') {
+        if (args.series.yName == "Rate")
+            args.fill = "f9fafb";
+    }
+    else if (selectedTheme === 'material') {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else if (selectedTheme === 'bootstrap5-dark') {
+        if (args.series.yName == "Rate")
+            args.fill = "#f9fafb";
+    }
+    else if (selectedTheme === 'bootstrap5') {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else if (selectedTheme === 'bootstrap-dark') {
+        if (args.series.yName == "Rate")
+            args.fill = "f9fafb";
+    }
+    else if (selectedTheme === 'bootstrap') {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else if (selectedTheme === 'highcontrast') {
+        if (args.series.yName == "Rate")
+            args.fill = "#f9fafb";
+    }
+    else if (selectedTheme === 'fluent-dark') {
+        if (args.series.yName == "Rate")
+            args.fill = "#f9fafb";
+    }
+    else if (selectedTheme === 'fluent') {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else if (selectedTheme === 'tailwind-dark') {
+        if (args.series.yName == "Rate")
+            args.fill = "#f9fafb";
+    }
+    else if (selectedTheme === 'tailwind') {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
+    else {
+        if (args.series.yName == "Rate")
+            args.fill = "grey";
+    }
 };
-export default Spread;
+let count = 0;
+function RoundedColumn() {
+    function load(args) {
+        let selectedTheme = location.hash.split('/')[1];
+        selectedTheme = selectedTheme ? selectedTheme : 'Material';
+        args.chart.theme = (selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)).replace(/-dark/i, "Dark");
+    }
+    ;
+    function loaded(args) {
+        let chart = document.getElementById('charts2');
+        chart.setAttribute('title', '');
+    }
+    ;
+    return (
+        <AdminLayout>
+            <GridLayout>
+                <Container className="box">
+                       <style>
+                {SAMPLE_CSS}
+            </style>
+                    <div className='control-section'>
+                        <ChartComponent id='charts2' style={{ textAlign: "center" }} enableSideBySidePlacement={false} primaryXAxis={{
+                            valueType: 'Category', interval: 1, majorGridLines: { width: 0 },
+                            majorTickLines: { width: 0 },
+                            minorTickLines: { width: 0 }, labelPosition: 'Outside', labelRotation: Browser.isDevice ? -45 : 0, labelIntersectAction: Browser.isDevice ? 'None' : 'Rotate45',
+                        }} primaryYAxis={{ minimum: 0, maximum: 100, title: 'Literacy Rate In Percentage', labelFormat: '{value}%', interval: 25, majorTickLines: { width: 0 }, lineStyle: { width: 0 } }} chartArea={{ border: { width: 0 } }} load={load.bind(this)} title='Literacy rate by Country in 2015' loaded={loaded.bind(this)} legendSettings={{ visible: false }} width={Browser.isDevice ? '100%' : '77%'} tooltip={{ enable: true, header: "<b>${point.x}</b>", format: "Rate : <b>${point.text}</b>" }} pointRender={pointRender}>
+                            <Inject services={[ColumnSeries, DataLabel, Category, Tooltip]} />
+                            <SeriesCollectionDirective>
+                                <SeriesDirective xName='x' yName='Rate' enableTooltip={false} columnWidth={0.8} opacity={0.5} dataSource={data1} type='Column' name='Tiger' cornerRadius={{ bottomLeft: Browser.isDevice ? 12 : 35, bottomRight: Browser.isDevice ? 12 : 35, topLeft: Browser.isDevice ? 12 : 35, topRight: Browser.isDevice ? 12 : 35 }}>
+                                </SeriesDirective>
+                                <SeriesDirective xName='x' yName='y' columnWidth={0.8} dataSource={data1} type='Column' marker={{ dataLabel: { visible: true, name: 'text', enableRotation: Browser.isDevice ? true : false, angle: -90, position: 'Top', font: { fontWeight: '600', color: '#ffffff' } } }} name='Tiger' cornerRadius={{ bottomLeft: Browser.isDevice ? 12 : 35, bottomRight: Browser.isDevice ? 12 : 35, topLeft: Browser.isDevice ? 12 : 35, topRight: Browser.isDevice ? 12 : 35 }}>
+                                </SeriesDirective>
+                            </SeriesCollectionDirective>
+                        </ChartComponent>
+                    </div>
+                </Container >
+                <Container className="box">
+           
+                    <div className='control-section'>
+                        <ChartComponent id='charts3' style={{ textAlign: "center" }} enableSideBySidePlacement={false} primaryXAxis={{
+                            valueType: 'Category', interval: 1, majorGridLines: { width: 0 },
+                            majorTickLines: { width: 0 },
+                            minorTickLines: { width: 0 }, labelPosition: 'Outside', labelRotation: Browser.isDevice ? -45 : 0, labelIntersectAction: Browser.isDevice ? 'None' : 'Rotate45',
+                        }} primaryYAxis={{ minimum: 0, maximum: 100, title: 'Literacy Rate In Percentage', labelFormat: '{value}%', interval: 25, majorTickLines: { width: 0 }, lineStyle: { width: 0 } }} chartArea={{ border: { width: 0 } }} load={load.bind(this)} title='Literacy rate by Country in 2015' loaded={loaded.bind(this)} legendSettings={{ visible: false }} width={Browser.isDevice ? '100%' : '77%'} tooltip={{ enable: true, header: "<b>${point.x}</b>", format: "Rate : <b>${point.text}</b>" }} pointRender={pointRender}>
+                            <Inject services={[ColumnSeries, DataLabel, Category, Tooltip]} />
+                            <SeriesCollectionDirective>
+                                <SeriesDirective xName='x' yName='Rate' enableTooltip={false} columnWidth={0.8} opacity={0.5} dataSource={data1} type='Column' name='Tiger' cornerRadius={{ bottomLeft: Browser.isDevice ? 12 : 35, bottomRight: Browser.isDevice ? 12 : 35, topLeft: Browser.isDevice ? 12 : 35, topRight: Browser.isDevice ? 12 : 35 }}>
+                                </SeriesDirective>
+                                <SeriesDirective xName='x' yName='y' columnWidth={0.8} dataSource={data1} type='Column' marker={{ dataLabel: { visible: true, name: 'text', enableRotation: Browser.isDevice ? true : false, angle: -90, position: 'Top', font: { fontWeight: '600', color: '#ffffff' } } }} name='Tiger' cornerRadius={{ bottomLeft: Browser.isDevice ? 12 : 35, bottomRight: Browser.isDevice ? 12 : 35, topLeft: Browser.isDevice ? 12 : 35, topRight: Browser.isDevice ? 12 : 35 }}>
+                                </SeriesDirective>
+                            </SeriesCollectionDirective>
+                        </ChartComponent>
+                    </div>
+                </Container >
+            </GridLayout>
+        </AdminLayout>
+    )
 
+
+
+
+}
+
+const Container = styled.div`
+  
+`
+
+const GridLayout = styled.div`
+    display: grid;
+    grid-template-columns: 60% 1fr;
+    grid-gap: 10px;
+`
+export default RoundedColumn;

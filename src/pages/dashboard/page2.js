@@ -87,22 +87,14 @@ const IconBtn = styled.button`
 		cursor: pointer;
 		transition: transform 0.3s, background-color 0.3s;
 		box-shadow: rgba(0, 0, 0, 0.10) 0px 1px 2px;
-		&:hover {
-			transform: scale(0.9);
-			background-color: #fff;
+		&:active {
+			transform: scale(0.8);
 			background-color: ${props => props.theme.palette.primary.light50};
-			border-radius: 7px;
+			border-radius: 8px;
 		}
 `
 
 
-const Button2 = styled.button`
-  background-color: #FAFAFA;
-  border: none;
-  outline: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-`
+
 
 export default Page2
