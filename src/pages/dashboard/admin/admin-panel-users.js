@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter } from '@syncfusion/ej2-react-grids';
@@ -11,6 +10,7 @@ import { conditionalFormatting } from '@syncfusion/ej2/pivotview';
 import { DataManager, RemoteSaveAdaptor } from '@syncfusion/ej2-data';
 
 function DialogEdit() {
+
     return (
         <AdminLayout>
             <GridTable />
@@ -18,14 +18,12 @@ function DialogEdit() {
     );
 }
 
-
-
 const GridTable = () => {
-    const [data, setData] = useState([])
+
     const [grid, setGrid] = useState(null);
     const [flag, setFlag] = useState(false)
     const [error, setError] = useState(false)
-
+    const [data, setData] = useState([])
 
     const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
@@ -37,19 +35,6 @@ const GridTable = () => {
     const passwordValidation = {
         minLength: [5, 'Τουλάχιστον 5 χαρακτήρες'],
     }
-<<<<<<< HEAD
-   
-    const dataSource = new DataManager({
-        adaptor: new RemoteSaveAdaptor,
-        insertUrl: 'http://localhost:3000/api/admin/users/insert',
-        json: data,
-        // removeUrl: '/Home/Delete',
-        // updateUrl: '/Home/Update'
-    });
-=======
-
->>>>>>> bb80e563d1a79141a8cc7dfe199932454d4cb145
-
 
     const handleFetchUser = async () => {
 
@@ -72,7 +57,7 @@ const GridTable = () => {
 
 
     const actionBegin = (e) => {
-        
+
         if (!flag && grid) {
             if (e.requestType == 'save' && e.action == 'edit') {
                 e.cancel = true;
@@ -89,7 +74,7 @@ const GridTable = () => {
                         if (res.data.success == false) {
                             toast.error(res.data.error)
                             setFlag(false)
-                            
+
 
                         }
 
@@ -114,7 +99,7 @@ const GridTable = () => {
                         }
 
                         if (res.data.success == false) {
-                      ;
+                            ;
                             toast.error(res.data.error)
                             setError(res.data.error)
                         }
@@ -124,7 +109,7 @@ const GridTable = () => {
                 }
                 handleCrud(editedData, 'add')
             }
-            
+
         }
     }
 
@@ -135,7 +120,7 @@ const GridTable = () => {
         console.log('on Action Complete')
         console.log(e)
         setFlag(false)
-        if(e.requestType === 'save' && e.action === 'add') {
+        if (e.requestType === 'save' && e.action === 'add') {
             console.log('On action complete: SAVE')
         }
     }
@@ -144,59 +129,33 @@ const GridTable = () => {
         setGrid(g)
     }
 
-   
+
     return (
-<<<<<<< HEAD
-     <>
-           <div className='control-pane'>
-            <div className='control-section'>
+        <>
+            <Container p="0px" className="box">
+                <h2 className="boxHeader">Χρήστες</h2>
                 <GridComponent
-                    // dataSource={data}
-                    dataSource={dataSource}
+                    dataSource={data}
                     toolbar={toolbarOptions}
                     allowPaging={true}
                     editSettings={editSettings}
                     pageSettings={pageSettings}
-                    // actionComplete={actionComplete}
-                    
-                >
-                    <ColumnsDirective  >
-                        <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                        <ColumnDirective field='password' headerText='Kωδικός' width='100'  validationRules={passwordValidation}  template={rowData => '••••••••••'}  ></ColumnDirective>
-                        <ColumnDirective field='role'  headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams}  validationRules={validationRules}></ColumnDirective>
-                    </ColumnsDirective>
-                    <Inject services={[Page, Edit, Toolbar, Filter]} />
-                </GridComponent>
-=======
-        <>
-            <div className='control-pane'>
-                <div className='control-section'>
-                    <GridComponent
-                        dataSource={data}
-                        toolbar={toolbarOptions}
-                        allowPaging={true}
-                        editSettings={editSettings}
-                        pageSettings={pageSettings}
-                        loadingIndicator={loadingIndicator}
-                        actionBegin={actionBegin}
-                        actionComplete={actionComplete}
-                        ref={g => handleGrid(g)}
+                    loadingIndicator={loadingIndicator}
+                    actionBegin={actionBegin}
+                    actionComplete={actionComplete}
+                    ref={g => handleGrid(g)}
                         // autoFit ={true}
-                    >
-                        <ColumnsDirective  >
-                            <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
-                            <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
-                            <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                            <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={passwordValidation} template={rowData => '••••••••••'}  ></ColumnDirective>
-                            <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams} validationRules={validationRules}></ColumnDirective>
-                        </ColumnsDirective>
-                        <Inject services={[Page, Edit, Toolbar, Filter]} />
-                    </GridComponent>
-                </div>
->>>>>>> bb80e563d1a79141a8cc7dfe199932454d4cb145
-            </div>
+                        >
+                            <ColumnsDirective  >
+                                <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
+                                <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
+                                <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
+                                <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={passwordValidation} template={rowData => '••••••••••'}  ></ColumnDirective>
+                                <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams} validationRules={validationRules}></ColumnDirective>
+                            </ColumnsDirective>
+                            <Inject services={[Page, Edit, Toolbar, Filter]} />
+                        </GridComponent>
+                    </Container>
         </>
 
     )
@@ -204,6 +163,9 @@ const GridTable = () => {
 }
 
 
+const Container = styled.div`
+    padding: 0px;
+`
 
 
 

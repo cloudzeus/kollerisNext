@@ -51,18 +51,41 @@ const GeneralContainer = styled.div`
     .box {
         background-color: white;
         border-radius: 5px;     
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        padding: 20px;
+        /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+        box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+        -webkit-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+        -moz-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+        padding: ${props => props.p ? props.p : '20px'};
         
     }
-
+    .boxHeader {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        position: relative;
+        margin-bottom: 40px;
+    }
+    .boxHeader:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 20px;
+        height: 3px;
+        border-radius: 30px;
+        background-color: ${props => props.theme.palette.accent};
+    }
     .primaryHeader {
         color: ${props => props.theme.palette.primary.main};
         font-size: 22px;
         font-weight: 900;
         font-family: 'Roboto Condensed', 'Roboto', sans-serif;
     }
-
+    .boxShadow {
+        box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+        -webkit-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+        -moz-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
+    }
    
 `
   

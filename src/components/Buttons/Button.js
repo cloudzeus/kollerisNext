@@ -2,14 +2,18 @@ import React from "react"
 import { CircularProgress } from "@mui/material"
 import styled from "styled-components";
 
-const Button = ({children, onClick, loading, size, type, edit}) => {
+const Button = ({children, onClick, loading, size, type, edit, mt, mb}) => {
   return (
     <Btn 
+      mt={mt}
       size={size} 
       type={type} 
       onClick={onClick} 
       edit={edit} 
-      disabled={loading}>
+      disabled={loading}
+    
+      mb={mb}
+      >
       {loading ? <CircularProgress  size={'20px'}/>  : <>{children}</>}
     </Btn>
   )
@@ -23,12 +27,12 @@ const Button = ({children, onClick, loading, size, type, edit}) => {
 
 export const Btn = styled.button`
   width: ${props => props.size ? `${props.size}` : '140px'};
-  margin-top: ${props => props.mt ? `${mt}px` : '0'};
-  margin-top: ${props => props.bt ? `${mb}px` : '0'};
+  margin-top: ${props => props.mt ?  `${props.mt}px` : '0'};
+  margin-bottom: ${props => props.mb ? `${props.mb}px` : '0'};
   background-color: ${props => props.edit ? '#7cbef4' : props.theme.palette.primary.main};
   border-radius: 4px;
   outline: none;
-  height: 50px;
+  height: 40px;
   border-style: none;
   color: white;
   letter-spacing: 0.7px;

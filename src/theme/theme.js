@@ -5,10 +5,9 @@ const theme = createTheme({
     primary: {
       light: "#f3f8f9",
       light50: "#e3e6ed",
-      // main: "#1b356a",
-      // main: "#4fa9ca",
       main: "#2090ED",
       dark: "#02153d",
+
     },
    
     secondary: {
@@ -58,6 +57,7 @@ const theme = createTheme({
     iconColor: '#b71c1c',
     hoverColor: '#E6F7FF',
     white: '#ffffff',
+    accent: '#F36BB6'
    
   },
   success: {

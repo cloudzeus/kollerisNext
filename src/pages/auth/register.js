@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 //Rest imports:
 import { Grid } from '@mui/material'
-import {Subheader } from '@/components/Forms/formStyles'
+import { Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
@@ -16,7 +16,7 @@ import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
-
+import styled from 'styled-components';
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 
 
@@ -34,7 +34,7 @@ const registerPage = () => {
 	const { isLoading, response } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
-	
+
 
 	const { register, handleSubmit, formState: { errors }, reset } = useForm({
 		resolver: yupResolver(registerSchema),
@@ -52,7 +52,7 @@ const registerPage = () => {
 		// toast.error('Συμπληρώστε τα απαραίτητα πεδία');
 	}
 
-	
+
 
 
 
@@ -82,7 +82,6 @@ const registerPage = () => {
 				<form noValidate onSubmit={handleSubmit(onSubmit)}>
 					<Grid container justifyContent="center" alignItems="center" direction="row" columnSpacing={2}>
 						<Grid item xs={6}>
-						
 							<InputStyled
 								label="Όνομα"
 								name="firstName"
@@ -90,10 +89,8 @@ const registerPage = () => {
 								register={register}
 								error={errors.firstName}
 							/>
-
 						</Grid>
 						<Grid item xs={6}>
-						
 							<InputStyled
 								label="Επώνυμο"
 								name="lastName"
@@ -101,10 +98,9 @@ const registerPage = () => {
 								register={register}
 								error={errors.lastName}
 							/>
-
 						</Grid>
 					</Grid>
-					
+
 					<InputStyled
 						label="email"
 						name="email"
@@ -125,16 +121,15 @@ const registerPage = () => {
 					</div>
 					{/* Login Button */}
 					<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
-
 				</form>
 
 
 				<Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
 
 				<div className="center-div">
-						<Link className="linkBtn" href="/auth/signin">
-							Έχετε ήδη λογαριασμό
-						</Link>
+					<Link className="linkBtn" href="/auth/signin">
+						Έχετε ήδη λογαριασμό
+					</Link>
 				</div>
 			</Container >
 		</LoginLayout>
@@ -145,24 +140,26 @@ const registerPage = () => {
 
 const Container = styled.div`
  padding: 30px;
-  width: 450px;
+ width: 450px;
   @media (max-width: 499px) {
     width: 90%;
   } 
   .flex-between {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	height: 60px;
+	font-size: 14px;
   }
 
   .linkBtn {
         font-size: 14px;
     }
 
-    .center-div {
+	.center-div {
         display: flex;
         align-items: center;
         justify-content: center;
+		font-size: 14px;
     }
 `
 export default registerPage;
