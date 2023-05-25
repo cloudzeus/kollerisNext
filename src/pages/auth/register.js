@@ -6,13 +6,12 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 //Rest imports:
 import { Grid } from '@mui/material'
-import { Container, Subheader } from '@/components/Forms/formStyles'
+import {Subheader } from '@/components/Forms/formStyles'
 import Link from 'next/link';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@/components/Buttons/Button';
-import { FlexBetween } from '@/components/styles';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
@@ -121,9 +120,9 @@ const registerPage = () => {
 					/>
 
 					{/* Checkbox row */}
-					<FlexBetween>
+					<div className="flex-between">
 						<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
-					</FlexBetween>
+					</div>
 					{/* Login Button */}
 					<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
 
@@ -143,4 +142,27 @@ const registerPage = () => {
 	)
 }
 
+
+const Container = styled.div`
+ padding: 30px;
+  width: 450px;
+  @media (max-width: 499px) {
+    width: 90%;
+  } 
+  .flex-between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  }
+
+  .linkBtn {
+        font-size: 14px;
+    }
+
+    .center-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+`
 export default registerPage;

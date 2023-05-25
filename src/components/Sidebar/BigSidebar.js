@@ -28,11 +28,11 @@ const BigSidebar = () => {
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <SidebarExpandableItem label="Accordion" open={open} setOpen={onClick}>
         <SidebarItem to="/dashboard/page1" label="Page1" />
-        <SidebarItem to="/dashboard/fake/page2" label="Page2" />
+        <SidebarItem to="/dashboard/page2" label="Page2" />
       </SidebarExpandableItem>
       <SidebarExpandableItem label="Accordion2" open={open} setOpen={onClick}>
-        <SidebarItem to="/dashboard/fake/page1" label="Page1" />
-        <SidebarItem to="/dashboard/fake/page2" label="Page2" />
+        <SidebarItem to="/dashboard/page1" label="Page1" />
+        <SidebarItem to="/dashboard/page2" label="Page2" />
       </SidebarExpandableItem>
       {data?.user?.role === 'admin' && (
          <SidebarExpandableItem label="Admin Pages" open={open} setOpen={onClick}>
