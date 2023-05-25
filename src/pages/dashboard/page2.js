@@ -4,9 +4,15 @@ import { SpreadsheetComponent, SheetsDirective, SheetDirective, RangesDirective 
 import styled from 'styled-components';
 import Button from '@/components/Buttons/Button';
 
+//Icons:
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { useTheme } from 'styled-components';
 const Page2 = () => {
 	const beforeOpen = () => { };
 	const spreadsheetRef = useRef(null);
+	const theme = useTheme();
+	console.log(theme)
 
 
 	useEffect(() => {
@@ -27,14 +33,19 @@ const Page2 = () => {
 	}
 	return (
 		<AdminLayout>
-			
-			<div >
-				<Button2
-					className="boxShadow"
-					onClick={handleSavetoDatabase}>Save to database</Button2>
-			</div>
-			<div className="box">
-			<h2 className="boxHeader">SpreadSheet</h2>
+
+			<Container className="box">
+				<h2 className="boxHeader">SpreadSheet</h2>
+				<div className="icon-container">
+					<IconBtn>
+						<FolderOpenIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+					<IconBtn>
+						<SaveAltIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+
+				</div>
+
 				<SpreadsheetComponent
 					ref={spreadsheetRef}
 					actionBegin={onActionBegin}
@@ -44,16 +55,46 @@ const Page2 = () => {
 					Open={beforeOpen}
 					allowSave={true}
 				/>
-				<Button mt="40">Load</Button>
-			</div>
+				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
+			</Container >
 
 		</AdminLayout>
 	)
 }
 
 const Container = styled.div`
+	.icon-container {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	
 
+	
 `
+
+const IconBtn = styled.button`
+	border: none;
+	padding: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: ${props => props.theme.palette.primary.light};
+		border-radius: 5px;
+		color: white;
+		font-size: 12px;
+		margin-right: 10px;
+		cursor: pointer;
+		transition: transform 0.3s, background-color 0.3s;
+		box-shadow: rgba(0, 0, 0, 0.10) 0px 1px 2px;
+		&:hover {
+			transform: scale(0.9);
+			background-color: #fff;
+			background-color: ${props => props.theme.palette.primary.light50};
+			border-radius: 7px;
+		}
+`
+
 
 const Button2 = styled.button`
   background-color: #FAFAFA;

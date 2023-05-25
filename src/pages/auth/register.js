@@ -145,7 +145,7 @@ const Container = styled.div`
     width: 90%;
   } 
   .flex-between {
-	display: flex;
+	display: flex;	
 	align-items: center;
 	height: 60px;
 	font-size: 14px;
