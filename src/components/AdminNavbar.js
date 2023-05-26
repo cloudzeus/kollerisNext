@@ -56,12 +56,12 @@ const AdminNavbar = () => {
 
 const IconContainer = styled(IconBtn)`
    /* background-color: ${props => props.theme.palette.primary.light60}; */
-   background-color: #f6f6f6;
+   background-color: #f9f9f9;
    border-radius: 50%;
    margin-right: 0;
    width:38px;
    height: 38px;
-   border: 2px solid #eeeeee;
+   border: 2px solid #f0f0f0;
    box-shadow: none;
    svg {
       font-size: 20px;
