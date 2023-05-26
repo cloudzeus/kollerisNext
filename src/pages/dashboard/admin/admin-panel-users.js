@@ -74,7 +74,7 @@ const GridTable = () => {
                         if (res.data.success == false) {
                             toast.error(res.data.error)
                             setFlag(false)
-
+                            console.log('')
 
                         }
 
