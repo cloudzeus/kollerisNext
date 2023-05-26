@@ -10,9 +10,10 @@ import Stack from '@mui/material/Stack';
 import AvatarSettings from './Buttons/AvatarSettings';
 import Image from 'next/image'
 
-
-
-
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import styled from 'styled-components';
+import { IconBtn } from './Buttons/Button';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 
 const AdminNavbar = () => {
@@ -25,7 +26,8 @@ const AdminNavbar = () => {
    }
 
    return (
-      <Stack sx={{ bgcolor: 'white', width: '100%', p: '10px', height: 70, position: 'fixed', zIndex: 12 }} direction="row"   >
+      <Container>
+          
          <Stack direction="row" alignItems={"center"}>
             <Burger onClick={toggle} />
             <Image
@@ -36,13 +38,59 @@ const AdminNavbar = () => {
             />
 
          </Stack>
-         <Stack direction="row" justifyContent="flex-end" alignItems="center" width="100%">
-            <AvatarSettings />
-         </Stack>
+            <div className="right-div">
+            
+               <IconContainer >
+                  <NotificationsIcon />
+               </IconContainer>
+               <IconContainer >
+                  <SettingsIcon />
+               </IconContainer>
+               <AvatarSettings />
+            </div>
          
-      </Stack >
+      </Container>
+    
    )
 }
+
+const IconContainer = styled(IconBtn)`
+   /* background-color: ${props => props.theme.palette.primary.light60}; */
+   background-color: #f6f6f6;
+   border-radius: 50%;
+   margin-right: 0;
+   width:38px;
+   height: 38px;
+   border: 2px solid #eeeeee;
+   box-shadow: none;
+   svg {
+      font-size: 20px;
+      color: ${props => props.theme.palette.accent};
+   }
+`
+
+const Container = styled.div`
+   display: flex;
+   width: 100%;
+   padding: 10px;
+   z-index: 99999;
+   height: 70px;
+   position: fixed;
+   flex-direction: row;
+   .right-div {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      align-items: center;
+      justify-content: flex-end;
+   }
+   .right-div button {
+      margin-left: 10px;
+   }
+
+`
+
+
 
 
 

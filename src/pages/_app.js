@@ -63,7 +63,7 @@ const GeneralContainer = styled.div`
         font-weight: 700;
         letter-spacing: 0.3px;
         position: relative;
-        margin-bottom: 30   px;
+        margin-bottom: 30px;
     }
     .boxHeader:after {
         content: '';
@@ -74,6 +74,7 @@ const GeneralContainer = styled.div`
         height: 3px;
         border-radius: 30px;
         background-color: ${props => props.theme.palette.accent};
+        z-index: 2;
     }
     .primaryHeader {
         color: ${props => props.theme.palette.primary.main};
