@@ -58,7 +58,7 @@ const Wrapper = styled.div`
     padding: 10px;
     background-color: white;
     height: 100%;
-  
+    z-index: 999999;
 
     @media (max-width: 768px) {
         width: 100%;

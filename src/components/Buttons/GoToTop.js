@@ -4,31 +4,9 @@ import NorthIcon from '@mui/icons-material/North';
 import { IconBtn } from './Button';
 const GoToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const toggleFullscreen = () => {
-        console.log('toggleFullscreen')
-        // const doc = window.document;
-        // const docEl = doc.documentElement;
-        // console.log(doc)
-        // const requestFullscreen =
-        //   docEl.requestFullscreen ||
-        //   docEl.mozRequestFullScreen ||
-        //   docEl.webkitRequestFullScreen ||
-        //   docEl.msRequestFullscreen;
-        
-        // const exitFullscreen =
-        //   doc.exitFullscreen ||
-        //   doc.mozCancelFullScreen ||
-        //   doc.webkitExitFullscreen ||
-        //   doc.msExitFullscreen;
-      
-        // if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-        //   requestFullscreen.call(docEl);
-        // } else {
-        //   exitFullscreen.call(doc);
-        // }
-      }
+   
     return (
-        <Container isVisible={isVisible} onClick={toggleFullscreen}>
+        <Container isVisible={isVisible} >
             <NorthIcon />
         </Container>
     )
@@ -37,7 +15,7 @@ const GoToTop = () => {
 const Container = styled(IconBtn)`
     /* display: ${({ isVisible }) => isVisible ? 'block' : 'none'}; */
     position: absolute;
-    right: 20px;
+    right: 3px;
     bottom: 20px;
     width: 30px;
     height: 30px;

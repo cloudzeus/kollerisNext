@@ -52,6 +52,7 @@ const AdminNavbar = () => {
 		dispatch(toggleSidebar())
 	}
 
+
 	return (
 		<Container>
 			<div className="burger-div">
@@ -102,6 +103,8 @@ const Container = styled.div`
    height: 70px;
    position: fixed;
    flex-direction: row;
+   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.04); /* Adjust the values as needed */
+
    .burger-div {
       display: flex;
       align-items: center;
@@ -135,7 +138,30 @@ const Burger = ({ onClick }) => {
 	)
 }
 
-
+const onScrollFunc = () => {
+   console.log('get Scroll')
+   const doc = window.document;
+   const docEl = doc.documentElement;
+   console.log(doc)
+   console.log(docEl)
+   // const requestFullscreen =
+   //   docEl.requestFullscreen ||
+   //   docEl.mozRequestFullScreen ||
+   //   docEl.webkitRequestFullScreen ||
+   //   docEl.msRequestFullscreen;
+   
+   // const exitFullscreen =
+   //   doc.exitFullscreen ||
+   //   doc.mozCancelFullScreen ||
+   //   doc.webkitExitFullscreen ||
+   //   doc.msExitFullscreen;
+ 
+   // if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+   //   requestFullscreen.call(docEl);
+   // } else {
+   //   exitFullscreen.call(doc);
+   // }
+ }
 
 
 export default AdminNavbar
