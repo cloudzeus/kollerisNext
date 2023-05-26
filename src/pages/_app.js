@@ -63,7 +63,7 @@ const GeneralContainer = styled.div`
         font-weight: 700;
         letter-spacing: 0.3px;
         position: relative;
-        margin-bottom: 30px;
+        margin-bottom: 30   px;
     }
     .boxHeader:after {
         content: '';

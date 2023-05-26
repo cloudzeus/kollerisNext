@@ -10,7 +10,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import { Btn } from './Button';
 
 
 const sx = {
@@ -18,18 +20,28 @@ const sx = {
     color: 'primary.main'
 }
 
+const filterName = (name) => {
+    if(name.length > 10){
+        return name.slice(0, 10) + '...'
+    } else {
+        return name;
+    }
+}
+
+
+
 const AvatarSettings = () => {
     const [show, setShow] = useState(false);
     const route = useRouter();
     const dispatch = useDispatch();
-    const {user} = useSelector(state => state.user)
+    const { user } = useSelector(state => state.user)
 
     const [name, setName] = useState('')
     const onClick = () => {
         setShow(!show)
     }
-    
-    
+
+
     const onPressLogout = () => {
         signOut({
             redirect: false
@@ -46,23 +58,28 @@ const AvatarSettings = () => {
         }
     }, [name])
 
-    
+   
     return (
         <Container>
-            < div className='topDiv' onClick={onClick}>
+            < AvatarBtn onClick={onClick}>
                 <Avatar
                     alt="Remy Sharp"
                     src='/static/imgs/avatar.jpg'
                     sx={{ bgcolor: 'triadic.light', color: 'triadic.main', fontSize: '10px', width: 35, height: 35 }}
                 />
-                {/* <SettingsIconStyled /> */}
-            </ div >
+                <div>
+                    <p>
+                        {filterName(user?.firstName)}
+                    </p>
+                    <SettingsIconStyled />
+                </div>
+            </AvatarBtn >
             {show && (
                 <div className='hiddenDropDown'>
                     <div className="hiddenTopDiv">
                         <p>
                             Γειά σου,
-                            <span className='name'> {name? name : '<User>'}</span>
+                            <span className='name'> {name ? name : '<User>'}</span>
                         </p>
                     </div>
                     <div className="hiddenBottomDiv">
@@ -89,16 +106,45 @@ const AvatarSettings = () => {
     )
 }
 
+const AvatarBtn = styled(Btn)`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: ${({ theme }) => theme.palette.primary.light60};
+    border-radius: 30px;
+    padding: 4px;   
+    background-color: white;
+    border: 1px solid ${({ theme }) => theme.palette.primary.light50};
+    height: auto;
+    width: auto;
+    min-width: 125px;
+    transition: transform 0.3s, background-color 0.3s;
+	box-shadow: rgba(0, 0, 0, 0.10) 0px 1px 2px;
+	&:active {
+		transform: scale(0.9);
+		background-color: ${props => props.theme.palette.primary.light50};
+	}
+    div {
+        display: flex;
+        align-items: center;
+    }
+    div p {
+        margin-right: 2px;
+        font-weight: 500;
+    }
+
+`
 
 
 const Container = styled.div`
-    .topDiv {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: ${({ theme }) => theme.palette.primary.light};
-        border-radius: 30px;
-        padding: 4px;
+
+   
+    p {
+        margin-left: 4px;
+    }
+    p span {
+        font-weight: 600;
+        color: ${({ theme }) => theme.palette.primary.main};
     }
     .hiddenDropDown {
         border-top: 2px solid ${({ theme }) => theme.palette.primary.light};
@@ -159,8 +205,8 @@ const ButtonText = styled.p`
 
 
 
-const SettingsIconStyled = styled(SettingsIcon)`
-  color: ${({ theme }) => theme.palette.primary.main};
+const SettingsIconStyled = styled(KeyboardArrowDownIcon)`
+  color: ${({ theme }) => theme.palette.accent};
   font-size: 20px;
   margin-right: 2px;
 `

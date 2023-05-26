@@ -40,6 +40,8 @@ const LoginForm = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
+        console.log('submit')
+        setLoading(true)
         console.log(data)
         const res = await signIn("credentials",
             {
@@ -47,8 +49,6 @@ const LoginForm = () => {
                 password: data.password,
                 redirect: false,
             })
-        console.log(res)
-        // //if next auth response  is ok:
         if (res.ok == true && res.status == 200 && res.error == null) {
             setLoading(false);
             router.push('/dashboard')
