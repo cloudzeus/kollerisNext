@@ -31,8 +31,8 @@ const Container = styled(IconBtn)`
    &:after {
         content: '10';
         position: absolute;
-        top: -7px;
-        right: -5px;
+        top: -6px;
+        right: -6px;
         background-color: ${({ theme }) => theme.palette.primary.main};
         border-radius: 50%;
         z-index: 4;

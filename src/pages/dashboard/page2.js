@@ -12,28 +12,74 @@ const Page2 = () => {
 	const beforeOpen = () => { };
 	const spreadsheetRef = useRef(null);
 	const theme = useTheme();
-	console.log(theme)
+
 
 
 	useEffect(() => {
 		let spreadsheet = spreadsheetRef.current;
-		console.log(spreadsheet)
+		// console.log(spreadsheet)
 
 	}, []);
 	const onActionBegin = (pasteArgs) => {
-		console.log('action begin')
-		console.log(pasteArgs)
+		// console.log('action begin')
+		// console.log(pasteArgs)
 	};
 
 	const handleSavetoDatabase = async () => {
 		let spreadsheet = spreadsheetRef.current;
 		let json = await spreadsheet.saveAsJson();
-		console.log(json)
+		// console.log(json)
 
 	}
 	return (
 		<AdminLayout>
 
+			<Container className="box">
+				<h2 className="boxHeader">SpreadSheet</h2>
+				<div className="icon-container">
+					<IconBtn>
+						<FolderOpenIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+					<IconBtn>
+						<SaveAltIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+
+				</div>
+
+				<SpreadsheetComponent
+					ref={spreadsheetRef}
+					actionBegin={onActionBegin}
+					allowOpen={true}
+					openUrl='https://services.syncfusion.com/react/production/api/spreadsheet/open'
+					saveUrl='https://services.syncfusion.com/react/production/api/spreadsheet/save'
+					Open={beforeOpen}
+					allowSave={true}
+				/>
+				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
+			</Container >
+			<Container className="box">
+				<h2 className="boxHeader">SpreadSheet</h2>
+				<div className="icon-container">
+					<IconBtn>
+						<FolderOpenIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+					<IconBtn>
+						<SaveAltIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
+					</IconBtn>
+
+				</div>
+
+				<SpreadsheetComponent
+					ref={spreadsheetRef}
+					actionBegin={onActionBegin}
+					allowOpen={true}
+					openUrl='https://services.syncfusion.com/react/production/api/spreadsheet/open'
+					saveUrl='https://services.syncfusion.com/react/production/api/spreadsheet/save'
+					Open={beforeOpen}
+					allowSave={true}
+				/>
+				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
+			</Container >
 			<Container className="box">
 				<h2 className="boxHeader">SpreadSheet</h2>
 				<div className="icon-container">
@@ -63,6 +109,7 @@ const Page2 = () => {
 }
 
 const Container = styled.div`
+	margin-bottom: 20px;
 	.icon-container {
 		display: flex;
 		align-items: center;

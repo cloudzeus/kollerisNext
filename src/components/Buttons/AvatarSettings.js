@@ -70,7 +70,7 @@ const AvatarSettings = () => {
                 />
                 <div>
                     <p>
-                        {filterName(user?.firstName)}
+                        {name ? filterName(name) : 'Not Found'}
                     </p>
                     <SettingsIconStyled />
                 </div>

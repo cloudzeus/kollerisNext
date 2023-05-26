@@ -6,7 +6,7 @@ import { IconButton } from '@mui/material';
 
 
 export const InputPass = ({ error, name, label, placeholder, register }) => {
-	;
+	
 	const [showPass, setShowPass] = React.useState(false);
 	return (
 		<InputContainer error={error}>
