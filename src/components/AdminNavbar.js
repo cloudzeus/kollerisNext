@@ -9,8 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Stack from '@mui/material/Stack';
 import AvatarSettings from './Buttons/AvatarSettings';
 import Image from 'next/image'
-
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import Notifications from './Buttons/Notifications';
 import styled from 'styled-components';
 import { IconBtn } from './Buttons/Button';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -39,10 +38,7 @@ const AdminNavbar = () => {
 
          </Stack>
             <div className="right-div">
-            
-               <IconContainer >
-                  <NotificationsIcon />
-               </IconContainer>
+               <Notifications />
                <IconContainer >
                   <SettingsIcon />
                </IconContainer>
@@ -61,7 +57,7 @@ const IconContainer = styled(IconBtn)`
    margin-right: 0;
    width:38px;
    height: 38px;
-   border: 2px solid #f0f0f0;
+   border: 2px solid#f4f4f4;
    box-shadow: none;
    svg {
       font-size: 20px;

@@ -2,18 +2,18 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Avatar from '@mui/material/Avatar';
-import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { signOut } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
-
+import SettingsIcon from '@mui/icons-material/Settings';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import { Btn } from './Button';
 
+//Login Container for the notifications:
 
 const sx = {
     fontSize: '17px',
@@ -21,6 +21,7 @@ const sx = {
 }
 
 const filterName = (name) => {
+   
     if(name.length > 10){
         return name.slice(0, 10) + '...'
     } else {
