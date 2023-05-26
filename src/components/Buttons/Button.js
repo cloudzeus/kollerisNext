@@ -45,8 +45,8 @@ export const Btn = styled.button`
   &:active {
     transform: scale(0.9);
     background-color: ${props => props.theme.palette.primary.light50};
-    border-radius: 8px;
   }
+    
   &:disabled {
     background-color: #7cbef4;
   }

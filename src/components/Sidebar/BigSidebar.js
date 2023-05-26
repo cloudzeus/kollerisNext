@@ -52,14 +52,12 @@ const Wrapper = styled.div`
     display: ${props => props.isSidebarOpen ? 'block' : 'none'};
     position: absolute;
     top: 70px;
-    left: 0;
+    background-color: white;
     width: 260px;
     z-index: 3;
     padding: 10px;
-    background-color: white;
     height: 100%;
     z-index: 999999;
-
     @media (max-width: 768px) {
         width: 100%;
 

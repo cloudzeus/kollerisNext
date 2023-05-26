@@ -103,7 +103,8 @@ const Container = styled.div`
    height: 70px;
    position: fixed;
    flex-direction: row;
-   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.04); /* Adjust the values as needed */
+   /* box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.04);= */
+   background-color: white;
 
    .burger-div {
       display: flex;

@@ -37,8 +37,13 @@ export default async (req, res) => {
     let clientId = loginApi.data.clientID
     //return if failed to fetch clientID
     if(!clientId) return res.status(401).json({message: "Identification failed"})
+    const client = axios.create({
+        baseURL: URL
+      });
+      
+    client.defaults.headers['Content-Type'] = 'application/json';
 
-    const response = await axios.post(URL, {
+    const response = await client.post(URL, {
         clientId: clientId,
         appId: APP_ID,
         version: VERSION,
