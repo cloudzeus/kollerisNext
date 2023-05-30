@@ -9,6 +9,7 @@ const Products = () => {
             fields: 'ITEMARK,name'
 
         })
+        console.log(res.data    )
     }
     useEffect(() => {
         handleReq();

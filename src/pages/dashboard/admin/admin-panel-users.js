@@ -50,7 +50,7 @@ const GridTable = () => {
     useEffect(() => {
         handleFetchUser();
         console.log('it should refresh')
-    }, [error])
+    }, [])
 
 
 
@@ -90,16 +90,17 @@ const GridTable = () => {
             if (e.requestType == 'save' && e.action == 'add') {
 
                 let editedData = e.data;
-                e.cancel = true
+                // e.cancel = true
                 const handleCrud = async (data, action) => {
                     try {
                         const res = await axios.post('/api/admin/users', { action: action, ...data })
+                        handleFetchUser()
                         if (res.data.success) {
-                            grid.endEdit();
+                           
                         }
 
                         if (res.data.success == false) {
-                            ;
+                        
                             toast.error(res.data.error)
                             setError(res.data.error)
                         }

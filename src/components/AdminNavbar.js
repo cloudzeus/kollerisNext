@@ -99,7 +99,7 @@ const Container = styled.div`
    display: flex;
    width: 100%;
    padding: 10px;
-   z-index: 99999;
+   z-index: 99;
    height: 70px;
    position: fixed;
    flex-direction: row;
