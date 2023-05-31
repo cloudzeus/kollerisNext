@@ -1,33 +1,42 @@
 import React, { useState, cloneElement } from 'react'
 import styled from 'styled-components'
-
-const DialogContainer = ({children, title}) => {
-  const [show, setSHow] = useState(false)
-  const handleClick= () => {
-    setSHow((prev) => !prev)
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+const DialogContainer = ({ children, title }) => {
+  const [show, setShow] = useState(false)
+  const handleClick = () => {
+    setShow((prev) => !prev)
   }
 
 
-  
+
   return (
- 
+
     <Container>
-        <div className="top-div" >
-          <button onClick={handleClick}>Add</button>
-         
-        </div>
-        {show && (
-          <div className="dialogForm">
-            <div  className="form">
-              <div className="header">
-                <h2>Προσθήκη Νέου</h2>
-                <button onClick={handleClick}>Close</button>
-              </div>
-              {children}
-             
+      <div className="top-div" >
+        <button onClick={handleClick}>
+          <AddIcon /> Προσθήκη
+        </button>
+        <button onClick={handleClick}>
+          <EditIcon /> Διόρθωση
+        </button>
+        <button onClick={handleClick}>
+          <DeleteIcon  /> Διαγραφή
+        </button>
+      </div>
+      {show && (
+        <div className="dialogForm">
+          <div className="form">
+            <div className="header">
+              <h2>Προσθήκη Νέου</h2>
+              <button onClick={handleClick}>Close</button>
             </div>
+            {children}
+
+          </div>
         </div>
-        )}
+      )}
     </Container>
   )
 }
@@ -39,6 +48,7 @@ const Container = styled.div`
  
   background-color: #fafafa;
   display: flex;
+  padding: 10px;
   .dialogForm {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
@@ -71,5 +81,33 @@ const Container = styled.div`
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 10px;
+  }
+  .top-div {
+    display: flex;
+  }
+
+  .top-div button {
+    height: 35px;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    color:#737384;
+    padding: 5px 10px;
+    border-radius: 4px;
+
+  }
+
+  .top-div button:hover, .top-div button:active {
+    background-color: #d5d4d5;
+  }
+  .top-div button:active {
+    scale: 0.9;
+  }
+  .top-div button svg {
+    font-size: 16px;
+    font-weight: 600;
+    color: #737384;
+    margin-right: 2px;
   }
 `

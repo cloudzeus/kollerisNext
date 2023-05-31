@@ -10,7 +10,6 @@ import { signOut } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
 import SettingsIcon from '@mui/icons-material/Settings';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
 import { Btn } from './Button';
 
 //Login Container for the notifications:

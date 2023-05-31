@@ -106,12 +106,15 @@ form {
 }
 
 
+/* STYLE THE GRID */
 
-.e-grid {
-  border: none;
+.e-grid .e-headercell {
+  color: darkblue;
+  background-color: #F9FAFB;
 }
-
-
+.e-grid .e-gridheader {
+  background-color: red;
+}
 .e-control .e-toolbar{
   border-radius: 6px 6px 0px 0px;
   border-top: none;

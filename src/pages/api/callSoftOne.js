@@ -37,6 +37,7 @@ export default async (req, res) => {
     let clientId = loginApi.data.clientID
     //return if failed to fetch clientID
     if(!clientId) return res.status(401).json({message: "Identification failed"})
+    
     const client = axios.create({
         baseURL: URL
       });

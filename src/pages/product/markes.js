@@ -4,13 +4,8 @@ import axios from 'axios';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, actionBegin } from '@syncfusion/ej2-react-grids';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
-import { conditionalFormatting } from '@syncfusion/ej2/pivotview';
-import { InputStyled } from '@/components/Forms/FormInput';
-import { DataManager, RemoteSaveAdaptor } from '@syncfusion/ej2-data';
-import { useForm } from "react-hook-form";
+
 import Dialog from '@/components/DialogFormTeampates/DialogTemplates/MarkesDialog';
-import { Column } from '@syncfusion/ej2-react-charts';
 import Image from 'next/image';
 
 
@@ -33,18 +28,18 @@ const GridTable = () => {
     const loadingIndicator = { indicatorType: 'Shimmer' }
     const editOptions = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
     const toolbarOptions = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
-    const settings = { checkboxMode: 'ResetOnRowClick' };
+    const [show, setShow] = useState(false)
     const gridTemplate = (props) => {
         console.log('props')
         console.log(props.logo)
         return (
-            <div className='image'>
-                <Image
-                    src={`/static/imgs/${props.logo}`}
-                    width={80}
-                    height={24}
-                />
-            </div>);
+        <div className='image'>
+            <Image
+					src={`/static/imgs/${props.logo}`}
+					width={80}
+					height={24}
+				/>
+        </div>);
     };
 
     const handleFetchUser = async () => {
@@ -72,16 +67,16 @@ const GridTable = () => {
             // alert(selectedrowindex + " : " + JSON.stringify(selectedrecords));
         }
     };
-    
+  
 
     return (
         <>
             <Container p="0px" className="box">
-                <h2 className="boxHeader">Χρήστες</h2>
-                <Dialog setDataRefresh={setDataRefresh} />
-                <GridComponent
+                <h2 className="boxHeader">Μάρκες</h2>
+                
+                <Dialog setDataRefresh={setDataRefresh}/> 
+                    <GridComponent
                     dataSource={data}
-                    selectionSettings={settings}
                     editSettings={editOptions}
                     allowPaging={true}
                     pageSettings={pageSettings}
@@ -90,15 +85,16 @@ const GridTable = () => {
                     ref={g => grid = g}
                 >
                     <ColumnsDirective  >
-                        <ColumnDirective type='checkbox' width='50'></ColumnDirective>
                         <ColumnDirective field='name' headerText='Όνομα' width='100' ></ColumnDirective>
                         <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
                         <ColumnDirective field='logo' headerText='Περιγραφή' width='100' template={gridTemplate}></ColumnDirective>
                         <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
                         <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective>
                     </ColumnsDirective>
-                    {/* <Inject services={[Page, Edit, Toolbar]} /> */}
+                    <Inject services={[Page, Edit, Toolbar]} />
                 </GridComponent>
+            
+            
             </Container>
         </>
 

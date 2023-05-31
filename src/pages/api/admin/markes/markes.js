@@ -1,29 +1,72 @@
 import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
-      // Create a new document
-    
 
+    // try {
+    //   await connectMongo();
+    //       let data = req.body.data
+    //       const newMarkes = await Markes.create({
+    //           name:'product1',
+    //           description: 'description of product 1',
+    //           logo: 'https://localohost:3000/assets/imgs/luffy.png',
+    //           videoPromoList: [
+    //             {
+    //               name: 'video1',
+    //               videoUrl: 'https://localohost:3000/assets/imgs/luffy.png'
+    //             }
+    //           ],
+    //           photosPromoList: [
+    //             {
+    //               name:'sefsefsef',
+    //               photosPromoUrl: 'sesefsefs'
+    //             }
+    //           ],
+    //           pimAccess: {
+    //             pimUrl: 'https://pimurl',
+    //             pimUserName:'pimUserName',
+    //             pimPassword: '1234567'
+    //           },
+    //           webSiteUrl: 'website url',
+    //           officialCatalogueUrl: 'catalogues url',
+    //           facebookUrl: 'facebook url',
+    //           instagramUrl: 'instagram url',
+    //           softOneMTRMARK: 1,
+    //           softOneName: 'softone name',
+    //           softOneCode: 'softone code',
+    //           softOneSODCODE: 'softonesodcode',
+    //           softOneISACTIVE: 1,
+    //       })
+    //       console.log(newMarkes);
+    //       return res.status(200).json({success: true, markes: newMarkes});
+    // } catch (error) {
+    //       console.log(error)
+    // }
+    let action = req.body.action;
+    if (action === 'findAll') {
+      console.log('Find all')
       try {
         await connectMongo();
-        const { 
-            name, 
-            description, 
-            logo, 
-            videoPromoList, 
-            photosPromoList, 
-            pimAccess, 
-            webSiteUrl, 
-            officialCatalogueUrl, 
-            facebookUrl, 
-            instagramUrl, 
-            softOneMTRMARK, 
-            softOneName, 
-            softOneCode, 
-            softOneSODCODE, 
-            softOneISACTIVE } = req.body;
-  
+         const markes = await Markes.find({});
+         if(markes) {
+          console.log(markes)
+          return  res.status(200).json({success: true, markes: markes});
+             
+         }
+         else {
+          return  res.status(200).json({success: false, markes: null});
+         }
+       
+         
+       } catch (error) {
+        return  res.status(400).json({ success: false, error: 'failed to fetch user' });
+       }
+     
+    }
+    if (action === 'create') {
+      // Create a new document
+      try {
+        await connectMongo();
+            let data = req.body.data
             const newMarkes = await Markes.create({
                 name: data.name,
                 description: data.description,
@@ -43,11 +86,13 @@ export default async function handler(req, res) {
             })
 
         if(newMarkes) {
-            res.status(201).json(savedMarkes);
+            console.log(newMarkes)
+            return res.status(200).json({success: true, markes: newMarkes});
+           
         }
        
       } catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({success: false, error: error.message });
       }
     } 
     

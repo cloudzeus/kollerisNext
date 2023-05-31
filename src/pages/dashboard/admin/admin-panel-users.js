@@ -49,7 +49,6 @@ const GridTable = () => {
 
     useEffect(() => {
         handleFetchUser();
-        console.log('it should refresh')
     }, [])
 
 
