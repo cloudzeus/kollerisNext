@@ -14,9 +14,6 @@ const AdminLayout = ({children}) => {
     const [offset, setOffset] = useState(0);
     const [offset2, setOffset2] = useState(0);
     const isBrowser = () => typeof window !== 'undefined'; //The approach recommended by Next.js
-   
-  
-     
     return (
             <Container>
                 <AdminNavbar />
@@ -46,7 +43,7 @@ const SidebarContainer = styled.div`
     top: 70px;
     left: ${({ isSidebarOpen }) => isSidebarOpen ? '260px' : '0'};
     width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 260px)' : '100%'};
-    padding: 40px;
+    padding: 100px;
     overflow-y:scroll;
     background-color: ${({ theme }) => theme.palette.background};
     height: calc(100vh - 70px);
