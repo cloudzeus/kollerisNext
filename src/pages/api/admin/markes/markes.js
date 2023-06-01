@@ -43,12 +43,11 @@ export default async function handler(req, res) {
     // }
     let action = req.body.action;
     if (action === 'findAll') {
-      console.log('Find all')
       try {
         await connectMongo();
          const markes = await Markes.find({});
          if(markes) {
-          console.log(markes)
+          // console.log(markes)
           return  res.status(200).json({success: true, markes: markes});
              
          }
@@ -96,15 +95,20 @@ export default async function handler(req, res) {
       }
     } 
     
-    if (req.method === 'GET') {
-      // Retrieve all documents
+    if (action === 'delete') {
+      await connectMongo();
+      
+      let id = req.body.id;
+      console.log('backend id')
+      console.log(id)
       try {
-        const markes = await Markes.find();
-        res.status(200).json(markes);
-      } catch (error) {
-        res.status(400).json({ error: error.message });
+        let deletedOne = await Markes.findByIdAndDelete(id);
+        return res.status(200).json({success: true, markes: deletedOne});
       }
-    } else {
-      res.status(405).json({ error: 'Method Not Allowed' });
+      catch (error) {
+        console.log(error)
+        return res.status(400).json({success: false, error: 'Αποτυχία διαγραφής'});
+      }
     }
+    
   }

@@ -4,6 +4,11 @@ export const Container = styled.div`
     padding: 0px !important;
     .header {
         padding: 20px;
+        border-bottom: 2px solid ${props => props.theme.palette.background};
+    }
+
+    .boxHeader {
+      margin-bottom: 10px ;
     }
   .dialogForm {
     position: absolute;
@@ -20,12 +25,17 @@ export const Container = styled.div`
   }
   .form {
     background-color: white;
-    padding: 50px;
+    padding: 40px;
     min-width: 600px;
     border-radius: 4px;
     @media (max-width: 601px) {
       min-width: 90%;
     }
+  }
+
+  .form h2 {
+    font-size: 17px;
+    margin-top: 20px;
   }
   .form div.header {
     display: flex;
@@ -44,7 +54,7 @@ export const Container = styled.div`
 export const GridActions = styled.div`
 
     /* background-color: #fafafa; */
-    border-top: 1px solid #d5d4d5;
+    /* border-top: 1px solid #d5d4d5; */
     display: flex;
     padding: 10px;
     display: flex;

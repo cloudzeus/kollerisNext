@@ -98,65 +98,6 @@ const Dialog = (props) => {
 }
 
 
-const UploadInput = ({title, selectedFile, setSelectedFile}) => {
 
-    const handleFileChange = () => {
-        let fileEl = document.getElementById('customFileUpload');
-        let file = fileEl.files[0];
-        setSelectedFile(file);
-
-      };
-
-      const handleClick = (e) => {
-        e.preventDefault()
-        document.getElementById('customFileUpload').click()
-      }
-
-     
-
-    return (
-        <UploadInputContainer >
-            <p>{`Ανέβασμα ${title}`}</p>
-            <input 
-                type="file" 
-                id="customFileUpload"
-                onChange={handleFileChange}
-                />
-           
-            <button onClick={handleClick}>
-                <AddPhotoAlternateIcon />
-            </button>
-            <span>{selectedFile ? selectedFile.name : ''}</span>
-        </UploadInputContainer>
-    )
-}
-
-const UploadInputContainer = styled.div`
-    p {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        letter-spacing: 0.7px;
-    }
-    button {
-        background-color: transparent;
-        border: none;
-
-    }
-    input[type="file"] {
-        display: none; 
-    }
-    span {
-        font-size: 12px;
-    }
-
-    svg {
-        color: ${({theme}) => theme.palette.primary.main};
-        transition: all 0.3s ease-in-out;
-    }
-    svg:active {
-        scale: 0.9;
-    }
-`
 
 export default Dialog;

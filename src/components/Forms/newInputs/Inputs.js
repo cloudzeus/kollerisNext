@@ -38,12 +38,13 @@ export const InputWhite = ({
 
 export const errorColor = '#ff0033'
 export const disabledColor = '#949695'
-
+const mainColor = '#c9c9c8'
 
 export const InputContainer = styled.div`
-min-height: 65px;
 /* background-color: lightblue; */
-margin-bottom: 5px;
+background-color: #f8f8f7;
+margin-bottom: 20px;
+padding: 10px;
 .input {
   display: flex;
   flex-direction: column;
@@ -53,36 +54,35 @@ margin-bottom: 5px;
   height: 45px;
   margin-bottom: 5px;
   margin-top: ${props => props.mt ? `${props.mt}px` : '0px'};
-  background-color: white;
-  border-bottom: 2px solid ${props => props.error ? errorColor : '#e6e6e6'};
+  border-bottom: 2px solid ${props => props.error ? errorColor : mainColor};
 }
 
 //change the border color when the input is focused
 & .input:focus-within{
   border-color:${props => props.error ? errorColor : props.theme.palette.primary.main};
-  background-color: white
 }
 //change the label when the input is focused
 & .input:focus-within label{
   color: ${props => props.error ? errorColor : props.theme.palette.primary.main};
-  background-color: white
+  font-weight: 600;
 }
 
-& .focusDiv label:valid {
-  border-color: pink;
-}
+
 
 
 label {
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.7px;
-    font-weight: 600;
+    font-weight: 400;
 	//disabled 
     color: ${props => {
+    
 		if(props.disabled) return disabledColor;
 		if(props.error) return errorColor;
+    return '#b6b6b4';
 	}};
 }
+
 input {
   outline: none;
   width: 100%;
@@ -94,6 +94,7 @@ input {
   font-weight: ${props => props.disabled ? '300' : '400'};
   margin-top: 2px;
   height: 100%;
+  background-color: transparent;
   color: ${props => {
 		if(props.disabled) return disabledColor;
 	}};
