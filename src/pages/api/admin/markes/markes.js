@@ -1,5 +1,6 @@
 import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
+import { rewrites } from "../../../../../next.config";
 export default async function handler(req, res) {
 
     // try {
@@ -63,32 +64,53 @@ export default async function handler(req, res) {
     }
     if (action === 'create') {
       // Create a new document
+      let {data} = req.body
+      let createBody = {
+        name: data.name,
+        description: data.description,
+        facebookUrl: data.facebookUrl,
+        instagramUrl: data.instagramUrl,
+        officialCatalogueUrl: data.officialCatalogueUrl,
+        softOneMTRMARK: data.softOneMTRMARK,
+        softOneName: data.softOneName,
+        softOneCode: data.softOneCode,
+        softOneSODCODE: data.softOneSODCODE,
+        softOneISACTIVE: data.softOneISACTIVE,
+        pimAccess: {
+          pimUrl: data.pimUrl,
+          pimUserName: data.pimUserName,
+          pimPassword: data.pimPassword,
+        },
+        videoPromoList: [{
+          name: 'sfef',
+          videoUrl: 'sefsefefsf'
+        }],
+        photosPromoList: [{
+          name: 'sefsef',
+          photosPromoUrl: 'sefsef'
+        }],
+        logo: 'sefsefseffesef'
+      }
       try {
         await connectMongo();
-            let data = req.body.data
+            // let data = req.body.data
+            let a ='se'
+            let b = 'sefsef'
+            
+            console.log(data)
             const newMarkes = await Markes.create({
-                name: data.name,
-                description: data.description,
-                logo: data.logo,
-                videoPromoList: data.videoPromoList,
-                photosPromoList: data.photosPromoList,
-                pimAccess: data.pimAccess,
-                webSiteUrl: data.webSiteUrl,
-                officialCatalogueUrl: data.officialCatalogueUrl,
-                facebookUrl: data.facebookUrl,
-                instagramUrl: data.instagramUrl,
-                softOneMTRMARK: data.softOneMTRMARK,
-                softOneName: data.softOneName,
-                softOneCode: data.softOneCode,
-                softOneSODCODE: data.softOneSODCODE,
-                softOneISACTIVE: data.softOneISACTIVE,
+               ...data
             })
 
         if(newMarkes) {
+            console.log('new markes')
             console.log(newMarkes)
             return res.status(200).json({success: true, markes: newMarkes});
            
+        } else {
+          return res.status(200).json({success: false, markes: null});
         }
+
        
       } catch (error) {
         return res.status(400).json({success: false, error: error.message });
@@ -112,3 +134,31 @@ export default async function handler(req, res) {
     }
     
   }
+
+
+  // let data = {
+  //   name: '4',
+  //   description: 'sefsefesfsefsefse',
+  //   facebookUrl: 'fsefsefsefse',
+  //   instagramUrl: 'fsefsefsefsef',
+  //   officialCatalogueUrl: 'sefsefsefsefse',
+  //   softOneMTRMARK: 1001,
+  //   softOneName: 'sefsefes',
+  //   softOneCode: 'fsefsefsefse',
+  //   softOneSODCODE: 'fsefesfsefse',
+  //   softOneISACTIVE: 1,
+  //   pimAccess: {
+  //     pimUrl: 'sefsefsefse',
+  //     pimUserName: '',
+  //     pimPassword: 'sefsfeefseffesf',
+  //   },
+  //   videoPromoList: [{
+  //     name: 'sfef',
+  //     videoUrl: 'sefsefefsf'
+  //   }],
+  //   photosPromoList: [{
+  //     name: 'sefsef',
+  //     photosPromoUrl: 'sefsef'
+  //   }],
+  //   logo: 'sefsefseffesef'
+  // }

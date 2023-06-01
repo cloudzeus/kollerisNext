@@ -74,7 +74,6 @@ const GridTable = () => {
     return (
         <>
             <Container p="0px" className="box">
-
                 <div className="header">
                     <h2 className="boxHeader">Μάρκες</h2>
                 </div>
