@@ -1,10 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, actionBegin } from '@syncfusion/ej2-react-grids';
 import styled from 'styled-components';
 import Image from 'next/image'
-import { Container, GridActions } from './styles';
+import { Container, GridActions, GridContainer } from './styles';
+import { useDispatch } from 'react-redux';
 import {
     validationRules,
     pageSettings,
@@ -16,42 +16,28 @@ import {
     DeleteIcon,
 } from './config';
 import { FormAdd } from './formAdd';
-
-
-
-
-
+import { FormEdit } from './formEdit';
+import Grid from './Grid';
+import { useSelector } from 'react-redux';
+import { setSelectedId } from '@/features/gridSlice';
+import { toast } from 'react-toastify';
 
 const GridTable = () => {
     const [data, setData] = useState([]);
     const [id, setId] = useState(null);
     const [show, setShow] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [action, setAction] = useState({
-        add: false,
-        edit: false,
-        delete: false,
-    })
+    const [action, setAction] = useState(null)
+    const {selectedId} = useSelector(state => state.grid)
+    const dispatch = useDispatch();
+    console.log('selectedId: '  + selectedId)
 
-    console.log(action)
 
-    const handleClick = () => {
-        setShow((prev) => !prev)
-    }
+    const handleAction = (action) => {setAction(action)}
 
-    const handleAction = () => {
-        console.log('handleAction')
-        setAction((prev) => ({ ...prev, add: true }))
-    }
-
-    const handleCancel = () => {
-        setAction((prev) => ({
-            ...prev,
-            add: false,
-            edit: false,
-            cancel: false
-        }
-        ))
+   const handleCancel = () => {
+        setAction(null)
+        dispatch(setSelectedId(null))
     }
 
     const handleDeleteUser = async () => {
@@ -66,22 +52,32 @@ const GridTable = () => {
         }
     }
 
+    const ReturnForms = () => {
+        if(action === 'edit' && selectedId) {
+            return (<FormEdit />)
+        }
+        if(action === 'add') {
+            return (<FormAdd />)
+        }
+        if( action==='edit' && !selectedId) {
+            setAction(null)
+            toast.error('Δεν έχει επιλεγεί εγγραφή') 
+        }
+    }
 
-
-    useEffect(() => {
-        console.log(id)
-    }, [id])
     return (
         <>
             <Container p="0px" className="box">
                 <div className="header">
                     <h2 className="boxHeader">Μάρκες</h2>
                 </div>
+               
+                <div className="innerContainer" >
                 <GridActions >
-                    <button onClick={handleAction}>
+                    <button onClick={() => handleAction('add')}>
                         <AddIcon /> Προσθήκη
                     </button>
-                    <button onClick={handleClick}>
+                    <button onClick={() => handleAction('edit')}>
                         <EditIcon /> Διόρθωση
                     </button>
                     <button onClick={handleDeleteUser}>
@@ -91,11 +87,10 @@ const GridTable = () => {
                         <DeleteIcon /> Ακύρωση
                     </button>
                 </GridActions>
-
-                {!action.add && !action.edit && <Grid id={id} setId={setId}/>}
-                {action.add && (
-                    <FormAdd />
-                )}
+                    {!action && <Grid id={id} setId={setId}/>}
+                    <ReturnForms />
+                </div>
+              
 
             </Container>
         </>
@@ -107,66 +102,6 @@ const GridTable = () => {
 
 
 
-const Grid = ({id, setId}) => {
-    const [data, setData] = useState([]);
-    const handleFetchUser = async () => {
-        try {
-            const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
-            setData(resp.data.markes)
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    
-    const gridTemplate = (props) => {
-        console.log(props.logo)
-        return (
-            <ImageDiv>
-                <Image
-                    src={`/static/imgs/${props.logo}`}
-                    // src={`/static/imgs/mountain.jpg`}
-                    alt="mountain"
-                    width={100}
-                    height={40}
-
-                />
-            </ImageDiv>
-        );
-    };
-    useEffect(() => {
-        handleFetchUser();
-    }, [])
-
-    let grid;
-    const rowSelected = () => {
-        if (grid) {
-            const selectedrecords = grid.getSelectedRecords();
-            let id = selectedrecords[0]._id
-            setId(id)
-        }
-    };
-    return (
-        <GridComponent
-            dataSource={data}
-            allowPaging={true}
-            pageSettings={pageSettings}
-            loadingIndicator={loadingIndicator}
-            rowSelected={rowSelected}
-            ref={g => grid = g}
-        >
-            <ColumnsDirective>
-                <ColumnDirective type='checkbox' width='50'></ColumnDirective>
-                <ColumnDirective field='name' headerText='Όνομα' width='100' ></ColumnDirective>
-                <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
-                <ColumnDirective field='logo' headerText='Περιγραφή' width='100' template={gridTemplate}></ColumnDirective>
-                <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
-                <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective>
-            </ColumnsDirective>
-            <Inject services={[Page, Edit, Toolbar, Filter]} />
-        </GridComponent>
-    )
-}
 
 
 
@@ -174,13 +109,4 @@ const Grid = ({id, setId}) => {
 export default GridTable;
 
 
-const ImageDiv = styled.div`
-    width: 100px;
-    height: auto;
-    object-fit: cover;
-    border-radius: 50%;
-    img {
-        width: 100%;
-        height: 100%;
-    }
-`
+

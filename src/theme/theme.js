@@ -48,16 +48,15 @@ const theme = createTheme({
       light: '#697586',
       main: '#484848',
     },
-    white: '#fff',
-    // background: '#F8F9FB',
     background: '#EEF2F6',
-    // background: '#fbfcfd',
+    // background: '#f9fbfc',
     contrastBackground: '#fff',
     seperator: '#e8e8e8',
     iconColor: '#b71c1c',
     hoverColor: '#E6F7FF',
     white: '#ffffff',
-    accent: '#F36BB6'
+    accent: '#F36BB6',
+    border: '#e8e8e8',
    
   },
   success: {

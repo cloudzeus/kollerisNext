@@ -1,20 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-	isAdd: false,
-	isEdit: false,
-	isDelete: false,
-	
+	selectedId: null,
 }
 
 
 
 const gridSlice = createSlice({
-	name: 'user',
+	name: 'grid',
 	initialState,
 	reducers: {
-		setIsAdd: (state, action) => {
-			state.isAdd = action.payload;
+		setSelectedId: (state, action) => {
+			console.log('action.payload')
+			console.log(action.payload)
+			state.selectedId = action.payload;
 		}
 
 
@@ -23,5 +22,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setIsAdd } = gridSlice.actions;
+export const {setSelectedId } = gridSlice.actions;
 export default gridSlice.reducer;

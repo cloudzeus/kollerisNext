@@ -25,17 +25,19 @@ export const Container = styled.div`
   }
   .form {
     background-color: white;
+    border: 1px solid ${props => props.theme.palette.border};
     padding: 40px;
-    min-width: 600px;
+    /* min-width: 600px; */
     border-radius: 4px;
-    @media (max-width: 601px) {
+    /* @media (max-width: 601px) {
       min-width: 90%;
-    }
+    } */
   }
 
   .form h2 {
-    font-size: 17px;
+    font-size: 15px;
     margin-top: 20px;
+    letter-spacing: 0.4px;
   }
   .form div.header {
     display: flex;
@@ -43,23 +45,28 @@ export const Container = styled.div`
     justify-content: space-between;
     min-height: 40px;
   }
+
+  
   h2 {
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 10px;
   }
   
+  .innerContainer {
+    padding: 30px;
+  }
 `
 
 export const GridActions = styled.div`
-
-    /* background-color: #fafafa; */
-    /* border-top: 1px solid #d5d4d5; */
-    display: flex;
-    padding: 10px;
-    display: flex;
+    border: 1px solid ${props => props.theme.palette.border};
+    display: inline-flex;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    width: auto;
     button {
-    height: 35px;
+    height: 30px;
     border: none;
     background-color: transparent;
     display: flex;
@@ -67,9 +74,16 @@ export const GridActions = styled.div`
     color:#737384;
     padding: 5px 10px;
     border-radius: 4px;
+    position: relative;
+    
     }
     button:hover, .top-div button:active {
-    background-color: #d5d4d5;
+		background-color: ${props => props.theme.palette.primary.light50};
+    color: ${props => props.theme.palette.primary.main};
+    font-weight: 500;
+  }
+    button:hover svg {
+		  color: ${props => props.theme.palette.primary.main};
   }
   button:active {
     scale: 0.9;
@@ -80,4 +94,19 @@ export const GridActions = styled.div`
     color: #737384;
     margin-right: 2px;
   }
+
+  /* @media (max-width: 700px) {
+    width: 50px;
+    height: 50px;
+    button {
+      display: none;
+    }
+  } */
+`
+
+
+export const GridContainer = styled.div`
+    border: 1px solid ${props => props.theme.palette.border};
+    border-radius: 6px;
+    border-top: 0px;
 `

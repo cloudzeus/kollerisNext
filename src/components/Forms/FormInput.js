@@ -67,6 +67,8 @@ export const disabledColor = '#949695'
 export const InputContainer = styled.div`
 min-height: 65px;
 /* background-color: lightblue; */
+padding: 20px;
+
 margin-bottom: 5px;
 .input {
   display: flex;

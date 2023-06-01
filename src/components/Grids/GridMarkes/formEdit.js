@@ -13,27 +13,15 @@ import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import theme from "@/theme/theme";
 import CloseIcon from '@mui/icons-material/Close';
 
-export const FormAdd = () => {
+export const FormEdit = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({});
     const [selectedFile, setSelectedFile] = useState(null);
-    const [formData, setFormData] = useState({
-        videoPromoList: [{
-            name: '',
-            videoUrl: ''
-        }],
-        photosPromoList: [{
-            name: '',
-            photoUrl: ''
-        }],
-
-    })
+    
 
     console.log(formData)
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('On Submit')
-        console.log(data)
-        console.log(selectedFile)
+ 
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
@@ -44,6 +32,7 @@ export const FormAdd = () => {
 
     return (
         <form className="form" noValidate  >
+            <p>edit form</p>
             <GridContainer>
                 <InputVar1
                     label="Όνομα"
@@ -254,8 +243,8 @@ const AddMoreInputContainer = styled.div`
 
 const GridContainer = styled.div`
     display: grid;
-    grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'};
-    grid-column-gap: 30px;
+    grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'} ;
+    grid-gap: 30px;
     @media (max-width: 1400px) {
         grid-template-columns: repeat(2, 1fr);
     }

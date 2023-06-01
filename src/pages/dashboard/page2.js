@@ -1,6 +1,6 @@
 import AdminLayout from 'src/layouts/Admin/AdminLayout';
 import React, { useRef, useEffect } from 'react';
-import { SpreadsheetComponent, SheetsDirective, SheetDirective, RangesDirective } from '@syncfusion/ej2-react-spreadsheet';
+import {SpreadsheetComponent} from '@syncfusion/ej2-react-spreadsheet';
 import styled from 'styled-components';
 import Button from '@/components/Buttons/Button';
 
