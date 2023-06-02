@@ -56,9 +56,7 @@ const GridTable = () => {
         if(action === 'edit' && selectedId) {
             return (<FormEdit />)
         }
-        if(action === 'add') {
-            return (<FormAdd />)
-        }
+        
         if( action==='edit' && !selectedId) {
             setAction(null)
             toast.error('Δεν έχει επιλεγεί εγγραφή') 
@@ -88,7 +86,8 @@ const GridTable = () => {
                     </button>
                 </GridActions>
                     {!action && <Grid id={id} setId={setId}/>}
-                    <ReturnForms />
+                    {action === 'add' && <FormAdd />}
+                    {action === 'edit' && selectedId && <FormEdit />}
                 </div>
               
 

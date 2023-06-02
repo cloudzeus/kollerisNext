@@ -18,7 +18,6 @@ export const FormEdit = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     
 
-    console.log(formData)
     const onSubmit = async (data, event) => {
         event.preventDefault();
  
@@ -143,21 +142,21 @@ export const FormEdit = () => {
                 />
             </GridContainer>
             <h2>VideoPromoList</h2>
-            <AddMoreInput  
+            {/* <AddMoreInput  
                 label="Video"
                 attr1="name"
                 attr2="videoUrl"
                 objName="videoPromoList" 
                 setFormData={setFormData} 
-                formData={formData} />
+                formData={formData} /> */}
             <h2>PhotoPromoList</h2>
-            <AddMoreInput 
+            {/* <AddMoreInput 
                 label="Photo"
                 objName="photosPromoList" 
                 attr1="name"
                 attr2="photoUrl"
                 setFormData={setFormData} 
-                formData={formData} />
+                formData={formData} /> */}
             {/* EndForm */}
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
         </form>
