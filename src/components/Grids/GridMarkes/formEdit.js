@@ -10,28 +10,59 @@ import axios from "axios";
 import UploadInput from "../Comps/UploadInput";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
-import theme from "@/theme/theme";
-import CloseIcon from '@mui/icons-material/Close';
+import { useSelector } from "react-redux";
+import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
+
 
 export const FormEdit = () => {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({});
+    const { gridRowData, gridSelectedFile } = useSelector(state => state.grid)
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+        defaultValues: {
+            _id: gridRowData?._id,
+            name: gridRowData?.name,
+            description: gridRowData?.description,
+            facebookUrl: gridRowData?.facebookUrl,
+            instagramUrl: gridRowData?.instagramUrl,
+            officialCatalogueUrl: gridRowData?.officialCatalogueUrl,
+            softOneMTRMARK: gridRowData?.softOneMTRMARK,
+            softOneName: gridRowData?.softOneName,
+            softOneCode: gridRowData?.softOneCode,
+            softOneSODCODE: gridRowData?.softOneSODCODE,
+            softOneISACTIVE: gridRowData?.softOneISACTIVE,
+            pimUrl: gridRowData?.pimAccess?.pimUrl,
+            pimUserName: gridRowData?.pimAccess?.pimUserName,
+            pimPassword: gridRowData?.pimAccess?.pimPassword,
+            logo: gridRowData?.logo,
+
+
+
+        }
+    });
     const [selectedFile, setSelectedFile] = useState(null);
-    
+
+    console.log('selected FILE ----------------------')
+    console.log(selectedFile)
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
- 
+
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
-        let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
-        console.log('------------------------- Res --------------------------')
-        console.log(res)
- 
+        // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
+        // console.log('------------------------- Res --------------------------')
+        // console.log(res)
+
     }
+
+    // const handleUpload = () => {
+    //     try {
+
+
+    //     }
+    // }
 
     return (
         <form className="form" noValidate  >
-            <p>edit form</p>
             <GridContainer>
                 <InputVar1
                     label="Όνομα"
@@ -77,7 +108,6 @@ export const FormEdit = () => {
                     label="softOneMTRMARK"
                     name="softOneMTRMARK"
                     type="text"
-                    
                     register={register}
                 />
                 <InputVar1
@@ -86,10 +116,10 @@ export const FormEdit = () => {
                     type="text"
                     register={register}
                 />
-               
+
             </GridContainer>
             <GridContainer >
-            <InputVar1
+                <InputVar1
                     label="softOneCode"
                     name="softOneCode"
                     type="text"
@@ -101,18 +131,9 @@ export const FormEdit = () => {
                     type="text"
                     register={register}
                 />
-               
-            </GridContainer>
-            <GridContainer >
-                <InputVar1
-                    label="softOneISACTIVE"
-                    name="softOneISACTIVE"
-                    type="text"
-                    register={register}
-                />
-               
-            </GridContainer>
 
+            </GridContainer>
+           
             <h2>Pim Access</h2>
             <GridContainer>
                 <InputVar1
@@ -135,13 +156,18 @@ export const FormEdit = () => {
                 register={register}
             />
             <GridContainer>
-                <UploadInput
+                {/* <UploadInput
                     title="λογότυπο"
                     selectedFile={selectedFile}
                     setSelectedFile={setSelectedFile}
+                /> */}
+                <ImageInput 
+                    logo={gridRowData?.logo}
+                    setSelectedFile={setSelectedFile}
+                    selectedFile={selectedFile}
                 />
             </GridContainer>
-            <h2>VideoPromoList</h2>
+            {/* <h2>VideoPromoList</h2> */}
             {/* <AddMoreInput  
                 label="Video"
                 attr1="name"
@@ -149,7 +175,7 @@ export const FormEdit = () => {
                 objName="videoPromoList" 
                 setFormData={setFormData} 
                 formData={formData} /> */}
-            <h2>PhotoPromoList</h2>
+            {/* <h2>PhotoPromoList</h2> */}
             {/* <AddMoreInput 
                 label="Photo"
                 objName="photosPromoList" 
@@ -163,9 +189,9 @@ export const FormEdit = () => {
     )
 }
 
-const AddMoreInput = ({setFormData, formData, label, atrr1, attr2, objName}) => {
+const AddMoreInput = ({ setFormData, formData, label, atrr1, attr2, objName }) => {
     const [rows, setRows] = useState(1);
-    const [cancel, setCancel ] = useState(false);
+    const [cancel, setCancel] = useState(false);
 
     const handleAddRow = () => {
         setRows(prevRows => prevRows + 1);
@@ -180,16 +206,16 @@ const AddMoreInput = ({setFormData, formData, label, atrr1, attr2, objName}) => 
         let value = e.target.value;
         console.log(name)
         console.log(value)
-        setFormData(prev => ({...prev, [objName]: {...prev.videoPromoList, [name]: [value]}}))
+        setFormData(prev => ({ ...prev, [objName]: { ...prev.videoPromoList, [name]: [value] } }))
     }
-   
+
 
     return (
         <AddMoreInputContainer >
             <label htmlFor="">{label}</label>
             <div>
                 <input type="text" placeholder="Όνομα" name={atrr1} onChange={(e) => handleFormData(e)} />
-                <input type="text" name={attr2} placeholder="https://" value={formData.name}  onChange={(e) => handleFormData(e)}/>
+                <input type="text" name={attr2} placeholder="https://" value={formData.name} onChange={(e) => handleFormData(e)} />
                 <AddIcon onClick={handleAddRow} />
             </div>
         </AddMoreInputContainer>
@@ -240,6 +266,9 @@ const AddMoreInputContainer = styled.div`
 
 `
 
+
+
+
 const GridContainer = styled.div`
     display: grid;
     grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'} ;
@@ -251,5 +280,7 @@ const GridContainer = styled.div`
         grid-template-columns: repeat(1, 1fr);
     }
 `
+
+
 
 

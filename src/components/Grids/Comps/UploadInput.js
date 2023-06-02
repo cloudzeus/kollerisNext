@@ -13,11 +13,11 @@ const UploadInput = ({title, selectedFile, setSelectedFile}) => {
 
       };
 
-      const handleClick = (e) => {
-        e.preventDefault()
-      
-        document.getElementById('customFileUpload').click()
-      }
+        const handleClick = (e) => {
+            e.preventDefault()
+        
+            document.getElementById('customFileUpload').click()
+        }
 
      
 
@@ -34,7 +34,6 @@ const UploadInput = ({title, selectedFile, setSelectedFile}) => {
                 <div className="btn" onClick={handleClick}>
                     <span>{selectedFile ? selectedFile.name : '' }</span>
                 </div>
-                {/* <button onClick={handleClick}></button> */}
             <AddPhotoAlternateIcon  />
         </UploadInputContainer>
     )

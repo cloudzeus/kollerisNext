@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
-
-
-
+import Image from "next/image";
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import { useDispatch } from 'react-redux';
+import { setSelectedFile } from '@/features/gridSlice';
 
 export const InputVar1 = ({
 	name,
@@ -44,10 +45,11 @@ export const InputVar1 = ({
 
 
 
+
+
 export const errorColor = '#ff0033'
 export const disabledColor = '#949695'
-const mainColor = '#c9c9c8'
-const borderColor = '#d1d1d1'
+
 
 export const InputContainer = styled.div`
 display: flex;
@@ -97,3 +99,87 @@ input:focus + label {
 
 
 `
+
+const ImageContainer = styled.div`
+    display: flex;
+    align-items: center;
+    border: 2px solid ${props => props.theme.palette.border};
+    border-radius: 4px;
+    padding: 4px;
+	position: relative;
+
+	div:nth-child(1) {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+	&:hover {
+		border-color: ${props => props.theme.palette.primary.main};
+	}
+    div.imageAndDetails {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        color: black;
+    }
+    p {
+        margin-left: 10px;
+        font-size: 14px;
+		font-style: italic;
+
+    }
+	
+	svg {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: ${props => props.theme.palette.primary.main};
+	}
+	input[type="file"] {
+        display: none; 
+    }
+    
+`
+export const ImageInput = (props) => {
+	const dispatch = useDispatch()
+	const handleFileChange = () => {
+        let fileEl = document.getElementById('customFileUpload2');
+        let file = fileEl.files[0];
+		console.log('file in ImageInput')
+		console.log(file)
+		dispatch(setSelectedFile(file.name))
+
+      };
+	  const handleClick = (e) => {
+		console.log('click')
+        e.preventDefault()
+        document.getElementById('customFileUpload2').click()
+		console.log(document.getElementById('customFileUpload2'))
+      }
+    return (
+        <ImageContainer >
+			<div onClick={handleClick}>
+				<div className='imageAndDetails'  >
+					<Image
+						src={`/static/imgs/${props.logo}`}
+						alt="mountain"
+						fill={true}
+					/>
+				</div>
+				<p>{props.logo}</p>
+				<DriveFolderUploadIcon />
+			</div>
+			<input 
+                type="file" 
+                id="customFileUpload2"
+                onChange={handleFileChange}
+            />
+        </ImageContainer>
+    )
+}

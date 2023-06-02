@@ -5,7 +5,7 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, 
 import { GridContainer } from "./styles";
 import styled from "styled-components";
 import { useDispatch } from 'react-redux';
-import { setSelectedId} from "@/features/gridSlice";
+import { setSelectedId, setGridRowData} from "@/features/gridSlice";
 import {
     validationRules,
     pageSettings,
@@ -17,9 +17,11 @@ import {
     DeleteIcon,} from './config';
 
 const Grid = ({id, setId}) => {
+    
     const [data, setData] = useState([]);
     const [grid, setGrid] = useState(null);
     const dispatch = useDispatch();
+
     const handleFetchUser = async () => {
         try {
             const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
@@ -34,16 +36,14 @@ const Grid = ({id, setId}) => {
         return (
             <ImageDiv>
                 <Image
-                    src={`/static/imgs/${props.logo}`}
-                    // src={`/static/imgs/mountain.jpg`}
+                    src={`/static/uploads/${props.logo}`}
                     alt="mountain"
-                    // width={30}
-                    // height={10}
                     fill={true}
                 />
             </ImageDiv>
         );
     };
+
     useEffect(() => {
         handleFetchUser();
     }, [])
@@ -58,6 +58,7 @@ const Grid = ({id, setId}) => {
             console.log(id)
             setId(id)
             dispatch(setSelectedId(id))
+            dispatch(setGridRowData(selectedrecords[0]))
         }
     };
     return (

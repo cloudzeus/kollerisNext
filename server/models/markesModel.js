@@ -36,14 +36,19 @@ const markesSchema = new mongoose.Schema({
     officialCatalogueUrl:String,
     facebookUrl:String,
     instagramUrl:String,
-    softOneMTRMARK: {
-        type: Number,
-        require: true
-    },
-    softOneName: String,
-    softOneCode:String,
-    softOneSODCODE:String,
-    softOneISACTIVE:Number
+    softOne: {
+        COMPANY: String,
+        SODCODE: String,
+        MTRMARK: {
+            type: Number,
+            require: true
+        },
+        CODE: String,
+        NAME: String,
+        ISACTIVE:Number
+    }
+    
+  
 });
 
 

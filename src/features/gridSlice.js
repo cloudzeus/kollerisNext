@@ -2,6 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedId: null,
+	gridAction: null,
+	gridRowData: [],
+	gridSelectedFile: null,
 }
 
 
@@ -11,10 +14,19 @@ const gridSlice = createSlice({
 	initialState,
 	reducers: {
 		setSelectedId: (state, action) => {
-			console.log('action.payload')
-			console.log(action.payload)
 			state.selectedId = action.payload;
-		}
+		},
+		setAction: (state, action) => {
+			state.gridAction = action.payload;
+		},
+		setGridRowData: (state, action) => {
+			state.gridRowData = action.payload;
+		},
+		setSelectedFile: (state, action) => {
+			console.log('redux selected file')
+			console.log(action.payload)
+			state.gridSelectedFile = action.payload;
+		},
 
 
 	},
@@ -22,5 +34,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId } = gridSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile } = gridSlice.actions;
 export default gridSlice.reducer;

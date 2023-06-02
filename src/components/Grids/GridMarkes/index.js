@@ -14,13 +14,16 @@ import {
     AddIcon,
     EditIcon,
     DeleteIcon,
+    SyncIcon,
 } from './config';
 import { FormAdd } from './formAdd';
 import { FormEdit } from './formEdit';
+import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
 import { setSelectedId } from '@/features/gridSlice';
 import { toast } from 'react-toastify';
+
 
 const GridTable = () => {
     const [data, setData] = useState([]);
@@ -34,7 +37,6 @@ const GridTable = () => {
 
 
     const handleAction = (action) => {setAction(action)}
-
    const handleCancel = () => {
         setAction(null)
         dispatch(setSelectedId(null))
@@ -84,9 +86,14 @@ const GridTable = () => {
                     <button onClick={handleCancel}>
                         <DeleteIcon /> Ακύρωση
                     </button>
+                  
                 </GridActions>
+                <button onClick={() => handleAction('sync')}>
+                        <SyncIcon /> Sync
+                </button>
                     {!action && <Grid id={id} setId={setId}/>}
                     {action === 'add' && <FormAdd />}
+                    {action === 'sync' && <Sync />}
                     {action === 'edit' && selectedId && <FormEdit />}
                 </div>
               
