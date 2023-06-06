@@ -25,6 +25,7 @@ const Grid = ({id, setId}) => {
     const handleFetchUser = async () => {
         try {
             const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
+            console.log(resp.data.markes)
             setData(resp.data.markes)
 
         } catch (error) {

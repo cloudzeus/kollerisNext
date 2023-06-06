@@ -3,14 +3,12 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import styled from "styled-components";
 import { InputContainer } from '@/components/Forms/FormInput';
 const UploadInput = ({title, selectedFile, setSelectedFile}) => {
-
     const handleFileChange = () => {
         let fileEl = document.getElementById('customFileUpload');
         let file = fileEl.files[0];
         let files = fileEl.files;
         console.log(files);
         setSelectedFile(file);
-
       };
 
         const handleClick = (e) => {

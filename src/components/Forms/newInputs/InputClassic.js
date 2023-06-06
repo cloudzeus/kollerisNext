@@ -21,7 +21,6 @@ export const InputVar1 = ({
 		setFocus(prev => !prev)
 	}
 	return (
-		
 		<InputContainer error={error} disabled={disabled} isFocus={focus}>
 				<label
 					htmlFor={name}>
@@ -34,6 +33,44 @@ export const InputVar1 = ({
 					placeholder={placeholder}
 					defaultValue={defaultValue}
 					{...register(name)}
+					disabled={disabled}
+					onBlur={handleFocus}
+					onFocus={handleFocus}
+				/>
+			{error && <span className="error-text">{error.message}</span>}
+		</InputContainer>
+	)
+}
+
+
+//NORMAL INPUT DOES NOT USE USEFORM PACKAGE:
+export const Input = ({
+	name,
+	type,
+	label,
+	placeholder,
+	register,
+	error,
+	value,
+	disabled 
+}) => {
+	const [focus, setFocus] = useState(false)
+	console.log(focus)
+	const handleFocus = () => {
+		setFocus(prev => !prev)
+	}
+	return (
+		<InputContainer error={error} disabled={disabled} isFocus={focus}>
+				<label
+					htmlFor={name}>
+					{label}
+				</label>
+				<input
+					id={name}
+					name={name}
+					type={type}
+					placeholder={placeholder}
+					value={value}
 					disabled={disabled}
 					onBlur={handleFocus}
 					onFocus={handleFocus}

@@ -54,16 +54,7 @@ const GridTable = () => {
         }
     }
 
-    const ReturnForms = () => {
-        if(action === 'edit' && selectedId) {
-            return (<FormEdit />)
-        }
-        
-        if( action==='edit' && !selectedId) {
-            setAction(null)
-            toast.error('Δεν έχει επιλεγεί εγγραφή') 
-        }
-    }
+
 
     return (
         <>
