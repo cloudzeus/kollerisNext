@@ -7,8 +7,9 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
 
-const Sync = () => {
-    const [data, setData] = useState([])
+
+
+const Sync = ({data}) => {
     const [isSynced, setIsSynced] = useState([])
     const [loading, setLoading] = useState(false);
     console.log(data)
@@ -18,19 +19,7 @@ const Sync = () => {
     })
 
     console.log(sync.syncTo)
-    useEffect(() => {
-        const handleSync = async () => {
-            try {
-                const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
-                console.log('sync');
-                // console.log(resp.data)
-                setData(resp.data.markes)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        handleSync()
-    }, [])
+    
 
     const changeSync = () => {
         if (sync.syncTo === 'Softone') {

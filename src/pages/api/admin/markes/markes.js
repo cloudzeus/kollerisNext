@@ -27,6 +27,7 @@ export default async function handler(req, res) {
 		}
 
 	}
+
 	if (action === 'create') {
 
 		let videoArray = req.body.data.videoPromoList;
@@ -133,10 +134,10 @@ export default async function handler(req, res) {
 			function compareObjects(object1, object2) {
 
 				
-				const id1 = object1?.COMPANY; // Retrieve ID from :OUR OBJECT
-				const id2 = object2?.COMPANY; // Retrieve ID from: SOFTONE OBJECT
+				const id1 = object1?.MTRMARK; // Retrieve ID from :OUR OBJECT
+				const id2 = object2?.MTRMARK; // Retrieve ID from: SOFTONE OBJECT
 				// console.log(object2)
-				if (id1 === id2) { // Check if IDs are the same
+				if (id1 == id2) { // Check if IDs are the same
 				const keys = Object.keys(object1);
 				for (const key of keys) {
 					// console.log(key)
@@ -157,8 +158,9 @@ export default async function handler(req, res) {
 		
 		//   console.log(compareObjects(object1, object2));
 	
-
+		console.log(softOneArray)
 		  let newArray = compareArrays( mongoArray, softOneArray)
+		  console.log(newArray)
 		  if(newArray) {
 			return res.status(200).json({ success: true, markes: newArray });
 		  } 
@@ -173,28 +175,7 @@ export default async function handler(req, res) {
 	}
 	
 	if (action === 'syncAndUpdate') {
-		// try {
-		// 	let data = req.body.data;
-		// 	let syncTo = req.body.syncTo;
-		// 	console.log('syncTo')
-		// 	console.log(syncTo)
-		
-		
 	
-		// 	//SyncTo === 'Εμάς , SyncTo === 'Softone'//
-		// 	if(syncTo == 'Εμάς') {
-		// 		console.log('we update our MTRMARK')
-				await connectMongo();
-				
-		// 	}
-		// 	if(syncTo === 'softone') {
-		// 		console.log('we update softone MTRMARK')
-		// 		return res.status(200).json({ success: false, markes: null });
-		// 	}
-		// 	return;
-		// } catch (error) {
-		// 	return res.status(400).json({ success: false, error: error.message });
-		// }
 			let data = req.body.data;
 			let syncTo = req.body.syncTo;
 			console.log(data)
@@ -214,6 +195,10 @@ export default async function handler(req, res) {
 					
 					return res.status(200).json({ success:	true, updated: true});
 				}
+
+				if(req.body.syncTo == 'Softone') {
+					return res.status(200).json({ success: true });
+				}
 				
 				// console.log('200')
 				// return res.status(200).json({ success: true, markes: null });
@@ -222,6 +207,8 @@ export default async function handler(req, res) {
 			}
 		
 	}
+
+	
 	
 }
 

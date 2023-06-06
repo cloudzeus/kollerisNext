@@ -15,6 +15,8 @@ import { IconBtn } from './Buttons/Button';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GoToTop from './Buttons/GoToTop';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 
 const toggleFullscreen = () => {
    console.log('toggleFullscreen')
@@ -65,7 +67,9 @@ const AdminNavbar = () => {
 				/>
 			</div>
 			<div className="right-div">
-				<Notifications />
+				<Notifications>
+               <NotificationsIcon />
+            </Notifications>
 				<IconContainer >
 					<SettingsIcon />
 				</IconContainer>
@@ -80,7 +84,7 @@ const AdminNavbar = () => {
 	)
 }
 
-const IconContainer = styled(IconBtn)`
+export const IconContainer = styled(IconBtn)`
    /* background-color: ${props => props.theme.palette.primary.light60}; */
    background-color: #f9f9f9;
    border-radius: 50%;
@@ -89,6 +93,7 @@ const IconContainer = styled(IconBtn)`
    height: 38px;
    border: 2px solid#f4f4f4;
    box-shadow: none;
+   display: inline-flex;
    svg {
       font-size: 20px;
       color: ${props => props.theme.palette.accent};
