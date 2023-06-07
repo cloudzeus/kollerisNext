@@ -4,14 +4,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from 'react'
 import styled from "styled-components";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AddIcon from '@mui/icons-material/Add';
 import axios from "axios";
-import UploadInput from "../Comps/UploadInput";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
-import theme from "@/theme/theme";
-import CloseIcon from '@mui/icons-material/Close';
+
 
 export const FormAdd = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({});
@@ -147,11 +144,11 @@ export const FormAdd = () => {
                 register={register}
             />
             <GridContainer>
-                <UploadInput
+                {/* <UploadInput
                     title="λογότυπο"
                     selectedFile={selectedFile}
                     setSelectedFile={setSelectedFile}
-                />
+                /> */}
             </GridContainer>
             <h2>VideoPromoList</h2>
             <AddMoreInput  

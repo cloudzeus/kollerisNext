@@ -8,21 +8,22 @@ import CircularProgress from '@mui/material/CircularProgress';
 export const ImageInput = (props) => {
     const [imageName, setImageName] = useState(props.logo);
     const [loading, setLoading] = useState(false);
-    const handleFileChange = async () => {
 
+    const handleFileChange = async () => {
         let fileEl = document.getElementById('customFileUpload2');
         let file = fileEl.files[0];
-       
         setLoading(true)
         const formData = new FormData();
         formData.append("myFile", file);
         const { data } = await axios.post("/api/saveImage", formData);
-        console.log(data)
         if(data.done === 'ok') {
             //props.setSelected files, to save the fileName to the database
             props.setSelectedFile(data.newFilename);
             //To change the image on the edit page when the loading is done:
             setImageName(data.newFilename)
+            setLoading(false)
+        } else {
+            setImageName("Aποτυχία Upload")
             setLoading(false)
         }
       
@@ -43,6 +44,7 @@ export const ImageInput = (props) => {
                                 src={`/static/uploads/${imageName}`}
                                 alt="mountain"
                                 fill={true}
+                                priority={false}
                             />
                         </div>
                         <p>{imageName}</p>
@@ -90,7 +92,7 @@ const ImageContainer = styled.div`
     }
     p {
         margin-left: 10px;
-        font-size: 14px;
+        font-size: 12px;
 		font-style: italic;
 
     }

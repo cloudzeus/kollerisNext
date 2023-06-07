@@ -30,7 +30,7 @@ const registerSchema = yup.object().shape({
 
 
 
-const registerPage = () => {
+const RegisterPage = () => {
 	const { isLoading, response } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const router = useRouter()
@@ -162,4 +162,4 @@ const Container = styled.div`
 		font-size: 14px;
     }
 `
-export default registerPage;
+export default RegisterPage;

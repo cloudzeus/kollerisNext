@@ -63,7 +63,7 @@ const GridTable = () => {
         // }
         // handleSync()
 
-    }, [])
+    }, [dispatch])
     return (
         <>
             <Container p="0px" className="box">

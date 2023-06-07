@@ -36,7 +36,6 @@ const AvatarSettings = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.user)
 
-    const [name, setName] = useState('')
     const onClick = () => {
         setShow(!show)
     }
@@ -52,12 +51,7 @@ const AvatarSettings = () => {
     }
 
     //load name on the welcome bar:
-    useEffect(() => {
-        if (user) {
-            setName(user.firstName)
-        }
-    }, [name])
-
+   
    
     return (
         <Container>
@@ -69,7 +63,7 @@ const AvatarSettings = () => {
                 />
                 <div>
                     <p>
-                        {name ? filterName(name) : 'Not Found'}
+                        {user ? filterName(user?.firstName ) : 'Not Found'}
                     </p>
                     <SettingsIconStyled />
                 </div>

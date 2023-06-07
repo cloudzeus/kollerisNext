@@ -7,7 +7,7 @@ const initialState = {
 
 
 const uploadSlice = createSlice({
-	name: 'user',
+	name: 'upload',
 	initialState,
 	reducers: {
 		setSelectedId: (state, action) => {

@@ -13,7 +13,6 @@ export const InputVar1 = ({
 	defaultValue,
 	disabled }) => {
 	const [focus, setFocus] = useState(false)
-	console.log(focus)
 	const handleFocus = () => {
 		setFocus(prev => !prev)
 	}

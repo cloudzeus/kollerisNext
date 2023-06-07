@@ -30,19 +30,17 @@ export const FormEdit = () => {
             pimPassword: gridRowData?.pimAccess?.pimPassword,
             logo: gridRowData?.logo,
 
-
-
         }
     });
     const [selectedFile, setSelectedFile] = useState(null);
 
-    console.log('selected FILE ----------------------')
-    console.log(selectedFile)
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-
-
+        console.log('---------- SUBMIT DATA -----------------------')
+        console.log(data)
+        console.log('---------- SELECTED FILE -----------------------')
+        console.log(selectedFile)
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
         // console.log('------------------------- Res --------------------------')

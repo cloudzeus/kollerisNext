@@ -17,7 +17,11 @@ const UploadInput = ({title, selectedFile, setSelectedFile}) => {
             document.getElementById('customFileUpload').click()
         }
 
-     
+        const trimSelectedFile = (input) => {
+            if(input.length > 20 ) {
+                return input.slice(0, 19) + '...'
+            }
+        }
 
     return (
        
@@ -30,7 +34,7 @@ const UploadInput = ({title, selectedFile, setSelectedFile}) => {
                     onChange={handleFileChange}
                     />
                 <div className="btn" onClick={handleClick}>
-                    <span>{selectedFile ? selectedFile.name : '' }</span>
+                    <span>{selectedFile ? trimSelectedFile(selectedFile.name) : '' }</span>
                 </div>
             <AddPhotoAlternateIcon  />
         </UploadInputContainer>
@@ -52,7 +56,6 @@ const UploadInputContainer = styled.div`
     .btn {
         width: 100%;
         height: 40px;
-        font-size: 12px;
         display: flex;
         align-items: center;
         cursor: pointer;
