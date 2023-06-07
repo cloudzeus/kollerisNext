@@ -1,21 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, actionBegin } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
-import { conditionalFormatting } from '@syncfusion/ej2/pivotview';
-import { InputStyled } from '@/components/Forms/FormInput';
-import { DataManager, RemoteSaveAdaptor } from '@syncfusion/ej2-data';
-import { useForm } from "react-hook-form";
 import Dialog from '@/components/DialogFormTeampates/DialogTemplates/MarkesDialog';
-import { Column } from '@syncfusion/ej2-react-charts';
 import Image from 'next/image';
 
-
 function DialogEdit() {
-
     return (
         <AdminLayout>
             <GridTable />
