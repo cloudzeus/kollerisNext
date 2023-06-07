@@ -1,7 +1,7 @@
 
 import User from '../../../../server/models/userModel';
 import connectMongo from '../../../../server/config';
-import { signJwtAccessToken } from '@/pages/lib/jwt';
+import { signJwtAccessToken } from '@/utils/jwt';
 import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {

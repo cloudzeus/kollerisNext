@@ -29,7 +29,7 @@ const readFile = (req, saveLocally) => {
 	});
 }
 
-export default async (req, res) => {
+export default async function handler(req, res) {
 	try {
 		 await fs.readdir(path.join(process.cwd() + "/public/static/", "/uploads"));
 	  } catch (error) {

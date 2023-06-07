@@ -1,12 +1,9 @@
 import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import { BasicContainer } from '@/components/styles'
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Button from '@/components/Buttons/Button'
-import {fetchUser} from '@/features/userSlice'
 
 const AdminEmailConfirmation = () => {
 

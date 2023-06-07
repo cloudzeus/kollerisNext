@@ -5,9 +5,6 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, 
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
-import { conditionalFormatting } from '@syncfusion/ej2/pivotview';
-
-import { DataManager, RemoteSaveAdaptor } from '@syncfusion/ej2-data';
 
 function DialogEdit() {
 

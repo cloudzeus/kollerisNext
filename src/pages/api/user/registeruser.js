@@ -1,5 +1,4 @@
 
-import { hash } from 'bcrypt';
 import connectMongo from '../../../../server/config';
 import User from "../../../../server/models/userModel";
 import bcrypt from 'bcrypt';
@@ -10,15 +9,6 @@ import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   const password = req.body.password;
-  // Object.keys(req.body).forEach(key => {
-  
-  //   console.log('keyA: ' + JSON.stringify(key) + '\n')
-  //     if(key !== 'password' || key !== 'email' || key !== 'firstName' || key !== 'lastName' || key !== 'role') {
-  //       console.log('inside ' + JSON.stringify(key))
-  //       return res.status(200).json({success: false,  error: 'Missing Parameter', user: null})
-  //     }
-  // })
-
 
   try {
     await connectMongo();

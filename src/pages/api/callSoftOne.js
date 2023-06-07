@@ -29,7 +29,7 @@ console.log('body', body)
 
 
 
-export default async (req, res) => {
+export default async function handler(req, res) {
     let table = req.body.table;
     let fields = req.body.fields;
     

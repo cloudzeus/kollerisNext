@@ -18,7 +18,7 @@ import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { StyledHeader, Subheader } from '@/components/Forms/formStyles';
 import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
-import { useSession, signIn } from "next-auth/react"
+import {  signIn } from "next-auth/react"
 //FORMIK:
 
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";

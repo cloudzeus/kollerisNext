@@ -1,5 +1,4 @@
 import '@/styles/globals.css'
-import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import styled, { ThemeProvider as ThemeStyledComponentsProvider } from 'styled-components';

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import toast from 'react-toastify'
+import { toast } from 'react-toastify';
 
 const initialState = {
 	selectedId: null,
@@ -32,8 +32,7 @@ export const updateNotSynced = createAsyncThunk(
 		const {syncTo, resData} = data;
 		try {
 			let res = await axios.post('/api/admin/markes/markes', { action: 'syncAndUpdate', syncTo: syncTo?.toString(), data: resData })
-			console.log('ressssssssss')
-			console.log(res)
+		
 			if(!res.data.success) {
 				toast.error('Αποτυχία Συγχρονισμού');
 			}
