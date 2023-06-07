@@ -4,40 +4,7 @@ import { rewrites } from "../../../../../next.config";
 import axios from "axios";
 import { CollectionsBookmarkOutlined } from "@mui/icons-material";
 export default async function handler(req, res) {
-	const newMarkes = await Markes.create({
-		name: 'product1',
-		description: 'description of product 1',
-		logo: '1685705325908_mountain.jpg',
-		videoPromoList: [
-			{
-				name: 'video1',
-				videoUrl: 'https://localohost:3000/assets/imgs/luffy.png'
-			}
-		],
-		photosPromoList: [
-			{
-				name: 'sefsefsef',
-				photosPromoUrl: 'sesefsefs'
-			}
-		],
-		pimAccess: {
-			pimUrl: 'https://pimurl',
-			pimUserName: 'pimUserName',
-			pimPassword: '1234567'
-		},
-		webSiteUrl: 'website url',
-		officialCatalogueUrl: 'catalogues url',
-		facebookUrl: 'facebook url',
-		instagramUrl: 'instagram url',
-		softOne: {
-			COMPANY: '1001',
-			SODTYPE: '200',
-			MTRMARK: 1001,
-			CODE: '200',
-			NAME: 'Addidas',
-			ISACTIVE: 1
-		}
-	});
+	
 
 	let action = req.body.action;
 
@@ -117,58 +84,58 @@ export default async function handler(req, res) {
 		}
 	}
 
-	if (action === 'update') {
-		await connectMongo();
-		let body = req.body.data;
-		try {
-			await connectMongo();
-			await Markes.updateOne(
-				{ _id: body._id },
-				{
-					name: 'product1',
-					description: 'description of product 1',
-					logo: '1685705325908_mountain.jpg',
-					videoPromoList: [
-						{
-							name: 'video1',
-							videoUrl: 'https://localohost:3000/assets/imgs/luffy.png'
-						}
-					],
-					photosPromoList: [
-						{
-							name: 'sefsefsef',
-							photosPromoUrl: 'sesefsefs'
-						}
-					],
-					pimAccess: {
-						pimUrl: 'https://pimurl',
-						pimUserName: 'pimUserName',
-						pimPassword: '1234567'
-					},
-					webSiteUrl: 'website url',
-					officialCatalogueUrl: 'catalogues url',
-					facebookUrl: 'facebook url',
-					instagramUrl: 'instagram url',
-					softOne: {
-						COMPANY: '1001',
-						SODTYPE: '200',
-						MTRMARK: 1001,
-						CODE: '200',
-						NAME: 'Addidas',
-						ISACTIVE: 1
-					}
-				});
+	// if (action === 'update') {
+	// 	await connectMongo();
+	// 	let body = req.body.data;
+	// 	try {
+	// 		await connectMongo();
+	// 		await Markes.updateOne(
+	// 			{ _id: body._id },
+	// 			{
+	// 				name: 'product1',
+	// 				description: 'description of product 1',
+	// 				logo: '1685705325908_mountain.jpg',
+	// 				videoPromoList: [
+	// 					{
+	// 						name: 'video1',
+	// 						videoUrl: 'https://localohost:3000/assets/imgs/luffy.png'
+	// 					}
+	// 				],
+	// 				photosPromoList: [
+	// 					{
+	// 						name: 'sefsefsef',
+	// 						photosPromoUrl: 'sesefsefs'
+	// 					}
+	// 				],
+	// 				pimAccess: {
+	// 					pimUrl: 'https://pimurl',
+	// 					pimUserName: 'pimUserName',
+	// 					pimPassword: '1234567'
+	// 				},
+	// 				webSiteUrl: 'website url',
+	// 				officialCatalogueUrl: 'catalogues url',
+	// 				facebookUrl: 'facebook url',
+	// 				instagramUrl: 'instagram url',
+	// 				softOne: {
+	// 					COMPANY: '1001',
+	// 					SODTYPE: '200',
+	// 					MTRMARK: 1001,
+	// 					CODE: '200',
+	// 					NAME: 'Addidas',
+	// 					ISACTIVE: 1
+	// 				}
+	// 			});
 
-			const user = await User.findOne({ _id: body._id });
-			res.status(200).json({ success: true, user });
+	// 		const user = await User.findOne({ _id: body._id });
+	// 		res.status(200).json({ success: true, user });
 
 
-		} catch (error) {
-			res.status(400).json({ success: false });
+	// 	} catch (error) {
+	// 		res.status(400).json({ success: false });
 
-		}
+	// 	}
 
-	}
+	// }
 
 	if (action === 'delete') {
 		await connectMongo();
