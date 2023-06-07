@@ -1,8 +1,5 @@
 import styled from "styled-components";
 
-
-
-
 export const Btn = styled.button`
   width: 100%;
   background-color: ${props => props.theme.palette.primary.main};

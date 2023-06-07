@@ -15,7 +15,7 @@ export default function Home() {
             if (session.status === "authenticated") {
                 router.push('/dashboard');
             }
-        }, [session])
+        }, [session, router])
     return (
         <>
             <Head>
