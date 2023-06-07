@@ -55,7 +55,6 @@ const LoginForm = () => {
             dispatch(fetchUser({ username: data.email, password: data.password }))
             toast.success('Επιτυχής σύνδεση');
         } else {
-
             toast.error('Δεν βρέθηκε χρήστης');
             setLoading(false);
         }

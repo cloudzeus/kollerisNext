@@ -4,7 +4,7 @@ import { useSession, signIn, signOut } from "next-auth/react"
 
 const DashboardIndex = () => {
   const session = useSession();
-  console.log(session)
+ 
 
 
   return (

@@ -1,21 +1,30 @@
 import React from 'react'
 import styled from 'styled-components'
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { IconBtn } from './Button';
 
-const Notifications = () => {
+
+ const Notifications = ({children, onClick, num, ml, mr}) => {
   return (
-    <Container>
-        <NotificationsIcon />
-    </Container>
+    <NotificationContainer 
+      onClick={onClick}  
+      data-count={num}
+      ml={ml}
+      mr={mr}
+      >
+         {children}
+    </NotificationContainer>
   )
 }
 
 
 
 
-const Container = styled(IconBtn)`
+
+
+export const NotificationContainer = styled(IconBtn)`
    /* background-color: ${props => props.theme.palette.primary.light60}; */
+   margin-left: ${props => props.ml ? props.ml : '0px'} ;
+   margin-right : ${props => props.mr ? props.mr : '0px'} ;
    background-color: #f9f9f9;
    border-radius: 50%;
    margin-right: 0;
@@ -24,15 +33,17 @@ const Container = styled(IconBtn)`
    border: 2px solid#f4f4f4;
    box-shadow: none;
    position: relative;
+   display: inline-flex;
    svg {
       font-size: 20px;
       color: ${props => props.theme.palette.accent};
    }
+
    &:after {
-        content: '10';
+        content: attr(data-count);
         position: absolute;
-        top: -7px;
-        right: -5px;
+        top: -6px;
+        right: -6px;
         background-color: ${({ theme }) => theme.palette.primary.main};
         border-radius: 50%;
         z-index: 4;

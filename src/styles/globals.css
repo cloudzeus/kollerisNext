@@ -25,11 +25,12 @@ body {
   padding: 0;
   margin: 0;
   font-size: 16px;
-  height: 100%;
+  height: 100vh;
   font-family: 'Roboto', sans-serif;
   color: #575353;
   font-weight: 300;
-
+  overflow: hidden;
+  background-color: #f0f0f0;
 }
 
 input {
@@ -105,12 +106,15 @@ form {
 }
 
 
+/* STYLE THE GRID */
 
-.e-grid {
-  border: none;
+.e-grid .e-headercell {
+  color: darkblue;
+  background-color: #F9FAFB;
 }
-
-
+.e-grid .e-gridheader {
+  background-color: red;
+}
 .e-control .e-toolbar{
   border-radius: 6px 6px 0px 0px;
   border-top: none;

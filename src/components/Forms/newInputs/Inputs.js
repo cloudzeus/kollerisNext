@@ -1,34 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { IconButton } from '@mui/material';
 
 
-export const InputPass = ({ error, name, label, placeholder, register }) => {
-	
-	const [showPass, setShowPass] = React.useState(false);
-	return (
-		<InputContainer error={error}>
-			<div className="input"  >
-				<label htmlFor={name}>{label}</label>
-				<input
-					name={name}
-					type={showPass ? 'text' : 'password'}
-					placeholder={placeholder}
-					{...register(name)}
-				/>
-				<IconButton className='showPassIcon' onClick={() => setShowPass(prev => !prev)}>
-					{showPass ? <VisibilityOff /> : <Visibility />}
-				</IconButton>
-			</div>
-			{error && <span className="error-text">{error.message}</span>}
-		</InputContainer>
-	)
-}
 
 
-export const InputStyled = ({
+export const InputWhite = ({
 	name,
 	type,
 	label,
@@ -62,26 +38,23 @@ export const InputStyled = ({
 
 export const errorColor = '#ff0033'
 export const disabledColor = '#949695'
-
+const mainColor = '#c9c9c8'
 
 export const InputContainer = styled.div`
-min-height: 65px;
 /* background-color: lightblue; */
-/* padding: 20px; */
-
-margin-bottom: 5px;
+background-color: #f8f8f7;
+margin-bottom: 20px;
+padding: 10px;
 .input {
   display: flex;
   flex-direction: column;
   width: 100%;
   position: relative;
   font-weight: 600;
-  height: 56px;
+  height: 45px;
+  margin-bottom: 5px;
   margin-top: ${props => props.mt ? `${props.mt}px` : '0px'};
-  background-color: ${props => props.theme.palette.background};
-  border-radius: 5px;
-  padding: 10px;
-  border: 2px solid ${props => props.error ? errorColor : ' transparent'};
+  border-bottom: 2px solid ${props => props.error ? errorColor : mainColor};
 }
 
 //change the border color when the input is focused
@@ -91,24 +64,25 @@ margin-bottom: 5px;
 //change the label when the input is focused
 & .input:focus-within label{
   color: ${props => props.error ? errorColor : props.theme.palette.primary.main};
+  font-weight: 600;
 }
 
-& .focusDiv label:valid {
-  border-color: pink;
-}
+
 
 
 label {
-    font-size: 10px;
-    letter-spacing: 0.9px;
-    font-weight: 600;
-    margin-bottom: 1px;
+    font-size: 13px;
+    letter-spacing: 0.7px;
+    font-weight: 400;
 	//disabled 
     color: ${props => {
+    
 		if(props.disabled) return disabledColor;
 		if(props.error) return errorColor;
+    return '#b6b6b4';
 	}};
 }
+
 input {
   outline: none;
   width: 100%;
@@ -120,7 +94,7 @@ input {
   font-weight: ${props => props.disabled ? '300' : '400'};
   margin-top: 2px;
   height: 100%;
-  background-color: ${props => props.theme.palette.background};
+  background-color: transparent;
   color: ${props => {
 		if(props.disabled) return disabledColor;
 	}};
