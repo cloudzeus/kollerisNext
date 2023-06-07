@@ -3,9 +3,14 @@ import styled from 'styled-components'
 import { IconBtn } from './Button';
 
 
- const Notifications = ({children, onClick, num, ml}) => {
+ const Notifications = ({children, onClick, num, ml, mr}) => {
   return (
-    <NotificationContainer onClick={onClick}  data-count={num}>
+    <NotificationContainer 
+      onClick={onClick}  
+      data-count={num}
+      ml={ml}
+      mr={mr}
+      >
          {children}
     </NotificationContainer>
   )
@@ -19,6 +24,7 @@ import { IconBtn } from './Button';
 export const NotificationContainer = styled(IconBtn)`
    /* background-color: ${props => props.theme.palette.primary.light60}; */
    margin-left: ${props => props.ml ? props.ml : '0px'} ;
+   margin-right : ${props => props.mr ? props.mr : '0px'} ;
    background-color: #f9f9f9;
    border-radius: 50%;
    margin-right: 0;

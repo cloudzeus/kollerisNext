@@ -38,7 +38,7 @@ const markesSchema = new mongoose.Schema({
     instagramUrl:String,
     softOne: {
         COMPANY: String,
-        SODCODE: String,
+        SODTYPE: String,
         MTRMARK: {
             type: Number,
             require: true

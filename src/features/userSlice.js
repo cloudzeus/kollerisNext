@@ -9,6 +9,7 @@ const initialState = {
 	response: null,
 	isLoading: false,
 	isSidebarOpen: true,
+	asycnedMarkes: 0,
 }
 
 

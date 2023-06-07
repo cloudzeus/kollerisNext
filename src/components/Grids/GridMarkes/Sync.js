@@ -6,19 +6,20 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import SyncIcon from '@mui/icons-material/Sync';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { fetchNotSynced, updateNotSynced, notSyncedData} from '@/features/gridSlice';
+import { useSelector } from 'react-redux';
+const Sync = () => {
 
-
-
-const Sync = ({data}) => {
     const [isSynced, setIsSynced] = useState([])
+    const dispatch = useDispatch();
+    const {notSyncedData} = useSelector(state => state.grid)
     const [loading, setLoading] = useState(false);
-    console.log(data)
     const [sync, setSync] = useState({
         syncTo: 'Softone',
         syncFrom: 'Eμάς'
     })
 
-    console.log(sync.syncTo)
     
 
     const changeSync = () => {
@@ -35,27 +36,27 @@ const Sync = ({data}) => {
         }
     }
 
-    const syncItem = (index, data) => {
+    const syncItem = (index, item) => {
         setLoading(true);
         let resData;
         if(sync.syncTo === 'Εμάς') {
             //if we update our schema, send Softone data:
-            resData = data.softoneObject
+            resData = item.softoneObject
             
         }
         if(sync.syncTo === 'Softone') {
               //if we update softone, send Our Shcema data:
-            resData = data.ourObject
+            resData = item.ourObject
         }
-        let res = axios.post('/api/admin/markes/markes', { action: 'syncAndUpdate', syncTo: sync.syncTo.toString(), data: resData })
-        setIsSynced((prevActiveItems) => {
-            const updatedActiveItems = [...prevActiveItems];
-            updatedActiveItems[index] = !updatedActiveItems[index];
-            return updatedActiveItems;
-        });
-        if(res?.modifiedCount == 0) {
-            toast.error('Αποτυχία Συγχρονισμού')
-        }
+        // let res = axios.post('/api/admin/markes/markes', { action: 'syncAndUpdate', syncTo: sync.syncTo.toString(), data: resData })
+        //Redux action, sync and update Softone and Ariadne Objects:
+        dispatch(updateNotSynced({syncTo: sync.syncTo.toString(), resData: resData}))
+        //HIDE ITEMS AFTER UPDATE:
+        // setIsSynced((prevActiveItems) => {
+        //     const updatedActiveItems = [...prevActiveItems];
+        //     updatedActiveItems[index] = !updatedActiveItems[index];
+        //     return updatedActiveItems;
+        // });
         setLoading(false);
     }
     return (
@@ -79,15 +80,13 @@ const Sync = ({data}) => {
                 </div>
             </div>
 
-            {data.map((item, index) => {
+            {notSyncedData.map((item, index) => {
                 const isItemSynced = isSynced[index];
                 const formsContainerClassName = isItemSynced ? 'formsContainer synced' : 'formsContainer';
                 let our = item?.ourObject;
                 let softone = item?.softoneObject
                 return (
-                    <>
                         <div className={formsContainerClassName} key={item?.ourObject.name}>
-                           
                             <div className="item-primary-key">
                                 <span>Kωδικός:</span>
                                 <span>{softone.CODE}</span>
@@ -111,9 +110,7 @@ const Sync = ({data}) => {
                                 <SyncIcon />
                             </button>
                             </div>
-                          
                         </div>
-                    </>
                 )
 
             })}
@@ -168,6 +165,8 @@ const Container = styled.div`
         margin-right: 10px;
     }
    
+
+
     .formsContainer {
         border: 1px solid ${props => props.theme.palette.border};
         padding: 20px;
@@ -175,6 +174,15 @@ const Container = styled.div`
         margin-bottom: 20px;
         min-height: 115px;
         position: relative;
+        box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.04);
+        -webkit-box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.04);
+        -moz-box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.04);
+    }
+
+    .formsContainer:hover {
+        box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.05);
+        -webkit-box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.05);
+        -moz-box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.05);
     }
 
   
@@ -218,7 +226,7 @@ const Container = styled.div`
         width: auto;
         color: white;
         padding: 10px 2px;
-
+        margin-left: 10px;
         
     }
     .sync-button svg {

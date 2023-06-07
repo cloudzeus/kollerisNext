@@ -16,22 +16,21 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { setSelectedId } from '@/features/gridSlice';
-import { toast } from 'react-toastify';
-import { IconContainer } from '@/components/AdminNavbar';
+import { fetchNotSynced, setSelectedId } from '@/features/gridSlice';
+
 import Notifications from '@/components/Buttons/Notifications';
 
 const GridTable = () => {
     const [id, setId] = useState(null);
     const [data, setData] = useState([]);
-    const [ asyncedMarkes, setAsyncedMarkes] = useState([])
+    // const [asyncedMarkes, setAsyncedMarkes] = useState(0);
     const [action, setAction] = useState(null)
-    const {selectedId} = useSelector(state => state.grid)
+    const { selectedId, asyncedMarkes, notSyncedData } = useSelector(state => state.grid)
     const dispatch = useDispatch();
-    console.log('asyncedMarke: ' + asyncedMarkes)
 
-    const handleAction = (action) => {setAction(action)}
-   const handleCancel = () => {
+
+    const handleAction = (action) => { setAction(action) }
+    const handleCancel = () => {
         setAction(null)
         dispatch(setSelectedId(null))
     }
@@ -48,65 +47,62 @@ const GridTable = () => {
         }
     }
 
+    const handleSyncButton =  () => {
+        handleAction('sync')
+    }
 
-    //
-  
-        
-      
+
+
     useEffect(() => {
-            const run = setTimeout(() => {
-                const handleSync = async () => {
-                    try {
-                        const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
-                        console.log('sync');
-                        // console.log(resp.data)
-                        setData(resp.data.markes)
-                        setAsyncedMarkes(resp.data.markes.length)
-                    } catch (error) {
-                        console.log(error)
-                    }
-                }
-                handleSync()
-            }, 2000);
-            return () => clearTimeout(run);
-    
+        dispatch(fetchNotSynced());
+        // const handleSync = async () => {
+        //     try {
+        //         const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
+        //         setData(resp.data.markes)
+        //         setAsyncedMarkes(resp.data.markes.length)
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
+        // handleSync()
 
-        }, [])
+    }, [])
     return (
         <>
             <Container p="0px" className="box">
                 <div className="header">
                     <h2 className="boxHeader">Μάρκες</h2>
                 </div>
-               
+
                 <div className="innerContainer" >
-                <GridActions >
-                    <button onClick={() => handleAction('add')}>
-                        <AddIcon /> Προσθήκη
-                    </button>
-                    <button onClick={() => handleAction('edit')}>
-                        <EditIcon /> Διόρθωση
-                    </button>
-                    <button onClick={handleDeleteUser}>
-                        <DeleteIcon /> Διαγραφή
-                    </button>
-                    <button onClick={handleCancel}>
-                        <DeleteIcon /> Ακύρωση
-                    </button>
-                  
-                </GridActions>
-                        
-                        <Notifications
-                             onClick={() => handleAction('sync')}
-                             num={asyncedMarkes}>
-                            <SyncIcon />
-                        </Notifications>
-                    {!action && <Grid id={id} setId={setId}/>}
+                    <GridActions >
+                        <button onClick={() => handleAction('add')}>
+                            <AddIcon /> Προσθήκη
+                        </button>
+                        <button onClick={() => handleAction('edit')}>
+                            <EditIcon /> Διόρθωση
+                        </button>
+                        <button onClick={handleDeleteUser}>
+                            <DeleteIcon /> Διαγραφή
+                        </button>
+                        <button onClick={handleCancel}>
+                            <DeleteIcon /> Ακύρωση
+                        </button>
+
+                    </GridActions>
+
+                    <Notifications
+                        ml="10px"
+                        onClick={handleSyncButton}
+                        num={asyncedMarkes}>
+                        <SyncIcon />
+                    </Notifications >
+                    {!action && <Grid id={id} setId={setId} />}
                     {action === 'add' && <FormAdd />}
-                    {action === 'sync' && <Sync data={data} />}
+                    {action === 'sync' && <Sync />}
                     {action === 'edit' && selectedId && <FormEdit />}
                 </div>
-              
+
 
             </Container>
         </>
@@ -117,12 +113,6 @@ const GridTable = () => {
 
 
 
-
-
-const SyncBtn = styled(IconContainer)`
-    border-radius: 10px;
-    margin-left: 4px;
-`
 
 
 export default GridTable;
