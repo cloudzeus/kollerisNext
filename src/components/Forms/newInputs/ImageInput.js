@@ -1,8 +1,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
-import { useDispatch } from 'react-redux';
-import { setSelectedFile } from '@/features/gridSlice';
 import styled from "styled-components";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';

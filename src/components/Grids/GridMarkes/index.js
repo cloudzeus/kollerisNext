@@ -1,8 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
-import Image from 'next/image'
 import { Container, GridActions, GridContainer } from './styles';
 import { useDispatch } from 'react-redux';
 import {
@@ -16,8 +14,7 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { fetchNotSynced, setSelectedId } from '@/features/gridSlice';
-
+import { fetchNotSynced,setSelectedId } from '@/features/grid/gridSlice';
 import Notifications from '@/components/Buttons/Notifications';
 
 const GridTable = () => {

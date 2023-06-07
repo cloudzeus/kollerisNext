@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./features/userSlice";
-import gridSlice from "./features/gridSlice";
+import gridSlice from "./features/grid/gridSlice";
 
 export const store = configureStore({
   reducer: {

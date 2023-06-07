@@ -1,13 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import React from 'react'
 import styled from "styled-components";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AddIcon from '@mui/icons-material/Add';
-import axios from "axios";
-import UploadInput from "../Comps/UploadInput";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { useSelector } from "react-redux";

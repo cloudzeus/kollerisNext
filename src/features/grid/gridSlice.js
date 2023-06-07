@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ConditionalSettings } from "@syncfusion/ej2/pivotview";
 import axios from "axios";
 import toast from 'react-toastify'
 const initialState = {
@@ -94,6 +93,7 @@ const gridSlice = createSlice({
 			})
 			.addCase(updateNotSynced.fulfilled, (state,  {payload} ) => {
 					state.asyncedMarkes = payload.length;
+					state.loading = false;
 			})
 			.addCase(updateNotSynced.rejected, (state, { payload }) => {
 				state.loading = false;

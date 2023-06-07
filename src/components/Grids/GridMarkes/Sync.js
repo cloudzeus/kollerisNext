@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styled from "styled-components";
 import axios from "axios";
 import { Input } from "@/components/Forms/newInputs/InputClassic";
@@ -7,21 +7,19 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { fetchNotSynced, updateNotSynced, notSyncedData} from '@/features/gridSlice';
+import { fetchNotSynced, updateNotSynced, notSyncedData} from '@/features/grid/gridSlice';
 import { useSelector } from 'react-redux';
 const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
     const dispatch = useDispatch();
-    const {notSyncedData} = useSelector(state => state.grid)
-    const [loading, setLoading] = useState(false);
+    const {notSyncedData, loading} = useSelector(state => state.grid)
     const [sync, setSync] = useState({
         syncTo: 'Softone',
         syncFrom: 'Eμάς'
     })
 
     
-
     const changeSync = () => {
         if (sync.syncTo === 'Softone') {
             setSync({
@@ -35,9 +33,9 @@ const Sync = () => {
             })
         }
     }
+  
 
-    const syncItem = (index, item) => {
-        setLoading(true);
+    const syncItem = async (index, item) => {
         let resData;
         if(sync.syncTo === 'Εμάς') {
             //if we update our schema, send Softone data:
@@ -48,17 +46,21 @@ const Sync = () => {
               //if we update softone, send Our Shcema data:
             resData = item.ourObject
         }
-        // let res = axios.post('/api/admin/markes/markes', { action: 'syncAndUpdate', syncTo: sync.syncTo.toString(), data: resData })
-        //Redux action, sync and update Softone and Ariadne Objects:
-        dispatch(updateNotSynced({syncTo: sync.syncTo.toString(), resData: resData}))
+        
+       
         //HIDE ITEMS AFTER UPDATE:
-        // setIsSynced((prevActiveItems) => {
-        //     const updatedActiveItems = [...prevActiveItems];
-        //     updatedActiveItems[index] = !updatedActiveItems[index];
-        //     return updatedActiveItems;
-        // });
-        setLoading(false);
+        dispatch(updateNotSynced({syncTo: sync.syncTo.toString(), resData: resData}))
+        setIsSynced((prevActiveItems) => {
+            const updatedActiveItems = [...prevActiveItems];
+            updatedActiveItems[index] = !updatedActiveItems[index];
+            return updatedActiveItems;
+        });
+       
     }
+
+
+    
+
     return (
 
 
@@ -82,7 +84,7 @@ const Sync = () => {
 
             {notSyncedData.map((item, index) => {
                 const isItemSynced = isSynced[index];
-                const formsContainerClassName = isItemSynced ? 'formsContainer synced' : 'formsContainer';
+                const formsContainerClassName = isItemSynced ? 'formsContainer synced filled-border' : 'formsContainer';
                 let our = item?.ourObject;
                 let softone = item?.softoneObject
                 return (
@@ -189,7 +191,7 @@ const Container = styled.div`
 
     .grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 40px;
+        grid-template-columns: 1fr 1fr 50px;
         grid-column-gap:  10px;
         box-shadow: rgba(99, 99, 99, 0.05) 0px 1px 5px 0px;
     }
@@ -214,12 +216,35 @@ const Container = styled.div`
         color: grey;
     }
    
+    @keyframes fillAnimation {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
+    }
+
+    .filled-border {
+    position: relative;
+    }
+
+    .filled-border::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px; /* Adjust the height of the filled border as needed */
+    background-color: blue; /* Adjust the color of the filled border as needed */
+    animation: fillAnimation 0.4s linear forwards; /* Adjust the animation duration as needed */
+    }
 
     .sync-button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         background-color: ${props => props.theme.palette.primary.main};
+        /* background-color:#e4ac1b; */
         border-radius: 5px;
         border: none;
         outline: none;
@@ -255,8 +280,6 @@ const Container = styled.div`
 `
 
 
-const StyledInput = styled(Input)`
-    margin-bottom: 0px;
-`
+
 
 export default Sync

@@ -5,7 +5,7 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, 
 import { GridContainer } from "./styles";
 import styled from "styled-components";
 import { useDispatch } from 'react-redux';
-import { setSelectedId, setGridRowData} from "@/features/gridSlice";
+import { setSelectedId, setGridRowData} from "@/features/grid/gridSlice";
 import {
     validationRules,
     pageSettings,
@@ -14,7 +14,8 @@ import {
     toolbarOptions,
     AddIcon,
     EditIcon,
-    DeleteIcon,} from './config';
+    DeleteIcon,
+} from './config';
 
 const Grid = ({id, setId}) => {
     
