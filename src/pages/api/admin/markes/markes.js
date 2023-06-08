@@ -4,7 +4,43 @@ import { rewrites } from "../../../../../next.config";
 import axios from "axios";
 import { CollectionsBookmarkOutlined } from "@mui/icons-material";
 export default async function handler(req, res) {
+	// await connectMongo();
+	// const newMarkes1 = await Markes.create({
+	// 	name: 'product1',
+	// 	description: 'description of product 1',
+	// 	logo: '1685705325908_mountain.jpg',
+	// 	videoPromoList: [
+	// 		{
+	// 			name: 'video1',
+	// 			videoUrl: 'videoURL'
+	// 		}
+	// 	],
+	// 	photosPromoList: [
+	// 		{
+	// 			name: 'sefsefsef',
+	// 			photosPromoUrl: 'sesefsefs'
+	// 		}
+	// 	],
+	// 	pimAccess: {
+	// 		pimUrl: 'https://pimurl',
+	// 		pimUserName: 'pimUserName',
+	// 		pimPassword: '1234567'
+	// 	},
+	// 	webSiteUrl: 'website url',
+	// 	officialCatalogueUrl: 'catalogues url',
+	// 	facebookUrl: 'facebook url',
+	// 	instagramUrl: 'instagram url',
+	// 	softOne: {
+	// 		COMPANY: '1001',
+	// 		SODTYPE: '51',
+	// 		MTRMARK: 1001,
+	// 		CODE: '1001',
+	// 		NAME: 'Addidas',
+	// 		ISACTIVE: 1
+	// 	}
+	// }); 
 	
+
 
 	let action = req.body.action;
 

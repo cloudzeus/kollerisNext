@@ -57,53 +57,6 @@ const Page2 = () => {
 				/>
 				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
 			</Container >
-			<Container className="box">
-				<h2 className="boxHeader">SpreadSheet</h2>
-				<div className="icon-container">
-					<IconBtn>
-						<FolderOpenIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
-					</IconBtn>
-					<IconBtn>
-						<SaveAltIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
-					</IconBtn>
-
-				</div>
-
-				<SpreadsheetComponent
-					ref={spreadsheetRef}
-					actionBegin={onActionBegin}
-					allowOpen={true}
-					openUrl='https://services.syncfusion.com/react/production/api/spreadsheet/open'
-					saveUrl='https://services.syncfusion.com/react/production/api/spreadsheet/save'
-					Open={beforeOpen}
-					allowSave={true}
-				/>
-				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
-			</Container >
-			<Container className="box">
-				<h2 className="boxHeader">SpreadSheet</h2>
-				<div className="icon-container">
-					<IconBtn>
-						<FolderOpenIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
-					</IconBtn>
-					<IconBtn>
-						<SaveAltIcon style={{ fontSize: '18px', color: `${theme.palette.primary.main}` }} />
-					</IconBtn>
-
-				</div>
-
-				<SpreadsheetComponent
-					ref={spreadsheetRef}
-					actionBegin={onActionBegin}
-					allowOpen={true}
-					openUrl='https://services.syncfusion.com/react/production/api/spreadsheet/open'
-					saveUrl='https://services.syncfusion.com/react/production/api/spreadsheet/save'
-					Open={beforeOpen}
-					allowSave={true}
-				/>
-				<Button mt="20" size="140px">Eνημέρωση Βάσης</Button>
-			</Container >
-
 		</AdminLayout>
 	)
 }

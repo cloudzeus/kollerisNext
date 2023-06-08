@@ -170,6 +170,7 @@ const Container = styled.div`
     .btn {
         display: flex;
         align-items: center;
+        margin-left: 0px;
         margin-bottom: ${props => props.mb ? `${props.mg}px` : '0px'};
         margin-top: ${props => props.mt ? `${props.mg}px` : '0px'};
         height: 40px;

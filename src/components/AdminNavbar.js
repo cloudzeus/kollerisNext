@@ -19,28 +19,28 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 
 const toggleFullscreen = () => {
-   console.log('toggleFullscreen')
-   const doc = window.document;
-   const docEl = doc.documentElement;
-   console.log(doc)
-   const requestFullscreen =
-     docEl.requestFullscreen ||
-     docEl.mozRequestFullScreen ||
-     docEl.webkitRequestFullScreen ||
-     docEl.msRequestFullscreen;
-   
-   const exitFullscreen =
-     doc.exitFullscreen ||
-     doc.mozCancelFullScreen ||
-     doc.webkitExitFullscreen ||
-     doc.msExitFullscreen;
- 
-   if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-     requestFullscreen.call(docEl);
-   } else {
-     exitFullscreen.call(doc);
-   }
- }
+	console.log('toggleFullscreen')
+	const doc = window.document;
+	const docEl = doc.documentElement;
+	console.log(doc)
+	const requestFullscreen =
+		docEl.requestFullscreen ||
+		docEl.mozRequestFullScreen ||
+		docEl.webkitRequestFullScreen ||
+		docEl.msRequestFullscreen;
+
+	const exitFullscreen =
+		doc.exitFullscreen ||
+		doc.mozCancelFullScreen ||
+		doc.webkitExitFullscreen ||
+		doc.msExitFullscreen;
+
+	if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+		requestFullscreen.call(docEl);
+	} else {
+		exitFullscreen.call(doc);
+	}
+}
 
 
 
@@ -67,16 +67,19 @@ const AdminNavbar = () => {
 				/>
 			</div>
 			<div className="right-div">
-				<Notifications num="10">
-               <NotificationsIcon />
-            </Notifications>
-				<IconContainer >
-					<SettingsIcon />
-				</IconContainer>
-				<IconContainer onClick={toggleFullscreen} >
-					<FullscreenIcon />
-				</IconContainer>
-				<AvatarSettings />
+				<div></div>
+				<div id="right-buttons-nav">
+					<Notifications num="10" className="buttons">
+						<NotificationsIcon />
+					</Notifications>
+					<IconContainer className="buttons" >
+						<SettingsIcon />
+					</IconContainer>
+					<IconContainer onClick={toggleFullscreen} className="buttons" >
+						<FullscreenIcon />
+					</IconContainer>
+					<AvatarSettings />
+				</div>
 			</div>
 
 		</Container>
@@ -101,34 +104,44 @@ export const IconContainer = styled(IconBtn)`
 `
 
 const Container = styled.div`
-   display: flex;
+   /* display: flex; */
+   display: grid;
+   grid-template-columns: 260px 1fr;
    width: 100%;
-   padding: 10px;
    z-index: 99;
    height: 70px;
    position: fixed;
-   flex-direction: row;
+   /* flex-direction: row; */
    /* box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.04);= */
    background-color: white;
    border-bottom: 2px solid ${props => props.theme.palette.background};
    .burger-div {
       display: flex;
+
       align-items: center;
 	  padding: 10px;
       @media (min-width: 1024px) {
-         width: 260px;
+         /* width: 260px; */
       }
    }
    .right-div {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, auto);
       flex-direction: row;
       width: 100%;
       align-items: center;
       justify-content: flex-end;
+	  padding: 10px;
    }
-   .right-div button {
-      margin-left: 10px;
+   .right-div #right-buttons-nav{
+	display: grid;
+	grid-template-columns: repeat(4, auto);
+	grid-column-gap: 8px;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
    }
+   
 
 `
 
