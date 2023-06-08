@@ -35,6 +35,7 @@ const AvatarSettings = () => {
     const route = useRouter();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.user)
+    console.log(user)
     const [name, setName] = useState('')
     const onClick = () => {
         setShow(!show)

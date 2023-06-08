@@ -4,8 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 export default NextAuth({
   session: {
     strategy: "jwt",
-    // async encode() {},
-    // async decode() {},
+  
   },
   providers: [
     CredentialsProvider({

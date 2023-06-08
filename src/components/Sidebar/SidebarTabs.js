@@ -14,10 +14,10 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
 
 
   return (
-    <NextLink href={to} passHref>
-      <StyledSpan  subItem={subItem} active={active} theme={theme}>
+    <NextLink href={to} passHref >
+      <StyledSpan pl="6px"  subItem={subItem} active={active} theme={theme}>
         {icon}
-        <SidebarTextExtraPad>{label}</SidebarTextExtraPad>
+        <span className="text" >{label}</span>
       </StyledSpan >
     </NextLink>
   );
@@ -38,9 +38,10 @@ export const SidebarExpandableItem = ({label, active, children,}) => {
     }
     return (
         <>
-           <StyledSpan onClick={onClick} active={active} theme={theme}>
+           <StyledSpan  onClick={onClick} active={active} theme={theme}>
             {open ? <KeyboardArrowDownIcon sx={sx} /> :<KeyboardArrowRightIcon  sx={sx} />  }
-           <SidebarText >{label}</SidebarText>
+           {/* <SidebarText >{label}</SidebarText> */}
+           <span className="text">{label}</span>
         </StyledSpan>
         <div>
          {open && children}
@@ -69,14 +70,14 @@ const SidebarTextExtraPad = styled(SidebarText)`
 
 //Parent Container for the Sidebar tab:
 export const StyledSpan = styled.div`
+  width: 95%;
+  border-radius: 0 35px 35px 0;
   display: flex;
   align-items: center;
   height: 40px;
   padding: ${props => props.subItem ? '0 40px' : '0 16px'};
   text-decoration: none;
   color: #333;
-  /* border-left: 3px solid transparent; */
-  width: 100%;
   cursor: pointer;
 
   &:hover {
@@ -86,12 +87,17 @@ export const StyledSpan = styled.div`
   ${({ active, theme }) =>
     active &&
     `
-    background-color: ${theme.palette.primary.light};
+    background-color: ${theme.palette.background};
     color: ${theme.palette.primary.main};
-    font-family: 'Roboto', sans-serif;
 
   `}
 
+  span.text {
+    font-size: 14px;
+    letter-spacing: 0.2px;
+    padding-left: ${props => props.pl ? props.pl : '0px'};
+  }
+ 
  
 `;
 

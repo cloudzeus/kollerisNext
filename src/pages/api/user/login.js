@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   let password = req.body.password;
   try {
     await connectMongo();
+    
     // const result = await User.findOne({email: req.body.username , password: req.body.password });
     const user = await User.findOne({email: req.body.username});
     console.log('user' + JSON.stringify(user))

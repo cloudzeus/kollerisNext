@@ -20,7 +20,6 @@ const BigSidebar = () => {
   }
   return (
     <Wrapper isSidebarOpen={isSidebarOpen} >
-      <LightHeader>ΜΕΝΟΥ</LightHeader>
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
       <SidebarItem to="/dashboard/test" label="Πελάτες" />
       <SidebarItem to="/dashboard/chart" label="Chart" />
@@ -49,13 +48,14 @@ const BigSidebar = () => {
 
 
 const Wrapper = styled.div`
+    padding-top: 20px;
     display: ${props => props.isSidebarOpen ? 'block' : 'none'};
     position: absolute;
     top: 70px;
     background-color: white;
+    /* background-color: red; */
     width: 260px;
     z-index: 3;
-    padding: 10px;
     height: 100%;
     z-index: 99;
     @media (max-width: 768px) {
