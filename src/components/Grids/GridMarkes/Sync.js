@@ -7,19 +7,19 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { fetchNotSynced, updateNotSynced, notSyncedData} from '@/features/grid/gridSlice';
+import { fetchNotSynced, updateNotSynced, notSyncedData } from '@/features/grid/gridSlice';
 import { useSelector } from 'react-redux';
 const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
     const dispatch = useDispatch();
-    const {notSyncedData, success } = useSelector(state => state.grid)
+    const { notSyncedData, success } = useSelector(state => state.grid)
     const [sync, setSync] = useState({
         syncTo: 'Softone',
         syncFrom: 'Eμάς'
     })
 
-    
+
     const changeSync = () => {
         if (sync.syncTo === 'Softone') {
             setSync({
@@ -33,45 +33,64 @@ const Sync = () => {
             })
         }
     }
-  
+
 
     const syncItem = async (index, item) => {
         let resData;
-        if(sync.syncTo === 'Εμάς') {
+        if (sync.syncTo === 'Εμάς') {
             //if we update our schema, send Softone data:
             resData = item.softoneObject
-            
+
         }
-        if(sync.syncTo === 'Softone') {
-              //if we update softone, send Our Shcema data:
+        if (sync.syncTo === 'Softone') {
+            //if we update softone, send Our Shcema data:
             resData = item.ourObject
         }
-        
-       
+
+
         //HIDE ITEMS AFTER UPDATE:
-        dispatch(updateNotSynced({syncTo: sync.syncTo.toString(), resData: resData}))
-        .then((res) => {
-            let updated = res.payload.updated;
-            if(updated) {
-                setIsSynced((prevActiveItems) => {
-                    const updatedActiveItems = [...prevActiveItems];
-                    updatedActiveItems[index] = !updatedActiveItems[index];
-                    return updatedActiveItems;
-                });
-                toast.success('Eπιτυχία')
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
-        
-        
+        dispatch(updateNotSynced({ syncTo: sync.syncTo.toString(), resData: resData }))
+            .then((res) => {
+                let updated = res.payload.updated;
+                if (updated) {
+                    setIsSynced((prevActiveItems) => {
+                        const updatedActiveItems = [...prevActiveItems];
+                        updatedActiveItems[index] = !updatedActiveItems[index];
+                        return updatedActiveItems;
+                    });
+                    toast.success('Eπιτυχία')
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+
+
     }
 
 
-    
+    const CompareInputs = ({ our, softone }) => {
+        if (sync.syncTo === 'Softone') {
+            return (
+                <>
+                    <span className="input">{our.NAME}</span>
+                    <span className="input">{softone.NAME}</span>
+                </>
+            )
+        }
+        else {
+            return (
+                <>
+                    <span className="input">{softone.NAME}</span>
+                    <span className="input">{our.NAME}</span>
+
+                </>
+            )
+        }
+
+
+    }
 
     return (
-
 
         <Container isSynced={isSynced} >
             <div className="header-top">
@@ -97,31 +116,20 @@ const Sync = () => {
                 let our = item?.ourObject;
                 let softone = item?.softoneObject
                 return (
-                        <div className={formsContainerClassName} key={item?.ourObject.name}>
-                            <div className="item-primary-key">
-                                <span>Kωδικός:</span>
-                                <span>{softone.CODE}</span>
-                            </div>
-                            <div className="grid"> 
-                            {sync.syncTo === 'Softone' ? (
-                                <>   
-                                    <span  className="input">{our.NAME}</span>
-                                    <span  className="input">{softone.NAME}</span>
-                                </>
-                            ) : (
-                                <>  
-                                  <span  className="input">{softone.NAME}</span>
-                                <span className="input">{our.NAME}</span>
-                                  
-                                </>
-                            )}
+                    <div className={formsContainerClassName} key={item?.ourObject.name}>
+                        <div className="item-primary-key">
+                            <span>Kωδικός:</span>
+                            <span>{softone.CODE}</span>
+                        </div>
+                        <div className="grid">
+                            <CompareInputs our={our} softone={softone} />
                             <button className='sync-button' onClick={() => {
                                 syncItem(index, item)
                             }}>
                                 <SyncIcon />
                             </button>
-                            </div>
                         </div>
+                    </div>
                 )
 
             })}
