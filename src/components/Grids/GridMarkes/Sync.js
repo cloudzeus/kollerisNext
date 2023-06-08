@@ -9,6 +9,8 @@ import { CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { fetchNotSynced, updateNotSynced, notSyncedData } from '@/features/grid/gridSlice';
 import { useSelector } from 'react-redux';
+
+
 const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
@@ -115,6 +117,7 @@ const Sync = () => {
                 const formsContainerClassName = isItemSynced ? 'formsContainer synced filled-border' : 'formsContainer';
                 let our = item?.ourObject;
                 let softone = item?.softoneObject
+                let isChecked = true;
                 return (
                     <div className={formsContainerClassName} key={item?.ourObject.name}>
                         <div className="item-primary-key">

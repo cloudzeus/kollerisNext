@@ -52,20 +52,9 @@ const GridTable = () => {
 
     useEffect(() => {
         dispatch(fetchNotSynced());
-        // const handleSync = async () => {
-        //     try {
-        //         const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
-        //         setData(resp.data.markes)
-        //         setAsyncedMarkes(resp.data.markes.length)
-        //     } catch (error) {
-        //         console.log(error)
-        //     }
-        // }
-        // handleSync()
-
+       
     }, [dispatch])
     return (
-        <>
             <Container p="0px" className="box">
                 <div className="header">
                     <h2 className="boxHeader">Μάρκες</h2>
@@ -100,9 +89,7 @@ const GridTable = () => {
                     {action === 'edit' && selectedId && <FormEdit />}
                 </div>
 
-
             </Container>
-        </>
 
     )
 
