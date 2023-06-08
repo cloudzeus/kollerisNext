@@ -13,7 +13,7 @@ const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
     const dispatch = useDispatch();
-    const {notSyncedData, loading} = useSelector(state => state.grid)
+    const {notSyncedData, success } = useSelector(state => state.grid)
     const [sync, setSync] = useState({
         syncTo: 'Softone',
         syncFrom: 'Eμάς'
@@ -50,12 +50,21 @@ const Sync = () => {
        
         //HIDE ITEMS AFTER UPDATE:
         dispatch(updateNotSynced({syncTo: sync.syncTo.toString(), resData: resData}))
-        setIsSynced((prevActiveItems) => {
-            const updatedActiveItems = [...prevActiveItems];
-            updatedActiveItems[index] = !updatedActiveItems[index];
-            return updatedActiveItems;
-        });
-       
+        .then((res) => {
+            let updated = res.payload.updated;
+            if(updated) {
+                setIsSynced((prevActiveItems) => {
+                    const updatedActiveItems = [...prevActiveItems];
+                    updatedActiveItems[index] = !updatedActiveItems[index];
+                    return updatedActiveItems;
+                });
+                toast.success('Eπιτυχία')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+        
+        
     }
 
 

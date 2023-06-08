@@ -10,6 +10,7 @@ const initialState = {
 	loading: false,
 	asyncedMarkes: 0,
 	notSyncedData: [],
+	success: false,
 }
 
 
@@ -17,7 +18,6 @@ export const fetchNotSynced = createAsyncThunk(
 	//action:
 	'grid/fetchNotSynced',
 	async (grid, thunkApi) => {
-		console.log('fsefsefsfsfesfsf')
 		try {
 			const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
 			return resp.data;
@@ -35,10 +35,11 @@ export const updateNotSynced = createAsyncThunk(
 		
 			if(!res.data.success) {
 				toast.error('Αποτυχία Συγχρονισμού');
+				return res.data;
 			}
-			if(res) {
+			if(res.data.success) {
 				const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
-				return {length: resp.data.markes.length};
+				return {...res.data, ...resp.data};
 			}
 		} catch (error) {
 			console.log(error)
@@ -78,8 +79,7 @@ const gridSlice = createSlice({
 			.addCase(fetchNotSynced.fulfilled, (state,  {payload} ) => {
 
 				const { markes } = payload;
-				console.log('-------------------- MARKES -------------------')
-				console.log(markes)
+				
 				state.notSyncedData = markes;
 				state.asyncedMarkes = markes.length;
 			})
@@ -87,12 +87,20 @@ const gridSlice = createSlice({
 				state.loading = false;
 			})
 
-			//FetchNotSynced
+			//UPDATE NOT SYNCED OBJECTS:
 			.addCase(updateNotSynced.pending, (state, {payload}) => {
+				state.success = false;
 				state.loading = true;
 			})
 			.addCase(updateNotSynced.fulfilled, (state,  {payload} ) => {
-					state.asyncedMarkes = payload.length;
+					console.log('payload')
+					console.log(payload)
+					if(payload.success && payload.updated)  {
+						state.asyncedMarkes = payload?.markes.length;
+						state.success = true;
+					} else {
+						state.success = false;
+					}
 					state.loading = false;
 			})
 			.addCase(updateNotSynced.rejected, (state, { payload }) => {

@@ -233,8 +233,7 @@ export default async function handler(req, res) {
 					for (const key of keys) {
 						// console.log(key)
 						if (object1[key].toString() !== object2[key].toString()) {
-							console.log('--------------------------- NOT THE SAME -----------------------------------')
-							console.log(key, object1[key])
+							
 							return true; // Values are not the same
 						}
 					}
@@ -251,8 +250,8 @@ export default async function handler(req, res) {
 			//   console.log(compareObjects(object1, object2));
 
 			let newArray = compareArrays(mongoArray, softOneArray)
-			console.log('--------------------------- NEW ARRAY -----------------------------------')
-			console.log(newArray)
+			// console.log('--------------------------- NEW ARRAY -----------------------------------')
+			// console.log(newArray)
 			if (newArray) {
 				return res.status(200).json({ success: true, markes: newArray });
 			}
@@ -270,9 +269,8 @@ export default async function handler(req, res) {
 
 		let data = req.body.data;
 		let syncTo = req.body.syncTo;
-		console.log(data)
-		console.log('syncTo')
-		console.log(syncTo)
+		console.log('Data' , Object(data))
+		console.log('syncTo: ' , syncTo)
 		try {
 			await connectMongo();
 			if (req.body.syncTo == 'Εμάς') {
@@ -281,15 +279,15 @@ export default async function handler(req, res) {
 					{ $set: { "softOne.NAME": data.NAME } });
 				console.log('------------------ updated ---------------------------')
 				console.log(updated)
-				if (!updated) {
-					return res.status(200).json({ success: false });
+				if (updated.modifiedCount === 0) {	
+					return res.status(200).json({ success: false, updated: false});
 				}
-
+				
 				return res.status(200).json({ success: true, updated: true });
 			}
 
 			if (req.body.syncTo == 'Softone') {
-				return res.status(200).json({ success: true });
+				return res.status(200).json({ success: false, updated: false });
 			}
 
 			// console.log('200')

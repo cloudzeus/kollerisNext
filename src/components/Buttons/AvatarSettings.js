@@ -154,6 +154,7 @@ const Container = styled.div`
         border-radius: 4px;
         min-width: 200px;
         right: 10px;
+        
     }
 
     .hiddenTopDiv {
