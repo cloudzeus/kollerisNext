@@ -13,30 +13,24 @@ import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 export const FormAdd = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({});
     const [selectedFile, setSelectedFile] = useState(null);
-    
-    const [formData, setFormData] = useState({
-        videoPromoList: [{
-            name: '',
-            videoUrl: ''
-        }],
-        photosPromoList: [{
-            name: '',
-            photoUrl: ''
-        }],
 
+    const [videoList, setVideoList] = useState([{
+        name: '',
+        videoUrl: ''
+    }])
+    const [photoList, setPhotoList] = useState({
+        name: '',
+        videoUrl: ''
     })
+    console.log(videoList)
 
-    console.log(formData)
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('On Submit')
-        console.log(data)
-        console.log(selectedFile)
+       
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
-        console.log('------------------------- Res --------------------------')
-        console.log(res)
+     
  
     }
 
@@ -164,11 +158,10 @@ export const FormAdd = () => {
               <h2>VideoPromoList</h2>
             <AddMoreInput  
                 label="Video"
-                attr1="name"
-                attr2="videoUrl"
-                objName="videoPromoList" 
-                setFormData={setFormData} 
-                formData={formData} />
+                htmlName1="name"
+                htmlName2="videoUrl"
+                setFormData={setVideoList} 
+                formData={videoList} />
           
           
            </div>

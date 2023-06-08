@@ -57,7 +57,6 @@ const theme = createTheme({
     white: '#ffffff',
     accent: '#F36BB6',
     border: '#e8e8e8',
-   
   },
   success: {
     main: '#21e51a',
