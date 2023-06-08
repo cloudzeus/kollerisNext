@@ -15,7 +15,12 @@ export const SidebarItem = ({ to, icon, label, subItem }) => {
 
   return (
     <NextLink href={to} passHref >
-      <StyledSpan pl="6px"  subItem={subItem} active={active} theme={theme}>
+      <StyledSpan 
+        pl="6px"  
+        subItem={subItem} 
+        active={active} 
+        theme={theme}
+      >
         {icon}
         <span className="text" >{label}</span>
       </StyledSpan >

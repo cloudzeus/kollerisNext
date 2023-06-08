@@ -4,7 +4,8 @@ import nodemailer from 'nodemailer';
 
 const email = 'johnchiout.dev@gmail.com'
 const pass = 'ypbytdbjwumhepop'
-const baseURL = 'http://localhost:3000'
+
+
 
 
 export const transporter = nodemailer.createTransport({
@@ -21,7 +22,7 @@ export const transporter = nodemailer.createTransport({
 const emailTemplate = (user) =>  `
     <p>Γειά σου, <strong>${user.firstName}</strong></p>
     <p>Η εγγραφή σου ολοκληρώθηκε μπορείς να πατήσεις τον παρακάτω σύνδεσμο για να συνδεθείς</p>
-    <a href="${baseURL}/auth/signin">Σύνδεση</a>
+    <a href="${process.env.BASE_URL}/auth/signin">Σύνδεση</a>
 `
 
 

@@ -8,11 +8,12 @@ import bcrypt from 'bcrypt';
 
 
 export default async function handler(req, res) {
+  console.log('reqbody' + JSON.stringify(req.body))
   const password = req.body.password;
-
+  console.log('resgister userrrrrrrrrr')
   try {
     await connectMongo();
-    
+    console.log('100')
     //DATABASE LOOKUP FOR EXISTING EMAIL:
     const alreadyEmailCheck = await User.findOne({ email: req.body.email })
     if(alreadyEmailCheck) {
@@ -63,6 +64,6 @@ const handleApi = async (user) => {
 const emailBody = (user) =>`
 <p>O χρήστης <strong>${user?.firstName} ${user?.lastName}</strong> έχει ζητήσει εγγραφή στον ιστότοπο σας</p> 
 <p>Πατήστε τον παρακάτω σύνδεσμο για να επιβεβαιώσετε την εγγραφή του</p>
-<a href="http://localhost:3000/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
+<a href="${process.env.BASE_URL}/api/user/change-user-role?id=${user?._id}" target="_blank">Επιβεβαίωση εγγραφής</a>
 `
 
