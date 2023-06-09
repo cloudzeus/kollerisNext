@@ -11,6 +11,7 @@ import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
 import { selected } from "@syncfusion/ej2/pivotview";
+import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -180,7 +181,7 @@ export const FormAdd = () => {
                 formData={formData} />
            */}
            <div>
-              <h2>VideoPromoList</h2>
+              <h2>Βίντεο Προϊόντος</h2>
             <AddMoreInput  
                 label="Video"
                 htmlName1="name"
@@ -188,7 +189,8 @@ export const FormAdd = () => {
                 setFormData={setVideoList}
                 formData={videoList} />
            </div>
-            <h2>PhotosPromoList</h2>
+            <h2>Φωτογραφίες Προϊόντος</h2>
+           <FileDropzone />
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
         </form>
     )

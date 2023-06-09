@@ -10,7 +10,6 @@ export const config = {
 };
 
 const readFile = (req, saveLocally) => {
-
 	const options = {};
 	if (saveLocally) {
 		options.uploadDir = path.join(process.cwd(), "/public/static/uploads");
@@ -30,15 +29,20 @@ const readFile = (req, saveLocally) => {
 }
 
 export default async function handler(req, res) {
+	console.log(req.fields, req.files)
 	try {
 		 await fs.readdir(path.join(process.cwd() + "/public/static/", "/uploads"));
 	  } catch (error) {
 		await fs.mkdir(path.join(process.cwd() + "/public/static", "/uploads"));
 	  }
 	  let response = await readFile(req, true);
-	//   console.log(response.files.myFile.newFilename)
-	  let filename = response.files.myFile.newFilename
-	  res.json({ done: "ok", newFilename: filename });
+	  if(response) {
+		let filename = response?.files?.myFile?.newFilename
+		return res.json({ done: "ok", newFilename: filename });
+	  } else {
+		return res.json({ done: "not ok", newFilename: null });
+	  }
+	
 }
 
 
