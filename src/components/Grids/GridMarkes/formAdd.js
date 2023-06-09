@@ -160,10 +160,8 @@ export const FormAdd = () => {
                 label="Video"
                 htmlName1="name"
                 htmlName2="videoUrl"
-                setFormData={setVideoList} 
+                setFormData={setVideoList}
                 formData={videoList} />
-          
-          
            </div>
             <h2>PhotosPromoList</h2>
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>

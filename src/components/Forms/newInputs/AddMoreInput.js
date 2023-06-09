@@ -2,60 +2,38 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { set } from "mongoose";
+import {toast} from 'react-toastify';
+
+
 export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, }) => {
-    const [rows, setRows] = useState([{}]);
- 
 
-    const handleAddRow = (index) => {
-        setRows(prev => {
-            return [...prev, {id: prev.length + 1}]
-        })
-    };
+    const [videoList, setVideoList] = useState([{
+        name: '',
+        videoUrl: ''
+    }])
 
-    const handleCancel = (index) => {
-        
-        
-    };
+    console.log(videoList)
+    const addInputFields = () => {
+        setVideoList([...videoList, { name: '', videoUrl: '' }]);
+      };
 
-    const handleFirstInput = (e, index) => {
-        let value= e.target.value;
-        const updatedFormData = { ...formData }
-        updatedFormData[index] = { [htmlName2]: updatedFormData[index][htmlName2], [htmlName1]: value }
-    }
+    const handleInputChange = (event,index) => {
+        const { name, value } = event.target;
+        const updatedList = [...videoList];
+        updatedList[index][name] = value;
+        setVideoList(updatedList);
+      };
 
-    const handleSecondInput = (e) => {
-        let value= e.target.value;
-        // setFormData(prev => {
-        //     return [...prev, {...prev.htmlName1, htmlName2: value }]
-        // })
-    }
 
     return (
-  
         <Container>
-             <div className="add_more_double_input_div">
-                        <input 
-                            type="text" 
-                            placeholder="Όνομα" 
-                            name={htmlName1} 
-                            onChange={(e) =>handleFirstInput(e, 1)} 
-                            // value={formData.name} 
-                            />
-                        <input 
-                            type="text" 
-                            name={htmlName2} 
-                            placeholder="https://" 
-                            // value={formData.videoUrl} 
-                            onChange={(e) => handleSecondInput(e)} />
-                        <AddIcon onClick={handleAddRow} />
-                    </div>
-            {rows.map((row, index) => {
+            {videoList.map((row, index) => {
                 return (
                     <div className="add_more_double_input_div">
-                        <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) => handleFirstInput(e)} />
-                        <input type="text" name={htmlName2} placeholder="https://" value={formData.videoUrl} onChange={(e) => handleSecondInput(e)} />
-                        <DeleteForeverIcon onClick={() => handleCancel(index)}  />
+                        <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)} />
+                        <input type="text" name={htmlName2} placeholder="https://" value={formData.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
+                        <AddIcon onClick={addInputFields} />
+                        {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => handleCancel(index)}  />}
                     </div>
                 )
             })}
@@ -70,7 +48,7 @@ const Container = styled.div`
    
     .add_more_double_input_div {
         display: grid;
-        grid-template-columns: 1fr 2fr 40px;
+        grid-template-columns: 1fr 2fr 40px 40px;
         grid-gap: 10px;
         margin-bottom: 10px;
     }
@@ -97,7 +75,9 @@ const Container = styled.div`
    svg:hover,svg:active  {
     scale: 0.9;
    }
-
+   svg.add_more_double_input_delete_icon {
+        color: red;
+   }
   
 `
 
