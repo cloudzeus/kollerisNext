@@ -39,7 +39,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
                         <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)} />
                         <input type="text" name={htmlName2} placeholder="https://" value={formData.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
                         <AddIcon onClick={addInputFields} />
-                        {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => handleCancel(index)}  />}
+                        {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => deleteInputFields(index)}  />}
                     </div>
                 )
             })}
