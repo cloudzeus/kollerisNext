@@ -25,11 +25,17 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
       };
 
 
+      const deleteInputFields = (index) => {
+        const updatedList = [...videoList];
+        updatedList.splice(index, 1);
+        setVideoList(updatedList);
+      };
+
     return (
         <Container>
             {videoList.map((row, index) => {
                 return (
-                    <div className="add_more_double_input_div">
+                    <div key={index} className="add_more_double_input_div">
                         <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)} />
                         <input type="text" name={htmlName2} placeholder="https://" value={formData.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
                         <AddIcon onClick={addInputFields} />
