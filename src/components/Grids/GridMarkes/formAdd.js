@@ -4,38 +4,33 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from 'react'
 import styled from "styled-components";
-import AddIcon from '@mui/icons-material/Add';
+
 import axios from "axios";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
-
+import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 
 export const FormAdd = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({});
     const [selectedFile, setSelectedFile] = useState(null);
-    const [formData, setFormData] = useState({
-        videoPromoList: [{
-            name: '',
-            videoUrl: ''
-        }],
-        photosPromoList: [{
-            name: '',
-            photoUrl: ''
-        }],
 
+    const [videoList, setVideoList] = useState([{
+        name: '',
+        videoUrl: ''
+    }])
+    const [photoList, setPhotoList] = useState({
+        name: '',
+        videoUrl: ''
     })
+    console.log(videoList)
 
-    console.log(formData)
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('On Submit')
-        console.log(data)
-        console.log(selectedFile)
+       
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
-        console.log('------------------------- Res --------------------------')
-        console.log(res)
+     
  
     }
 
@@ -150,7 +145,7 @@ export const FormAdd = () => {
                     setSelectedFile={setSelectedFile}
                 /> */}
             </GridContainer>
-            <h2>VideoPromoList</h2>
+            {/* <h2>VideoPromoList</h2>
             <AddMoreInput  
                 label="Video"
                 attr1="name"
@@ -158,99 +153,30 @@ export const FormAdd = () => {
                 objName="videoPromoList" 
                 setFormData={setFormData} 
                 formData={formData} />
-            <h2>PhotoPromoList</h2>
-            <AddMoreInput 
-                label="Photo"
-                objName="photosPromoList" 
-                attr1="name"
-                attr2="photoUrl"
-                setFormData={setFormData} 
-                formData={formData} />
-            {/* EndForm */}
+           */}
+           <div>
+              <h2>VideoPromoList</h2>
+            <AddMoreInput  
+                label="Video"
+                htmlName1="name"
+                htmlName2="videoUrl"
+                setFormData={setVideoList}
+                formData={videoList} />
+           </div>
+            <h2>PhotosPromoList</h2>
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
         </form>
     )
 }
 
-const AddMoreInput = ({setFormData, formData, label, atrr1, attr2, objName}) => {
-    const [rows, setRows] = useState(1);
-    const [cancel, setCancel ] = useState(false);
-
-    const handleAddRow = () => {
-        setRows(prevRows => prevRows + 1);
-    };
-    const handleCancel = () => {
-        setCancel(prev => !prev);
-        setRows(setRows(prevRows => prevRows - 1))
-    };
-
-    const handleFormData = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
-        console.log(name)
-        console.log(value)
-        setFormData(prev => ({...prev, [objName]: {...prev.videoPromoList, [name]: [value]}}))
-    }
-   
-
-    return (
-        <AddMoreInputContainer >
-            <label htmlFor="">{label}</label>
-            <div>
-                <input type="text" placeholder="Όνομα" name={atrr1} onChange={(e) => handleFormData(e)} />
-                <input type="text" name={attr2} placeholder="https://" value={formData.name}  onChange={(e) => handleFormData(e)}/>
-                <AddIcon onClick={handleAddRow} />
-            </div>
-        </AddMoreInputContainer>
-    )
-}
 
 
-const borderColor = '#e8e8e8';
 
-const AddMoreInputContainer = styled.div`
-    width: 100%;
-    height: 40px;
-  
-    margin-bottom: 10px;
-    div {
-        display:  flex;
-    }
-    label {
-        font-size: 12px;
-        margin-bottom: 8px;
-    }
-    /* background-color: pink; */
-   input {
-    height: 40px;
-    padding: 10px;
-    border: 1px solid ${borderColor};
-    border-radius: 4px;
-    height: 100%;
-    margin-right: 10px;
-   }
-   input:nth-child(2) {
-    flex: 1;
-   }
-   svg {
-    border: 1px solid ${borderColor};
-    border-radius: 4px;
-    padding: 10px;
-    height: 100%;
-    width: 40px;
-    font-size: 20px;
-    color: ${props => props.theme.palette.primary.main};
-    cursor: pointer;
-    
-   }
-   svg:hover,svg:active  {
-    scale: 0.9;
-   }
 
-`
 
 const GridContainer = styled.div`
     display: grid;
+    height: auto;
     grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'};
     grid-column-gap: 30px;
     @media (max-width: 1400px) {

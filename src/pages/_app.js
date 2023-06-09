@@ -55,6 +55,7 @@ const GeneralContainer = styled.div`
         -webkit-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
         -moz-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
         padding: ${props => props.p ? props.p : '20px'};
+        height: auto;   
         
     }
     .boxHeader {

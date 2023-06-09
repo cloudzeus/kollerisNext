@@ -99,7 +99,7 @@ input {
     height: 45px;
 	padding: 0 10px;
     border-radius: 4px;
-    border: 2px solid ${props => props.theme.palette.border};
+    border: 1px solid ${props => props.theme.palette.border};
 	outline: none;
 	/* background-color: ${props =>props.isFocus ?  props.theme.palette.background : 'white'}; */
 	/* background-color: #F7F7F7; */
