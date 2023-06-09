@@ -21,10 +21,9 @@ import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 
 
 const registerSchema = yup.object().shape({
-	firstName: yup.string().required('Συμπληρώστε το όνομα'),
-	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
-	email: yup.string().required('Συμπληρώστε το email').email('Λάθος format email'),
-	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες').max(15, 'Μέχρι 15 χαρακτήρες'),
+	name: yup.string().required('Συμπληρώστε το όνομα'),
+	description: yup.string().required('Συμπληρώστε το επώνυμο'),
+	
 });
 
 
@@ -87,7 +86,7 @@ const RegisterPage = () => {
 								name="firstName"
 								type="text"
 								register={register}
-								error={errors.firstName}
+								error={errors.name}
 							/>
 						</Grid>
 						<Grid item xs={6}>
@@ -96,7 +95,7 @@ const RegisterPage = () => {
 								name="lastName"
 								type="text"
 								register={register}
-								error={errors.lastName}
+								error={errors.description}
 							/>
 						</Grid>
 					</Grid>

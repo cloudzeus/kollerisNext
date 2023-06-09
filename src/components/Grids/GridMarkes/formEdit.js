@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-
+import * as yup from "yup";
 import React from 'react'
 import styled from "styled-components";
 import AddIcon from '@mui/icons-material/Add';
@@ -8,11 +8,24 @@ import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { useSelector } from "react-redux";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
+import YupForm from "@/components/Forms/YupForm";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+
+
+const registerSchema = yup.object().shape({
+	name: yup.string().required('Συμπληρώστε το όνομα'),
+	description: yup.string().required('Συμπληρώστε το επώνυμο'),
+	
+});
+
+
 
 
 export const FormEdit = () => {
     const { gridRowData, gridSelectedFile } = useSelector(state => state.grid)
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(registerSchema),
         defaultValues: {
             _id: gridRowData?._id,
             name: gridRowData?.name,
@@ -37,10 +50,7 @@ export const FormEdit = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('---------- SUBMIT DATA -----------------------')
-        console.log(data)
-        console.log('---------- SELECTED FILE -----------------------')
-        console.log(selectedFile)
+       
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
         // console.log('------------------------- Res --------------------------')
@@ -56,13 +66,14 @@ export const FormEdit = () => {
     // }
 
     return (
-        <form className="form" noValidate  >
+        <YupForm className="form">
             <GridContainer>
                 <InputVar1
                     label="Όνομα"
                     name="name"
                     type="text"
                     register={register}
+                    error={errors.name}
                 />
                 <InputVar1
                     label="Περιγραφή"
@@ -179,7 +190,7 @@ export const FormEdit = () => {
                 formData={formData} /> */}
             {/* EndForm */}
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
-        </form>
+        </YupForm>
     )
 }
 

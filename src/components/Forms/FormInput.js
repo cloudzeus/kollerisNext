@@ -93,10 +93,6 @@ margin-bottom: 5px;
   color: ${props => props.error ? errorColor : props.theme.palette.primary.main};
 }
 
-& .focusDiv label:valid {
-  border-color: pink;
-}
-
 
 label {
     font-size: 10px;

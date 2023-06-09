@@ -5,35 +5,29 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {toast} from 'react-toastify';
 
 
-export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, }) => {
+export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register}) => {
 
-    const [videoList, setVideoList] = useState([{
-        name: '',
-        videoUrl: ''
-    }])
-
-    console.log(videoList)
     const addInputFields = () => {
-        setVideoList([...videoList, { name: '', videoUrl: '' }]);
+        setFormData([...formData, { name: '', videoUrl: '' }]);
       };
 
     const handleInputChange = (event,index) => {
         const { name, value } = event.target;
-        const updatedList = [...videoList];
+        const updatedList = [...formData];
         updatedList[index][name] = value;
-        setVideoList(updatedList);
+        setFormData(updatedList);
       };
 
 
       const deleteInputFields = (index) => {
-        const updatedList = [...videoList];
+        const updatedList = [...formData];
         updatedList.splice(index, 1);
-        setVideoList(updatedList);
+        setFormData(updatedList);
       };
 
     return (
         <Container>
-            {videoList.map((row, index) => {
+            {formData.map((row, index) => {
                 return (
                     <div key={index} className="add_more_double_input_div">
                         <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)} />
@@ -50,13 +44,15 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
 const borderColor = '#e8e8e8';
 const Container = styled.div`
-    align-items: center;
-   
+    border: 1px solid ${({theme}) => theme.palette.border};
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
     .add_more_double_input_div {
         display: grid;
         grid-template-columns: 1fr 2fr 40px 40px;
         grid-gap: 10px;
-        margin-bottom: 10px;
+        margin: 5px 0;
     }
     input {
         width: 100%;

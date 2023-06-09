@@ -9,11 +9,24 @@ import axios from "axios";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
+import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
+import { selected } from "@syncfusion/ej2/pivotview";
+
+const registerSchema = yup.object().shape({
+	name: yup.string().required('Συμπληρώστε το όνομα'),
+	description: yup.string().required('Συμπληρώστε το επώνυμο'),
+	
+});
+
+
+
 
 export const FormAdd = () => {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({});
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+        resolver: yupResolver(registerSchema),
+    });
     const [selectedFile, setSelectedFile] = useState(null);
-
+  
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
@@ -22,14 +35,21 @@ export const FormAdd = () => {
         name: '',
         videoUrl: ''
     })
-    console.log(videoList)
+
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-       
+        // console.log('data', Object(data))
+        // console.log('selected file: ' , selectedFile)
+        let body = {
+            logo: selectedFile,
+            videoList: videoList,
+        }
+        console.log(videoList)
+        console.log(body)
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
-        let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
+        // let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
      
  
     }
@@ -42,6 +62,7 @@ export const FormAdd = () => {
                     name="name"
                     type="text"
                     register={register}
+                    error={errors.name}
                 />
                 <InputVar1
                     label="Περιγραφή"
@@ -74,7 +95,11 @@ export const FormAdd = () => {
                 type="text"
                 register={register}
             />
-
+            < ImageInput 
+                label={'Λογότυπο'}
+             setSelectedFile={setSelectedFile}
+             selectedFile={selectedFile}
+            />
             <h2>SoftOne Info</h2>
             <GridContainer >
                 <InputVar1

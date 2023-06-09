@@ -54,6 +54,7 @@ export const Input = ({
 	const handleFocus = () => {
 		setFocus(prev => !prev)
 	}
+	console.log(error)
 	return (
 		<InputContainer error={error} disabled={disabled} isFocus={focus}>
 				<label
@@ -92,27 +93,26 @@ label {
 	font-weight: ${props => props.isFocus ? '500' : '400'};
 	letter-spacing: 0.3px;
     margin-bottom: 5px;
-	color: ${props => props.isFocus ? props.theme.palette.primary.main : '#818281'};
+	color: ${props => {
+		if(props.disabled) return disabledColor;
+		if(props.error) return errorColor;
+		if(props.isFocus) return props.theme.palette.primary.main;
+	}};
 }
 
 input {
     height: 45px;
 	padding: 0 10px;
     border-radius: 4px;
-    border: 1px solid ${props => props.theme.palette.border};
+    border: ${props => props.error ? '2px' :  '1px'} solid ${props => props.error ? errorColor : props.theme.palette.border};
 	outline: none;
-	/* background-color: ${props =>props.isFocus ?  props.theme.palette.background : 'white'}; */
-	/* background-color: #F7F7F7; */
-    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; */
+	
 }
  input:focus{
   border-color:${props => props.error ? errorColor : props.theme.palette.primary.main};
   border-width: 2px;
 }
-//change the label when the input is focused
-input:focus + label {
-  color: red;
-}
+
 .showPassIcon {
   position: absolute;
   right: 10px;
@@ -127,6 +127,7 @@ input:focus + label {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.5px;
+  margin-top: 4px;
 }
 
 

@@ -4,22 +4,29 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import styled from "styled-components";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';
+import ImageIcon from '@mui/icons-material/Image';
 
-export const ImageInput = (props) => {
-    const [imageName, setImageName] = useState(props.logo);
+
+
+
+export const ImageInput = ({logo, setSelectedFile, label}) => {
+    const [imageName, setImageName] = useState(logo);
     const [loading, setLoading] = useState(false);
 
     const handleFileChange = async () => {
         let fileEl = document.getElementById('customFileUpload2');
         let file = fileEl.files[0];
+        // console.log('file', file)
         setLoading(true)
+
+
         const formData = new FormData();
         formData.append("myFile", file);
         const { data } = await axios.post("/api/saveImage", formData);
         if(data.done === 'ok') {
             //props.setSelected files, to save the fileName to the database
-            props.setSelectedFile(data.newFilename);
-            //To change the image on the edit page when the loading is done:
+            console.log(data.newFilename)
+            setSelectedFile(data.newFilename);
             setImageName(data.newFilename)
             setLoading(false)
         } else {
@@ -35,17 +42,28 @@ export const ImageInput = (props) => {
         document.getElementById('customFileUpload2').click()
     }
     return (
-        <ImageContainer >
+        <Container>
+            <p className="label">{label}</p>
+            <ImageContainer >
+            
             {loading ? <CircularProgress /> : (
-                <>
+                <>  
                     <div onClick={handleClick}>
+                       
                         <div className='imageAndDetails'  >
-                            <Image
-                                src={`/static/uploads/${imageName}`}
-                                alt="mountain"
-                                fill={true}
-                                priority={false}
-                            />
+                           {imageName ? (
+                             <Image
+                             src={`/static/uploads/${imageName}`}
+                             alt="mountain"
+                             fill={true}
+                             priority={false}
+                             sizes="40px"
+                         />
+                           ) : (
+                            <div>
+                                <ImageIcon className="upload-image-placeholder" />
+                            </div>
+                           )}
                         </div>
                         <p>{imageName}</p>
                         <DriveFolderUploadIcon />
@@ -59,18 +77,31 @@ export const ImageInput = (props) => {
             )}
 
         </ImageContainer>
+        </Container>
+        
     )
 }
 
 
+const Container = styled.div`
+
+    p.label {
+        font-size: 14px;
+	font-weight: ${props => props.isFocus ? '500' : '400'};
+	letter-spacing: 0.3px;
+    margin-bottom: 5px;
+    }
+    
+`
+
 const ImageContainer = styled.div`
     display: flex;
     align-items: center;
-    border: 2px solid ${props => props.theme.palette.border};
+    border: 1px solid ${props => props.theme.palette.border};
     border-radius: 4px;
     padding: 4px;
 	position: relative;
-
+    
 	div:nth-child(1) {
 		height: 100%;
 		width: 100%;
@@ -106,6 +137,11 @@ const ImageContainer = styled.div`
 	}
 	input[type="file"] {
         display: none; 
+    }
+
+    .upload-image-placeholder {
+        font-size: 30px;
+        color: #e3e3e3;
     }
     
 `
