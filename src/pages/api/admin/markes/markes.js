@@ -209,16 +209,19 @@ export default async function handler(req, res) {
 
 
 	if (action === 'sync') {
-		// console.log('sync')
+		console.log('sync')
 		try {
-			let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
+			let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
+			console.log(URL)
 			let { data } = await axios.post(URL)
+			console.log(data)
 			//SOFTONE ARRAY:
 			let softOneArray = data.result;
-			// console.log('100', Array(softOneArray))
+			console.log('100', Array(softOneArray))
 			//MONGO ARRAY:
 			await connectMongo();
 			const mongoArray = await Markes.find({}, { softOne: 1 });
+
 			console.log('Received Mongo Array')
 			console.log(mongoArray)
 
