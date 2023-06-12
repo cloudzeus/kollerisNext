@@ -57,8 +57,6 @@ const Grid = ({id, setId}) => {
             console.log('row selected')
             const selectedrecords = grid.getSelectedRecords();
             let id = selectedrecords[0]._id
-            console.log('idee')
-            console.log(id)
             setId(id)
             dispatch(setSelectedId(id))
             dispatch(setGridRowData(selectedrecords[0]))

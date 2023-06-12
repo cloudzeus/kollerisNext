@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, GridActions, GridContainer } from './styles';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
     AddIcon,
     EditIcon,
@@ -19,15 +20,12 @@ import Notifications from '@/components/Buttons/Notifications';
 
 const GridTable = () => {
     const [id, setId] = useState(null);
-    const [data, setData] = useState([]);
-    const { selectedId, asyncedMarkes, notSyncedData, action} = useSelector(state => state.grid)
+    const { selectedId, asyncedMarkes, action} = useSelector(state => state.grid)
     const dispatch = useDispatch();
 
 
-    console.log('action', action)
     const handleAction = (action) => { dispatch(setAction(action)) }
     const handleCancel = () => {
-        setAction(null)
         dispatch(setAction(null))
         dispatch(setSelectedId(null))
     }
@@ -65,7 +63,11 @@ const GridTable = () => {
                         <button onClick={() => handleAction('add')}>
                             <AddIcon /> Προσθήκη
                         </button>
-                        <button onClick={() => handleAction('edit')}>
+                        <button onClick={() => {
+                            if(selectedId) {
+                                handleAction('edit')
+                            } else {toast.error('Δεν έχετε επιλέξει εγγραφή')}
+                        }}>
                             <EditIcon /> Διόρθωση
                         </button>
                         <button onClick={handleDeleteUser}>
