@@ -1,79 +1,94 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Image from 'next/image'
-import styled from 'styled-components'
-import axios from "axios";
+import { useState } from 'react';
+import Dropzone from 'react-dropzone';
+import Image from 'next/image';
+import styled from 'styled-components';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 
 
-const FileDropzone = () => {
-    const [files, setFiles] = useState([]);
-    const { getRootProps, getInputProps } = useDropzone({
-        accept: 'image/*',
-        onDrop: acceptedFiles => {
-            console.log(acceptedFiles)
-            setFiles(acceptedFiles.map(file => Object.assign(file, {
-                preview: URL.createObjectURL(file)
-            })));
-        }
-    });
+function ImageUploader() {
+    const [uploadedImages, setUploadedImages] = useState([]);
+    console.log(uploadedImages)
 
-    const Thumbs = files.map((file, index) => {
-        console.log(index)
-        return (
-            <div>
-                <Image
-                src={file.preview}
-                alt="mountain"
-                width={40}
-                height={40}
-                priority={false}
-                sizes="40px"   />
-                <button onClick={(e) => handleDeleteImg(e, index)}>delete</button>
-            </div>
-        )
-    });
-
-    useEffect(() => {
-        // Make sure to revoke the data uris to avoid memory leaks
-        console.log(files)
-        files.forEach(file => URL.revokeObjectURL(file.preview));
-    }, [files]);
-
-    const handleDeleteImg = (e, index) => {
-        e.preventDefault()
-    }
-    const handleUpload = async (e) => {
-        console.log(files[0])
-        e.preventDefault()
+    const handleDrop = async (acceptedFiles) => {
         const formData = new FormData();
-        formData.append("myFile", files[0]);
-        const { data } = await axios.post("/api/saveImages", formData);
-    }
+        acceptedFiles.forEach((file) => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await fetch('/api/uploads/saveImageMulter', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const { urls } = await response.json();
+                setUploadedImages(urls);
+            } else {
+                console.error('Error uploading files');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
-        <Container >
-            <div {...getRootProps({ className: 'dropzone' })}>
-                <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files</p>
-            </div>
-            <div className="upload-dragndrop-images">
-                {Thumbs}
-            </div>
-            <button 
-                onClick={handleUpload}
-                type="submit">
-                upload
-            </button>
-        </Container>
-    )
+        <UploaderStyled>
+            <Dropzone onDrop={handleDrop} accept="image/*" multiple>
+                {({ getRootProps, getInputProps }) => (
+                    <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        < CameraAltIcon  />
+                        <p>Σύρετε ή πατήστε και επιλέξτε φωτογραφίες</p>
+                        
+                    </div>
+                )}
+            </Dropzone>
+            <div className="multiple-upload-images-container" >
+                {uploadedImages && uploadedImages.map((imageUrl, index) => (
+                    <div className="multiple-upload-images" key={index}>
+                        <Image
+                            src={imageUrl}
+                            alt={`Uploaded ${index + 1}`}
+                            fill={true}
+                            sizes={50}
+                        />
+                    </div>
 
+                ))}
+            </div>
+        </UploaderStyled>
+    );
 }
 
 
-const Container = styled.div`
-    .upload-dragndrop-images {
-        
+
+
+
+const UploaderStyled = styled.div`
+
+    border: 1px dashed ${({ theme }) => theme.palette.primary.light10};
+    padding: 10px;
+    border-radius: 4px;
+    & div {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        width:  100%;
     }
+
+    svg {
+        color: ${({ theme }) => theme.palette.primary.light10};
+        margin-right: 10px;
+    }
+    .multiple-upload-images {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        margin: 3px;
+        border-radius: 4px;
+    }
+    
 `
-export default FileDropzone;
+export default ImageUploader;
