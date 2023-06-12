@@ -10,52 +10,68 @@ import { useDispatch } from 'react-redux';
 import { fetchNotSynced, updateNotSynced, notSyncedData } from '@/features/grid/gridSlice';
 import { useSelector } from 'react-redux';
 import CheckIcon from '@mui/icons-material/Check';
-import { set } from 'mongoose';
+import { Pagination } from '@mui/material';
+import usePagination from '@/utils/pagination';
 
 const CheckDifferences = () => {
     const dispatch = useDispatch();
-    const {notFoundData} = useSelector(state => state.grid);
+    const { notFoundData } = useSelector(state => state.grid);
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const { currentPage, totalPages, paginatedData, handlePageChange, } = usePagination(notFoundData, 10);
+    console.log('data update')
+    console.log(dataUpdate)
+
+
     const [selectAll, setSelectAll] = useState(false);
-    const [selected, setSelected] = useState([{
-        id: null,
-    }]);
+    const [selected, setSelected] = useState([{}]);
     console.log(selected)
     const handleAdd = () => {
 
     }
+    const handleItemClick = (index, item) => {
+        console.log(item)
+        if (selected.includes(index)) {
+            setDataUpdate(dataUpdate.filter((id) => id !== item));
+            setSelected(selected.filter((id) => id !== index));
+        } else {
+            setDataUpdate((prevData) => [...prevData, item]);
+            setSelected([...selected, index]);
+        }
+    };
 
-    const handleSingleCheck = (index) => {
-            setSelected(prev => {
-                return [...prev, {id: index}]
-            })
-    }
 
-    
-    
     return (
 
         <Container >
             <button onClick={() => setSelectAll(prev => !prev)}>select all</button>
             <p>Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne</p>
-            {notFoundData.map((item, index) => (
+            {paginatedData.map((item, index) => (
                 <div
-                    key={index} 
-                    className="formsContainer" 
-                    onClick={() => handleSingleCheck(index)}>
+                    key={index}
+                    className="formsContainer"
+                    onClick={() => handleItemClick(index, item)}>
                     <div className="info-div">
                         <span>MTRMARK:</span>
-                        <p>{item.COMPANY}</p>
+                        <p>{item.MTRMARK}</p>
                         <span>ΟΝΟΜΑ:</span>
                         <p>{item.NAME}</p>
                     </div>
-                  
+
                     {/* <button onClick={handleAdd}>Add</button> */}
                     <div className="check-div">
-                        {selected.id === index && <CheckIcon />}
-                      {selectAll && <CheckIcon />}
-                    </div> 
+                        {selected.includes(index) && <CheckIcon />}
+                        {selectAll && <CheckIcon />}
+                    </div>
                 </div>
             ))}
+
+            <Pagination
+                count={totalPages}
+                shape="rounded"
+                onChange={handlePageChange}
+                page={currentPage}
+            />
+
         </Container>
     )
 }
@@ -87,7 +103,7 @@ const Container = styled.div`
         border: 1px solid ${props => props.theme.palette.border};
         & svg {
             font-size: 18px;
-            color: ${({theme}) => theme.palette.primary.main};
+            color: ${({ theme }) => theme.palette.primary.main};
         }
     }
     .formsContainer {
