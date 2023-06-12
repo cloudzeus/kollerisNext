@@ -36,10 +36,10 @@ export default async function handler(req, res) {
         uploadedURLs.push(publicURL);
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Error saving files' });
+        return res.status(500).json({ success: false, error: 'Error saving files',urls: null });
       }
     }
 
-    return res.status(200).json({ urls: uploadedURLs });
+    return res.status(200).json({success: true, urls: uploadedURLs });
   });
 }

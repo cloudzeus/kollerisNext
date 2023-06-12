@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 
 const initialState = {
-    gridSelectedFile: null,
+    uploadedImages:[],
 }
 
 
@@ -10,13 +10,15 @@ const uploadSlice = createSlice({
 	name: 'upload',
 	initialState,
 	reducers: {
-		setSelectedId: (state, action) => {
-			state.selectedId = action.payload;
+		setUploadImages: (state, action) => {
+			console.log('setUploadImages')
+			console.log(action.payload)
+			state.uploadedImages = [...state.uploadedImages, ...action.payload];
 		}
 	},
 	
 })
 
 
-export const { setSelectedFile} = uploadSlice.actions;
+export const { setUploadImages} = uploadSlice.actions;
 export default uploadSlice.reducer;

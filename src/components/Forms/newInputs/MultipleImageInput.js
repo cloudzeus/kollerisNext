@@ -3,13 +3,14 @@ import Dropzone from 'react-dropzone';
 import Image from 'next/image';
 import styled from 'styled-components';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUploadImages } from '@/features/upload/uploadSlice';
 
-
-
-function ImageUploader() {
-    const [uploadedImages, setUploadedImages] = useState([]);
+const ImageUploader = () => {
+    // const [uploadedImages, setUploadedImages] = useState([]);
+    const { uploadedImages } = useSelector((state) => state.upload);
     console.log(uploadedImages)
-
+    const dispatch = useDispatch();
     const handleDrop = async (acceptedFiles) => {
         const formData = new FormData();
         acceptedFiles.forEach((file) => {
@@ -24,7 +25,9 @@ function ImageUploader() {
 
             if (response.ok) {
                 const { urls } = await response.json();
-                setUploadedImages(urls);
+                // setUploadedImages((prev) => [...prev, ...urls]);
+                console.log(urls)
+                dispatch(setUploadImages(urls))
             } else {
                 console.error('Error uploading files');
             }
@@ -76,6 +79,7 @@ const UploaderStyled = styled.div`
         align-items: center;
         padding: 5px;
         width:  100%;
+
     }
 
     svg {
