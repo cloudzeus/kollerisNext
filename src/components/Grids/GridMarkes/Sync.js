@@ -15,7 +15,7 @@ const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
     const dispatch = useDispatch();
-    const { notSyncedData, success } = useSelector(state => state.grid)
+    const { notSyncedData } = useSelector(state => state.grid)
     const [sync, setSync] = useState({
         syncTo: 'Softone',
         syncFrom: 'Eμάς'
@@ -65,6 +65,7 @@ const Sync = () => {
             }).catch((err) => {
                 console.log(err)
             })
+            dispatch(fetchNotSynced())
 
 
     }
@@ -119,7 +120,7 @@ const Sync = () => {
                 let softone = item?.softoneObject
                 let isChecked = true;
                 return (
-                    <div className={formsContainerClassName} key={item?.ourObject.name}>
+                    <div className={formsContainerClassName} key={index}>
                         <div className="item-primary-key">
                             <span>Kωδικός:</span>
                             <span>{softone.CODE}</span>

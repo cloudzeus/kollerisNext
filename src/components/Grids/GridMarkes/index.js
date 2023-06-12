@@ -14,21 +14,21 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { fetchNotSynced,setSelectedId } from '@/features/grid/gridSlice';
+import { fetchNotSynced,setSelectedId, setAction } from '@/features/grid/gridSlice';
 import Notifications from '@/components/Buttons/Notifications';
 
 const GridTable = () => {
     const [id, setId] = useState(null);
     const [data, setData] = useState([]);
-    // const [asyncedMarkes, setAsyncedMarkes] = useState(0);
-    const [action, setAction] = useState(null)
-    const { selectedId, asyncedMarkes, notSyncedData } = useSelector(state => state.grid)
+    const { selectedId, asyncedMarkes, notSyncedData, action} = useSelector(state => state.grid)
     const dispatch = useDispatch();
 
 
-    const handleAction = (action) => { setAction(action) }
+    console.log('action', action)
+    const handleAction = (action) => { dispatch(setAction(action)) }
     const handleCancel = () => {
         setAction(null)
+        dispatch(setAction(null))
         dispatch(setSelectedId(null))
     }
 

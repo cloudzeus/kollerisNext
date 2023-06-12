@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 const initialState = {
 	selectedId: null,
-	gridAction: null,
+	action: null,
 	gridRowData: [],
 	gridSelectedFile: null,
 	loading: false,
@@ -60,7 +60,8 @@ const gridSlice = createSlice({
 			state.selectedId = action.payload;
 		},
 		setAction: (state, action) => {
-			state.gridAction = action.payload;
+			console.log(action.payload)
+			state.action = action.payload;
 		},
 		setGridRowData: (state, action) => {
 			state.gridRowData = action.payload;
@@ -113,5 +114,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes} = gridSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction} = gridSlice.actions;
 export default gridSlice.reducer;

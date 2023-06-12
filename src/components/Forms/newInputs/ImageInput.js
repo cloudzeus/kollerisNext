@@ -57,7 +57,7 @@ export const ImageInput = ({logo, setSelectedFile, label, required}) => {
                         <div className='imageAndDetails'  >
                            {imageName ? (
                              <Image
-                             src={`/static/uploads/${imageName}`}
+                             src={`/uploads/${imageName}`}
                              alt="mountain"
                              fill={true}
                              priority={false}

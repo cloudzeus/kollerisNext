@@ -34,6 +34,7 @@ const Grid = ({id, setId}) => {
         }
     }
     
+   
     const gridTemplate = (props) => {
         return (
             <ImageDiv>

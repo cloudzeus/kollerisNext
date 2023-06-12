@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { use, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from 'react'
@@ -14,7 +14,9 @@ import { selected } from "@syncfusion/ej2/pivotview";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
 import { useSelector } from "react-redux";
 import {toast} from 'react-toastify';
-import { set } from "mongoose";
+import { useDispatch } from "react-redux";
+import { fetchNotSynced, setAction } from "@/features/grid/gridSlice";
+
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -28,6 +30,8 @@ export const FormAdd = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(registerSchema),
     });
+    const dispatch = useDispatch();
+    
     const [selectedFile, setSelectedFile] = useState(null);
     const {uploadedImages} = useSelector((state) => state.upload);
     const [videoList, setVideoList] = useState([{
@@ -48,14 +52,18 @@ export const FormAdd = () => {
             uploadedImages: uploadedImages,
            
         }
-        console.log('--------------------- BODY ------------------------')
-        console.log(body)
-        console.log('---------------------------------------------------')
+       
         
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
+        await axios.post('/api/admin/markes/markes', { action: 'sync'})
         if(res.data.success) {
+            
+            dispatch(setAction(null))
+            dispatch(fetchNotSynced())
             toast.success('Επιτυχής προσθήκης μάρκας')
+            
+
         } else {
             toast.error('Aποτυχία προσθήκης μάρκας')
         }

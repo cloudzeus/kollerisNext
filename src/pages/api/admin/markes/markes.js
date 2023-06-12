@@ -1,8 +1,10 @@
 import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
-import { rewrites } from "../../../../../next.config";
 import axios from "axios";
-import { CollectionsBookmarkOutlined } from "@mui/icons-material";
+import compareArrays from "@/utils/compareArrays";
+
+
+
 export default async function handler(req, res) {
 	// await connectMongo();
 	// const newMarkes1 = await Markes.create({
@@ -88,8 +90,8 @@ export default async function handler(req, res) {
 				COMPANY: data.COMPANY ? data.COMPANY : '---',
 				SODTYPE: data.SODTYPE ? data.SODTYPE : '---',
 				MTRMARK: parseInt(data.MTRMARK),
-				CODE: data.CODE ? data.softOne.CODE : '---',
-				NAME: data.NAME ? data.softOne.NAME : '---',
+				CODE: data.CODE ? data.CODE : '---',
+				NAME: data.NAME ? data.NAME : '---',
 
 			}
 		}
@@ -184,80 +186,35 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'sync') {
-		console.log('sync')
+		// console.log('sync')
 		try {
 			let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
 			let { data } = await axios.post(URL)
 			//SOFTONE ARRAY:
 			let softOneArray = data.result;
-			console.log('100', Array(softOneArray))
+			// console.log('100', Array(softOneArray))
 			//MONGO ARRAY:
 			await connectMongo();
 			const mongoArray = await Markes.find({}, { softOne: 1 });
+			console.log('Received Mongo Array')
+			console.log(mongoArray)
 
+		
+		
 
-			function compareArrays(arr1, arr2) {
-				const newArray = [];
-				for (let i = 0; i < arr1.length; i++) {
-					//SERVER ARRAY:
-					const object1 = arr1[i].softOne;
-					//SOSFTONE:
-					for (let j = 0; j < arr2.length; j++) {
-						const object2 = arr2[j];
-						if (compareObjects(object1, object2)) {
-							newArray.push({
-								ourObject: object1,
-								softoneObject: object2
-							})
-						}
-					}
-
-				}
-				return newArray;
-			}
-
-
-
-			function compareObjects(object1, object2) {
-
-
-				const id1 = object1?.MTRMARK.toString(); // Retrieve ID from :OUR OBJECT
-				const id2 = object2?.MTRMARK.toString(); // Retrieve ID from: SOFTONE OBJECT
-				// console.log(object2)
-				if (id1 == id2) { // Check if IDs are the same
-					const keys = Object.keys(object1);
-					for (const key of keys) {
-						console.log(key)
-						if (object1[key].toString() !== object2[key].toString()) {
-							
-							return true; // Values are not the same
-						}
-					}
-					return false; // All values are the same
-				}
-
-				return false; // IDs are different
-			}
-
-			// Example usage:
-			//   const object1 = { id: 123, name: 'Object A', value: 10, color: 'blue', size: 'small' };
-			//   const object2 = { id: 123, name: 'Object A', value: 10, color: 'red', size: 'big' };
-
-			//   console.log(compareObjects(object1, object2));
-
-			let newArray = compareArrays(mongoArray, softOneArray)
+			let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
 			console.log('--------------------------- NEW ARRAY -----------------------------------')
 			console.log(newArray)
 			if (newArray) {
 				return res.status(200).json({ success: true, markes: newArray });
 			}
 			else {
-				return res.status(200).json({ success: false, markes: null });
+				return res.status(200).json({ success: false, markes: []});
 			}
 
 		}
 		catch (error) {
-			return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού' });
+			return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού',  markes: [] });
 		}
 	}
 
@@ -267,14 +224,15 @@ export default async function handler(req, res) {
 		let syncTo = req.body.syncTo;
 		console.log('Data' , Object(data))
 		console.log('syncTo: ' , syncTo)
+		console.log(parseInt(data.MTRMARK))
 		try {
 			await connectMongo();
 			if (req.body.syncTo == 'Εμάς') {
 				let updated = await Markes.updateOne(
-					{ "softOne.MTRMARK": data.MTRMARK },
-					{ $set: { "softOne.NAME": data.NAME } });
-				console.log('------------------ updated ---------------------------')
-				console.log(updated)
+					{ "softOne.MTRMARK": parseInt(data.MTRMARK) },
+					{ $set: { "softOne.NAME": data.NAME } }
+					);
+				
 				if (updated.modifiedCount === 0) {	
 					return res.status(200).json({ success: false, updated: false});
 				}
