@@ -11,7 +11,33 @@ const initialState = {
 	asyncedMarkes: 0,
 	notSyncedData: [],
 	success: false,
+	editData: [],
+	notFoundData: [],
 }
+
+
+export const findSoftoneAndSyncTables = createAsyncThunk(
+	//action:
+	'grid/findSoftoneAndSyncTables',
+	async (grid, thunkApi) => {
+		try {
+			const resp = await axios.post('/api/admin/markes/markes', { action: 'findExtraSoftone' })
+			return resp.data;
+		} catch (error) {
+			console.log(error)
+		}
+})
+export const editGridItem = createAsyncThunk(
+	//action:
+	'grid/editGridItem',
+	async (grid, thunkApi) => {
+		try {
+			const resp = await axios.post('/api/admin/markes/markes', { action: 'findOne', id: grid.id })
+			return resp.data;
+		} catch (error) {
+			console.log(error)
+		}
+})
 
 
 export const fetchNotSynced = createAsyncThunk(
@@ -24,7 +50,9 @@ export const fetchNotSynced = createAsyncThunk(
 		} catch (error) {
 			console.log(error)
 		}
-	})
+})
+
+
 export const updateNotSynced = createAsyncThunk(
 	//action:
 	'grid/updateNotSynced',
@@ -49,6 +77,7 @@ export const updateNotSynced = createAsyncThunk(
 
 
 	})
+
 
 
 
@@ -108,6 +137,37 @@ const gridSlice = createSlice({
 					state.loading = false;
 			})
 			.addCase(updateNotSynced.rejected, (state, { payload }) => {
+				state.loading = false;
+			})
+
+			//EDIT GRID ITEM:
+			.addCase(editGridItem.pending, (state, {payload}) => {
+				state.success = false;
+				state.loading = true;
+			})
+			.addCase(editGridItem.fulfilled, (state,  {payload} ) => {
+					console.log('payload edit')
+					console.log(payload)
+					const {markes} = payload;
+					state.editData = markes[0];
+					
+			})
+			.addCase(editGridItem.rejected, (state, { payload }) => {
+				state.loading = false;
+			})
+
+			//find diffreneces between softone and mongo:
+			.addCase(findSoftoneAndSyncTables.pending, (state, {payload}) => {
+				state.success = false;
+				state.loading = true;
+			})
+			.addCase(findSoftoneAndSyncTables.fulfilled, (state,  {payload} ) => {
+					console.log('payload findSoftoneAndSyncTables')
+					console.log(payload)
+					state.notFoundData = payload.result;
+					
+			})
+			.addCase(findSoftoneAndSyncTables.rejected, (state, { payload }) => {
 				state.loading = false;
 			})
 	}

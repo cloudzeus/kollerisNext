@@ -15,8 +15,10 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { fetchNotSynced,setSelectedId, setAction } from '@/features/grid/gridSlice';
+import { fetchNotSynced,setSelectedId, setAction, findSoftoneAndSyncTables } from '@/features/grid/gridSlice';
 import Notifications from '@/components/Buttons/Notifications';
+import SoftOneExtra from './softone/addAllSoftone';
+
 
 const GridTable = () => {
     const [id, setId] = useState(null);
@@ -50,8 +52,13 @@ const GridTable = () => {
 
     useEffect(() => {
         dispatch(fetchNotSynced());
-       
     }, [dispatch])
+
+
+   const findExtraSoftone = async () => {
+        handleAction('findSoftoneExtra')
+        dispatch(findSoftoneAndSyncTables())
+   }
     return (
             <Container p="0px" className="box">
                 <div className="header">
@@ -85,10 +92,12 @@ const GridTable = () => {
                         num={asyncedMarkes}>
                         <SyncIcon />
                     </Notifications >
+                    <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
                     {!action && <Grid id={id} setId={setId} />}
                     {action === 'add' && <FormAdd />}
                     {action === 'sync' && <Sync />}
                     {action === 'edit' && selectedId && <FormEdit />}
+                    {action === 'findSoftoneExtra' && <SoftOneExtra />}
                 </div>
 
             </Container>

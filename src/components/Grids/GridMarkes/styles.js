@@ -23,16 +23,37 @@ export const Container = styled.div`
     left: 0;
     top: 0;
   }
-  .form {
+  .grid-styles-form {
     background-color: white;
     border: 1px solid ${props => props.theme.palette.border};
-    padding: 40px;
+    padding: 30px;
     /* min-width: 600px; */
     border-radius: 4px;
     /* @media (max-width: 601px) {
       min-width: 90%;
     } */
   }
+  .grid-styles-form__header {
+    /* color: ${props => props.theme.palette.primary.main}; */
+    font-weight: 300;
+    position: relative;
+    margin-bottom: 40px;
+    & span {
+      font-weight: 700;
+    }
+  }
+  .grid-styles-form__header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 20px;
+    height: 2px;
+    border-radius: 4px;
+    background-color: ${props => props.theme.palette.accent};
+
+  }
+
 
   .form h2 {
     font-size: 15px;

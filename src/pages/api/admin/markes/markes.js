@@ -2,6 +2,7 @@ import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
 import axios from "axios";
 import compareArrays from "@/utils/compareArrays";
+import { columnSelectionComplete } from "@syncfusion/ej2-react-grids";
 
 
 
@@ -45,6 +46,24 @@ export default async function handler(req, res) {
 
 
 	let action = req.body.action;
+	if(action === 'findOne') {
+		console.log('findOne')
+		console.log(req.body.id)
+		try {
+			await connectMongo();
+			const markes = await Markes.find({_id: req.body.id});
+			if (markes) {
+				return res.status(200).json({ success: true, markes: markes });
+			}
+			else {
+				return res.status(200).json({ success: false, markes: null });
+			}
+
+
+		} catch (error) {
+			return res.status(400).json({ success: false, error: 'failed to fetch Markes', markes: null });
+		}
+	}
 
 	if (action === 'findAll') {
 		try {
@@ -185,6 +204,10 @@ export default async function handler(req, res) {
 		}
 	}
 
+
+
+
+
 	if (action === 'sync') {
 		// console.log('sync')
 		try {
@@ -222,8 +245,6 @@ export default async function handler(req, res) {
 
 		let data = req.body.data;
 		let syncTo = req.body.syncTo;
-		console.log('Data' , Object(data))
-		console.log('syncTo: ' , syncTo)
 		console.log(parseInt(data.MTRMARK))
 		try {
 			await connectMongo();
@@ -252,9 +273,30 @@ export default async function handler(req, res) {
 
 	}
 
+	if (action === 'findExtraSoftone') {
+		await connectMongo();
+		const mongoArray = await Markes.find();
+		
+		// console.log(mongoArray)
+		let resp = await fetchSoftoneMarkes();
+		// console.log(resp.result)
+		let result = resp.result.filter(o1=> {
+			return mongoArray.some((o2) => {
+				// console.log(o2.softOne.MTRMARK)
+				return o1.MTRMARK !== o2.softOne.MTRMARK; // return the ones with equal id
+		   });
+		});
+		
+		
+		return res.status(200).json({ success: true, result: result});
 
-
+	}
 }
 
 
 
+const fetchSoftoneMarkes = async () => {
+	let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
+	let { data } = await axios.post(URL)	
+	return data;
+}

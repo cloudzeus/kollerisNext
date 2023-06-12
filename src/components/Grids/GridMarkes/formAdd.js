@@ -71,7 +71,8 @@ export const FormAdd = () => {
     }
 
     return (
-        <form className="form" noValidate  >
+        // grid-form-styles-form : /components/Grids/GridMarkes/styles.js
+        <form className="grid-styles-form" noValidate  >
             <GridContainer>
                 <InputVar1
                     label="Όνομα"

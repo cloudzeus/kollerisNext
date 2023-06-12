@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as yup from "yup";
 import React from 'react'
 import styled from "styled-components";
@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
 import YupForm from "@/components/Forms/YupForm";
 import { yupResolver } from "@hookform/resolvers/yup";
-
+import { editGridItem } from "@/features/grid/gridSlice";
+import { useDispatch } from "react-redux";
 
 
 const registerSchema = yup.object().shape({
@@ -23,30 +24,40 @@ const registerSchema = yup.object().shape({
 
 
 export const FormEdit = () => {
-    const { gridRowData, gridSelectedFile } = useSelector(state => state.grid)
+    const { gridRowData, gridSelectedFile, editData } = useSelector(state => state.grid)
+    console.log('EDIT DATA')
+    console.log(editData)
+    const dispatch = useDispatch();
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
         defaultValues: {
-            _id: gridRowData?._id,
-            name: gridRowData?.name,
-            description: gridRowData?.description,
-            facebookUrl: gridRowData?.facebookUrl,
-            instagramUrl: gridRowData?.instagramUrl,
-            officialCatalogueUrl: gridRowData?.officialCatalogueUrl,
-            softOneMTRMARK: gridRowData?.softOneMTRMARK,
-            softOneName: gridRowData?.softOneName,
-            softOneCode: gridRowData?.softOneCode,
-            softOneSODCODE: gridRowData?.softOneSODCODE,
-            softOneISACTIVE: gridRowData?.softOneISACTIVE,
-            pimUrl: gridRowData?.pimAccess?.pimUrl,
-            pimUserName: gridRowData?.pimAccess?.pimUserName,
-            pimPassword: gridRowData?.pimAccess?.pimPassword,
-            logo: gridRowData?.logo,
+            _id: editData?._id,
+            name: editData?.name,
+            description:  editData?.description,
+            facebookUrl:  editData?.facebookUrl,
+            instagramUrl:  editData?.instagramUrl,
+            officialCatalogueUrl:  editData?.officialCatalogueUrl,
+            softOneMTRMARK: editData?.softOneMTRMARK,
+            softOneName: editData?.softOneName,
+            softOneCode:  editData?.softOneCode,
+            softOneSODCODE:  editData?.softOneSODCODE,
+            softOneISACTIVE:  editData?.softOneISACTIVE,
+            pimUrl:  editData?.pimAccess?.pimUrl,
+            pimUserName:  editData?.pimAccess?.pimUserName,
+            pimPassword:  editData?.pimAccess?.pimPassword,
+            logo:  editData?.logo,
 
         }
     });
     const [selectedFile, setSelectedFile] = useState(null);
 
+    
+    useEffect(() => {
+        const handleFetchOne =  async () => {
+            dispatch(editGridItem({id: gridRowData?._id}))
+        }
+        handleFetchOne();
+    }, [])
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
@@ -66,7 +77,12 @@ export const FormEdit = () => {
     // }
 
     return (
-        <YupForm className="form">
+        // grid-form-styles-form : /components/Grids/GridMarkes/styles.js
+        <YupForm className="grid-styles-form">
+            <h2 className="grid-styles-form__header">Διόρθωση Μάρκας:<span>{editData?.softOne.MTRMARK}</span></h2>
+            <div>
+                <span></span>
+            </div>
             <GridContainer>
                 <InputVar1
                     label="Όνομα"
@@ -161,115 +177,22 @@ export const FormEdit = () => {
                 register={register}
             />
             <GridContainer>
-                {/* <UploadInput
-                    title="λογότυπο"
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                /> */}
+               
                 <ImageInput 
                     logo={gridRowData?.logo}
                     setSelectedFile={setSelectedFile}
                     selectedFile={selectedFile}
                 />
             </GridContainer>
-            {/* <h2>VideoPromoList</h2> */}
-            {/* <AddMoreInput  
-                label="Video"
-                attr1="name"
-                attr2="videoUrl"
-                objName="videoPromoList" 
-                setFormData={setFormData} 
-                formData={formData} /> */}
-            {/* <h2>PhotoPromoList</h2> */}
-            {/* <AddMoreInput 
-                label="Photo"
-                objName="photosPromoList" 
-                attr1="name"
-                attr2="photoUrl"
-                setFormData={setFormData} 
-                formData={formData} /> */}
-            {/* EndForm */}
+           
             <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
         </YupForm>
-    )
-}
-
-const AddMoreInput = ({ setFormData, formData, label, atrr1, attr2, objName }) => {
-    const [rows, setRows] = useState(1);
-    const [cancel, setCancel] = useState(false);
-
-    const handleAddRow = () => {
-        setRows(prevRows => prevRows + 1);
-    };
-    const handleCancel = () => {
-        setCancel(prev => !prev);
-        setRows(setRows(prevRows => prevRows - 1))
-    };
-
-    const handleFormData = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
-        console.log(name)
-        console.log(value)
-        setFormData(prev => ({ ...prev, [objName]: { ...prev.videoPromoList, [name]: [value] } }))
-    }
-
-
-    return (
-        <AddMoreInputContainer >
-            <label htmlFor="">{label}</label>
-            <div>
-                <input type="text" placeholder="Όνομα" name={atrr1} onChange={(e) => handleFormData(e)} />
-                <input type="text" name={attr2} placeholder="https://" value={formData.name} onChange={(e) => handleFormData(e)} />
-                <AddIcon onClick={handleAddRow} />
-            </div>
-        </AddMoreInputContainer>
     )
 }
 
 
 const borderColor = '#e8e8e8';
 
-const AddMoreInputContainer = styled.div`
-    width: 100%;
-    height: 40px;
-  
-    margin-bottom: 10px;
-    div {
-        display:  flex;
-    }
-    label {
-        font-size: 12px;
-        margin-bottom: 8px;
-    }
-    /* background-color: pink; */
-   input {
-    height: 40px;
-    padding: 10px;
-    border: 1px solid ${borderColor};
-    border-radius: 4px;
-    height: 100%;
-    margin-right: 10px;
-   }
-   input:nth-child(2) {
-    flex: 1;
-   }
-   svg {
-    border: 1px solid ${borderColor};
-    border-radius: 4px;
-    padding: 10px;
-    height: 100%;
-    width: 40px;
-    font-size: 20px;
-    color: ${props => props.theme.palette.primary.main};
-    cursor: pointer;
-    
-   }
-   svg:hover,svg:active  {
-    scale: 0.9;
-   }
-
-`
 
 
 
@@ -277,7 +200,7 @@ const AddMoreInputContainer = styled.div`
 const GridContainer = styled.div`
     display: grid;
     grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'} ;
-    grid-gap: 30px;
+    grid-column-gap: 30px;
     @media (max-width: 1400px) {
         grid-template-columns: repeat(2, 1fr);
     }

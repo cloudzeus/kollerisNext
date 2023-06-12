@@ -21,8 +21,8 @@ import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 
 
 const registerSchema = yup.object().shape({
-	name: yup.string().required('Συμπληρώστε το όνομα'),
-	description: yup.string().required('Συμπληρώστε το επώνυμο'),
+	firstName: yup.string().required('Συμπληρώστε το όνομα'),
+	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
 	
 });
 

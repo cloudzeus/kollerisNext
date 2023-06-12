@@ -77,8 +77,8 @@ const Grid = ({id, setId}) => {
                 <ColumnDirective field='name' headerText='Όνομα' width='100' ></ColumnDirective>
                 <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
                 <ColumnDirective field='logo' headerText='Λογότυπο' width='100' template={gridTemplate}></ColumnDirective>
-                <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
-                <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective>
+                {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
+                <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective> */}
             </ColumnsDirective>
             <Inject services={[Page, Edit, Toolbar, Filter]} />
         </GridComponent>
