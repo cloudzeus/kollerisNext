@@ -11,16 +11,21 @@ export const InputVar1 = ({
 	error,
 	mt,
 	defaultValue,
-	disabled }) => {
+	disabled,
+	required
+}) => {
 	const [focus, setFocus] = useState(false)
 	const handleFocus = () => {
 		setFocus(prev => !prev)
 	}
+
+
 	return (
 		<InputContainer error={error} disabled={disabled} isFocus={focus}>
 				<label
 					htmlFor={name}>
-					{label}
+						{label}
+						{required ? <span className="required-span">*</span> : ''}
 				</label>
 				<input
 					id={name}
@@ -32,6 +37,7 @@ export const InputVar1 = ({
 					disabled={disabled}
 					onBlur={handleFocus}
 					onFocus={handleFocus}
+					required={required}
 				/>
 			{error && <span className="error-text">{error.message}</span>}
 		</InputContainer>
@@ -48,18 +54,20 @@ export const Input = ({
 	register,
 	error,
 	value,
-	disabled 
+	disabled,
 }) => {
 	const [focus, setFocus] = useState(false)
 	const handleFocus = () => {
 		setFocus(prev => !prev)
 	}
 	console.log(error)
+
+	
 	return (
 		<InputContainer error={error} disabled={disabled} isFocus={focus}>
 				<label
 					htmlFor={name}>
-					{label}
+					{label }
 				</label>
 				<input
 					id={name}
@@ -70,6 +78,7 @@ export const Input = ({
 					disabled={disabled}
 					onBlur={handleFocus}
 					onFocus={handleFocus}
+					
 				/>
 			{error && <span className="error-text">{error.message}</span>}
 		</InputContainer>
@@ -130,6 +139,10 @@ input {
   margin-top: 4px;
 }
 
+.required-span {
+	color: red;
+	margin-left: 2px;
+}
 
 `
 

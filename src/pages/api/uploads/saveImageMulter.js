@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       try {
         fs.renameSync(file.path, path.join('public/uploads/', newFileName));
 
-        const publicURL = `/uploads/${newFileName}`;
+        const publicURL = `${newFileName}`;
         uploadedURLs.push(publicURL);
       } catch (error) {
         console.error(error);

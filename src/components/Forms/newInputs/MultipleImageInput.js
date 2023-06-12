@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Dropzone from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import styled from 'styled-components';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
@@ -17,6 +18,7 @@ const ImageUploader = () => {
             formData.append('files', file);
         });
 
+       
         try {
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
@@ -25,8 +27,6 @@ const ImageUploader = () => {
 
             if (response.ok) {
                 const { urls } = await response.json();
-                // setUploadedImages((prev) => [...prev, ...urls]);
-                console.log(urls)
                 dispatch(setUploadImages(urls))
             } else {
                 console.error('Error uploading files');
@@ -38,11 +38,13 @@ const ImageUploader = () => {
 
     return (
         <UploaderStyled>
-            <Dropzone onDrop={handleDrop} accept="image/*" multiple>
+            <Dropzone onDrop={handleDrop} 
+            accept="image/*" 
+            multiple>
                 {({ getRootProps, getInputProps }) => (
                     <div {...getRootProps()}>
                         <input {...getInputProps()} />
-                        < CameraAltIcon  />
+                        <CameraAltIcon  />
                         <p>Σύρετε ή πατήστε και επιλέξτε φωτογραφίες</p>
                         
                     </div>
@@ -52,7 +54,7 @@ const ImageUploader = () => {
                 {uploadedImages && uploadedImages.map((imageUrl, index) => (
                     <div className="multiple-upload-images" key={index}>
                         <Image
-                            src={imageUrl}
+                            src={`/uploads/${imageUrl}`}
                             alt={`Uploaded ${index + 1}`}
                             fill={true}
                             sizes={50}

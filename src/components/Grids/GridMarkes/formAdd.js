@@ -12,11 +12,13 @@ import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
 import { selected } from "@syncfusion/ej2/pivotview";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
+import { useSelector } from "react-redux";
+import {toast} from 'react-toastify';
+import { set } from "mongoose";
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
-	description: yup.string().required('Συμπληρώστε το επώνυμο'),
-	
+	MTRMARK: yup.string().required('Συμπληρώστε την Μάρκα'),
 });
 
 
@@ -27,31 +29,36 @@ export const FormAdd = () => {
         resolver: yupResolver(registerSchema),
     });
     const [selectedFile, setSelectedFile] = useState(null);
-  
+    const {uploadedImages} = useSelector((state) => state.upload);
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
     }])
-    const [photoList, setPhotoList] = useState({
-        name: '',
-        videoUrl: ''
-    })
+
+    
 
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        // console.log('data', Object(data))
-        // console.log('selected file: ' , selectedFile)
+       
         let body = {
+            ...data,
             logo: selectedFile,
-            videoList: videoList,
+            videoPromiList: videoList,
+            uploadedImages: uploadedImages,
+           
         }
-        console.log(videoList)
+        console.log('--------------------- BODY ------------------------')
         console.log(body)
+        console.log('---------------------------------------------------')
+        
 
-        // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
-        // let res = await axios.post('/api/admin/markes/markes', { action: 'create'})
-     
+        let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
+        if(res.data.success) {
+            toast.success('Επιτυχής προσθήκης μάρκας')
+        } else {
+            toast.error('Aποτυχία προσθήκης μάρκας')
+        }
  
     }
 
@@ -64,6 +71,7 @@ export const FormAdd = () => {
                     type="text"
                     register={register}
                     error={errors.name}
+                    required={true}
                 />
                 <InputVar1
                     label="Περιγραφή"
@@ -77,42 +85,53 @@ export const FormAdd = () => {
             </GridContainer>
             <GridContainer>
                 <InputVar1
-                    label="Facebook Url"
+                    label="Facebook URL"
                     name="facebookUrl"
                     type="text"
                     register={register}
                 />
                 <InputVar1
-                    label="Instagram Url"
+                    label="Instagram URL"
                     name="instagramUrl"
                     type="text"
                     register={register}
                 />
 
             </GridContainer>
+            <GridContainer>
             <InputVar1
-                label="officialCatalogueUrl"
+                label="Official Catalogue URL"
                 name="officialCatalogueUrl"
                 type="text"
                 register={register}
             />
-            < ImageInput 
-                label={'Λογότυπο'}
-             setSelectedFile={setSelectedFile}
-             selectedFile={selectedFile}
+            <InputVar1
+                label="Webiste URL"
+                name="webSiteUrl"
+                type="text"
+                register={register}
             />
-            <h2>SoftOne Info</h2>
+
+            </GridContainer>
+            
+            < ImageInput 
+                required={true}
+                label={'Λογότυπο'}
+                setSelectedFile={setSelectedFile}
+                selectedFile={selectedFile}
+            />
+            <h2>SOFTONE Info</h2>
             <GridContainer >
                 <InputVar1
-                    label="softOneMTRMARK"
-                    name="softOneMTRMARK"
+                    label="MTRMARK"
+                    name="MTRMARK"
                     type="text"
-                    
+                    required={true}
                     register={register}
                 />
                 <InputVar1
-                    label="softOneName"
-                    name="softOneName"
+                    label="ΟΝΟΜΑ"
+                    name="NAME"
                     type="text"
                     register={register}
                 />
@@ -120,28 +139,25 @@ export const FormAdd = () => {
             </GridContainer>
             <GridContainer >
             <InputVar1
-                    label="softOneCode"
-                    name="softOneCode"
+                    label="CODE"
+                    name="CODE"
                     type="text"
                     register={register}
                 />
                 <InputVar1
-                    label="softOneSODCODE"
-                    name="softOneSODCODE"
+                    label="SODCODE"
+                    name="SODCODE"
                     type="text"
                     register={register}
                 />
                
             </GridContainer>
-            <GridContainer >
-                <InputVar1
-                    label="softOneISACTIVE"
-                    name="softOneISACTIVE"
+            <InputVar1
+                    label="COMPANY"
+                    name="COMPANY"
                     type="text"
                     register={register}
                 />
-               
-            </GridContainer>
 
             <h2>Pim Access</h2>
             <GridContainer>

@@ -66,48 +66,42 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 
-		let videoArray = req.body.data.videoPromoList;
-		// Create a new document
 		let { data } = req.body
-		let createBody = {
+		console.log('data')
+		console.log(data)
+
+		const object = {
 			name: data.name,
 			description: data.description,
-			facebookUrl: data.facebookUrl,
-			instagramUrl: data.instagramUrl,
-			officialCatalogueUrl: data.officialCatalogueUrl,
-			softOneMTRMARK: data.softOneMTRMARK,
-			softOneName: data.softOneName,
-			softOneCode: data.softOneCode,
-			softOneSODCODE: data.softOneSODCODE,
-			softOneISACTIVE: data.softOneISACTIVE,
+			logo: data.logo,
+			videoPromoList: data.videoPromoList,
 			pimAccess: {
 				pimUrl: data.pimUrl,
 				pimUserName: data.pimUserName,
-				pimPassword: data.pimPassword,
+				pimPassword: data.pimPassword
 			},
-			videoPromoList: [{
-				name: 'se',
-				videoUrl: 'sefsefefsf'
-			}],
-			photosPromoList: [{
-				name: 'sefsef',
-				photosPromoUrl: 'sefsef'
-			}],
-			logo: 'sefsefseffesef'
+			webSiteUrl: data.webSiteUrl,
+			officialCatalogueUrl: data.officialCatalogueUrl,
+			facebookUrl: data.facebookUrl,
+			instagramUrl: data.instagramUrl,
+			softOne: {
+				COMPANY: data.COMPANY ? data.COMPANY : '---',
+				SODTYPE: data.SODTYPE ? data.SODTYPE : '---',
+				MTRMARK: parseInt(data.MTRMARK),
+				CODE: data.CODE ? data.softOne.CODE : '---',
+				NAME: data.NAME ? data.softOne.NAME : '---',
+
+			}
 		}
+		console.log("OBject to create Markes:", Object(object));
 		try {
 			await connectMongo();
-			// let data = req.body.data
-
-
-			console.log(data)
 			const newMarkes = await Markes.create({
-				...createBody
-			})
+				...object,
+			});
 
 			if (newMarkes) {
-				console.log('new markes')
-				console.log(newMarkes)
+				
 				return res.status(200).json({ success: true, markes: newMarkes });
 
 			} else {
@@ -116,7 +110,7 @@ export default async function handler(req, res) {
 
 
 		} catch (error) {
-			return res.status(400).json({ success: false, error: error.message });
+			return res.status(400).json({ success: false, error: error.message, markes: null });
 		}
 	}
 
@@ -190,11 +184,13 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'sync') {
+		console.log('sync')
 		try {
 			let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
 			let { data } = await axios.post(URL)
 			//SOFTONE ARRAY:
-			let softOneArray = data.result
+			let softOneArray = data.result;
+			console.log('100', Array(softOneArray))
 			//MONGO ARRAY:
 			await connectMongo();
 			const mongoArray = await Markes.find({}, { softOne: 1 });
@@ -231,7 +227,7 @@ export default async function handler(req, res) {
 				if (id1 == id2) { // Check if IDs are the same
 					const keys = Object.keys(object1);
 					for (const key of keys) {
-						// console.log(key)
+						console.log(key)
 						if (object1[key].toString() !== object2[key].toString()) {
 							
 							return true; // Values are not the same
@@ -250,8 +246,8 @@ export default async function handler(req, res) {
 			//   console.log(compareObjects(object1, object2));
 
 			let newArray = compareArrays(mongoArray, softOneArray)
-			// console.log('--------------------------- NEW ARRAY -----------------------------------')
-			// console.log(newArray)
+			console.log('--------------------------- NEW ARRAY -----------------------------------')
+			console.log(newArray)
 			if (newArray) {
 				return res.status(200).json({ success: true, markes: newArray });
 			}

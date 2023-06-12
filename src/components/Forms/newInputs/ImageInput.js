@@ -9,7 +9,7 @@ import ImageIcon from '@mui/icons-material/Image';
 
 
 
-export const ImageInput = ({logo, setSelectedFile, label}) => {
+export const ImageInput = ({logo, setSelectedFile, label, required}) => {
     const [imageName, setImageName] = useState(logo);
     const [loading, setLoading] = useState(false);
 
@@ -43,7 +43,11 @@ export const ImageInput = ({logo, setSelectedFile, label}) => {
     }
     return (
         <Container>
-            <p className="label">{label}</p>
+            <p className="label">
+                {label}
+                <span>{required ? '*' : ''}
+                </span> 
+            </p>
             <ImageContainer >
             
             {loading ? <CircularProgress /> : (
@@ -90,6 +94,10 @@ const Container = styled.div`
 	font-weight: ${props => props.isFocus ? '500' : '400'};
 	letter-spacing: 0.3px;
     margin-bottom: 5px;
+    & span {
+        color: red;
+        margin-left: 2px;
+    }
     }
     
 `

@@ -39,6 +39,8 @@ export const updateNotSynced = createAsyncThunk(
 			}
 			if(res.data.success) {
 				const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
+				console.log('--------------- RES DATA -----------------')
+				console.log(resp.data, res.data)
 				return {...res.data, ...resp.data};
 			}
 		} catch (error) {
@@ -77,7 +79,8 @@ const gridSlice = createSlice({
 				state.loading = true;
 			})
 			.addCase(fetchNotSynced.fulfilled, (state,  {payload} ) => {
-
+				console.log('payload')
+				console.log(payload)
 				const { markes } = payload;
 				
 				state.notSyncedData = markes;
