@@ -47,12 +47,15 @@ const Grid = ({ id, setId }) => {
     };
 
     const gridTemplate = (props) => {
+        const logo = props.logo ? props.logo : 'notfound.jpg'
+        const objectFit = props.logo ? 'contain' : 'cover'
         return (
             <ImageDiv>
                 <Image
-                    src={`/static/uploads/${props.logo}`}
+                    src={`/uploads/${logo}`}
                     alt="mountain"
                     fill={true}
+                    style={{objectFit: objectFit}}	
                 />
             </ImageDiv>
         );
@@ -109,10 +112,11 @@ const Grid = ({ id, setId }) => {
 }
 
 const ImageDiv = styled.div`
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
-    border-radius: 50%;
+    border-radius: 4px;
+    background-color: white;
     position: relative;
     overflow: hidden;
     border: 2px solid ${({ theme }) => theme.palette.border};

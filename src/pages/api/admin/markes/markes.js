@@ -355,9 +355,9 @@ export default async function handler(req, res) {
 		let resp = await fetchSoftoneMarkes();
 		// console.log(resp.result)
 		let result = resp.result.filter(o1=> {
-			return mongoArray.some((o2) => {
+			return !mongoArray.some((o2) => {
 				// console.log(o2.softOne.MTRMARK)
-				return o1.MTRMARK !== o2.softOne.MTRMARK; // return the ones with equal id
+				return o1.MTRMARK == o2.softOne.MTRMARK; // return the ones with equal id
 		   });
 		});
 		
