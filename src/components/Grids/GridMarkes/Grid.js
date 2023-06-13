@@ -1,7 +1,7 @@
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, ExcelExport } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, ExcelExport, Sort } from '@syncfusion/ej2-react-grids';
 import { GridContainer } from "./styles";
 import styled from "styled-components";
 import { useDispatch } from 'react-redux';
@@ -42,6 +42,10 @@ const Grid = ({ id, setId }) => {
         }
     };
 
+    const sortingOptions = {
+        columns: [{ field: 'softOne.MTRMAR', direction: 'Ascending' }]
+    };
+
     const gridTemplate = (props) => {
         return (
             <ImageDiv>
@@ -73,6 +77,9 @@ const Grid = ({ id, setId }) => {
         <GridContainer>
             <GridComponent
                 id='grid'
+                allowMultiSorting={true}
+                // sortSettings={sortingOptions}
+                allowSorting={true}
                 toolbarClick={toolbarClick}
                 toolbar={toolbarOptions}
                 dataSource={data}
@@ -95,7 +102,7 @@ const Grid = ({ id, setId }) => {
                     {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
                 <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective> */}
                 </ColumnsDirective>
-                <Inject services={[Page, Edit, Toolbar, Filter, ExcelExport]} />
+                <Inject services={[Page, Edit, Toolbar, Filter, ExcelExport, Sort]} />
             </GridComponent>
         </GridContainer>
     )
