@@ -134,7 +134,78 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, error: error.message, markes: null });
 		}
 	}
+	if (action === 'createMany') {
+		let { data } = req.body
+		console.log('data')
+		console.log(data)
 
+		
+		let newArray = [];
+		for(let item of data) {
+			console.log(item)
+			const object = {
+				name:'',
+				description: '',
+				logo: '',
+				videoPromoList: [],
+				photoPromoList: [],
+				pimAccess: {
+					pimUrl: '',
+					pimUserName: '',
+					pimPassword: ''
+				},
+				webSiteUrl: '',
+				officialCatalogueUrl: '',
+				facebookUrl: '',
+				instagramUrl: '',
+				softOne: {
+					...item
+				},
+			}
+
+			newArray.push(object)
+		}
+		
+		console.log('Array to insert in Mongo')
+		console.log(newArray)
+
+
+		try {
+			await connectMongo();
+			const newMarkes = await Markes.insertMany(newArray);
+			// const newMarkes = await Markes.create({
+			// 	name:'',
+			// 	description: '',
+			// 	logo: '',
+			// 	videoPromoList: [],
+			// 	photoPromoList: [],
+			// 	pimAccess: {
+			// 		pimUrl: '',
+			// 		pimUserName: '',
+			// 		pimPassword: ''
+			// 	},
+			// 	webSiteUrl: '',
+			// 	officialCatalogueUrl: '',
+			// 	facebookUrl: '',
+			// 	instagramUrl: '',
+			// 	softOne: {
+			// 		...data[0]
+			// 	},
+			// });
+			console.log('Softone Markes Inserted Successfully', JSON.stringify(newMarkes))
+
+			if (newMarkes) {
+				return res.status(200).json({ success: true, result: newMarkes });
+
+			} else {
+				return res.status(200).json({ success: false, result: null });
+			}
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+
+
+	}
 	// if (action === 'update') {
 	// 	await connectMongo();
 	// 	let body = req.body.data;

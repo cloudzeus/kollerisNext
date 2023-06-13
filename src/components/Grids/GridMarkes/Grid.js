@@ -1,27 +1,23 @@
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, ExcelExport } from '@syncfusion/ej2-react-grids';
 import { GridContainer } from "./styles";
 import styled from "styled-components";
 import { useDispatch } from 'react-redux';
-import { setSelectedId, setGridRowData} from "@/features/grid/gridSlice";
-import {
-    validationRules,
-    pageSettings,
-    loadingIndicator,
-    editOptions,
-    toolbarOptions,
-    AddIcon,
-    EditIcon,
-    DeleteIcon,
-} from './config';
+import { setSelectedId, setGridRowData } from "@/features/grid/gridSlice";
 
-const Grid = ({id, setId}) => {
-    
+
+const Grid = ({ id, setId }) => {
+
     const [data, setData] = useState([]);
     const [grid, setGrid] = useState(null);
     const dispatch = useDispatch();
+    const validationRules = { required: true };
+    const pageSettings = { pageCount: 5 };
+    const loadingIndicator = { indicatorType: 'Shimmer' }
+    const editOptions = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
+    const toolbarOptions = ['Search', 'ExcelExport'];
 
     const handleFetchUser = async () => {
         try {
@@ -33,8 +29,19 @@ const Grid = ({id, setId}) => {
             console.log(error)
         }
     }
-    
-   
+
+    const created = () => {
+        document.getElementById(grid.element.id + "_searchbar").addEventListener('keyup', () => {
+            grid.search(event.target.value);
+        });
+    };
+
+    const toolbarClick = (args) => {
+        if (grid && args.item.id === 'grid_excelexport') {
+            grid.excelExport();
+        }
+    };
+
     const gridTemplate = (props) => {
         return (
             <ImageDiv>
@@ -63,26 +70,34 @@ const Grid = ({id, setId}) => {
         }
     };
     return (
-       <GridContainer>
-             <GridComponent
-            dataSource={data}
-            allowPaging={true}
-            pageSettings={pageSettings}
-            loadingIndicator={loadingIndicator}
-            rowSelected={rowSelected}
-            ref={g => setGrid(g)}
-        >
-            <ColumnsDirective>
-                <ColumnDirective type='checkbox' width='50'></ColumnDirective>
-                <ColumnDirective field='name' headerText='Όνομα' width='100' ></ColumnDirective>
-                <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
-                <ColumnDirective field='logo' headerText='Λογότυπο' width='100' template={gridTemplate}></ColumnDirective>
-                {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
+        <GridContainer>
+            <GridComponent
+                id='grid'
+                toolbarClick={toolbarClick}
+                toolbar={toolbarOptions}
+                dataSource={data}
+                allowPaging={true}
+                allowExcelExport={true}
+                pageSettings={pageSettings}
+                loadingIndicator={loadingIndicator}
+                rowSelected={rowSelected}
+                created={created}
+                ref={g => setGrid(g)}
+            >
+                <ColumnsDirective>
+                    <ColumnDirective type='checkbox' width='30'></ColumnDirective>
+                    <ColumnDirective field='softOne.MTRMARK' headerText='MTRMARK' width='100' ></ColumnDirective>
+                    <ColumnDirective field='logo' headerText='Λογότυπο' width='100' template={gridTemplate}></ColumnDirective>
+                    <ColumnDirective field='softOne.NAME' headerText='Softone Όνομα' width='140' ></ColumnDirective>
+                    <ColumnDirective field='name' headerText='Όνομα' width='140' ></ColumnDirective>
+                    <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
+
+                    {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
                 <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective> */}
-            </ColumnsDirective>
-            <Inject services={[Page, Edit, Toolbar, Filter]} />
-        </GridComponent>
-       </GridContainer>
+                </ColumnsDirective>
+                <Inject services={[Page, Edit, Toolbar, Filter, ExcelExport]} />
+            </GridComponent>
+        </GridContainer>
     )
 }
 
@@ -93,6 +108,8 @@ const ImageDiv = styled.div`
     border-radius: 50%;
     position: relative;
     overflow: hidden;
+    border: 2px solid ${({ theme }) => theme.palette.border};
+    
    
 `
 

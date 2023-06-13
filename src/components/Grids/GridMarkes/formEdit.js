@@ -79,7 +79,7 @@ export const FormEdit = () => {
     return (
         // grid-form-styles-form : /components/Grids/GridMarkes/styles.js
         <YupForm className="grid-styles-form">
-            <h2 className="grid-styles-form__header">Διόρθωση Μάρκας:<span>{editData?.softOne.MTRMARK}</span></h2>
+            {/* <h2 className="grid-styles-form__header">Διόρθωση Μάρκας:<span>{editData?.softOne.MTRMARK}</span></h2> */}
             <div>
                 <span></span>
             </div>

@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import CheckIcon from '@mui/icons-material/Check';
 import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
+import Button from '@/components/Buttons/Button';
 
 const CheckDifferences = () => {
     const dispatch = useDispatch();
@@ -25,8 +26,10 @@ const CheckDifferences = () => {
     const [selectAll, setSelectAll] = useState(false);
     const [selected, setSelected] = useState([{}]);
     console.log(selected)
-    const handleAdd = () => {
 
+
+    const handleAdd =  async () => {
+        let {data} = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
     }
     const handleItemClick = (index, item) => {
         console.log(item)
@@ -64,7 +67,7 @@ const CheckDifferences = () => {
                     </div>
                 </div>
             ))}
-
+            <Button onClick={handleAdd} >Προσθήκη</Button>
             <Pagination
                 count={totalPages}
                 shape="rounded"
