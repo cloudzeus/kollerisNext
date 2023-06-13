@@ -39,7 +39,9 @@ export const InputVar1 = ({
 					onFocus={handleFocus}
 					required={required}
 				/>
-			{error && <span className="error-text">{error.message}</span>}
+			<div>
+				{error && <span className="error-text">{error.message}</span>}
+			</div>
 		</InputContainer>
 	)
 }

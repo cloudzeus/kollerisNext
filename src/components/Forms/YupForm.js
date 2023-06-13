@@ -10,7 +10,9 @@ const YupForm = ({children, onSubmit, className}) => {
             className={className} 
             noValidate 
             onSubmit={handleSubmit(onSubmit)}>
+            <div>
             {children}
+            </div>
         </form>
     </div>
   )
