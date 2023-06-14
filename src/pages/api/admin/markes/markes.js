@@ -96,6 +96,7 @@ export default async function handler(req, res) {
 			description: data.description,
 			logo: data.logo,
 			videoPromoList: data.videoPromoList,
+			photosPromoList: data.photosPromoList,
 			pimAccess: {
 				pimUrl: data.pimUrl,
 				pimUserName: data.pimUserName,

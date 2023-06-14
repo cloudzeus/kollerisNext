@@ -15,19 +15,20 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { fetchNotSynced,setSelectedId, setAction, findSoftoneAndSyncTables, } from '@/features/grid/gridSlice';
+import { fetchNotSynced, setSelectedId, setAction, findSoftoneAndSyncTables, } from '@/features/grid/gridSlice';
 import Notifications from '@/components/Buttons/Notifications';
 import SoftOneExtra from './softone/addAllSoftone';
 import { setUploadImages } from '@/features/upload/uploadSlice';
+import { ImList2 } from 'react-icons/im';
 
 const GridTable = () => {
     const [id, setId] = useState(null);
-    const { selectedId, asyncedMarkes, action} = useSelector(state => state.grid)
+    const { selectedId, asyncedMarkes, action } = useSelector(state => state.grid)
     const dispatch = useDispatch();
 
 
-    const handleAction = (action) => { 
-        dispatch(setAction(action)) 
+    const handleAction = (action) => {
+        dispatch(setAction(action))
     }
     const handleCancel = () => {
         dispatch(setAction(null))
@@ -46,7 +47,7 @@ const GridTable = () => {
         }
     }
 
-    const handleSyncButton =  () => {
+    const handleSyncButton = () => {
         handleAction('sync')
     }
 
@@ -57,54 +58,55 @@ const GridTable = () => {
     }, [dispatch])
 
 
-   const findExtraSoftone = async () => {
+    const findExtraSoftone = async () => {
         handleAction('findSoftoneExtra')
         dispatch(findSoftoneAndSyncTables())
-   }
+    }
     return (
-            <Container p="0px" className="box">
-                <div className="header">
-                    <h2 className="boxHeader">Μάρκες</h2>
+        <Container p="0px" className="box">
+            <div className="header">
+                <h2 className="boxHeader">Μάρκες</h2>
+            </div>
+
+            <div className="innerContainer" >
+                <GridActions >
+                    <button className="grid-icon" onClick={handleCancel}>
+                        <ImList2 />
+                    </button>
+                    <button onClick={() => handleAction('add')}>
+                        <AddIcon /> Προσθήκη
+                    </button>
+                    <button onClick={() => {
+                        if (selectedId) {
+                            handleAction('edit')
+                        } else { toast.error('Δεν έχετε επιλέξει εγγραφή') }
+                    }}>
+                        <EditIcon /> Διόρθωση
+                    </button>
+                    {/* <button onClick={handleDeleteUser}>
+                        <DeleteIcon /> Διαγραφή
+                    </button> */}
+
+
+                </GridActions>
+
+                <Notifications
+                    ml="10px"
+                    onClick={handleSyncButton}
+                    num={asyncedMarkes}>
+                    <SyncIcon />
+                </Notifications >
+                <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
+                <div>
+                    {!action && <Grid id={id} setId={setId} />}
+                    {action === 'add' && <FormAdd />}
+                    {action === 'sync' && <Sync />}
+                    {action === 'edit' && selectedId && <FormEdit />}
+                    {action === 'findSoftoneExtra' && <SoftOneExtra />}
                 </div>
+            </div>
 
-                <div className="innerContainer" >
-                    <GridActions >
-                        <button onClick={() => handleAction('add')}>
-                            <AddIcon /> Προσθήκη
-                        </button>
-                        <button onClick={() => {
-                            if(selectedId) {
-                                handleAction('edit')
-                            } else {toast.error('Δεν έχετε επιλέξει εγγραφή')}
-                        }}>
-                            <EditIcon /> Διόρθωση
-                        </button>
-                        <button onClick={handleDeleteUser}>
-                            <DeleteIcon /> Διαγραφή
-                        </button>
-                        <button onClick={handleCancel}>
-                            <DeleteIcon /> Ακύρωση
-                        </button>
-
-                    </GridActions>
-
-                    <Notifications
-                        ml="10px"
-                        onClick={handleSyncButton}
-                        num={asyncedMarkes}>
-                        <SyncIcon />
-                    </Notifications >
-                    <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
-                    <div>
-                        {!action && <Grid id={id} setId={setId} />}
-                        {action === 'add' && <FormAdd />}
-                        {action === 'sync' && <Sync />}
-                        {action === 'edit' && selectedId && <FormEdit />}
-                        {action === 'findSoftoneExtra' && <SoftOneExtra />}
-                    </div>
-                </div>
-
-            </Container>
+        </Container>
 
     )
 

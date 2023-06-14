@@ -44,12 +44,9 @@ export const fetchNotSynced = createAsyncThunk(
 	//action:
 	'grid/fetchNotSynced',
 	async (grid, thunkApi) => {
-		console.log('whysssss')
 		try {
-			console.log('why')
+			
 			const resp = await axios.post('/api/admin/markes/markes', { action: 'sync' })
-			console.log('--------------- REDUX FETCH UNYNCED MARKES -----------------')
-		console.log()
 			return resp.data;
 		} catch (error) {
 			console.log(error)

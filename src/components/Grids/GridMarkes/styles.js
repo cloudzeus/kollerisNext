@@ -77,6 +77,12 @@ export const Container = styled.div`
   .innerContainer {
     padding: 30px;
   }
+
+  .innerContainer button.grid-icon {
+    padding: 10px;
+	background-color: ${props => props.theme.palette.primary.light50};
+	margin-right: 5px;
+  }
 `
 
 export const GridActions = styled.div`

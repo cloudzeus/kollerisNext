@@ -12,7 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
-import { setUploadImages } from "@/features/upload/uploadSlice";
+import { setUploadImages,resetUploadImages  } from "@/features/upload/uploadSlice";
 
 const registerSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -34,10 +34,11 @@ export const FormEdit = () => {
 
     useEffect(() => {
         let array = [];
+        dispatch(resetUploadImages())
         for(let element of gridRowData.photosPromoList) {
             array.push(element.photosPromoUrl)
-            dispatch(setUploadImages(array))
         }
+        dispatch(setUploadImages(array))
         if(gridRowData?.photosPromoList?.photosPromoUrl) { 
             dispatch(setUploadImages(gridRowData.photosPromoList.photosPromoUrl))
         }

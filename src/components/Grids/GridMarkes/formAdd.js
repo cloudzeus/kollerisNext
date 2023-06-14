@@ -35,6 +35,7 @@ export const FormAdd = () => {
     
     const [selectedFile, setSelectedFile] = useState(null);
     const {uploadedImages} = useSelector((state) => state.upload);
+    console.log(uploadedImages)
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
@@ -47,16 +48,22 @@ export const FormAdd = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-     
+        let dataImages = []
+        for(let i of uploadedImages) {
+            dataImages.push({
+                name: i,
+                photosPromoUrl: i
+            })
+        }
+        
         let body = {
             ...data,
             logo: selectedFile,
             videoPromoList: videoList,
-            uploadedImages: uploadedImages,
+            photosPromoList: dataImages
         }
-
-       
-        
+        console.log('-------- body ----------')
+        console.log(body)   
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
         await axios.post('/api/admin/markes/markes', { action: 'sync'})

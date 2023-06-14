@@ -69,9 +69,7 @@ const Grid = ({ id, setId }) => {
     }, [])
 
     const rowSelected = () => {
-        console.log('before grid')
         if (grid) {
-            console.log('row selected')
             const selectedrecords = grid.getSelectedRecords();
             let id = selectedrecords[0]._id
             console.log(selectedrecords[0])
