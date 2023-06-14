@@ -42,16 +42,16 @@ export default async function handler(req, res) {
 	// 		ISACTIVE: 1
 	// 	}
 	// }); 
-	
+
 
 
 	let action = req.body.action;
-	if(action === 'findOne') {
+	if (action === 'findOne') {
 		console.log('findOne')
 		console.log(req.body.id)
 		try {
 			await connectMongo();
-			const markes = await Markes.find({_id: req.body.id});
+			const markes = await Markes.find({ _id: req.body.id });
 			if (markes) {
 				return res.status(200).json({ success: true, markes: markes });
 			}
@@ -123,7 +123,7 @@ export default async function handler(req, res) {
 			});
 
 			if (newMarkes) {
-				
+
 				return res.status(200).json({ success: true, markes: newMarkes });
 
 			} else {
@@ -140,12 +140,12 @@ export default async function handler(req, res) {
 		// console.log('data')
 		// console.log(data)
 
-		
+
 		let newArray = [];
-		for(let item of data) {
+		for (let item of data) {
 			console.log(item)
 			const object = {
-				name:'',
+				name: '',
 				description: '',
 				logo: '',
 				videoPromoList: [],
@@ -166,7 +166,7 @@ export default async function handler(req, res) {
 
 			newArray.push(object)
 		}
-		
+
 		console.log('Array to insert in Mongo')
 		console.log(newArray)
 
@@ -207,58 +207,50 @@ export default async function handler(req, res) {
 
 
 	}
-	// if (action === 'update') {
-	// 	await connectMongo();
-	// 	let body = req.body.data;
-	// 	try {
-	// 		await connectMongo();
-	// 		await Markes.updateOne(
-	// 			{ _id: body._id },
-	// 			{
-	// 				name: 'product1',
-	// 				description: 'description of product 1',
-	// 				logo: '1685705325908_mountain.jpg',
-	// 				videoPromoList: [
-	// 					{
-	// 						name: 'video1',
-	// 						videoUrl: 'https://localohost:3000/assets/imgs/luffy.png'
-	// 					}
-	// 				],
-	// 				photosPromoList: [
-	// 					{
-	// 						name: 'sefsefsef',
-	// 						photosPromoUrl: 'sesefsefs'
-	// 					}
-	// 				],
-	// 				pimAccess: {
-	// 					pimUrl: 'https://pimurl',
-	// 					pimUserName: 'pimUserName',
-	// 					pimPassword: '1234567'
-	// 				},
-	// 				webSiteUrl: 'website url',
-	// 				officialCatalogueUrl: 'catalogues url',
-	// 				facebookUrl: 'facebook url',
-	// 				instagramUrl: 'instagram url',
-	// 				softOne: {
-	// 					COMPANY: '1001',
-	// 					SODTYPE: '200',
-	// 					MTRMARK: 1001,
-	// 					CODE: '200',
-	// 					NAME: 'Addidas',
-	// 					ISACTIVE: 1
-	// 				}
-	// 			});
+	if (action === 'update') {
+		await connectMongo();
+		let body = req.body.data;
+		console.log('body data')
+		console.log(body)
+		try {
+			await connectMongo();
+			await Markes.updateOne(
+				{ _id: body._id },
+				{
+					name: body.name,
+					description: body.description,
+					logo: body.logo,
+					videoPromoList: body.videoPromoList,
+					photosPromoList: body.photosPromoList,
+					pimAccess: {
+						pimUrl: body.pimUrl,
+						pimUserName: body.pimUserName,
+						pimPassword: body.pimPassword
+					},
+					webSiteUrl: body.webSiteUrl,
+					officialCatalogueUrl:  body.officialCatalogueUrl,
+					facebookUrl:  body.facebookUrl,
+					instagramUrl: body.instagramUrl,
+					softOne: {
+						COMPANY: '1001',
+						SODTYPE: '200',
+						MTRMARK: body.softOneMTRMARK,
+						CODE: '51',
+						NAME:  body.softOneName,
+						ISACTIVE: 1
+					}
+				});
 
-	// 		const user = await User.findOne({ _id: body._id });
-	// 		res.status(200).json({ success: true, user });
+			const user = await User.findOne({ _id: body._id });
+			res.status(200).json({ success: true, user });
 
 
-	// 	} catch (error) {
-	// 		res.status(400).json({ success: false });
+		} catch (error) {
+			res.status(400).json({ success: false });
 
-	// 	}
+		}
 
-	// }
+	}
 
 	if (action === 'delete') {
 		await connectMongo();
@@ -284,55 +276,40 @@ export default async function handler(req, res) {
 		console.log('sync')
 		try {
 			let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
-			// console.log(URL)
 			let { data } = await axios.post(URL)
-			// console.log(data)
-			//SOFTONE ARRAY:
 			let softOneArray = data.result;
-			// console.log('100', Array(softOneArray))
-			//MONGO ARRAY:
 			await connectMongo();
 			const mongoArray = await Markes.find({}, { softOne: 1 });
-
-			// console.log('Received Mongo Array')
-			// console.log(mongoArray)
-
-		
-		
-
 			let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
-			// console.log('--------------------------- NEW ARRAY -----------------------------------')
-			// console.log(newArray)
 			if (newArray) {
 				return res.status(200).json({ success: true, markes: newArray });
 			}
 			else {
-				return res.status(200).json({ success: false, markes: []});
+				return res.status(200).json({ success: false, markes: [] });
 			}
 
 		}
 		catch (error) {
-			return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού',  markes: [] });
+			return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού', markes: [] });
 		}
 	}
 
 	if (action === 'syncAndUpdate') {
 
 		let data = req.body.data;
-		let syncTo = req.body.syncTo;
-		// console.log(parseInt(data.MTRMARK))
+		
 		try {
 			await connectMongo();
 			if (req.body.syncTo == 'Εμάς') {
 				let updated = await Markes.updateOne(
 					{ "softOne.MTRMARK": parseInt(data.MTRMARK) },
 					{ $set: { "softOne.NAME": data.NAME } }
-					);
-				
-				if (updated.modifiedCount === 0) {	
-					return res.status(200).json({ success: false, updated: false});
+				);
+
+				if (updated.modifiedCount === 0) {
+					return res.status(200).json({ success: false, updated: false });
 				}
-				
+
 				return res.status(200).json({ success: true, updated: true });
 			}
 
@@ -351,19 +328,19 @@ export default async function handler(req, res) {
 	if (action === 'findExtraSoftone') {
 		await connectMongo();
 		const mongoArray = await Markes.find();
-		
+
 		// console.log(mongoArray)
 		let resp = await fetchSoftoneMarkes();
 		// console.log(resp.result)
-		let result = resp.result.filter(o1=> {
+		let result = resp.result.filter(o1 => {
 			return !mongoArray.some((o2) => {
 				// console.log(o2.softOne.MTRMARK)
 				return o1.MTRMARK == o2.softOne.MTRMARK; // return the ones with equal id
-		   });
+			});
 		});
-		
-		
-		return res.status(200).json({ success: true, result: result});
+
+
+		return res.status(200).json({ success: true, result: result });
 
 	}
 }
@@ -372,6 +349,6 @@ export default async function handler(req, res) {
 
 const fetchSoftoneMarkes = async () => {
 	let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
-	let { data } = await axios.post(URL)	
+	let { data } = await axios.post(URL)
 	return data;
 }

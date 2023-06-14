@@ -35,18 +35,7 @@ const GridTable = () => {
         dispatch(setSelectedId(null))
     }
 
-    const handleDeleteUser = async () => {
-        console.log('delete id')
-        console.log(id)
-        try {
-            const resp = await axios.post('/api/admin/markes/markes', { action: 'delete', id: id })
-            console.log(resp.data)
-            handleFetchUser();
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
+    
     const handleSyncButton = () => {
         handleAction('sync')
     }

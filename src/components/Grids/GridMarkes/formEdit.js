@@ -13,6 +13,8 @@ import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
 import { setUploadImages,resetUploadImages  } from "@/features/upload/uploadSlice";
+import axios from "axios";
+
 
 const registerSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -98,13 +100,11 @@ export const FormEdit = () => {
             
         }
 
-        console.log('data')
-        console.log(dataObj)
+     
 
-        // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
-        // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
-        // console.log('------------------------- Res --------------------------')
-        // console.log(res)
+        let res = await axios.post('/api/admin/markes/markes', { action: 'update', data: dataObj })
+        console.log('------------------------- Res --------------------------')
+        console.log(res)
 
     }
 
@@ -137,25 +137,35 @@ export const FormEdit = () => {
                 </GridContainer>
                 <GridContainer>
                     <InputVar1
-                        label="Facebook Url"
+                        label="URL facebook"
                         name="facebookUrl"
                         type="text"
                         register={register}
                     />
                     <InputVar1
-                        label="Instagram Url"
+                        label="URL Instagram"
                         name="instagramUrl"
                         type="text"
                         register={register}
                     />
 
                 </GridContainer>
+                <GridContainer>
                 <InputVar1
-                    label="officialCatalogueUrl"
+                    label="URL Official Καταλόγου"
                     name="officialCatalogueUrl"
                     type="text"
                     register={register}
                 />
+                   <InputVar1
+                    label="URL Ιστοσελίδας"
+                    name="webSiteUrl"
+                    type="text"
+                    register={register}
+                />
+
+                </GridContainer>
+               
 
                 <h2>SoftOne Info</h2>
                 <GridContainer >
@@ -164,6 +174,7 @@ export const FormEdit = () => {
                         name="softOneMTRMARK"
                         type="text"
                         register={register}
+                        disabled={true}
                     />
                     <InputVar1
                         label="softOneName"
@@ -173,22 +184,6 @@ export const FormEdit = () => {
                     />
 
                 </GridContainer>
-                <GridContainer >
-                    <InputVar1
-                        label="softOneCode"
-                        name="softOneCode"
-                        type="text"
-                        register={register}
-                    />
-                    <InputVar1
-                        label="softOneSODCODE"
-                        name="softOneSODCODE"
-                        type="text"
-                        register={register}
-                    />
-
-                </GridContainer>
-
                 <h2>Pim Access</h2>
                 <GridContainer>
                     <InputVar1
