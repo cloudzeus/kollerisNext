@@ -3,18 +3,16 @@ import { useState, useEffect } from "react";
 import * as yup from "yup";
 import React from 'react'
 import styled from "styled-components";
-import AddIcon from '@mui/icons-material/Add';
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { useSelector } from "react-redux";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
 import YupForm from "@/components/Forms/YupForm";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { editGridItem } from "@/features/grid/gridSlice";
 import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
-import { set } from "mongoose";
-
+import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
+import { setUploadImages } from "@/features/upload/uploadSlice";
 
 const registerSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -32,9 +30,18 @@ export const FormEdit = () => {
         name: '',
         videoUrl: ''
     }])
-    console.log('videoList 0000' + JSON.stringify(videoList))
+   
 
     useEffect(() => {
+        let array = [];
+        for(let element of gridRowData.photosPromoList) {
+            array.push(element.photosPromoUrl)
+            dispatch(setUploadImages(array))
+        }
+        if(gridRowData?.photosPromoList?.photosPromoUrl) { 
+            dispatch(setUploadImages(gridRowData.photosPromoList.photosPromoUrl))
+        }
+      
         if(gridRowData.videoPromoList.length  < 1) {
             setVideoList([{
                 name: '',
@@ -75,6 +82,7 @@ export const FormEdit = () => {
         event.preventDefault();
         console.log('videoList')
         console.log(videoList)
+
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
         // console.log('------------------------- Res --------------------------')
@@ -192,6 +200,7 @@ export const FormEdit = () => {
                         setSelectedFile={setSelectedFile}
                         selectedFile={selectedFile}
                         mb={'20px'}
+                        edit={true}
                     />
                 </GridContainer>
                 <div>
@@ -204,6 +213,7 @@ export const FormEdit = () => {
                         formData={videoList}
                         />
                 </div>
+                <FileDropzone />
                 <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
             </YupForm>
         </div>

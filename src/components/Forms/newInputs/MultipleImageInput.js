@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUploadImages } from '@/features/upload/uploadSlice';
 
 const ImageUploader = () => {
-    // const [uploadedImages, setUploadedImages] = useState([]);
     const { uploadedImages } = useSelector((state) => state.upload);
+    console.log('uploadedImages')
     console.log(uploadedImages)
     const dispatch = useDispatch();
+
+
     const handleDrop = async (acceptedFiles) => {
         const formData = new FormData();
         acceptedFiles.forEach((file) => {

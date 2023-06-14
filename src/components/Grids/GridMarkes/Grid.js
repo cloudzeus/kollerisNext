@@ -58,6 +58,7 @@ const Grid = ({ id, setId }) => {
                     alt="mountain"
                     fill={true}
                     style={{objectFit: objectFit}}	
+                    sizes="40px"
                 />
             </ImageDiv>
         );

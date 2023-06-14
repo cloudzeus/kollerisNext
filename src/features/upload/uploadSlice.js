@@ -11,7 +11,7 @@ const uploadSlice = createSlice({
 	initialState,
 	reducers: {
 		setUploadImages: (state, action) => {
-			console.log('setUploadImages')
+			console.log('-------- setUploadImages ------------')
 			console.log(action.payload)
 			state.uploadedImages = [...state.uploadedImages, ...action.payload];
 		}
