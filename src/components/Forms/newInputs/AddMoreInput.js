@@ -11,9 +11,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
         
       };
 
-    useEffect(() => {
-       
-    })
+  
 
     const handleInputChange = (event,index) => {
         const { name, value } = event.target;
