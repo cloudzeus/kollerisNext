@@ -16,7 +16,8 @@ import { useSelector } from "react-redux";
 import {toast} from 'react-toastify';
 import { useDispatch } from "react-redux";
 import { fetchNotSynced, setAction } from "@/features/grid/gridSlice";
-
+import { setUploadImages, resetUploadImages} from "@/features/upload/uploadSlice";
+import { useEffect } from "react";
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -39,13 +40,14 @@ export const FormAdd = () => {
         videoUrl: ''
     }])
 
-   
+   useEffect(() => {
+         dispatch(resetUploadImages())
+   }, [dispatch])
 
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('videoList')
-        console.log(videoList)
+     
         let body = {
             ...data,
             logo: selectedFile,

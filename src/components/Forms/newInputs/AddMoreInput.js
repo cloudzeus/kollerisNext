@@ -15,17 +15,10 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
     const handleInputChange = (event,index) => {
             const { name, value } = event.target;
-            // const updatedList = [...formData];
-            // updatedList[index][name] = value;
-            // setFormData(updatedList);
-            const updatedList = formData.map((item, i) => {
-                if (i === index) {
-                  // Update the specific item at the given index
-                  return { ...item, [name]: value };
-                }
-                return item;
-              });
-              setFormData(updatedList);
+            const updatedList = [...formData];
+            updatedList[index][name] = value;
+            setFormData(updatedList);
+           
 
 
       };

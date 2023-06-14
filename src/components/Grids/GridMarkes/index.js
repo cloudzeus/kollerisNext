@@ -15,10 +15,10 @@ import { FormEdit } from './formEdit';
 import Sync from './Sync';
 import Grid from './Grid';
 import { useSelector } from 'react-redux';
-import { fetchNotSynced,setSelectedId, setAction, findSoftoneAndSyncTables } from '@/features/grid/gridSlice';
+import { fetchNotSynced,setSelectedId, setAction, findSoftoneAndSyncTables, } from '@/features/grid/gridSlice';
 import Notifications from '@/components/Buttons/Notifications';
 import SoftOneExtra from './softone/addAllSoftone';
-
+import { setUploadImages } from '@/features/upload/uploadSlice';
 
 const GridTable = () => {
     const [id, setId] = useState(null);
@@ -26,7 +26,9 @@ const GridTable = () => {
     const dispatch = useDispatch();
 
 
-    const handleAction = (action) => { dispatch(setAction(action)) }
+    const handleAction = (action) => { 
+        dispatch(setAction(action)) 
+    }
     const handleCancel = () => {
         dispatch(setAction(null))
         dispatch(setSelectedId(null))
