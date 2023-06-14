@@ -35,9 +35,15 @@ export const FormEdit = () => {
     console.log('videoList 0000' + JSON.stringify(videoList))
 
     useEffect(() => {
-        if (gridRowData?.videoPromoList) {
+        if(gridRowData.videoPromoList.length  < 1) {
+            setVideoList([{
+                name: '',
+                videoUrl: ''
+            }])
+        } else {
             setVideoList([...gridRowData?.videoPromoList])
         }
+     
     }, [])
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
