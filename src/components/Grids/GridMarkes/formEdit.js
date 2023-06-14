@@ -25,6 +25,28 @@ const registerSchema = yup.object().shape({
 
 export const FormEdit = () => {
     const { gridRowData, gridSelectedFile} = useSelector(state => state.grid)
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(registerSchema),
+        defaultValues: {
+            _id: gridRowData?._id,
+            name: gridRowData?.name,
+            description: gridRowData?.description,
+            facebookUrl: gridRowData?.facebookUrl,
+            instagramUrl: gridRowData?.instagramUrl,
+            officialCatalogueUrl: gridRowData?.officialCatalogueUrl,
+            softOneMTRMARK: gridRowData?.softOne?.MTRMARK,
+            softOneName: gridRowData?.softOne?.NAME,
+            softOneCode: gridRowData?.softOne?.CODE,
+            softOneSODCODE: gridRowData?.softOne?.SODCODE,
+            softOneISACTIVE: gridRowData?.softOne?.ISACTIVE,
+            pimUrl: gridRowData?.pimAccess?.pimUrl,
+            pimUserName: gridRowData?.pimAccess?.pimUserName,
+            pimPassword: gridRowData?.pimAccess?.pimPassword,
+            logo: gridRowData?.logo,
+
+        }
+    });
+    const [selectedFile, setSelectedFile] = useState(null);
     const dispatch = useDispatch();
     const [videoList, setVideoList] = useState([{
         name: '',
@@ -53,28 +75,7 @@ export const FormEdit = () => {
         }
      
     }, [])
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: yupResolver(registerSchema),
-        defaultValues: {
-            _id: gridRowData?._id,
-            name: gridRowData?.name,
-            description: gridRowData?.description,
-            facebookUrl: gridRowData?.facebookUrl,
-            instagramUrl: gridRowData?.instagramUrl,
-            officialCatalogueUrl: gridRowData?.officialCatalogueUrl,
-            softOneMTRMARK: gridRowData?.softOne?.MTRMARK,
-            softOneName: gridRowData?.softOne?.NAME,
-            softOneCode: gridRowData?.softOne?.CODE,
-            softOneSODCODE: gridRowData?.softOne?.SODCODE,
-            softOneISACTIVE: gridRowData?.softOne?.ISACTIVE,
-            pimUrl: gridRowData?.pimAccess?.pimUrl,
-            pimUserName: gridRowData?.pimAccess?.pimUserName,
-            pimPassword: gridRowData?.pimAccess?.pimPassword,
-            logo: gridRowData?.logo,
 
-        }
-    });
-    const [selectedFile, setSelectedFile] = useState(null);
 
 
 
