@@ -208,45 +208,47 @@ export default async function handler(req, res) {
 
 	}
 	if (action === 'update') {
-		await connectMongo();
+		// await connectMongo();
 		let body = req.body.data;
 		console.log('body data')
 		console.log(body)
+		let updateBody = {
+			name: body.name,
+			description: body.description,
+			logo: body.logo,
+			videoPromoList: body.videoPromoList,
+			photosPromoList: body.photosPromoList,
+			pimAccess: {
+				pimUrl: body.pimUrl,
+				pimUserName: body.pimUserName,
+				pimPassword: body.pimPassword
+			},
+			webSiteUrl: body.webSiteUrl,
+			officialCatalogueUrl:  body.officialCatalogueUrl,
+			facebookUrl:  body.facebookUrl,
+			instagramUrl: body.instagramUrl,
+			softOne: {
+				COMPANY: '1001',
+				SODTYPE: '200',
+				MTRMARK: body.softOneMTRMARK,
+				CODE: '51',
+				NAME:  body.softOneName,
+				
+			}
+		}
 		try {
 			await connectMongo();
-			await Markes.updateOne(
-				{ _id: body._id },
-				{
-					name: body.name,
-					description: body.description,
-					logo: body.logo,
-					videoPromoList: body.videoPromoList,
-					photosPromoList: body.photosPromoList,
-					pimAccess: {
-						pimUrl: body.pimUrl,
-						pimUserName: body.pimUserName,
-						pimPassword: body.pimPassword
-					},
-					webSiteUrl: body.webSiteUrl,
-					officialCatalogueUrl:  body.officialCatalogueUrl,
-					facebookUrl:  body.facebookUrl,
-					instagramUrl: body.instagramUrl,
-					softOne: {
-						COMPANY: '1001',
-						SODTYPE: '200',
-						MTRMARK: body.softOneMTRMARK,
-						CODE: '51',
-						NAME:  body.softOneName,
-						ISACTIVE: 1
-					}
-				});
-
-			const user = await User.findOne({ _id: body._id });
-			res.status(200).json({ success: true, user });
+			await Markes.updateOne({ _id: body._id }, { $set: { ...updateBody } });
+			const markes = await Markes.findOne({ _id: body._id });
+			if(markes) {
+				return res.status(200).json({ success: true, result: markes });
+			} else {
+				res.status(200).json({ success: false, result: null });
+			}
 
 
 		} catch (error) {
-			res.status(400).json({ success: false });
+			res.status(400).json({ success: false, result: null });
 
 		}
 

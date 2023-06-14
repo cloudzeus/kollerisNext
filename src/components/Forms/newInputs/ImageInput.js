@@ -25,7 +25,6 @@ export const ImageInput = ({logo, setSelectedFile, label, required, mb}) => {
         const { data } = await axios.post("/api/saveImage", formData);
         if(data.done === 'ok') {
             //props.setSelected files, to save the fileName to the database
-            console.log(data.newFilename)
             setSelectedFile(data.newFilename);
             setImageName(data.newFilename)
             setLoading(false)

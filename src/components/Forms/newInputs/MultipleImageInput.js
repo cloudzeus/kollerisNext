@@ -60,36 +60,94 @@ const ImageUploader = () => {
                     </div>
                 )}
             </Dropzone>
-            <div className="multiple-upload-images-container" >
-                {uploadedImages && uploadedImages.map((imageUrl, index) => (
-                    <>
-                        <div className="multiple-upload-images" key={index}>
-                            <Image
-                                src={`/uploads/${imageUrl}`}
-                                alt={`Uploaded ${index + 1}`}
-                                fill={true}
-                                sizes={50}
+            {uploadedImages && uploadedImages.map((imageUrl, index) => (
+                <div className="drag-n-drop_container" key={index}>
+                    <div className="drag-n-drop_image">
+                        <Image
+                            src={`/uploads/${imageUrl}`}
+                            alt={`Uploaded ${index + 1}`}
+                            fill={true}
+                            sizes={50}
+                        />
+                        <button
+                            onClick={(e) => deleteImage(e, imageUrl)}
+                            className="delete-button">
+                            <ClearIcon />
+                        </button>
+                    </div>
+                    <div className="drag-n-drop_inputdiv">
+                            <input
+                                className="drag-n-drop_input"
+                                type="text"
+                                placeholder="Ονομα"
                             />
-                            <button
-                                onClick={(e) => deleteImage(e, imageUrl)}
-                                className="delete-button">
-                                <ClearIcon />
-                            </button>
                         </div>
-
-                    </>
+                </div>
+            ))}
+            {/* <div className="container">
+                {uploadedImages && uploadedImages.map((imageUrl, index) => (
+                   <div className="test">sss</div>
                 ))}
-            </div>
+            </div> */}
         </UploaderStyled>
     );
 }
 
 
+{/* <div className='multiple-upload-image_container'>
+<div className="multiple-upload-images" key={index}>
+        <Image
+            src={`/uploads/${imageUrl}`}
+            alt={`Uploaded ${index + 1}`}
+            fill={true}
+            sizes={50}
+        />
+      
+    <button
+        onClick={(e) => deleteImage(e, imageUrl)}
+        className="delete-button">
+        <ClearIcon />
+    </button>
+</div>
+<input
+            type="text"
+            placeholder="Ονομα"
+        />
 
+</div> */}
 
 
 const UploaderStyled = styled.div`
+    .drag-n-drop_container {
+        width: 100%;
+        border: 1px solid ${({ theme }) => theme.palette.border};
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    .test {
+        width: 100%;
+        background-color: pink;
+    }
+    .drag-n-drop_image {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        margin-right: 16px;
+        border-radius: 4px;
+        position: relative;
+        border-radius: 5px;
+        z-index: 0;
+    }
+    .drag-n-drop_inputdiv {
+        width: 100%;
+        margin-left: 10px;
+    }
+    .drag-n-drop_inputdiv input.drag-n-drop_input {
+        width: 100%;
+        padding: 10px;
+        /* border: 1px solid ${({ theme }) => theme.palette.border}; */
 
+    }
     border: 1px dashed ${({ theme }) => theme.palette.primary.light10};
     padding: 10px;
     border-radius: 4px;
@@ -107,9 +165,17 @@ const UploaderStyled = styled.div`
         color: ${({ theme }) => theme.palette.primary.light10};
         margin-right: 10px;
     }
+
+    .multiple-upload-image_container {
+        display: block;
+        width: 1;
+        border: 1px solid ${({ theme }) => theme.palette.border};
+        padding: 15px;
+    }
+
     .multiple-upload-images {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         position: relative;
         margin-right: 16px;
         border-radius: 4px;

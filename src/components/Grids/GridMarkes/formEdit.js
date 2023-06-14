@@ -45,7 +45,7 @@ export const FormEdit = () => {
             pimUrl: gridRowData?.pimAccess?.pimUrl,
             pimUserName: gridRowData?.pimAccess?.pimUserName,
             pimPassword: gridRowData?.pimAccess?.pimPassword,
-            logo: gridRowData?.logo,
+            
         }
     });
     const [selectedFile, setSelectedFile] = useState(null);
@@ -79,6 +79,8 @@ export const FormEdit = () => {
         } else {
             setVideoList([...gridRowData?.videoPromoList])
         }
+
+        setSelectedFile(gridRowData?.logo)
      
     }, [])
 
