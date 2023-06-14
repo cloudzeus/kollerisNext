@@ -25,6 +25,7 @@ const registerSchema = yup.object().shape({
 
 export const FormEdit = () => {
     const { gridRowData, gridSelectedFile} = useSelector(state => state.grid)
+    const { uploadedImages } = useSelector(state => state.upload)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
         defaultValues: {
@@ -43,15 +44,17 @@ export const FormEdit = () => {
             pimUserName: gridRowData?.pimAccess?.pimUserName,
             pimPassword: gridRowData?.pimAccess?.pimPassword,
             logo: gridRowData?.logo,
-
         }
     });
     const [selectedFile, setSelectedFile] = useState(null);
     const dispatch = useDispatch();
-    const [videoList, setVideoList] = useState([{
-        name: '',
-        videoUrl: ''
-    }])
+
+    const [videoList, setVideoList] = useState([
+        {
+            name: '',
+            videoUrl: ''
+        }
+    ]);
    
 
     useEffect(() => {
@@ -60,6 +63,7 @@ export const FormEdit = () => {
         for(let element of gridRowData.photosPromoList) {
             array.push(element.photosPromoUrl)
         }
+
         dispatch(setUploadImages(array))
         if(gridRowData?.photosPromoList?.photosPromoUrl) { 
             dispatch(setUploadImages(gridRowData.photosPromoList.photosPromoUrl))
@@ -82,8 +86,20 @@ export const FormEdit = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
+        console.log('data')
+        console.log(data)
         console.log('videoList')
         console.log(videoList)
+        let dataObj = {
+            ...data,
+            logo: selectedFile,
+            videoPromoList: videoList,
+            photosPromoList: uploadedImages,
+            
+        }
+
+        console.log('data')
+        console.log(dataObj)
 
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })

@@ -2,30 +2,45 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import { useDispatch } from "react-redux";
+import { setVideoUrl } from "@/features/grid/gridSlice";
 
-
-export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register}) => {
-    const addInputFields = () => {
-        setFormData([...formData, { name: '', videoUrl: '' }]);
-        
-      };
-
-  
-
-    const handleInputChange = (event,index) => {
-            const { name, value } = event.target;
-            const updatedList = [...formData];
-            updatedList[index][name] = value;
-            setFormData(updatedList);
-           
-
-
-      };
+export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register }) => {
 
 
 
-      const deleteInputFields = (index) => {
+
+
+    const handleNameChange = (event, index) => {
+        const updatedVideoList = [...formData];
+        updatedVideoList[index] = {
+            ...updatedVideoList[index],
+            name: event.target.value
+        };
+        setFormData(updatedVideoList);
+    };
+
+    const handleVideoUrlChange = (event ,index) => {
+        const updatedVideoList = [...formData];
+        updatedVideoList[index] = {
+            ...updatedVideoList[index],
+            videoUrl: event.target.value
+        };
+        setFormData(updatedVideoList);
+    };
+
+    const addVideo = (e) => {
+        e.preventDefault();
+        setFormData(prevList => [
+            ...prevList,
+            {
+                name: '',
+                videoUrl: ''
+            }
+        ]);
+    };
+    const deleteInputFields = (index) => {
         const updatedList = [...formData];
         updatedList.splice(index, 1);
         setFormData(updatedList);
@@ -33,25 +48,37 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
     return (
         <Container>
-            {formData.map((row, index) => {
-                console.log(row)
-                return (
+            <div >
+                {formData.map((video, index) => (
                     <div key={index} className="add_more_double_input_div">
-                        <input type="text" placeholder="Όνομα" value={row.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)}/>
-                        <input type="text" name={htmlName2} placeholder="https://" value={row.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
-                        <AddIcon onClick={addInputFields} />
+                        <input
+                            type="text"
+                            value={video.name}
+                            onChange={event => handleNameChange(event, index)}
+                            placeholder="Ονομα:"
+                        />
+                        <input
+                            type="text"
+                            value={video.videoUrl}
+                            onChange={event => handleVideoUrlChange(event, index)}
+                            placeholder="https://"
+                        />
                         {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => deleteInputFields(index)}  />}
                     </div>
-                )
-            })}
+                ))}
+                <AddIcon onClick={addVideo} />
+                {/* <button onClick={(e) => addVideo(e)}>Add Video</button> */}
+            </div>
         </Container>
     )
 }
 
 
+
+
 const borderColor = '#e8e8e8';
 const Container = styled.div`
-    border: 1px solid ${({theme}) => theme.palette.border};
+    border: 1px solid ${({ theme }) => theme.palette.border};
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 10px;

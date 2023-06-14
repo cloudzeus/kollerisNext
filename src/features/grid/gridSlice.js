@@ -13,6 +13,7 @@ const initialState = {
 	success: false,
 	editData: [],
 	notFoundData: [],
+	
 }
 
 
@@ -102,7 +103,8 @@ const gridSlice = createSlice({
 		},
 		setAsyncedMarkes: (state, action) => {
 			state.asyncedMarkes = action.payload;
-		}
+		},
+		
 	},
 	extraReducers: (builder) => {
 		builder
@@ -175,5 +177,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction} = gridSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, l} = gridSlice.actions;
 export default gridSlice.reducer;
