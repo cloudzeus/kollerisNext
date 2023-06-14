@@ -136,8 +136,8 @@ export default async function handler(req, res) {
 	}
 	if (action === 'createMany') {
 		let { data } = req.body
-		console.log('data')
-		console.log(data)
+		// console.log('data')
+		// console.log(data)
 
 		
 		let newArray = [];
@@ -283,25 +283,25 @@ export default async function handler(req, res) {
 		console.log('sync')
 		try {
 			let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
-			console.log(URL)
+			// console.log(URL)
 			let { data } = await axios.post(URL)
-			console.log(data)
+			// console.log(data)
 			//SOFTONE ARRAY:
 			let softOneArray = data.result;
-			console.log('100', Array(softOneArray))
+			// console.log('100', Array(softOneArray))
 			//MONGO ARRAY:
 			await connectMongo();
 			const mongoArray = await Markes.find({}, { softOne: 1 });
 
-			console.log('Received Mongo Array')
-			console.log(mongoArray)
+			// console.log('Received Mongo Array')
+			// console.log(mongoArray)
 
 		
 		
 
 			let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
-			console.log('--------------------------- NEW ARRAY -----------------------------------')
-			console.log(newArray)
+			// console.log('--------------------------- NEW ARRAY -----------------------------------')
+			// console.log(newArray)
 			if (newArray) {
 				return res.status(200).json({ success: true, markes: newArray });
 			}
@@ -319,7 +319,7 @@ export default async function handler(req, res) {
 
 		let data = req.body.data;
 		let syncTo = req.body.syncTo;
-		console.log(parseInt(data.MTRMARK))
+		// console.log(parseInt(data.MTRMARK))
 		try {
 			await connectMongo();
 			if (req.body.syncTo == 'Εμάς') {

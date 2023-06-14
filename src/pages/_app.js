@@ -33,7 +33,7 @@ function App({ Component, pageProps: {session, pageProps} }) {
                                     pauseOnHover
                                     theme="light"
                                 />
-                                <GeneralContainer>
+                                <GeneralContainer >
                                     <Component {...pageProps} />
                                 </GeneralContainer>
 

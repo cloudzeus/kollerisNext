@@ -93,11 +93,13 @@ const GridTable = () => {
                         <SyncIcon />
                     </Notifications >
                     <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
-                    {!action && <Grid id={id} setId={setId} />}
-                    {action === 'add' && <FormAdd />}
-                    {action === 'sync' && <Sync />}
-                    {action === 'edit' && selectedId && <FormEdit />}
-                    {action === 'findSoftoneExtra' && <SoftOneExtra />}
+                    <div>
+                        {!action && <Grid id={id} setId={setId} />}
+                        {action === 'add' && <FormAdd />}
+                        {action === 'sync' && <Sync />}
+                        {action === 'edit' && selectedId && <FormEdit />}
+                        {action === 'findSoftoneExtra' && <SoftOneExtra />}
+                    </div>
                 </div>
 
             </Container>

@@ -13,6 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { editGridItem } from "@/features/grid/gridSlice";
 import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
+import { set } from "mongoose";
 
 
 const registerSchema = yup.object().shape({
@@ -25,18 +26,17 @@ const registerSchema = yup.object().shape({
 
 
 export const FormEdit = () => {
-    const { gridRowData, gridSelectedFile, editData } = useSelector(state => state.grid)
-    console.log('EDIT DATA')
-    console.log(editData)
+    const { gridRowData, gridSelectedFile} = useSelector(state => state.grid)
     const dispatch = useDispatch();
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
     }])
+    console.log('videoList 0000' + JSON.stringify(videoList))
 
     useEffect(() => {
-        for(let i of gridRowData?.videoPromoList) {
-            setVideoList(prev => [...prev, i])
+        if (gridRowData?.videoPromoList) {
+            setVideoList([...gridRowData?.videoPromoList])
         }
     }, [])
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -46,8 +46,8 @@ export const FormEdit = () => {
             name: gridRowData?.name,
             description: gridRowData?.description,
             facebookUrl: gridRowData?.facebookUrl,
-            instagramUrl: editData?.instagramUrl,
-            officialCatalogueUrl: editData?.officialCatalogueUrl,
+            instagramUrl: gridRowData?.instagramUrl,
+            officialCatalogueUrl: gridRowData?.officialCatalogueUrl,
             softOneMTRMARK: gridRowData?.softOne?.MTRMARK,
             softOneName: gridRowData?.softOne?.NAME,
             softOneCode: gridRowData?.softOne?.CODE,
@@ -67,7 +67,8 @@ export const FormEdit = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-
+        console.log('videoList')
+        console.log(videoList)
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: {...data, ...formData, logo: selectedFile ? selectedFile.name : ''} })
         // let res = await axios.post('/api/admin/markes/markes', { action: 'create' })
         // console.log('------------------------- Res --------------------------')
@@ -192,7 +193,8 @@ export const FormEdit = () => {
                         htmlName1="name"
                         htmlName2="videoUrl"
                         setFormData={setVideoList}
-                        formData={videoList} />
+                        formData={videoList}
+                        />
                 </div>
                 <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
             </YupForm>

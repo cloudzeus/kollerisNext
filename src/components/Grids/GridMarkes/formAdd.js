@@ -39,19 +39,20 @@ export const FormAdd = () => {
         videoUrl: ''
     }])
 
-    
+   
 
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-       
+        console.log('videoList')
+        console.log(videoList)
         let body = {
             ...data,
             logo: selectedFile,
-            videoPromiList: videoList,
+            videoPromoList: videoList,
             uploadedImages: uploadedImages,
-           
         }
+
        
         
 

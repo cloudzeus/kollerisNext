@@ -6,10 +6,14 @@ import {toast} from 'react-toastify';
 
 
 export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register}) => {
-
     const addInputFields = () => {
         setFormData([...formData, { name: '', videoUrl: '' }]);
+        
       };
+
+    useEffect(() => {
+       
+    })
 
     const handleInputChange = (event,index) => {
         const { name, value } = event.target;
@@ -28,10 +32,11 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
     return (
         <Container>
             {formData.map((row, index) => {
+                console.log(row)
                 return (
                     <div key={index} className="add_more_double_input_div">
-                        <input type="text" placeholder="Όνομα"  value={formData.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)} />
-                        <input type="text" name={htmlName2} placeholder="https://" value={formData.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
+                        <input type="text" placeholder="Όνομα"  value={row.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)}/>
+                        <input type="text" name={htmlName2} placeholder="https://" value={row.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
                         <AddIcon onClick={addInputFields} />
                         {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => deleteInputFields(index)}  />}
                     </div>

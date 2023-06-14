@@ -152,7 +152,7 @@ const FlexBorderBottom = styled.div`
 const Box = styled.div`
     margin-bottom: 20px;
     background-color: white;
-        border-radius: 5px;     
+    border-radius: 5px;     
         /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
         box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
         -webkit-box-shadow: 1px 1px 9px 1px rgba(0,0,0,0.05);
@@ -167,5 +167,5 @@ const Box = styled.div`
 export {
     Box,
     Section,
-    FlexBorderBottom 
+    FlexBorderBottom
 }

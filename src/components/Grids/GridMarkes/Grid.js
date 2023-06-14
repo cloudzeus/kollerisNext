@@ -7,18 +7,20 @@ import styled from "styled-components";
 import { useDispatch } from 'react-redux';
 import { setSelectedId, setGridRowData } from "@/features/grid/gridSlice";
 
+const settings = { checkboxMode: 'ResetOnRowClick' };
+const validationRules = { required: true };
+const pageSettings = { pageCount: 5 };
+const loadingIndicator = { indicatorType: 'Shimmer' }
+const editOptions = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
+const toolbarOptions = ['Search', 'ExcelExport'];
+
 
 const Grid = ({ id, setId }) => {
 
     const [data, setData] = useState([]);
     const [grid, setGrid] = useState(null);
     const dispatch = useDispatch();
-    const validationRules = { required: true };
-    const pageSettings = { pageCount: 5 };
-    const loadingIndicator = { indicatorType: 'Shimmer' }
-    const editOptions = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
-    const toolbarOptions = ['Search', 'ExcelExport'];
-
+ 
     const handleFetchUser = async () => {
         try {
             const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
@@ -71,6 +73,7 @@ const Grid = ({ id, setId }) => {
             console.log('row selected')
             const selectedrecords = grid.getSelectedRecords();
             let id = selectedrecords[0]._id
+            console.log(selectedrecords[0])
             setId(id)
             dispatch(setSelectedId(id))
             dispatch(setGridRowData(selectedrecords[0]))
@@ -81,6 +84,7 @@ const Grid = ({ id, setId }) => {
             <GridComponent
                 id='grid'
                 allowMultiSorting={true}
+                selectionSettings={settings}
                 // sortSettings={sortingOptions}
                 allowSorting={true}
                 toolbarClick={toolbarClick}
@@ -95,7 +99,7 @@ const Grid = ({ id, setId }) => {
                 ref={g => setGrid(g)}
             >
                 <ColumnsDirective>
-                    <ColumnDirective type='checkbox' width='30'></ColumnDirective>
+                    {/* <ColumnDirective type='checkbox' width='30'></ColumnDirective> */}
                     <ColumnDirective field='softOne.MTRMARK' headerText='MTRMARK' width='100' ></ColumnDirective>
                     <ColumnDirective field='logo' headerText='Λογότυπο' width='100' template={gridTemplate}></ColumnDirective>
                     <ColumnDirective field='softOne.NAME' headerText='Softone Όνομα' width='140' ></ColumnDirective>
