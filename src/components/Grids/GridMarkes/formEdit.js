@@ -187,9 +187,11 @@ export const FormEdit = () => {
                 <GridContainer>
 
                     <ImageInput
+                        label="Λογότυπο"
                         logo={gridRowData?.logo}
                         setSelectedFile={setSelectedFile}
                         selectedFile={selectedFile}
+                        mb={'20px'}
                     />
                 </GridContainer>
                 <div>

@@ -9,7 +9,7 @@ import ImageIcon from '@mui/icons-material/Image';
 
 
 
-export const ImageInput = ({logo, setSelectedFile, label, required}) => {
+export const ImageInput = ({logo, setSelectedFile, label, required, mb}) => {
     const [imageName, setImageName] = useState(logo);
     const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,7 @@ export const ImageInput = ({logo, setSelectedFile, label, required}) => {
         document.getElementById('customFileUpload2').click()
     }
     return (
-        <Container>
+        <Container mb={mb}>
             <p className="label">
                 {label}
                 <span>{required ? '*' : ''}
@@ -99,6 +99,8 @@ const Container = styled.div`
         margin-left: 2px;
     }
     }
+
+    margin-bottom: ${props => props.mb ? props.mb : ''};
     
 `
 

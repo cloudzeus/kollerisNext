@@ -14,11 +14,22 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
   
 
     const handleInputChange = (event,index) => {
-        const { name, value } = event.target;
-        const updatedList = [...formData];
-        updatedList[index][name] = value;
-        setFormData(updatedList);
+            const { name, value } = event.target;
+            // const updatedList = [...formData];
+            // updatedList[index][name] = value;
+            // setFormData(updatedList);
+            const updatedList = formData.map((item, i) => {
+                if (i === index) {
+                  // Update the specific item at the given index
+                  return { ...item, [name]: value };
+                }
+                return item;
+              });
+              setFormData(updatedList);
+
+
       };
+
 
 
       const deleteInputFields = (index) => {
@@ -33,7 +44,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
                 console.log(row)
                 return (
                     <div key={index} className="add_more_double_input_div">
-                        <input type="text" placeholder="Όνομα"  value={row.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)}/>
+                        <input type="text" placeholder="Όνομα" value={row.name} name={htmlName1} onChange={(e) =>handleInputChange (e, index)}/>
                         <input type="text" name={htmlName2} placeholder="https://" value={row.videoUrl} onChange={(e) =>handleInputChange (e, index)} />
                         <AddIcon onClick={addInputFields} />
                         {index > 0 && <DeleteForeverIcon className="add_more_double_input_delete_icon" onClick={() => deleteInputFields(index)}  />}
