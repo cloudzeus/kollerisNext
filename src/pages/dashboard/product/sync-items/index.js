@@ -9,6 +9,8 @@ import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
 import Button from '@/components/Buttons/Button';
 import { findSoftoneAndSyncTables } from '@/features/grid/gridSlice';
+import styled from 'styled-components';
+
 
 const percentage = 90;
 
