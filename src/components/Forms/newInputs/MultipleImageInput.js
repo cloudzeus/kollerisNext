@@ -76,12 +76,16 @@ const ImageUploader = () => {
                         </button>
                     </div>
                     <div className="drag-n-drop_inputdiv">
-                            <input
-                                className="drag-n-drop_input"
-                                type="text"
-                                placeholder="Ονομα"
-                            />
+                        <div>
+                            <span>url:</span>
+                            <span>{imageUrl}</span>
                         </div>
+                        <input
+                            className="drag-n-drop_input"
+                            type="text"
+                            placeholder="Ονομα"
+                        />
+                    </div>
                 </div>
             ))}
             {/* <div className="container">
@@ -94,30 +98,20 @@ const ImageUploader = () => {
 }
 
 
-{/* <div className='multiple-upload-image_container'>
-<div className="multiple-upload-images" key={index}>
-        <Image
-            src={`/uploads/${imageUrl}`}
-            alt={`Uploaded ${index + 1}`}
-            fill={true}
-            sizes={50}
-        />
-      
-    <button
-        onClick={(e) => deleteImage(e, imageUrl)}
-        className="delete-button">
-        <ClearIcon />
-    </button>
-</div>
-<input
-            type="text"
-            placeholder="Ονομα"
-        />
 
-</div> */}
 
 
 const UploaderStyled = styled.div`
+ border: 1px dashed ${({ theme }) => theme.palette.primary.light10};
+    padding: 10px;
+    border-radius: 4px;
+    & div {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        width:  100%;
+
+    }
     .drag-n-drop_container {
         width: 100%;
         border: 1px solid ${({ theme }) => theme.palette.border};
@@ -141,23 +135,22 @@ const UploaderStyled = styled.div`
     .drag-n-drop_inputdiv {
         width: 100%;
         margin-left: 10px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    .drag-n-drop_inputdiv div {
+        font-size: 14px;
+    }
+    .drag-n-drop_inputdiv div span:first-child {
+        font-weight: 700;
     }
     .drag-n-drop_inputdiv input.drag-n-drop_input {
         width: 100%;
         padding: 10px;
-        /* border: 1px solid ${({ theme }) => theme.palette.border}; */
-
+        border: 1px solid ${({ theme }) => theme.palette.border};
     }
-    border: 1px dashed ${({ theme }) => theme.palette.primary.light10};
-    padding: 10px;
-    border-radius: 4px;
-    & div {
-        display: flex;
-        align-items: center;
-        padding: 5px;
-        width:  100%;
-
-    }
+   
     p {
         font-size: 14px;
     }
@@ -166,24 +159,7 @@ const UploaderStyled = styled.div`
         margin-right: 10px;
     }
 
-    .multiple-upload-image_container {
-        display: block;
-        width: 1;
-        border: 1px solid ${({ theme }) => theme.palette.border};
-        padding: 15px;
-    }
-
-    .multiple-upload-images {
-        width: 60px;
-        height: 60px;
-        position: relative;
-        margin-right: 16px;
-        border-radius: 4px;
-        position: relative;
-        border-radius: 5px;
-        z-index: 0;
-
-    }
+  
     .delete-button {
         outline: none;
         width: 20px;
