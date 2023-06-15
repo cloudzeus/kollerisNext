@@ -1,9 +1,14 @@
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter, ExcelExport, Sort } from '@syncfusion/ej2-react-grids';
-import { GridContainer } from "./styles";
-import styled from "styled-components";
+import { 
+    GridComponent, 
+    ColumnsDirective, 
+    ColumnDirective, 
+    Page, Toolbar, Edit, Inject, Filter, ExcelExport, Sort 
+} from '@syncfusion/ej2-react-grids';
+
+import {  ImageDiv } from "@/componentsStyles/grid/gridStyles";
 import { useDispatch } from 'react-redux';
 import { setSelectedId, setGridRowData } from "@/features/grid/gridSlice";
 
@@ -79,7 +84,7 @@ const Grid = ({ id, setId }) => {
         }
     };
     return (
-        <GridContainer>
+        <div className="grid-wrapper">
             <GridComponent
                 id='grid'
                 allowMultiSorting={true}
@@ -110,21 +115,10 @@ const Grid = ({ id, setId }) => {
                 </ColumnsDirective>
                 <Inject services={[Page, Edit, Toolbar, Filter, ExcelExport, Sort]} />
             </GridComponent>
-        </GridContainer>
+        </div>
     )
 }
 
-const ImageDiv = styled.div`
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    border-radius: 4px;
-    background-color: white;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid ${({ theme }) => theme.palette.border};
-    
-   
-`
+
 
 export default Grid

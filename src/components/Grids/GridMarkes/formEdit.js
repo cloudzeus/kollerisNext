@@ -14,7 +14,7 @@ import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
 import { setUploadImages,resetUploadImages  } from "@/features/upload/uploadSlice";
 import axios from "axios";
-
+import { GridContainer } from "@/componentsStyles/grid/gridStyles";
 
 const registerSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -26,7 +26,7 @@ const registerSchema = yup.object().shape({
 
 
 export const FormEdit = () => {
-    const { gridRowData, gridSelectedFile} = useSelector(state => state.grid)
+    const { gridRowData} = useSelector(state => state.grid)
     const { uploadedImages } = useSelector(state => state.upload)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
@@ -237,17 +237,7 @@ export const FormEdit = () => {
 
 
 
-const GridContainer = styled.div`
-    display: grid;
-    grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'} ;
-    grid-column-gap: 30px;
-    @media (max-width: 1400px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 1000px) {
-        grid-template-columns: repeat(1, 1fr);
-    }
-`
+
 
 
 

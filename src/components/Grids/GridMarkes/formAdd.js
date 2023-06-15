@@ -1,16 +1,13 @@
 import { useForm } from "react-hook-form";
-import { use, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from 'react'
-import styled from "styled-components";
-
 import axios from "axios";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
-import { selected } from "@syncfusion/ej2/pivotview";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
 import { useSelector } from "react-redux";
 import {toast} from 'react-toastify';
@@ -18,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { fetchNotSynced, setAction } from "@/features/grid/gridSlice";
 import { setUploadImages, resetUploadImages} from "@/features/upload/uploadSlice";
 import { useEffect } from "react";
+import { GridContainer } from "@/componentsStyles/grid/gridStyles";
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -199,22 +197,6 @@ export const FormAdd = () => {
                 type="text"
                 register={register}
             />
-            <GridContainer>
-                {/* <UploadInput
-                    title="λογότυπο"
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                /> */}
-            </GridContainer>
-            {/* <h2>VideoPromoList</h2>
-            <AddMoreInput  
-                label="Video"
-                attr1="name"
-                attr2="videoUrl"
-                objName="videoPromoList" 
-                setFormData={setFormData} 
-                formData={formData} />
-           */}
            <div>
               <h2>Βίντεο Προϊόντος</h2>
             <AddMoreInput  
@@ -235,18 +217,5 @@ export const FormAdd = () => {
 
 
 
-
-const GridContainer = styled.div`
-    display: grid;
-    height: auto;
-    grid-template-columns: ${props => props.repeat ? `repeat(${props.repeat}, 1fr)` : 'repeat(2, 1fr)'};
-    grid-column-gap: 30px;
-    @media (max-width: 1400px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 1000px) {
-        grid-template-columns: repeat(1, 1fr);
-    }
-`
 
 
