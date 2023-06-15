@@ -7,10 +7,10 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUploadImages, resetUploadImages } from '@/features/upload/uploadSlice';
 import ClearIcon from '@mui/icons-material/Clear';
+import { Input } from './InputClassic';
 const ImageUploader = () => {
     const { uploadedImages } = useSelector((state) => state.upload);
-    console.log('uploadedImages')
-    console.log(uploadedImages)
+    const [input, setInput] = useState('');
     const dispatch = useDispatch();
 
     const deleteImage = (e, imageUrl) => {
@@ -18,9 +18,13 @@ const ImageUploader = () => {
         e.preventDefault();
         let newImages = uploadedImages.filter((image) => image !== imageUrl);
         dispatch(setUploadImages(newImages))
-        console.log('newImages')
-        console.log(newImages)
+     
     }
+
+    const handleInput = (e) => {
+        setInput(e.target.value)
+    }
+
 
     const handleDrop = async (acceptedFiles) => {
         const formData = new FormData();
@@ -46,6 +50,17 @@ const ImageUploader = () => {
         }
     };
 
+   const onSubmitName = async () => {
+
+    const response = await fetch('/api/uploads/saveImageMulter', {
+        method: 'POST',
+        body: {
+            name: input,
+            action: 'changeName'
+        },
+    });
+   }
+
     return (
         <UploaderStyled>
             <Dropzone onDrop={handleDrop}
@@ -56,7 +71,6 @@ const ImageUploader = () => {
                         <input {...getInputProps()} />
                         <CameraAltIcon />
                         <p>Σύρετε ή πατήστε και επιλέξτε φωτογραφίες</p>
-
                     </div>
                 )}
             </Dropzone>
@@ -80,19 +94,21 @@ const ImageUploader = () => {
                             <span>url:</span>
                             <span>{imageUrl}</span>
                         </div>
-                        <input
-                            className="drag-n-drop_input"
-                            type="text"
-                            placeholder="Ονομα"
-                        />
+                        <div className="input-div">
+                            <Input 
+                                mb={'0'}
+                                type="text"
+                                placeholder="Ονομα"
+                                onChange={(e) => handleInput(e)}
+                            />
+                            {/* <button onClick={onSubmitName}> change name</button>   */}
+                        </div>
+                       
+                       
                     </div>
                 </div>
             ))}
-            {/* <div className="container">
-                {uploadedImages && uploadedImages.map((imageUrl, index) => (
-                   <div className="test">sss</div>
-                ))}
-            </div> */}
+        
         </UploaderStyled>
     );
 }
@@ -102,9 +118,10 @@ const ImageUploader = () => {
 
 
 const UploaderStyled = styled.div`
- border: 1px dashed ${({ theme }) => theme.palette.primary.light10};
+     border: 1px solid ${({ theme }) => theme.palette.border};
     padding: 10px;
     border-radius: 4px;
+    cursor: pointer;
     & div {
         display: flex;
         align-items: center;
@@ -180,6 +197,15 @@ const UploaderStyled = styled.div`
             color: red;
             margin-right: 0;
         }
+
+        .input-div {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            align-items: center;
+            width: 100%;
+        }
+
+        
     }
 `
 export default ImageUploader;

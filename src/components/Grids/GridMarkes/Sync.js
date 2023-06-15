@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { fetchNotSynced, updateNotSynced, notSyncedData } from '@/features/grid/gridSlice';
 import { useSelector } from 'react-redux';
 import { SyncItemsContainer } from '@/componentsStyles/grid/gridStyles';
-
+import {Alert} from '@mui/material';
 const Sync = () => {
 
     const [isSynced, setIsSynced] = useState([])
@@ -96,7 +96,9 @@ const Sync = () => {
     return (
 
         <SyncItemsContainer isSynced={isSynced} >
+             <Alert style={{marginTop: '20px'}} severity="info">Ενημερώστε τις διαφορές βάσης Softone και Ariadne</Alert>
             <div className="header-top">
+           
                 <div className="syncDiv" onClick={changeSync}>
                     < SyncAltIcon />
                     <p>
@@ -118,9 +120,11 @@ const Sync = () => {
                 const formsContainerClassName = isItemSynced ? 'formsContainer synced filled-border' : 'formsContainer';
                 let our = item?.ourObject;
                 let softone = item?.softoneObject
-                let isChecked = true;
                 return (
+
                     <div className={formsContainerClassName} key={index}>
+                        
+
                         <div className="item-primary-key">
                             <span>Kωδικός:</span>
                             <span>{softone.CODE}</span>

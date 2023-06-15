@@ -15,7 +15,8 @@ import { useDispatch } from "react-redux";
 import { fetchNotSynced, setAction } from "@/features/grid/gridSlice";
 import { setUploadImages, resetUploadImages} from "@/features/upload/uploadSlice";
 import { useEffect } from "react";
-import { GridContainer } from "@/componentsStyles/grid/gridStyles";
+import { GridContainer, FormWrapper } from "@/componentsStyles/grid/gridStyles";
+import {MdOutlineKeyboardBackspace} from 'react-icons/md';
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -66,7 +67,6 @@ export const FormAdd = () => {
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
         await axios.post('/api/admin/markes/markes', { action: 'sync'})
         if(res.data.success) {
-            
             dispatch(setAction(null))
             dispatch(fetchNotSynced())
             toast.success('Επιτυχής προσθήκης μάρκας')
@@ -80,7 +80,8 @@ export const FormAdd = () => {
 
     return (
         // grid-form-styles-form : /components/Grids/GridMarkes/styles.js
-        <form className="grid-styles-form" noValidate  >
+        <FormWrapper  noValidate  >
+            <h2 className="grid-form_header">Προσθήκη Μάρκας</h2>
             <GridContainer>
                 <InputVar1
                     label="Όνομα"
@@ -137,7 +138,7 @@ export const FormAdd = () => {
                 setSelectedFile={setSelectedFile}
                 selectedFile={selectedFile}
             />
-            <h2>SOFTONE Info</h2>
+            <h2 className="grid-form_subheader">Softone</h2>
             <GridContainer >
                 <InputVar1
                     label="MTRMARK"
@@ -176,7 +177,7 @@ export const FormAdd = () => {
                     register={register}
                 />
 
-            <h2>Pim Access</h2>
+            <h2 className="grid-form_subheader">Pim access</h2>
             <GridContainer>
                 <InputVar1
                     label="pimUrl"
@@ -198,7 +199,7 @@ export const FormAdd = () => {
                 register={register}
             />
            <div>
-              <h2>Βίντεο Προϊόντος</h2>
+           <h2 className="grid-form_subheader">Βίντεο</h2>
             <AddMoreInput  
                 label="Video"
                 htmlName1="name"
@@ -206,10 +207,18 @@ export const FormAdd = () => {
                 setFormData={setVideoList}
                 formData={videoList} />
            </div>
-            <h2>Φωτογραφίες Προϊόντος</h2>
+           <h2 className="grid-form_subheader">Φωτογραφίες Προϊόντος</h2>
            <FileDropzone />
-            <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
-        </form>
+            <div className="grid-form_buttondiv">
+                <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
+                <button
+                    className="grid-form_back" 
+                    onClick={() => dispatch(setAction(null))} >
+                    <MdOutlineKeyboardBackspace />
+                </button>
+            </div>
+          
+        </FormWrapper>
     )
 }
 

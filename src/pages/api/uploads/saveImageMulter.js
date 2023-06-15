@@ -13,6 +13,8 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+
+ 
   // Use the multer middleware to handle multiple file uploads
   upload.array('files')(req, res, async function (err) {
     if (err) {
@@ -22,7 +24,7 @@ export default async function handler(req, res) {
 
     const { files } = req;
 
-    const uploadedURLs = [];
+    const uploadedURLs = [{name: '', photosPromoUrl: ''}];
 
     // Process each uploaded file
     for (const file of files) {

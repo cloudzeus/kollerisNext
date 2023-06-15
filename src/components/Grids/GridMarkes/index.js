@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import {
     AddIcon,
     EditIcon,
-    DeleteIcon,
     SyncIcon,
 } from './config';
 import { FormAdd } from './formAdd';
@@ -32,8 +31,6 @@ const GridTable = () => {
     const [id, setId] = useState(null);
     const { selectedId, asyncedMarkes, action } = useSelector(state => state.grid)
     const dispatch = useDispatch();
-    const gridActionCondition = (a) => (action !== a && action !== null) ? 'disabled' : ''
-
     const handleAction = (action) => {
         dispatch(setAction(action))
     }
@@ -47,7 +44,20 @@ const GridTable = () => {
         handleAction('sync')
     }
 
-
+    const showComponents = () => {
+        switch (action) {
+            case 'add':
+                return <FormAdd />
+            case 'edit':
+                return <FormEdit />
+            case 'sync':
+                return <Sync />
+            case 'findSoftoneExtra':
+                return <SoftOneExtra />
+            default:
+                return <Grid id={id} setId={setId} />
+        }
+    }
 
     useEffect(() => {
         dispatch(fetchNotSynced());
@@ -97,11 +107,10 @@ const GridTable = () => {
                 </Notifications >
                 <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
                 <div>
-                    {!action && <Grid id={id} setId={setId} />}
-                    {action === 'add' && <FormAdd />}
-                    {action === 'sync' && <Sync />}
-                    {action === 'edit' && selectedId && <FormEdit />}
-                    {action === 'findSoftoneExtra' && <SoftOneExtra />}
+                    <>
+                        {showComponents()}
+                    </>
+                   
                 </div>
             </div>
 

@@ -174,27 +174,8 @@ export default async function handler(req, res) {
 		try {
 			await connectMongo();
 			const newMarkes = await Markes.insertMany(newArray);
-			// const newMarkes = await Markes.create({
-			// 	name:'',
-			// 	description: '',
-			// 	logo: '',
-			// 	videoPromoList: [],
-			// 	photoPromoList: [],
-			// 	pimAccess: {
-			// 		pimUrl: '',
-			// 		pimUserName: '',
-			// 		pimPassword: ''
-			// 	},
-			// 	webSiteUrl: '',
-			// 	officialCatalogueUrl: '',
-			// 	facebookUrl: '',
-			// 	instagramUrl: '',
-			// 	softOne: {
-			// 		...data[0]
-			// 	},
-			// });
+			
 			console.log('Softone Markes Inserted Successfully', JSON.stringify(newMarkes))
-
 			if (newMarkes) {
 				return res.status(200).json({ success: true, result: newMarkes });
 
@@ -211,13 +192,15 @@ export default async function handler(req, res) {
 		// await connectMongo();
 		let body = req.body.data;
 		console.log('body data')
-		console.log(body)
 		let updateBody = {
 			name: body.name,
 			description: body.description,
 			logo: body.logo,
 			videoPromoList: body.videoPromoList,
-			photosPromoList: body.photosPromoList,
+			photosPromoList: {
+				name: 'name',
+				photosPromoUrl: body.photosPromoUrl
+			},
 			pimAccess: {
 				pimUrl: body.pimUrl,
 				pimUserName: body.pimUserName,
@@ -233,12 +216,14 @@ export default async function handler(req, res) {
 				MTRMARK: body.softOneMTRMARK,
 				CODE: '51',
 				NAME:  body.softOneName,
-				
+				ISACTIVE: 1
 			}
 		}
+
+		console.log(updateBody)
 		try {
 			await connectMongo();
-			await Markes.updateOne({ _id: body._id }, { $set: { ...updateBody } });
+			await Markes.updateOne({ _id: body._id },  { ...updateBody });
 			const markes = await Markes.findOne({ _id: body._id });
 			if(markes) {
 				return res.status(200).json({ success: true, result: markes });

@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import * as yup from "yup";
 import React from 'react'
-import styled from "styled-components";
 import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { useSelector } from "react-redux";
@@ -12,9 +11,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
 import FileDropzone from "@/components/Forms/newInputs/MultipleImageInput";
-import { setUploadImages,resetUploadImages  } from "@/features/upload/uploadSlice";
+import { setUploadImages, resetUploadImages } from "@/features/upload/uploadSlice";
 import axios from "axios";
-import { GridContainer } from "@/componentsStyles/grid/gridStyles";
+import { GridContainer, FormWrapper } from "@/componentsStyles/grid/gridStyles";
+import { toast } from 'react-toastify';
+import { setAction } from "@/features/grid/gridSlice";
+import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 
 const registerSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -26,7 +28,7 @@ const registerSchema = yup.object().shape({
 
 
 export const FormEdit = () => {
-    const { gridRowData} = useSelector(state => state.grid)
+    const { gridRowData } = useSelector(state => state.grid)
     const { uploadedImages } = useSelector(state => state.upload)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
@@ -45,7 +47,7 @@ export const FormEdit = () => {
             pimUrl: gridRowData?.pimAccess?.pimUrl,
             pimUserName: gridRowData?.pimAccess?.pimUserName,
             pimPassword: gridRowData?.pimAccess?.pimPassword,
-            
+
         }
     });
     const [selectedFile, setSelectedFile] = useState(null);
@@ -57,21 +59,21 @@ export const FormEdit = () => {
             videoUrl: ''
         }
     ]);
-   
+
 
     useEffect(() => {
         let array = [];
         dispatch(resetUploadImages())
-        for(let element of gridRowData.photosPromoList) {
+        for (let element of gridRowData.photosPromoList) {
             array.push(element.photosPromoUrl)
         }
 
         dispatch(setUploadImages(array))
-        if(gridRowData?.photosPromoList?.photosPromoUrl) { 
+        if (gridRowData?.photosPromoList?.photosPromoUrl) {
             dispatch(setUploadImages(gridRowData.photosPromoList.photosPromoUrl))
         }
-      
-        if(gridRowData.videoPromoList.length  < 1) {
+
+        if (gridRowData.videoPromoList.length < 1) {
             setVideoList([{
                 name: '',
                 videoUrl: ''
@@ -81,7 +83,7 @@ export const FormEdit = () => {
         }
 
         setSelectedFile(gridRowData?.logo)
-     
+
     }, [dispatch, gridRowData])
 
 
@@ -99,14 +101,19 @@ export const FormEdit = () => {
             logo: selectedFile,
             videoPromoList: videoList,
             photosPromoList: uploadedImages,
-            
+
         }
 
-     
+
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'update', data: dataObj })
-        console.log('------------------------- Res --------------------------')
-        console.log(res)
+        if(res.data.success) {
+            toast.success('Η μάρκα ενημερώθηκε επιτυχώς')
+            dispatch(setAction(null))
+        } else {
+            toast.error('Κάτι πήγε στραβά')
+        }
+       
 
     }
 
@@ -115,9 +122,9 @@ export const FormEdit = () => {
     return (
         // grid-form-styles-form : /components/Grids/GridMarkes/styles.js
         <div>
-            <YupForm className="grid-styles-form">
+            < FormWrapper noValidate>
                 <div>
-                    <span></span>
+                    <h2 className="grid-form_header">Διόρθωση Μάρκας</h2>
                 </div>
                 <GridContainer>
                     <InputVar1
@@ -153,40 +160,29 @@ export const FormEdit = () => {
 
                 </GridContainer>
                 <GridContainer>
+                    <InputVar1
+                        label="URL Official Καταλόγου"
+                        name="officialCatalogueUrl"
+                        type="text"
+                        register={register}
+                    />
+                    <InputVar1
+                        label="URL Ιστοσελίδας"
+                        name="webSiteUrl"
+                        type="text"
+                        register={register}
+                    />
+
+                </GridContainer>
+                <h2 className="grid-form_subheader">Softone</h2>
                 <InputVar1
-                    label="URL Official Καταλόγου"
-                    name="officialCatalogueUrl"
-                    type="text"
-                    register={register}
-                />
-                   <InputVar1
-                    label="URL Ιστοσελίδας"
-                    name="webSiteUrl"
+                    label="softOneName"
+                    name="softOneName"
                     type="text"
                     register={register}
                 />
 
-                </GridContainer>
-               
-
-                <h2>SoftOne Info</h2>
-                <GridContainer >
-                    <InputVar1
-                        label="MTRMARK"
-                        name="softOneMTRMARK"
-                        type="text"
-                        register={register}
-                        disabled={true}
-                    />
-                    <InputVar1
-                        label="softOneName"
-                        name="softOneName"
-                        type="text"
-                        register={register}
-                    />
-
-                </GridContainer>
-                <h2>Pim Access</h2>
+                <h2 className="grid-form_subheader">Pim access</h2>
                 <GridContainer>
                     <InputVar1
                         label="pimUrl"
@@ -219,18 +215,27 @@ export const FormEdit = () => {
                     />
                 </GridContainer>
                 <div>
-                    <h2>Βίντεο Προϊόντος</h2>
+                    <h2 className="grid-form_subheader">Βίντεο</h2>
                     <AddMoreInput
                         label="Video"
                         htmlName1="name"
                         htmlName2="videoUrl"
                         setFormData={setVideoList}
                         formData={videoList}
-                        />
+                    />
                 </div>
+                
+                <h2 className="grid-form_subheader">Φωτογραφίες Μάρκας</h2>
                 <FileDropzone />
-                <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Aποθήκευση Νέου</Button>
-            </YupForm>
+                <div className="grid-form_buttondiv">
+                <Button mt={'20'} onClick={handleSubmit(onSubmit)} type="submit">Διόρθωση Νέου</Button>
+                <button
+                    className="grid-form_back" 
+                    onClick={() => dispatch(setAction(null))} >
+                    <MdOutlineKeyboardBackspace />
+                </button>
+            </div>
+            </FormWrapper>
         </div>
     )
 }

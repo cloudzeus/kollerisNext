@@ -21,7 +21,7 @@ export const InputVar1 = ({
 
 
 	return (
-		<InputContainer error={error} disabled={disabled} isFocus={focus}>
+		<InputContainer error={error} disabled={disabled} isFocus={focus} label={label}>
 				<label
 					htmlFor={name}>
 						{label}
@@ -53,10 +53,11 @@ export const Input = ({
 	type,
 	label,
 	placeholder,
-	register,
 	error,
 	value,
 	disabled,
+	onChange,
+	mb
 }) => {
 	const [focus, setFocus] = useState(false)
 	const handleFocus = () => {
@@ -66,7 +67,7 @@ export const Input = ({
 
 	
 	return (
-		<InputContainer error={error} disabled={disabled} isFocus={focus}>
+		<InputContainer mb={mb} error={error} disabled={disabled} isFocus={focus} label={label}>
 				<label
 					htmlFor={name}>
 					{label }
@@ -80,6 +81,7 @@ export const Input = ({
 					disabled={disabled}
 					onBlur={handleFocus}
 					onFocus={handleFocus}
+					onChange={onChange}
 					
 				/>
 			{error && <span className="error-text">{error.message}</span>}
@@ -98,12 +100,13 @@ export const disabledColor = '#949695'
 export const InputContainer = styled.div`
 display: flex;
 flex-direction: column;
-margin-bottom: 20px;
+margin-bottom: ${props => props.mb ? props.mb : '20px'};
+width: 100%;
 label {
     font-size: 14px;
 	font-weight: ${props => props.isFocus ? '500' : '400'};
 	letter-spacing: 0.3px;
-    margin-bottom: 5px;
+    margin-bottom: ${props => props.label ? '5px' : '0px'};
 	color: ${props => {
 		if(props.disabled) return disabledColor;
 		if(props.error) return errorColor;
@@ -112,6 +115,7 @@ label {
 }
 
 input {
+	width: 100%;
     height: 45px;
 	padding: 0 10px;
     border-radius: 4px;

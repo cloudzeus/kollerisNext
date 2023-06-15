@@ -33,49 +33,6 @@ const IndexWrapper = styled.div`
     left: 0;
     top: 0;
   }
-  .grid-styles-form {
-    background-color: white;
-    border: 1px solid ${props => props.theme.palette.border};
-    padding: 30px;
-    /* min-width: 600px; */
-    border-radius: 4px;
-    /* @media (max-width: 601px) {
-      min-width: 90%;
-    } */
-  }
-  .grid-styles-form__header {
-    /* color: ${props => props.theme.palette.primary.main}; */
-    font-weight: 300;
-    position: relative;
-    margin-bottom: 40px;
-    & span {
-      font-weight: 700;
-    }
-  }
-  .grid-styles-form__header::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -10px;
-    width: 20px;
-    height: 2px;
-    border-radius: 4px;
-    background-color: ${props => props.theme.palette.accent};
-
-  }
-
-
-  .form h2 {
-    font-size: 15px;
-    margin-top: 20px;
-    letter-spacing: 0.4px;
-  }
-  .form div.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 40px;
-  }
 
   
   h2 {
@@ -88,10 +45,12 @@ const IndexWrapper = styled.div`
     padding: 30px;
   }
 
-  .innerContainer button.grid-icon {
+   button.grid-icon {
     padding: 10px;
-	background-color: ${props => props.theme.palette.primary.light50};
+	background-color: ${props => props.theme.palette.primary.light};
 	margin-right: 5px;
+    outline: none;
+    border: none;
   }
 `
 
@@ -142,6 +101,74 @@ const GridActions = styled.div`
       color: #dedede;
     }
 
+
+`
+
+
+const FormWrapper = styled.form`
+    background-color: white;
+    border: 1px solid ${props => props.theme.palette.border};
+    padding: 30px;
+    border-radius: 4px;
+   
+  .grid-form_header {
+    font-weight: 400;
+    font-size: 20px;
+    position: relative;
+    margin-bottom: 40px;
+    & span {
+      font-weight: 700;
+    }
+  }
+
+  .grid-form_header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 20px;
+    height: 2px;
+    border-radius: 4px;
+    background-color: ${props => props.theme.palette.accent};
+
+  }
+
+  .grid-form_subheader {
+    font-size: 18px;
+    font-weight: 500;
+    position:relative;
+    margin-bottom: 30px;
+    margin-top: 40px;
+    color:#727273;
+  }
+
+  .grid-form_subheader::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 15px;
+    height: 2px;
+    border-radius: 4px;
+    background-color: ${props => props.theme.palette.accent};
+
+  }
+  .grid-form_buttondiv {
+    margin-top: 30px;
+  }
+  .grid-form_back {
+	background-color: ${props => props.theme.palette.primary.light};
+	margin-right: 5px;
+    outline: none;
+    border: none;
+    margin-left: 10px;
+    height:  40px;
+    width: 40px;
+    border-radius: 4px;
+  }
+
+ 
+  
 
 `
 
@@ -453,5 +480,6 @@ export {
     ImageDiv,
     GridContainer,
     SyncItemsContainer,
-    MissingItemsContainer
+    MissingItemsContainer,
+    FormWrapper
 }

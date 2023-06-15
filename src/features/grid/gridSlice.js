@@ -13,6 +13,7 @@ const initialState = {
 	success: false,
 	editData: [],
 	notFoundData: [],
+	imageName: '',
 	
 }
 
@@ -103,6 +104,9 @@ const gridSlice = createSlice({
 		},
 		setAsyncedMarkes: (state, action) => {
 			state.asyncedMarkes = action.payload;
+		},
+		setImageName: (state, action) => {
+			state.imageName = action.payload;
 		},
 		
 	},
