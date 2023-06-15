@@ -41,13 +41,14 @@ const SyncItems = () => {
     }
   };
 
-  const findExtraSoftone = async () => {
-    dispatch(findSoftoneAndSyncTables())
-  }
+ 
 
   useEffect(() => {
+    const findExtraSoftone = async () => {
+      dispatch(findSoftoneAndSyncTables())
+    }
     findExtraSoftone();
-  }, [])
+  }, [dispatch])
 
   return (
     <AdminLayout>

@@ -82,7 +82,7 @@ export const FormEdit = () => {
 
         setSelectedFile(gridRowData?.logo)
      
-    }, [])
+    }, [dispatch, gridRowData])
 
 
 
