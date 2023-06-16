@@ -3,6 +3,7 @@ import 'react-circular-progressbar/dist/styles.css';
 
 
 const CircularProg = ({color, value}) => {
+    console.log('color in circular prog ' + color)
     return (
         <CircularProgressbar 
         value={value} 

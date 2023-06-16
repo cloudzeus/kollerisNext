@@ -15,8 +15,15 @@ const initialState = {
 	editData: [],
 	dataNotFoundInAriadne: [],
 	dataNotFoundInSoftone: [],
-	itemPercentage: 0,
-	updatedItemsLength: 0,
+	itemPercentage: {
+		percentage: 0,
+		id: null,
+	},
+	updatedItemsLength: {
+		updated: 0,
+		id: null,
+	},
+	updatedItemsColor: '#da252b',
 	imageName: '',
 	
 }
@@ -111,16 +118,30 @@ const gridSlice = createSlice({
 		setImageName: (state, action) => {
 			state.imageName = action.payload;
 		},
+		setCalculateId: (state, action) => {
+			console.log(action.payload.id)
+			state.itemPercentage.id = action.payload;
+		},
 		calculatePercentage: (state, action) => {
 			console.log('action payload')
 			console.log(action.payload)
 			const {dataToUpdateLength, dataLength} = action.payload;
+				state.updatedItemsLength = state.updatedItemsLength + dataToUpdateLength
+
 			
-			state.updatedItemsLength = state.updatedItemsLength + dataToUpdateLength
-			console.log('state.updatedItemsLength')
-			console.log(state.updatedItemsLength)
 			let calculate = (state.updatedItemsLength / dataLength ) * 100;
-			state.itemPercentage =  calculate.toFixed(2);
+			// if(calculate => 30 && calculate < 60) {
+			// 	state.updatedItemsColor = '#e66c19'
+			// }
+			
+			if(calculate >= 60 && calculate < 100) {
+				state.updatedItemsColor = '#ea8f15'
+			}
+			if(calculate < 100) {
+				state.itemPercentage.percentage =  calculate.toFixed(2);
+				state.updatedItemsColor = '#da252b'
+			}
+			
 			
 		}
 		
@@ -197,5 +218,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, calculatePercentage} = gridSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, calculatePercentage, setCalculateId} = gridSlice.actions;
 export default gridSlice.reducer;

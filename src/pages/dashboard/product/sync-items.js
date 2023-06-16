@@ -8,8 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
 import Button from '@/components/Buttons/Button';
-import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/grid/gridSlice';
-import styled from 'styled-components';
+import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/compareDatabases/compareDatabasesSlice';
 import { Section, Box, TopDiv, MainDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 const percentage = 90;
@@ -17,13 +16,14 @@ const percentage = 90;
 
 
 const SyncItemsWrapper = () => {
-    const { dataNotFoundInAriadne, dataNotFoundInSoftone, itemPercentage } = useSelector(state => state.grid);
-    console.log('Items percentage ' + itemPercentage)
+    const { dataNotFoundInAriadne, dataNotFoundInSoftone } = useSelector(state => state.compareDatabases);
+    const dispatch = useDispatch();
+    
     return (
         <AdminLayout>
             <SyncItems
                 data={dataNotFoundInAriadne}
-                percentage={itemPercentage}
+             
                 subtitle="Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
@@ -31,7 +31,7 @@ const SyncItemsWrapper = () => {
 
             <SyncItems
                 data={dataNotFoundInSoftone}
-                percentage={itemPercentage}
+           
                 subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'softOne.NAME' }
@@ -41,20 +41,20 @@ const SyncItemsWrapper = () => {
 
 }
 
-const SyncItems = ({ data, displayAttr, subtitle, percentage }) => {
+const SyncItems = ({ data, displayAttr, subtitle, percentage, id }) => {
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
     const [hide, setHide] = useState(false);
     const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
-    const {updatedItemsColor} = useSelector(state => state.grid)
-
+    const {updatedItemsColor, itemPercentage} = useSelector(state => state.compareDatabases)
+    console.log('updatedItemsColor ' + updatedItemsColor)
     const [selected, setSelected] = useState([{}]);
 
     const handleAdd = async () => {
         
         dispatch(findSoftoneAndSyncTables())
-        dispatch( calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length}))
+        dispatch(calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length}))
         // let { data } = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
         // if (data.success) {
         //     dispatch(findSoftoneAndSyncTables(dataUpdate.length))
@@ -105,7 +105,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage }) => {
                         <p className="intro" >{subtitle}</p>
                     </div>
                     <div className="prog-div" >
-                        <CircularProg color={'#ff9000'} value={percentage} />
+                        <CircularProg color={updatedItemsColor} value={itemPercentage} />
                     </div>
                     
                 </TopDiv >
