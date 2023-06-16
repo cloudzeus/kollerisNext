@@ -40,7 +40,10 @@ const compareDatabasesSlice = createSlice({
 			state.asyncedMarkes = action.payload;
 		},
 		
-		
+		setCalculateId: (state, action) => {
+			console.log(action.payload.id)
+			state.itemPercentage.id = action.payload;
+		},
 		calculatePercentage: (state, action) => {
 			console.log('action payload')
 			console.log(action.payload)
@@ -86,5 +89,5 @@ const compareDatabasesSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, calculatePercentage} = compareDatabasesSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, calculatePercentage, setCalculateId} = compareDatabasesSlice.actions;
 export default compareDatabasesSlice.reducer;

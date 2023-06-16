@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 const usePagination = (data, pageSize) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(data.length / pageSize);
+  const dataLength = data?.length ? data?.length : 0;
+  const totalPages = Math.ceil(dataLength / pageSize);
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;

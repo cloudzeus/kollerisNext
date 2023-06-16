@@ -11,6 +11,7 @@ import Button from '@/components/Buttons/Button';
 import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/compareDatabases/compareDatabasesSlice';
 import { Section, Box, TopDiv, MainDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
+import { Component } from '@syncfusion/ej2/base';
 const percentage = 90;
 
 
@@ -23,7 +24,7 @@ const SyncItemsWrapper = () => {
         <AdminLayout>
             <SyncItems
                 data={dataNotFoundInAriadne}
-             
+                component="component1"
                 subtitle="Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
@@ -31,7 +32,7 @@ const SyncItemsWrapper = () => {
 
             <SyncItems
                 data={dataNotFoundInSoftone}
-           
+                component="component2"
                 subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'softOne.NAME' }
@@ -41,7 +42,7 @@ const SyncItemsWrapper = () => {
 
 }
 
-const SyncItems = ({ data, displayAttr, subtitle, percentage, id }) => {
+const SyncItems = ({ data, displayAttr, subtitle, percentage, component }) => {
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
@@ -53,8 +54,8 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, id }) => {
 
     const handleAdd = async () => {
         
-        dispatch(findSoftoneAndSyncTables())
-        dispatch(calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length}))
+        dispatch(findSoftoneAndSyncTables( {component: component}))
+        dispatch(calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length, component: component}))
         // let { data } = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
         // if (data.success) {
         //     dispatch(findSoftoneAndSyncTables(dataUpdate.length))
