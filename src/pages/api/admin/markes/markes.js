@@ -316,18 +316,24 @@ export default async function handler(req, res) {
 		await connectMongo();
 		const mongoArray = await Markes.find();
 
-		// console.log(mongoArray)
 		let resp = await fetchSoftoneMarkes();
-		// console.log(resp.result)
-		let result = resp.result.filter(o1 => {
+		let notFoundAriadne = resp.result.filter(o1 => {
 			return !mongoArray.some((o2) => {
 				// console.log(o2.softOne.MTRMARK)
 				return o1.MTRMARK == o2.softOne.MTRMARK; // return the ones with equal id
 			});
 		});
 
+		console.log('return items not found in ariadne: ' + JSON.stringify(notFoundAriadne))
+		let notFoundSoftone = mongoArray.filter(o1 => {
+			return !resp.result.some((o2) => {
+				// console.log(o2.softOne.MTRMARK)
+				return o1.softOne.MTRMARK == o2.MTRMARK; // return the ones with equal id
+			});
+		});
+		console.log('return items not found in softone: ' + JSON.stringify(notFoundSoftone))
 
-		return res.status(200).json({ success: true, result: result });
+		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone });
 
 	}
 }

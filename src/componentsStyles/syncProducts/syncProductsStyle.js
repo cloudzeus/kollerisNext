@@ -12,6 +12,24 @@ const Section = styled.section`
         align-items: center;
         justify-content: space-evenly;
     }
+
+    div.expand {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 1;
+        padding: 6px;
+        cursor: pointer;
+
+    }
+    div.expand svg {
+        outline: none;
+        font-size: 17px;
+        color: ${props => props.theme.palette.primary.main};
+    }
+
+    
     .data-to-sync {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;

@@ -12,7 +12,8 @@ const initialState = {
 	notSyncedData: [],
 	success: false,
 	editData: [],
-	notFoundData: [],
+	dataNotFoundInAriadne: [],
+	dataNotFoundInSoftone: [],
 	imageName: '',
 	
 }
@@ -171,7 +172,8 @@ const gridSlice = createSlice({
 			.addCase(findSoftoneAndSyncTables.fulfilled, (state,  {payload} ) => {
 					console.log('payload findSoftoneAndSyncTables')
 					console.log(payload)
-					state.notFoundData = payload.result;
+					state.dataNotFoundInAriadne = payload.notFoundAriadne;
+					state.dataNotFoundInSoftone = payload.notFoundSoftone;
 					
 			})
 			.addCase(findSoftoneAndSyncTables.rejected, (state, { payload }) => {

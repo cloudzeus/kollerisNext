@@ -10,7 +10,6 @@ const usePagination = (data, pageSize) => {
   console.log(paginatedData)
 
   const handlePageChange = (event, page) => {
-    console.log(page, event)
     setCurrentPage(page);
   };
 
