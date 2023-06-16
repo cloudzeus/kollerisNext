@@ -7,7 +7,6 @@ const usePagination = (data, pageSize) => {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedData = data.slice(startIndex, endIndex);
-  console.log(paginatedData)
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);

@@ -20,7 +20,6 @@ export const fetchUser = createAsyncThunk(
 	//action:
 	'user/fetchUser',
 	async (user, thunkApi) => {
-		console.log(`Fetch User: ${JSON.stringify(user)}`)
 		try {
 			const resp = await axios.post('/api/user/fetchuser', user)
 			return resp.data;
@@ -34,7 +33,6 @@ export const registerUser = createAsyncThunk(
 	//action:
 	'user/registerUser',
 	async (user, thunkApi) => {
-		console.log(`Register User: ${JSON.stringify(user)}`)
 		try {
 			const resp = await axios.post('/api/user/registeruser', user)
 			return resp.data;
@@ -49,7 +47,6 @@ export const updateUser = createAsyncThunk(
 	//action:
 	'user/updateUser',
 	async (user, thunkApi) => {
-		console.log(`Update User: ${JSON.stringify(user)}`)
 		try {
 			const resp = await axios.post('/api/user/update', user)
 			return resp.data;
@@ -84,7 +81,6 @@ const userSlice = createSlice({
 			})
 			.addCase(fetchUser.fulfilled, (state, { payload }) => {
 				const { user } = payload;
-				console.log('User in reducers' + JSON.stringify(user))
 
 				state.user = user;
 				if (user) {

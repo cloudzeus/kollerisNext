@@ -40,9 +40,7 @@ const LoginForm = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('submit')
         setLoading(true)
-        console.log(data)
         const res = await signIn("credentials",
             {
                 username: data.email,

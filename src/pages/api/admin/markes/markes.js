@@ -324,16 +324,24 @@ export default async function handler(req, res) {
 			});
 		});
 
-		console.log('return items not found in ariadne: ' + JSON.stringify(notFoundAriadne))
+	
 		let notFoundSoftone = mongoArray.filter(o1 => {
 			return !resp.result.some((o2) => {
 				// console.log(o2.softOne.MTRMARK)
 				return o1.softOne.MTRMARK == o2.MTRMARK; // return the ones with equal id
 			});
 		});
-		console.log('return items not found in softone: ' + JSON.stringify(notFoundSoftone))
+		console.log('return items not found in softone: ' + JSON.stringify(notFoundSoftone.length))
 
-		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone });
+		let itemsInSoftone = resp.result.length;
+		console.log('return items not found in ariadne: ' + JSON.stringify(notFoundAriadne.length))
+		console.log('total softone: ' + itemsInSoftone)
+		let itemInAriadne = mongoArray.length;
+		
+
+		let percentageAriadne = (itemInAriadne / itemsInSoftone) * 100;
+
+		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone, percentageAriadne: percentageAriadne });
 
 	}
 }

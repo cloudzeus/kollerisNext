@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { update } from "@syncfusion/ej2/inplace-editor";
 import axios from "axios";
 import { toast } from 'react-toastify';
 
@@ -14,6 +15,8 @@ const initialState = {
 	editData: [],
 	dataNotFoundInAriadne: [],
 	dataNotFoundInSoftone: [],
+	itemPercentage: 0,
+	updatedItemsLength: 0,
 	imageName: '',
 	
 }
@@ -22,9 +25,12 @@ const initialState = {
 export const findSoftoneAndSyncTables = createAsyncThunk(
 	//action:
 	'grid/findSoftoneAndSyncTables',
-	async (grid, thunkApi) => {
+	async (toBeUpdatedLength, thunkApi) => {
 		try {
 			const resp = await axios.post('/api/admin/markes/markes', { action: 'findExtraSoftone' })
+			
+			//Length of itesm that will be updated: 
+			// console.log(toBeUpdatedLength)
 			return resp.data;
 		} catch (error) {
 			console.log(error)
@@ -42,7 +48,6 @@ export const editGridItem = createAsyncThunk(
 		}
 })
 
-
 export const fetchNotSynced = createAsyncThunk(
 	//action:
 	'grid/fetchNotSynced',
@@ -55,7 +60,6 @@ export const fetchNotSynced = createAsyncThunk(
 			console.log(error)
 		}
 })
-
 
 export const updateNotSynced = createAsyncThunk(
 	//action:
@@ -83,8 +87,6 @@ export const updateNotSynced = createAsyncThunk(
 	})
 
 
-
-
 const gridSlice = createSlice({
 	name: 'grid',
 	initialState,
@@ -109,6 +111,18 @@ const gridSlice = createSlice({
 		setImageName: (state, action) => {
 			state.imageName = action.payload;
 		},
+		calculatePercentage: (state, action) => {
+			console.log('action payload')
+			console.log(action.payload)
+			const {dataToUpdateLength, dataLength} = action.payload;
+			
+			state.updatedItemsLength = state.updatedItemsLength + dataToUpdateLength
+			console.log('state.updatedItemsLength')
+			console.log(state.updatedItemsLength)
+			let calculate = (state.updatedItemsLength / dataLength ) * 100;
+			state.itemPercentage =  calculate.toFixed(2);
+			
+		}
 		
 	},
 	extraReducers: (builder) => {
@@ -183,5 +197,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, l} = gridSlice.actions;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAsyncedMarkes, setAction, calculatePercentage} = gridSlice.actions;
 export default gridSlice.reducer;

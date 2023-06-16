@@ -8,27 +8,31 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
 import Button from '@/components/Buttons/Button';
-import { findSoftoneAndSyncTables } from '@/features/grid/gridSlice';
+import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/grid/gridSlice';
 import styled from 'styled-components';
 import { Section, Box, TopDiv, MainDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
-
 const percentage = 90;
 
 
 
 const SyncItemsWrapper = () => {
-    const { dataNotFoundInAriadne, dataNotFoundInSoftone } = useSelector(state => state.grid);
+    const { dataNotFoundInAriadne, dataNotFoundInSoftone, itemPercentage } = useSelector(state => state.grid);
+    console.log('Items percentage ' + itemPercentage)
     return (
         <AdminLayout>
             <SyncItems
                 data={dataNotFoundInAriadne}
+                percentage={itemPercentage}
+                subtitle="Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
                 ]} />
 
             <SyncItems
                 data={dataNotFoundInSoftone}
+                percentage={itemPercentage}
+                subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'softOne.NAME' }
                 ]} />
@@ -37,25 +41,28 @@ const SyncItemsWrapper = () => {
 
 }
 
-const SyncItems = ({ data, displayAttr }) => {
+const SyncItems = ({ data, displayAttr, subtitle, percentage }) => {
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
-    const { currentPage, totalPages, paginatedData, handlePageChange, } = usePagination(data, 10);
+    const [hide, setHide] = useState(false);
+    const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
+    const {updatedItemsColor} = useSelector(state => state.grid)
 
-
-    const [selectAll, setSelectAll] = useState(false);
     const [selected, setSelected] = useState([{}]);
 
     const handleAdd = async () => {
-        let { data } = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
-        if (data.success) {
-
-        }
+        
+        dispatch(findSoftoneAndSyncTables())
+        dispatch( calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length}))
+        // let { data } = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
+        // if (data.success) {
+        //     dispatch(findSoftoneAndSyncTables(dataUpdate.length))
+        // }
     }
 
     const handleItemClick = (index, item) => {
-        console.log(item)
+        // console.log(item)
         if (selected.includes(item.MTRMARK)) {
             setDataUpdate(dataUpdate.filter((data) => data !== item));
             setSelected(selected.filter((id) => id !== item.MTRMARK));
@@ -95,10 +102,10 @@ const SyncItems = ({ data, displayAttr }) => {
                 <TopDiv  >
                     <div className="header">
                         <h2>Μάρκες Softone:</h2>
-                        <p className="intro" >Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne</p>
+                        <p className="intro" >{subtitle}</p>
                     </div>
                     <div className="prog-div" >
-                        <CircularProg color={'#ff9000'} value={66} />
+                        <CircularProg color={'#ff9000'} value={percentage} />
                     </div>
                     
                 </TopDiv >
@@ -107,7 +114,6 @@ const SyncItems = ({ data, displayAttr }) => {
                 </div>
                 {expand ? (
                     <MainDiv>
-
                     <button onClick={handleSelectSinglePage}>Επιλογή Σελίδας {currentPage}</button>
                     <button onClick={clearAllSelected}>Επίλεξε όλα τα <span>{data.length}</span> προϊόντα</button>
                     <button onClick={clearAllSelected}>clear all</button>
@@ -131,10 +137,10 @@ const SyncItems = ({ data, displayAttr }) => {
                                         }
 
                                         return (
-                                            <div key={index}>
-                                                <span>{single.displayName}:</span>
-                                                <p>{attributeValue}</p>
-                                            </div>
+                                                <div key={index} >
+                                                    <span>{single.displayName}:</span>
+                                                    <p>{attributeValue}</p>
+                                                </div>
                                         );
                                     })}
 

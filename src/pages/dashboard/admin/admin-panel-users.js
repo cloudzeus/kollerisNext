@@ -41,6 +41,7 @@ const GridTable = () => {
 
         } catch (error) {
             console.log(error)
+
         }
     }
 
@@ -61,8 +62,7 @@ const GridTable = () => {
                 const handleCRUD = async (data, action) => {
                     try {
                         const res = await axios.post('/api/admin/users', { action: action, ...data })
-                        console.log(res)
-                        console.log('res success is: ' + res.data.success)
+                    
                         if (res.data.success == true) {
                             grid.endEdit();
                             setFlag(() => true)
@@ -70,7 +70,6 @@ const GridTable = () => {
                         if (res.data.success == false) {
                             toast.error(res.data.error)
                             setFlag(false)
-                            console.log('')
 
                         }
 
@@ -114,8 +113,7 @@ const GridTable = () => {
 
     //Αdd and save user
     const actionComplete = (e) => {
-        console.log('on Action Complete')
-        console.log(e)
+      
         setFlag(false)
         if (e.requestType === 'save' && e.action === 'add') {
             console.log('On action complete: SAVE')
