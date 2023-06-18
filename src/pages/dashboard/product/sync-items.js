@@ -8,31 +8,37 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
 import Button from '@/components/Buttons/Button';
-import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/compareDatabases/compareDatabasesSlice';
+// import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/compareDatabases/compareDatabasesSlice';
 import { Section, Box, TopDiv, MainDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import { Component } from '@syncfusion/ej2/base';
-const percentage = 90;
+import { findSoftoneAndSyncTables } from '@/features/syncProduct/markesNotFoundAriadne';
+import { calculateCompletionAriadne, notFoundSoftoneApi} from '@/features/syncProduct/markesNotFoundSoftone';
+import { calculateCompletionSoftone, notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 
 
 
 const SyncItemsWrapper = () => {
-    const { dataNotFoundInAriadne, dataNotFoundInSoftone } = useSelector(state => state.compareDatabases);
-    const dispatch = useDispatch();
+    const {dataNotFoundInAriadne, softoneCompletionPercentage } = useSelector((store) => store.notFoundAriadne)
+    const {dataNotFoundInSoftone, ariadneCompletionPercentage} = useSelector((store) => store.notFoundSoftone)
     
     return (
         <AdminLayout>
-            <SyncItems
+            {/* <SyncItems
                 data={dataNotFoundInAriadne}
-                component="component1"
+                percentage={softoneCompletionPercentage}
+                apiCall={notFoundAriadneApi}
+                calculatePercentage={calculateCompletionSoftone}
                 subtitle="Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
-                ]} />
+                ]} /> */}
 
             <SyncItems
                 data={dataNotFoundInSoftone}
-                component="component2"
+                percentage={ariadneCompletionPercentage}
+                apiCall={notFoundSoftoneApi}
+                calculatePercentage={calculateCompletionAriadne}
                 subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'softOne.NAME' }
@@ -42,28 +48,21 @@ const SyncItemsWrapper = () => {
 
 }
 
-const SyncItems = ({ data, displayAttr, subtitle, percentage, component }) => {
+const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall, calculatePercentage }) => {
+    console.log(percentage)
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
-    const [hide, setHide] = useState(false);
     const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
-    const {updatedItemsColor, itemPercentage} = useSelector(state => state.compareDatabases)
-    console.log('updatedItemsColor ' + updatedItemsColor)
+ 
     const [selected, setSelected] = useState([{}]);
 
     const handleAdd = async () => {
-        
-        dispatch(findSoftoneAndSyncTables( {component: component}))
         dispatch(calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length, component: component}))
-        // let { data } = await axios.post('/api/admin/markes/markes', { action: 'createMany', data: dataUpdate })
-        // if (data.success) {
-        //     dispatch(findSoftoneAndSyncTables(dataUpdate.length))
-        // }
+       
     }
 
     const handleItemClick = (index, item) => {
-        // console.log(item)
         if (selected.includes(item.MTRMARK)) {
             setDataUpdate(dataUpdate.filter((data) => data !== item));
             setSelected(selected.filter((id) => id !== item.MTRMARK));
@@ -92,10 +91,10 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component }) => {
 
     useEffect(() => {
         const findExtraSoftone = async () => {
-            dispatch(findSoftoneAndSyncTables())
+            dispatch(apiCall())
         }
         findExtraSoftone();
-    }, [dispatch])
+    }, [dispatch, apiCall])
 
     return (
         <Section>
@@ -106,7 +105,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component }) => {
                         <p className="intro" >{subtitle}</p>
                     </div>
                     <div className="prog-div" >
-                        <CircularProg color={updatedItemsColor} value={itemPercentage} />
+                        <CircularProg color={'orange'} value={percentage} />
                     </div>
                     
                 </TopDiv >
@@ -129,18 +128,11 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component }) => {
                                 onClick={() => handleItemClick(index, item)}>
                                 <div className="info-div">
                                     {displayAttr.map((single, index) => {
-                                        const attrKeys = single.attr.split('.');
-                                        let attributeValue = item;
-                                        // Traverse the nested attributes
-                                        for (const key of attrKeys) {
-                                            attributeValue = attributeValue[key];
-                                            if (!attributeValue) break;
-                                        }
-
+                                        const key = single.attr;
                                         return (
                                                 <div key={index} >
                                                     <span>{single.displayName}:</span>
-                                                    <p>{attributeValue}</p>
+                                                    <p>{item[key]}</p>
                                                 </div>
                                         );
                                     })}
