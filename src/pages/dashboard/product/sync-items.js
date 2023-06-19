@@ -9,19 +9,19 @@ import { Pagination } from '@mui/material';
 import usePagination from '@/utils/pagination';
 import Button from '@/components/Buttons/Button';
 // import { findSoftoneAndSyncTables, calculatePercentage } from '@/features/compareDatabases/compareDatabasesSlice';
-import { Section, Box, TopDiv, MainDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
-import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
+import { Section, Box, TopDiv, MainDiv, BottomDiv } from '@/componentsStyles/syncProducts/syncProductsStyle';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { Component } from '@syncfusion/ej2/base';
 import { findSoftoneAndSyncTables } from '@/features/syncProduct/markesNotFoundAriadne';
-import { calculateCompletionAriadne, notFoundSoftoneApi} from '@/features/syncProduct/markesNotFoundSoftone';
+import { calculateCompletionAriadne, notFoundSoftoneApi } from '@/features/syncProduct/markesNotFoundSoftone';
 import { calculateCompletionSoftone, notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 
 
 
 const SyncItemsWrapper = () => {
-    const {dataNotFoundInAriadne, softoneCompletionPercentage } = useSelector((store) => store.notFoundAriadne)
-    const {dataNotFoundInSoftone, ariadneCompletionPercentage} = useSelector((store) => store.notFoundSoftone)
-    
+    const { dataNotFoundInAriadne, softoneCompletionPercentage } = useSelector((store) => store.notFoundAriadne)
+    const { dataNotFoundInSoftone, ariadneCompletionPercentage } = useSelector((store) => store.notFoundSoftone)
+
     return (
         <AdminLayout>
             {/* <SyncItems
@@ -41,7 +41,7 @@ const SyncItemsWrapper = () => {
                 calculatePercentage={calculateCompletionAriadne}
                 subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
-                    { displayName: 'Softone Όνομα', attr: 'softOne.NAME' }
+                    { displayName: 'Softone Όνομα', attr: 'NAME' }
                 ]} />
         </AdminLayout>
     )
@@ -54,12 +54,11 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
     const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
- 
+
     const [selected, setSelected] = useState([{}]);
 
     const handleAdd = async () => {
-        dispatch(calculatePercentage({dataToUpdateLength: dataUpdate.length ,dataLength: data.length, component: component}))
-       
+        dispatch(calculatePercentage({ dataToUpdateLength: dataUpdate.length, dataLength: data.length, component: component }))
     }
 
     const handleItemClick = (index, item) => {
@@ -107,58 +106,64 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
                     <div className="prog-div" >
                         <CircularProg color={'orange'} value={percentage} />
                     </div>
-                    
+
                 </TopDiv >
                 <div className='expand' onClick={() => setExpand(prev => !prev)}>
-                        {!expand ? < IoIosArrowDown/> : <IoIosArrowUp />}
+                    {!expand ? < IoIosArrowDown /> : <IoIosArrowUp />}
                 </div>
                 {expand ? (
                     <MainDiv>
-                    <button onClick={handleSelectSinglePage}>Επιλογή Σελίδας {currentPage}</button>
-                    <button onClick={clearAllSelected}>Επίλεξε όλα τα <span>{data.length}</span> προϊόντα</button>
-                    <button onClick={clearAllSelected}>clear all</button>
-                    <div>
+                        <div className="button-action-div">
+                            <button onClick={handleSelectSinglePage}>Επιλογή Σελίδας {currentPage}</button>
+                            <button onClick={clearAllSelected}>Επίλεξε όλα τα <span>{data.length}</span> προϊόντα</button>
+                            <button onClick={clearAllSelected}>clear all</button>
+                        </div>
 
-                    </div>
-                    {paginatedData.map((item, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className="formsContainer"
-                                onClick={() => handleItemClick(index, item)}>
-                                <div className="info-div">
-                                    {displayAttr.map((single, index) => {
-                                        const key = single.attr;
-                                        return (
+                        <div>
+                        </div>
+                        {paginatedData.map((item, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className="formsContainer"
+                                    onClick={() => handleItemClick(index, item)}>
+                                    <div className="info-div">
+                                        {displayAttr.map((single, index) => {
+                                            const key = single.attr;
+                                            console.log(key)
+                                            return (
                                                 <div key={index} >
                                                     <span>{single.displayName}:</span>
                                                     <p>{item[key]}</p>
                                                 </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
 
-                                </div>
+                                    </div>
 
-                                {/* <button onClick={handleAdd}>Add</button> */}
-                                <div className="check-div">
-                                    {selected.includes(item.MTRMARK) ? <CheckIcon /> : null}
-                                    {/* {selectAll ? <CheckIcon /> : null} */}
+                                    {/* <button onClick={handleAdd}>Add</button> */}
+                                    <div className="check-div">
+                                        {selected.includes(item.MTRMARK) ? <CheckIcon /> : null}
+                                        {/* {selectAll ? <CheckIcon /> : null} */}
+                                    </div>
                                 </div>
-                            </div>
-                        )
-                    })}
-                    <Button onClick={handleAdd} >Προσθήκη</Button>
-                    <Pagination
-                        count={totalPages}
-                        shape="rounded"
-                        onChange={handlePageChange}
-                        page={currentPage}
-                    />
-                </MainDiv>
+                            )
+                        })}
+                        <BottomDiv>
+                            <Button onClick={handleAdd} >Προσθήκη</Button>
+                            <Pagination
+                                count={totalPages}
+                                shape="rounded"
+                                onChange={handlePageChange}
+                                page={currentPage}
+                            />
+                        </BottomDiv>
+
+                    </MainDiv>
                 ) : (
                     null
                 )}
-                
+
 
             </Box>
 

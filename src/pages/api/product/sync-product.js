@@ -7,10 +7,9 @@ import connectMongo from "../../../../server/config";
 
 export default async function handler(req, res) {
     let { action } = req.body;
+    console.log('sync product api')
     if (action === 'notFoundAriadne') {
         try {
-            console.log(action)
-
         await connectMongo();
         const mongoArray = await Markes.find();
         let resp = await fetchSoftoneMarkes();
@@ -19,7 +18,6 @@ export default async function handler(req, res) {
                 return o1.MTRMARK == o2.softOne.MTRMARK
             });
         });
-        console.log('NOT FOUND IN SOFTONE ' + JSON.stringify(notFoundAriadne))
         if(!notFoundAriadne) return res.status(200).json({ success: false, notFoundAriadne: []});
         return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne });
         } 
@@ -33,7 +31,7 @@ export default async function handler(req, res) {
 
     if (action === 'notFoundSoftone') {
         //data 2:
-
+        console.log('200')
         try {
             await connectMongo();
             const mongoArray = await Markes.find();
@@ -45,14 +43,14 @@ export default async function handler(req, res) {
                 });
             });
             if(!notFoundSoftone) {
-                return res.status(200).json({ success:false,notFoundSoftone: [] });
+                return res.status(200).json({ success:false, result: [] });
 
             }
-            console.log(notFoundSoftone)
-            return res.status(200).json({ success: true, notFoundSoftone: notFoundSoftone });
+            // console.log(notFoundSoftone)
+            return res.status(200).json({ success: true, result: notFoundSoftone });
 
         } catch (e) {
-            return res.status(200).json({ success: false ,notFoundSoftone: [] });
+            return res.status(200).json({ success: false ,result: [] });
         }
 
 

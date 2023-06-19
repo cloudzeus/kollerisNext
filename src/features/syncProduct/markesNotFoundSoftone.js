@@ -1,31 +1,25 @@
+import { ContactSupportOutlined } from "@mui/icons-material";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { update } from "@syncfusion/ej2/inplace-editor";
 import axios from "axios";
-import { toast } from 'react-toastify';
 
 const initialState = {
 	loading: false,
 	dataNotFoundInSoftone: [],
 	ariadneCompletionPercentage: 0,
-	updatedItemsLength: 0,
-	updatedItemsColor: '#da252b',
 }
-
 
 export const notFoundSoftoneApi = createAsyncThunk(
 	//action:
-	'notFoundSoftone/findSoftoneAndSyncTables',
+	'notFoundSoftone/notFoundSoftoneApi',
 	async (toBeUpdatedLength, thunkApi) => {
-		console.log('sefsfeef')
+		// console.log('1000')
 		try {
-			const resp = await axios.post('/api/procut/sync-product', { action: 'notFoundSoftone' })
-			console.log('1000')
-			console.log('respdata 1111' + JSON.stringify(resp.data))
+			const resp = await axios.post('/api/product/sync-product', { action: 'notFoundSoftone' })
 			let notFoundSoftone = [];
-			resp.data.notFoun.map((item) => {
-				array.push(item.softOne)
+			resp.data.result.map((item) => {
+				notFoundSoftone.push(item.softOne)
 			})
-			return notFoundSoftone;
+			return {notFoundSoftone: notFoundSoftone};
 		} catch (error) {
 			console.log(error)
 		}
@@ -39,13 +33,12 @@ const notFoundSoftoneSlice = createSlice({
 	reducers: {
 		calculateCompletionAriadne: (state, action) => {
 			const {dataToUpdateLength, dataLength} = action.payload;
-				state.updatedItemsLength = state.updatedItemsLength + dataToUpdateLength
-			let calculate = (state.updatedItemsLength / dataLength ) * 100;
+			let calculate = ( dataToUpdateLength / dataLength ) * 100;
 		
 			if(calculate >= 60 && calculate < 100) {
 				state.updatedItemsColor = '#ea8f15'
 			}
-			if(calculate < 100) {
+			if(calculate <= 100) {
 				state.ariadneCompletionPercentage =  calculate.toFixed(2);
 			}
 			
@@ -61,9 +54,8 @@ const notFoundSoftoneSlice = createSlice({
 				state.loading = true;
 			})
 			.addCase(notFoundSoftoneApi.fulfilled, (state,  {payload} ) => {
-					console.log('payload 1000000000 findSoftoneAndSyncTables')
-					console.log(payload)
-					// state.dataNotFoundInSoftone = payload.notFoundSoftone;
+					
+					state.dataNotFoundInSoftone = payload.notFoundSoftone;
 					
 			})
 			.addCase(notFoundSoftoneApi.rejected, (state, { payload }) => {

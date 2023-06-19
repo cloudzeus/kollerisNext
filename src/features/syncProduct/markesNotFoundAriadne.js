@@ -5,15 +5,12 @@ const initialState = {
 	loading: false,
 	dataNotFoundInAriadne: [],
 	softoneCompletionPercentage: 0,
-	updatedItemsLength: 0,
-	updatedItemsColor: '#da252b',
-	
 }
 
 
 export const notFoundAriadneApi = createAsyncThunk(
 	//action:
-	'notFoundAriadne/findSoftoneAndSyncTables',
+	'notFoundAriadne/notFoundAriadneApi',
 	async (toBeUpdatedLength, thunkApi) => {
 		try {
 			const resp = await axios.post('/api/product/sync-product', { action: 'notFoundAriadne' })
@@ -33,10 +30,8 @@ const notFoundAriadneSlice = createSlice({
 			console.log('action payload')
 			console.log(action.payload)
 			const {dataToUpdateLength, dataLength} = action.payload;
-				state.updatedItemsLength = state.updatedItemsLength + dataToUpdateLength
-
 			
-			let calculate = (state.updatedItemsLength / dataLength ) * 100;
+			let calculate = (dataToUpdateLength / dataLength ) * 100;
 			// if(calculate => 30 && calculate < 60) {
 			// 	state.updatedItemsColor = '#e66c19'
 			// }

@@ -181,19 +181,56 @@ const TopDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .header h2 {
+        font-size: 23px;
+        font-weight: 500;
+        color: ${props => props.theme.palette.text.lightHeaderShade1};
+    }
+    .header p {
+        font-size: 16px;
+        font-weight: 300;
+    }
 `
 
 const MainDiv = styled.div`
     padding: 20px;
+    
     .intro {
         margin: 20px 0;
     }
+
+    .button-action-div {
+        padding: 4px;
+        border: 1px solid ${props => props.theme.palette.border};
+        border-radius: 4px;
+        margin-bottom: 20px;
+        width: auto;
+        display: inline-flex;
+    }
+    .button-action-div button {
+        background-color:   ${props => props.theme.palette.primary.light50};
+        border: none;
+        outline: none;
+        padding: 10px 20px;
+        margin-right: 4px;
+        border-radius: 4px;
+        cursor: pointer;
+
+    }
 `
 
+const BottomDiv = styled.div`
+   button {
+        margin: 20px 0;
+   }
+    
+`
 
 export {
     Section,
     TopDiv,
     Box,
     MainDiv,
+    BottomDiv
 }
