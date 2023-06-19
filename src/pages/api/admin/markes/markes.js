@@ -86,53 +86,74 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'create') {
-
+		console.log('create')
 		let { data } = req.body
-		console.log('data')
-		console.log(data)
-
-		const object = {
-			name: data.name,
-			description: data.description,
-			logo: data.logo,
-			videoPromoList: data.videoPromoList,
-			photosPromoList: data.photosPromoList,
-			pimAccess: {
-				pimUrl: data.pimUrl,
-				pimUserName: data.pimUserName,
-				pimPassword: data.pimPassword
-			},
-			webSiteUrl: data.webSiteUrl,
-			officialCatalogueUrl: data.officialCatalogueUrl,
-			facebookUrl: data.facebookUrl,
-			instagramUrl: data.instagramUrl,
-			softOne: {
-				COMPANY: data.COMPANY ? data.COMPANY : '---',
-				SODTYPE: data.SODTYPE ? data.SODTYPE : '---',
-				MTRMARK: parseInt(data.MTRMARK),
-				CODE: data.CODE ? data.CODE : '---',
-				NAME: data.NAME ? data.NAME : '---',
-
-			}
-		}
-		console.log("OBject to create Markes:", Object(object));
 		try {
-			await connectMongo();
-			const newMarkes = await Markes.create({
-				...object,
-			});
+			let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/createMtrMark`;
+			let softoneResponse = await axios.post(URL, {
+				username: 'Service',
+				password: 'Service',
+				company: '1001',
+				sodtype: '51',
+				name: data.name
+			})
 
-			if (newMarkes) {
-
-				return res.status(200).json({ success: true, markes: newMarkes });
-
-			} else {
-				return res.status(200).json({ success: false, markes: null });
+			if (!softoneResponse.data.success) {
+				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone' });
 			}
+
+			console.log('softone response data')
+			console.log(softoneResponse.data)
+			let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
+			console.log(SOFTONE_MTRMARK)
+
+
+			const object = {
+				name: data.name,
+				description: data.description,
+				logo: data.logo,
+				videoPromoList: data.videoPromoList,
+				photosPromoList: data.photosPromoList,
+				pimAccess: {
+					pimUrl: data.pimUrl,
+					pimUserName: data.pimUserName,
+					pimPassword: data.pimPassword
+				},
+				webSiteUrl: data.webSiteUrl,
+				officialCatalogueUrl: data.officialCatalogueUrl,
+				facebookUrl: data.facebookUrl,
+				instagramUrl: data.instagramUrl,
+				softOne: {
+					COMPANY: '1001',
+					SODTYPE: '51',
+					MTRMARK: parseInt(SOFTONE_MTRMARK),
+					CODE: SOFTONE_MTRMARK.toString(),
+					NAME: data.name,
+					ISACTIVE: 1
+				}
+			}
+
+			console.log('object')
+			console.log(object)
+			if (softoneResponse.data.success) {
+				await connectMongo();
+				const newMarkes = await Markes.create({
+					...object,
+				});
+
+
+				if (newMarkes) {
+					return res.status(200).json({ success: true, markes: newMarkes, error: null });
+
+				} else {
+					return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
+				}
+			}
+
 
 
 		} catch (error) {
-			return res.status(400).json({ success: false, error: error.message, markes: null });
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
 		}
 	}
 	if (action === 'createMany') {
@@ -174,7 +195,7 @@ export default async function handler(req, res) {
 		try {
 			await connectMongo();
 			const newMarkes = await Markes.insertMany(newArray);
-			
+
 			console.log('Softone Markes Inserted Successfully', JSON.stringify(newMarkes))
 			if (newMarkes) {
 				return res.status(200).json({ success: true, result: newMarkes });
@@ -207,15 +228,15 @@ export default async function handler(req, res) {
 				pimPassword: body.pimPassword
 			},
 			webSiteUrl: body.webSiteUrl,
-			officialCatalogueUrl:  body.officialCatalogueUrl,
-			facebookUrl:  body.facebookUrl,
+			officialCatalogueUrl: body.officialCatalogueUrl,
+			facebookUrl: body.facebookUrl,
 			instagramUrl: body.instagramUrl,
 			softOne: {
 				COMPANY: '1001',
 				SODTYPE: '200',
 				MTRMARK: body.softOneMTRMARK,
 				CODE: '51',
-				NAME:  body.softOneName,
+				NAME: body.softOneName,
 				ISACTIVE: 1
 			}
 		}
@@ -223,9 +244,9 @@ export default async function handler(req, res) {
 		console.log(updateBody)
 		try {
 			await connectMongo();
-			await Markes.updateOne({ _id: body._id },  { ...updateBody });
+			await Markes.updateOne({ _id: body._id }, { ...updateBody });
 			const markes = await Markes.findOne({ _id: body._id });
-			if(markes) {
+			if (markes) {
 				return res.status(200).json({ success: true, result: markes });
 			} else {
 				res.status(200).json({ success: false, result: null });
@@ -255,10 +276,6 @@ export default async function handler(req, res) {
 		}
 	}
 
-
-
-
-
 	if (action === 'sync') {
 		console.log('sync')
 		try {
@@ -284,7 +301,7 @@ export default async function handler(req, res) {
 	if (action === 'syncAndUpdate') {
 
 		let data = req.body.data;
-		
+
 		try {
 			await connectMongo();
 			if (req.body.syncTo == 'Εμάς') {
@@ -324,7 +341,7 @@ export default async function handler(req, res) {
 			});
 		});
 
-	
+
 		let notFoundSoftone = mongoArray.filter(o1 => {
 			return !resp.result.some((o2) => {
 				// console.log(o2.softOne.MTRMARK)
@@ -337,7 +354,7 @@ export default async function handler(req, res) {
 		console.log('return items not found in ariadne: ' + JSON.stringify(notFoundAriadne.length))
 		console.log('total softone: ' + itemsInSoftone)
 		let itemInAriadne = mongoArray.length;
-		
+
 
 		let percentageAriadne = (itemInAriadne / itemsInSoftone) * 100;
 

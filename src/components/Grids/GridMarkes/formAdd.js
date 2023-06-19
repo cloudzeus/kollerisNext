@@ -20,7 +20,6 @@ import {MdOutlineKeyboardBackspace} from 'react-icons/md';
 
 const registerSchema = yup.object().shape({
 	name: yup.string().required('Συμπληρώστε το όνομα'),
-	MTRMARK: yup.string().required('Συμπληρώστε την Μάρκα'),
 });
 
 
@@ -47,7 +46,13 @@ export const FormAdd = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        let dataImages = []
+        console.log('data')
+        console.log(data)
+        let dataImages = [{
+            name: '',
+            photosPromoUrl: ''
+            
+        }]
         for(let i of uploadedImages) {
             dataImages.push({
                 name: i,
@@ -61,14 +66,13 @@ export const FormAdd = () => {
             videoPromoList: videoList,
             photosPromoList: dataImages
         }
-        console.log('-------- body ----------')
-        console.log(body)   
+       
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
         await axios.post('/api/admin/markes/markes', { action: 'sync'})
         if(res.data.success) {
             dispatch(setAction(null))
-            dispatch(fetchNotSynced())
+            // dispatch(fetchNotSynced())
             toast.success('Επιτυχής προσθήκης μάρκας')
             
 
@@ -133,13 +137,19 @@ export const FormAdd = () => {
             </GridContainer>
             
             < ImageInput 
-                required={true}
+                // required={true}
                 label={'Λογότυπο'}
                 setSelectedFile={setSelectedFile}
                 selectedFile={selectedFile}
             />
             <h2 className="grid-form_subheader">Softone</h2>
-            <GridContainer >
+            {/* <InputVar1
+                    label="ΟΝΟΜΑ"
+                    name="softOneName"
+                    type="text"
+                    register={register}
+                /> */}
+            {/* <GridContainer >
                 <InputVar1
                     label="MTRMARK"
                     name="MTRMARK"
@@ -147,12 +157,7 @@ export const FormAdd = () => {
                     required={true}
                     register={register}
                 />
-                <InputVar1
-                    label="ΟΝΟΜΑ"
-                    name="NAME"
-                    type="text"
-                    register={register}
-                />
+                
                
             </GridContainer>
             <GridContainer >
@@ -175,7 +180,7 @@ export const FormAdd = () => {
                     name="COMPANY"
                     type="text"
                     register={register}
-                />
+                /> */}
 
             <h2 className="grid-form_subheader">Pim access</h2>
             <GridContainer>

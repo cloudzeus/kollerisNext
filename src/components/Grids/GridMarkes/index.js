@@ -40,9 +40,9 @@ const GridTable = () => {
     }
 
 
-    const handleSyncButton = () => {
-        handleAction('sync')
-    }
+    // const handleSyncButton = () => {
+    //     handleAction('sync')
+    // }
 
     const showComponents = () => {
         switch (action) {
@@ -50,8 +50,8 @@ const GridTable = () => {
                 return <FormAdd />
             case 'edit':
                 return <FormEdit />
-            case 'sync':
-                return <Sync />
+            // case 'sync':
+            //     return <Sync />
             case 'findSoftoneExtra':
                 return <SoftOneExtra />
             default:
@@ -59,9 +59,9 @@ const GridTable = () => {
         }
     }
 
-    useEffect(() => {
-        dispatch(fetchNotSynced());
-    }, [dispatch])
+    // useEffect(() => {
+    //     dispatch(fetchNotSynced());
+    // }, [dispatch])
 
 
 
@@ -97,12 +97,12 @@ const GridTable = () => {
                     </button>
 
                 </GridActions>
-                <Notifications
+                {/* <Notifications
                     ml="10px"
                     onClick={handleSyncButton}
                     num={asyncedMarkes}>
                     <SyncIcon />
-                </Notifications >
+                </Notifications > */}
                 {/* <button onClick={findExtraSoftone}>Νέες Εγγραφές</button> */}
 
                 <Button variant="outlined" sx={{ marginLeft: '10px', marginBottom: '10px' }}>
