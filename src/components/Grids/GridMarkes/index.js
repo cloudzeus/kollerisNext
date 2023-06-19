@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 // import { Container, GridActions, GridContainer } from './styles';
 import { IndexWrapper, GridActions, GridContainer } from '@/componentsStyles/grid/gridStyles';
-import {MdOutlineKeyboardBackspace} from 'react-icons/md';
-
+import { MdOutlineKeyboardBackspace } from 'react-icons/md';
+import Link from 'next/link';
+import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
@@ -26,7 +27,6 @@ import { ImList2 } from 'react-icons/im';
 
 
 
-
 const GridTable = () => {
     const [id, setId] = useState(null);
     const { selectedId, asyncedMarkes, action } = useSelector(state => state.grid)
@@ -39,7 +39,7 @@ const GridTable = () => {
         dispatch(setSelectedId(null))
     }
 
-    
+
     const handleSyncButton = () => {
         handleAction('sync')
     }
@@ -64,16 +64,14 @@ const GridTable = () => {
     }, [dispatch])
 
 
-    const findExtraSoftone = async () => {
-        handleAction('findSoftoneExtra')
-        dispatch(findSoftoneAndSyncTables())
-    }
+
     return (
         <IndexWrapper p="0px" className="box">
             <div className="header">
                 <h2 className="boxHeader">Μάρκες</h2>
             </div>
             <div className="innerContainer" >
+              
                 <GridActions action={action}>
                     <button className="grid-icon" onClick={handleCancel} >
                         <ImList2 />
@@ -81,23 +79,23 @@ const GridTable = () => {
                     <button className="grid-icon" onClick={handleCancel} >
                         <MdOutlineKeyboardBackspace />
                     </button>
-                    <button 
+                    <button
                         className={(action !== 'add' && action !== null) ? 'disabled' : ''}
                         disabled={(action !== 'add' && action !== null) ? true : false}
                         onClick={() => handleAction('add')}>
-                        <AddIcon  className={(action !== 'add' && action !== null) ? 'disabled' : ''}/> Προσθήκη
+                        <AddIcon className={(action !== 'add' && action !== null) ? 'disabled' : ''} /> Προσθήκη
                     </button>
-                    <button 
+                    <button
                         className={(action !== 'edit' && action !== null) ? 'disabled' : ''}
                         disabled={(action !== 'edit' && action !== null) ? true : false}
                         onClick={() => {
-                        if (selectedId) {
-                            handleAction('edit')
-                        } else { toast.error('Δεν έχετε επιλέξει εγγραφή') }
-                    }}>
+                            if (selectedId) {
+                                handleAction('edit')
+                            } else { toast.error('Δεν έχετε επιλέξει εγγραφή') }
+                        }}>
                         <EditIcon className={(action !== 'edit' && action !== null) ? 'disabled' : ''} /> Διόρθωση
                     </button>
-                   
+
                 </GridActions>
                 <Notifications
                     ml="10px"
@@ -105,12 +103,16 @@ const GridTable = () => {
                     num={asyncedMarkes}>
                     <SyncIcon />
                 </Notifications >
-                <button onClick={findExtraSoftone}>Νέες Εγγραφές στο softone</button>
+                {/* <button onClick={findExtraSoftone}>Νέες Εγγραφές</button> */}
+
+                <Button variant="outlined" sx={{ marginLeft: '10px', marginBottom: '10px' }}>
+                    <Link href="/dashboard/product/sync-items">Νεες Εγγραφες</Link>
+                </Button>
                 <div>
                     <>
                         {showComponents()}
                     </>
-                   
+
                 </div>
             </div>
 
