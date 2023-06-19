@@ -24,8 +24,7 @@ export default async function handler(req, res) {
 
     const { files } = req;
 
-    const uploadedURLs = [{name: '', photosPromoUrl: ''}];
-
+    const uploadedURLs = [];
     // Process each uploaded file
     for (const file of files) {
       const timestamp = Date.now();

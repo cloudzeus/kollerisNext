@@ -74,10 +74,12 @@ const ImageUploader = () => {
                     </div>
                 )}
             </Dropzone>
-            {uploadedImages && uploadedImages.map((imageUrl, index) => (
-                <div className="drag-n-drop_container" key={index}>
+            {uploadedImages && uploadedImages.map((imageUrl, index) => {
+                console.log(imageUrl)
+                return (
+                    <div className="drag-n-drop_container" key={index}>
                     <div className="drag-n-drop_image">
-                        <Image
+                        {/* <Image
                             src={`/uploads/${imageUrl}`}
                             alt={`Uploaded ${index + 1}`}
                             fill={true}
@@ -87,7 +89,7 @@ const ImageUploader = () => {
                             onClick={(e) => deleteImage(e, imageUrl)}
                             className="delete-button">
                             <ClearIcon />
-                        </button>
+                        </button> */}
                     </div>
                     <div className="drag-n-drop_inputdiv">
                         <div>
@@ -95,19 +97,21 @@ const ImageUploader = () => {
                             <span>{imageUrl}</span>
                         </div>
                         <div className="input-div">
-                            <Input 
+                            {/* <Input 
                                 mb={'0'}
                                 type="text"
                                 placeholder="Ονομα"
                                 onChange={(e) => handleInput(e)}
-                            />
+                            /> */}
                             {/* <button onClick={onSubmitName}> change name</button>   */}
                         </div>
                        
                        
                     </div>
                 </div>
-            ))}
+                )
+            
+})}
         
         </UploaderStyled>
     );

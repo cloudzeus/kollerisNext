@@ -69,7 +69,7 @@ export const FormAdd = () => {
        
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
-        await axios.post('/api/admin/markes/markes', { action: 'sync'})
+        console.log('res ' + JSON.stringify(res.data))
         if(res.data.success) {
             dispatch(setAction(null))
             // dispatch(fetchNotSynced())
