@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 const Section = styled.section`
-    
     .border-div  {
         border-bottom: 2px solid ${props => props.theme.palette.background};
     }

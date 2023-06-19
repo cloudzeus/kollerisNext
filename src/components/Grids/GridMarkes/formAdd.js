@@ -46,8 +46,7 @@ export const FormAdd = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('data')
-        console.log(data)
+      
         let dataImages = [{
             name: '',
             photosPromoUrl: ''
@@ -69,7 +68,6 @@ export const FormAdd = () => {
        
 
         let res = await axios.post('/api/admin/markes/markes', { action: 'create', data: body})
-        console.log('res ' + JSON.stringify(res.data))
         if(res.data.success) {
             dispatch(setAction(null))
             // dispatch(fetchNotSynced())

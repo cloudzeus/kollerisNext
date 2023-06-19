@@ -26,7 +26,6 @@ import { ImList2 } from 'react-icons/im';
 
 
 
-
 const GridTable = () => {
     const [id, setId] = useState(null);
     const { selectedId, asyncedMarkes, action } = useSelector(state => state.grid)
@@ -50,6 +49,7 @@ const GridTable = () => {
                 return <FormAdd />
             case 'edit':
                 return <FormEdit />
+         
             // case 'sync':
             //     return <Sync />
             case 'findSoftoneExtra':

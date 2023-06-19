@@ -36,7 +36,7 @@ const SyncItemsWrapper = () => {
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
                 ]} />
 
-            <SyncItems
+            {/* <SyncItems
                 data={dataNotFoundInSoftone}
                 percentage={ariadneCompletionPercentage}
                 apiCall={notFoundSoftoneApi}
@@ -44,7 +44,7 @@ const SyncItemsWrapper = () => {
                 subtitle="Εγγραφές που υπάρχουν στο Ariadne και λείπουν από το Softone"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
-                ]} />
+                ]} /> */}
         </AdminLayout>
     )
 

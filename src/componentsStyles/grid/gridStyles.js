@@ -20,6 +20,10 @@ const IndexWrapper = styled.div`
         border-radius: 6px;
         border-top: 0px;
     }
+    .grid-wrapper .percentage {
+        width: 60;
+        height: 60;
+    }
   .dialogForm {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
@@ -473,6 +477,15 @@ const MissingItemsContainer = styled.div`
     }
 `
 
+const List = styled.div`
+
+`
+
+const GridItemPercentage = styled.div`
+    width: 65px;
+    height: 65px;
+    padding: 5px;
+`
 
 export {
     IndexWrapper,
@@ -481,5 +494,7 @@ export {
     GridContainer,
     SyncItemsContainer,
     MissingItemsContainer,
-    FormWrapper
+    FormWrapper,
+    List,
+    GridItemPercentage 
 }

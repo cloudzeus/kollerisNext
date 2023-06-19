@@ -7,8 +7,9 @@ import {
     ColumnDirective, 
     Page, Toolbar, Edit, Inject, Filter, ExcelExport, Sort 
 } from '@syncfusion/ej2-react-grids';
+import CircularProg from '@/components/CircularProgress';
 
-import {  ImageDiv } from "@/componentsStyles/grid/gridStyles";
+import {  ImageDiv, GridItemPercentage  } from "@/componentsStyles/grid/gridStyles";
 import { useDispatch } from 'react-redux';
 import { setSelectedId, setGridRowData } from "@/features/grid/gridSlice";
 
@@ -52,6 +53,16 @@ const Grid = ({ id, setId }) => {
     const sortingOptions = {
         columns: [{ field: 'softOne.MTRMAR', direction: 'Ascending' }]
     };
+
+    const completionTemplate = (props) => {
+        return (
+            <GridItemPercentage >
+                <CircularProg color={'orange'} value={90} />
+            </GridItemPercentage >
+        )
+    }
+
+
 
     const gridTemplate = (props) => {
         const logo = props.logo ? props.logo : 'notfound.jpg'
@@ -109,6 +120,7 @@ const Grid = ({ id, setId }) => {
                     <ColumnDirective field='softOne.NAME' headerText='Softone Όνομα' width='140' ></ColumnDirective>
                     <ColumnDirective field='name' headerText='Όνομα' width='140' ></ColumnDirective>
                     <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
+                    <ColumnDirective  headerText='Ποσ.Ολοκλήρωσης' width='100' template={completionTemplate}  textAlign="Right" ></ColumnDirective>
 
                     {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
                 <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective> */}
