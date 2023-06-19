@@ -15,6 +15,7 @@ import { Component } from '@syncfusion/ej2/base';
 import { findSoftoneAndSyncTables } from '@/features/syncProduct/markesNotFoundAriadne';
 import { calculateCompletionAriadne, notFoundSoftoneApi } from '@/features/syncProduct/markesNotFoundSoftone';
 import { calculateCompletionSoftone, notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
+import { toast } from 'react-toastify';
 
 
 
@@ -24,15 +25,16 @@ const SyncItemsWrapper = () => {
 
     return (
         <AdminLayout>
-            {/* <SyncItems
+            <SyncItems
                 data={dataNotFoundInAriadne}
                 percentage={softoneCompletionPercentage}
                 apiCall={notFoundAriadneApi}
+                addToDatabaseURL= '/api/admin/markes/markes'
                 calculatePercentage={calculateCompletionSoftone}
                 subtitle="Εγγραφές που υπάρχουν στο Softone και λείπουν από το Ariadne"
                 displayAttr={[
                     { displayName: 'Softone Όνομα', attr: 'NAME' }
-                ]} /> */}
+                ]} />
 
             <SyncItems
                 data={dataNotFoundInSoftone}
@@ -48,17 +50,25 @@ const SyncItemsWrapper = () => {
 
 }
 
-const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall, calculatePercentage }) => {
+const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall, calculatePercentage, addToDatabaseURL }) => {
     console.log(percentage)
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
+    const [hide, setHide] = useState(false)
     const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
-
-    const [selected, setSelected] = useState([{}]);
-
+    
+    const [selected, setSelected] = useState([]);
+    
     const handleAdd = async () => {
-        dispatch(calculatePercentage({ dataToUpdateLength: dataUpdate.length, dataLength: data.length, component: component }))
+        dispatch(calculatePercentage({ dataToUpdateLength: dataUpdate.length, dataLength: data.length}))
+        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: dataUpdate })
+        if(res) {
+            setHide(true)
+            toast.success('Προστέθηκαν επιτυχώς')
+        } else {
+            toast.error('Πρόβλημα κατά την προσθήκη')
+        }
     }
 
     const handleItemClick = (index, item) => {
@@ -123,30 +133,34 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
                         </div>
                         {paginatedData.map((item, index) => {
                             return (
-                                <div
-                                    key={index}
-                                    className="formsContainer"
-                                    onClick={() => handleItemClick(index, item)}>
-                                    <div className="info-div">
-                                        {displayAttr.map((single, index) => {
-                                            const key = single.attr;
-                                            console.log(key)
-                                            return (
-                                                <div key={index} >
-                                                    <span>{single.displayName}:</span>
-                                                    <p>{item[key]}</p>
-                                                </div>
-                                            );
-                                        })}
-
-                                    </div>
-
-                                    {/* <button onClick={handleAdd}>Add</button> */}
-                                    <div className="check-div">
-                                        {selected.includes(item.MTRMARK) ? <CheckIcon /> : null}
-                                        {/* {selectAll ? <CheckIcon /> : null} */}
-                                    </div>
-                                </div>
+                               <>
+                                {selected.includes(item.MTRMARK) && hide ? null : (
+                                     <div
+                                     key={index}
+                                     className="formsContainer"
+                                     onClick={() => handleItemClick(index, item)}>
+                                     <div className="info-div">
+                                         {displayAttr.map((single, index) => {
+                                             const key = single.attr;
+                                             console.log(key)
+                                             return (
+                                                 <div key={index} >
+                                                     <span>{single.displayName}:</span>
+                                                     <p>{item[key]}</p>
+                                                 </div>
+                                             );
+                                         })}
+ 
+                                     </div>
+ 
+                                     {/* <button onClick={handleAdd}>Add</button> */}
+                                     <div className="check-div">
+                                         {selected.includes(item.MTRMARK) ? <CheckIcon /> : null}
+                                         {/* {selectAll ? <CheckIcon /> : null} */}
+                                     </div>
+                                 </div>
+                                )}
+                               </>
                             )
                         })}
                         <BottomDiv>
