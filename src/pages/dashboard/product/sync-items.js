@@ -55,7 +55,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
     const dispatch = useDispatch();
     const [dataUpdate, setDataUpdate] = useState([]);
     const [expand, setExpand] = useState(false);
-    const [hide, setHide] = useState(false)
+    const [hide, setHide] = useState([])
     const { currentPage, totalPages, paginatedData, handlePageChange } = usePagination(data, 10);
     
     const [selected, setSelected] = useState([]);
@@ -64,7 +64,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
         dispatch(calculatePercentage({ dataToUpdateLength: dataUpdate.length, dataLength: data.length}))
         let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: dataUpdate })
         if(res) {
-            setHide(true)
+            setHide([...selected])
             toast.success('Προστέθηκαν επιτυχώς')
         } else {
             toast.error('Πρόβλημα κατά την προσθήκη')
@@ -105,6 +105,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
         findExtraSoftone();
     }, [dispatch, apiCall])
 
+    
     return (
         <Section>
             <Box p={'0'}>
@@ -134,7 +135,7 @@ const SyncItems = ({ data, displayAttr, subtitle, percentage, component, apiCall
                         {paginatedData.map((item, index) => {
                             return (
                                <>
-                                {selected.includes(item.MTRMARK) && hide ? null : (
+                                {hide.includes(item.MTRMARK) ? null : (
                                      <div
                                      key={index}
                                      className="formsContainer"
