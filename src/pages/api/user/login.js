@@ -5,7 +5,7 @@ import { signJwtAccessToken } from '@/utils/jwt';
 import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
-  console.log('reqbody '  + JSON.stringify(req.body))
+  console.log('reqbody :'  + JSON.stringify(req.body))
   try {
     
     await connectMongo();
