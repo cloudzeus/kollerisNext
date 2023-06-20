@@ -2,46 +2,10 @@ import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
 import axios from "axios";
 import compareArrays from "@/utils/compareArrays";
-import { columnSelectionComplete } from "@syncfusion/ej2-react-grids";
 
 
 
 export default async function handler(req, res) {
-	// await connectMongo();
-	// const newMarkes1 = await Markes.create({
-	// 	name: 'product1',
-	// 	description: 'description of product 1',
-	// 	logo: '1685705325908_mountain.jpg',
-	// 	videoPromoList: [
-	// 		{
-	// 			name: 'video1',
-	// 			videoUrl: 'videoURL'
-	// 		}
-	// 	],
-	// 	photosPromoList: [
-	// 		{
-	// 			name: 'sefsefsef',
-	// 			photosPromoUrl: 'sesefsefs'
-	// 		}
-	// 	],
-	// 	pimAccess: {
-	// 		pimUrl: 'https://pimurl',
-	// 		pimUserName: 'pimUserName',
-	// 		pimPassword: '1234567'
-	// 	},
-	// 	webSiteUrl: 'website url',
-	// 	officialCatalogueUrl: 'catalogues url',
-	// 	facebookUrl: 'facebook url',
-	// 	instagramUrl: 'instagram url',
-	// 	softOne: {
-	// 		COMPANY: '1001',
-	// 		SODTYPE: '51',
-	// 		MTRMARK: 1001,
-	// 		CODE: '1001',
-	// 		NAME: 'Addidas',
-	// 		ISACTIVE: 1
-	// 	}
-	// }); 
 
 
 
@@ -89,7 +53,7 @@ export default async function handler(req, res) {
 		console.log('create')
 		let { data } = req.body
 		try {
-			let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/createMtrMark`;
+			let URL = `https://${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
 			let softoneResponse = await axios.post(URL, {
 				username: 'Service',
 				password: 'Service',

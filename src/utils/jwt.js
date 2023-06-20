@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 
 export function signJwtAccessToken(payload) {
-    const secret = process.env.SECRET_KEY;
+    const secret = process.env.NEXT_PUBLIC_SECRET_KEY;
     const token = jwt.sign(payload, secret, { algorithm: 'HS256' }, { expiresIn: '1h' });
     console.log('token created' + JSON.stringify(token))
     return token;
@@ -13,7 +13,7 @@ export function signJwtAccessToken(payload) {
 
 export function verifyJwt(token) {
     try {
-        const secret = process.env.SECRET_KEY;
+        const secret = process.env.NEXT_PUBLIC_SECRET_KEY;
         const decoded = jwt.verify(token, secret);
         return decoded;
     } catch (error) {

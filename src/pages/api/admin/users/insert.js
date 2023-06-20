@@ -37,11 +37,3 @@ export default async function handler(req, res) {
 
 }
 
-
-const addUserValidation = (req) => {
-  console.log('are we here')
-  if(req.body.password === '') {
-    console.log('are we here `100')
-    return  res.status(200).json({success: false, user: null, error: 'Missing parameters'});
-  }
-}

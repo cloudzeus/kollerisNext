@@ -22,7 +22,7 @@ export const transporter = nodemailer.createTransport({
 const emailTemplate = (user) =>  `
     <p>Γειά σου, <strong>${user.firstName}</strong></p>
     <p>Η εγγραφή σου ολοκληρώθηκε μπορείς να πατήσεις τον παρακάτω σύνδεσμο για να συνδεθείς</p>
-    <a href="${process.env.BASE_URL}/auth/signin">Σύνδεση</a>
+    <a href="${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin">Σύνδεση</a>
 `
 
 

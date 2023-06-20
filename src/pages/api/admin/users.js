@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     let action = req.body.action
     let body = req.body
     console.log( 'action: ' + JSON.stringify(action) + '\n')
-    console.log( 'req body: ' + JSON.stringify(body) + '\n')
+    console.log( 'req body users/users : ' + JSON.stringify(body) + '\n')
 
     //iNSERT NEW USER
     if(action === 'add') {
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         
             
         } catch (error) {
-          return res.status(400).json({ success: false, error: 'failed to fetch user' });
+          return res.status(400).json({ success: false, error: 'Status 400: failed to fetch user' });
         }
     }
 
