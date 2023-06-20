@@ -47,6 +47,7 @@ const LoginForm = () => {
                 password: data.password,
                 redirect: false,
             })
+        console.log('next auth credentials response: ' + JSON.stringify(res))
         if (res.ok == true && res.status == 200 && res.error == null) {
             setLoading(false);
             router.push('/dashboard')
@@ -56,7 +57,7 @@ const LoginForm = () => {
             toast.error('Δεν βρέθηκε χρήστης');
             setLoading(false);
         }
-        reset();
+        // reset();
 
     };
 

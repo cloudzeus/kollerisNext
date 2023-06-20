@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-
+import axios from 'axios';
 console.log('NEXTAUTH_SECRET:' + process.env.NEXTAUTH_SECRET)
 
 export default NextAuth({
