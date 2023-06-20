@@ -1,6 +1,8 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
+console.log('NEXTAUTH_SECRET:' + process.env.NEXTAUTH_SECRET)
+
 export default NextAuth({
   session: {
     strategy: "jwt",
@@ -14,6 +16,7 @@ export default NextAuth({
         credentials: {},
        
         async authorize(credentials, req) {
+            console.log('CREDENTIALS IN NEXTAUTH:' + JSON.stringify(credentials))
             const res = await fetch(`${process.env.BASE_URL}/api/user/login`, {
               method: "POST",
               body: JSON.stringify(credentials),

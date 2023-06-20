@@ -5,11 +5,11 @@ import { signJwtAccessToken } from '@/utils/jwt';
 import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
-  console.log('reqbody' + JSON.stringify(req.body))
-  let password = req.body.password;
+  console.log('reqbody '  + JSON.stringify(req.body))
   try {
+    console.log('login users 100')
     await connectMongo();
-    
+    console.log('login users 200')
     // const result = await User.findOne({email: req.body.username , password: req.body.password });
     const user = await User.findOne({email: req.body.username});
     console.log('user' + JSON.stringify(user))
