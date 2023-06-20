@@ -79,7 +79,7 @@ const ImageUploader = () => {
                 return (
                     <div className="drag-n-drop_container" key={index}>
                     <div className="drag-n-drop_image">
-                        {/* <Image
+                        <Image
                             src={`/uploads/${imageUrl}`}
                             alt={`Uploaded ${index + 1}`}
                             fill={true}
@@ -89,7 +89,7 @@ const ImageUploader = () => {
                             onClick={(e) => deleteImage(e, imageUrl)}
                             className="delete-button">
                             <ClearIcon />
-                        </button> */}
+                        </button>
                     </div>
                     <div className="drag-n-drop_inputdiv">
                         <div>

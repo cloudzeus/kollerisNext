@@ -50,9 +50,6 @@ const Grid = ({ id, setId }) => {
         }
     };
 
-    const sortingOptions = {
-        columns: [{ field: 'softOne.MTRMAR', direction: 'Ascending' }]
-    };
 
     const completionTemplate = (props) => {
         return (

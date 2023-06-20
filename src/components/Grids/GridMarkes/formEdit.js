@@ -30,6 +30,7 @@ const registerSchema = yup.object().shape({
 export const FormEdit = () => {
     const { gridRowData } = useSelector(state => state.grid)
     const { uploadedImages } = useSelector(state => state.upload)
+    console.log('ON edit upload imagese ' + JSON.stringify(uploadedImages))
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(registerSchema),
         defaultValues: {
@@ -92,15 +93,21 @@ export const FormEdit = () => {
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
-        console.log('data')
-        console.log(data)
-        console.log('videoList')
-        console.log(videoList)
+      
+        let dataImages = []
+        for(let i of uploadedImages) {
+            dataImages.push({
+                name: i,
+                photosPromoUrl: i
+            })
+        }
+        
+
         let dataObj = {
             ...data,
             logo: selectedFile,
             videoPromoList: videoList,
-            photosPromoList: uploadedImages,
+            photosPromoList: dataImages,
 
         }
 
