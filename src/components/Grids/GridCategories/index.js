@@ -17,8 +17,7 @@ const CategoriesTreeGrid = () => {
     const [data, setData] = useState([])
 
     const [expand, setExpand] = useState([])
-    const [subexpand, setSubexpand] = useState([])
-    console.log(subexpand)
+
     useEffect(() => {
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
@@ -83,32 +82,7 @@ const CategoriesTreeGrid = () => {
                                             />
                                             {/* INNER MAP */}
                                             <div className="inner-items-container">
-                                                {item.groups.map((group, indexGroup) => {
-                                                    console.log(indexGroup)
-                                                    let condition = expand.includes(index) && subexpand.includes(indexGroup)
-                                                    return (
-                                                        <div className="inner-items" key={indexGroup}>
-                                                            <div className='list-header-div' onClick={() => handleSubExpand(indexGroup)}>
-                                                                <div >
-                                                                    <span>Ονομα Group:</span>
-                                                                    <span>{group.groupName}</span>
-                                                                </div>
-                                                                {condition ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />}
-                                                            </div>
-                                                            {condition ? (
-                                                                <Input
-                                                                label="Όνομα"
-                                                                name="softOne.NAME"
-                                                                type="text"
-                                                                value={group.groupName}
-                                                                disabled={true}
-                                                                required={true}
-                                                            />
-                                                            ) : null}
-                                                            
-                                                        </div>
-                                                    )
-                                                })}
+                                                <NestedList group={item.groups} />
                                             </div>
 
                                         </ExpandableItems>
@@ -125,7 +99,45 @@ const CategoriesTreeGrid = () => {
     );
 }
 
+const NestedList = ({ groups }) => {
+    const [subexpand, setSubexpand] = useState([])
+    const handleSubExpand = (index) => {
+        if (subexpand.includes(index)) {
+            setSubexpand([])
+            return;
+        }
+        setSubexpand([index])
+    }
+    return (
+        <div>
+            {groups.map((group, indexGroup) => {
+                console.log(indexGroup)
+                return (
+                    <div className="inner-items" key={indexGroup}>
+                        <div className='list-header-div' onClick={() => handleSubExpand(indexGroup)}>
+                            <div >
+                                <span>Ονομα Group:</span>
+                                <span>{group.groupName}</span>
+                            </div>
+                            {   subexpand.includes(indexGroup)? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />}
+                        </div>
+                        {subexpand.includes(indexGroup) ? (
+                            <Input
+                                label="Όνομα"
+                                name="softOne.NAME"
+                                type="text"
+                                value={group.groupName}
+                                disabled={true}
+                                required={true}
+                            />
+                        ) : null}
 
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
 
 
 export default CategoriesTreeGrid;
