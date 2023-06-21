@@ -52,22 +52,53 @@ const ExpandableItems = styled.div`
         position: relative;
 
     }
-    .inner-items-container {
-        padding: 20px;
-        border: 1px solid ${props => props.theme.palette.border};
-        border-radius: 5px;
-    }
-    .inner-items {
-        border: 1px solid ${props => props.theme.palette.border};
-        padding: 20px;
-        margin-bottom: 10px;
-    }
+    
     
 
 `
 
+const NestedListA = styled.div`
+  
+    .inner-items {
+        border: 1px solid ${props => props.theme.palette.border};
+        margin: 10px 0px;
+        border-radius: 5px;
+        box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.02);
+    }
 
+    .inner-items-header {
+        padding: 20px;
+    }
+    .inner-items-expand {
+        padding: 30px;
+        border-top: 1px solid ${props => props.theme.palette.border};
+    }
+    .inner-items-btn-container {
+        display: grid;
+        width: 80px;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 10px;
+    }
+    .inner-items-btn-container button {
+        width: 35px;
+        height: 35px;
+        border: 1px solid ${props => props.theme.palette.border};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border-radius: 4px;
+        box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.02);
+    }
+
+    .inner-items-btn-container svg {
+        color: #9a9a97;
+        font-size: 20px;
+    }
+    
+`
 export {
     ListContainer,
     ExpandableItems,
+    NestedListA
 }
