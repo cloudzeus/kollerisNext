@@ -39,7 +39,8 @@ import { model, models, Schema } from 'mongoose';
                 type: String
             }
         }
-    ]
+    ],
+    groups: [{ type: Schema.Types.ObjectId, ref: "MtrGroup" }],
 }, {
 
     timestamps: true,
@@ -49,6 +50,8 @@ import { model, models, Schema } from 'mongoose';
 
 
 const MtrGroupSchema = new mongoose.Schema({
+    category: { type: Schema.Types.ObjectId, ref: "MtrCategory" },
+    subGroups: [{ type: Schema.Types.ObjectId, ref: "SubMtrGroup" }],
     groupName: {
         type: String,
         required: true,
@@ -59,10 +62,7 @@ const MtrGroupSchema = new mongoose.Schema({
     groupImage: {
         type: String
     },
-    category: {
-        type: Schema.Types.ObjectId,
-        ref: 'MTRCATEGORY'
-    },
+  
     softOne: {
         MTRGROUP: {
             type: Number
@@ -99,6 +99,10 @@ const MtrGroupSchema = new mongoose.Schema({
 
 
 const MtrSubGroupSchema = new mongoose.Schema({
+    group: {
+        type: Schema.Types.ObjectId,
+        ref: 'MTRGROUP'
+    },
     subGroupName: {
         type: String,
         required: true,
@@ -109,10 +113,7 @@ const MtrSubGroupSchema = new mongoose.Schema({
     subGroupImage: {
         type: String
     },
-    group: {
-        type: Schema.Types.ObjectId,
-        ref: 'MTRGROUP'
-    },
+   
     softOne: {
         cccSubgroup2: {
             type: Number
@@ -148,9 +149,12 @@ const MtrSubGroupSchema = new mongoose.Schema({
 
 
 
-const MTRCATEGORY = models.MTRCATEGORY || model('MTRCATEGORY', MtrCategorySchema);
-const MTRGROUP = models.MTRGROUP || model('MTRGROUP', MtrGroupSchema);
-const SUBMTRGROUP = models.SUBMTRGROUP || model('SUBMTRGROUP', MtrSubGroupSchema);
+const MtrCategory = mongoose.models.MtrCategory || mongoose.model('MtrCategory', MtrCategorySchema);
+const MtrGroup = mongoose.models.MtrGroup || mongoose.model('MtrGroup', MtrGroupSchema);
+const SubMtrGroup = mongoose.models.SubMtrGroup || mongoose.model('SubMtrGroup', MtrSubGroupSchema)
 
-
-export default MTRCATEGORY;
+export {
+    MtrCategory,
+    MtrGroup,
+    SubMtrGroup
+}

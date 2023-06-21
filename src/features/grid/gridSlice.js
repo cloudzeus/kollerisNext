@@ -1,7 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { update } from "@syncfusion/ej2/inplace-editor";
-import axios from "axios";
-import { toast } from 'react-toastify';
+import { createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedId: null,
@@ -12,8 +9,6 @@ const initialState = {
 	success: false,
 	editData: [],
 }
-
-
 
 
 
