@@ -1,12 +1,11 @@
 import styled from "styled-components";
 
+
+
+
 const ListContainer = styled.div`
-    
+        background-color: white;
         border: 1px solid ${props => props.theme.palette.border};
-        /* display: flex;
-        align-items: center;
-        justify-content: space-between; */
-        padding: 20px;
         border-radius: 5px;
         margin-bottom: 10px;
         position: relative;
@@ -20,14 +19,15 @@ const ListContainer = styled.div`
         -moz-box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.07);
     }
 
-    
 
     .list-header-div {
+        cursor: pointer;
         font-size: 14px;
         display: flex;
         width: 100%;
         justify-content: space-between;
         align-items: center;
+        position: relative;
         span:nth-child(1) {
             font-weight: 600;
         }
@@ -35,9 +35,26 @@ const ListContainer = styled.div`
             margin-left: 10px;
         }
     }
+    
+    .list-header-div-left {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 10px;
+        align-items: center;
+        justify-content: space-between;
+        border-right: 1px solid ${props => props.theme.palette.border};
+    }
+    .list-header-div-rigth {
+        padding: 10px;
+    }
+    
 `
 
 const ExpandableItems = styled.div`
+padding: 20px;
+ background-color: white;
+ border-top: 2px solid ${props => props.theme.palette.background};
     .divider {
         width: 100%;
         height: 1px;
@@ -58,12 +75,16 @@ const ExpandableItems = styled.div`
 `
 
 const NestedListA = styled.div`
-  
+    margin-left: 40px;
     .inner-items {
+        background-color: white;
         border: 1px solid ${props => props.theme.palette.border};
         margin: 10px 0px;
         border-radius: 5px;
         box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.02);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .inner-items-header {

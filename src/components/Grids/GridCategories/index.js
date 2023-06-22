@@ -3,7 +3,7 @@ import React from 'react';
 import { IndexWrapper } from '@/componentsStyles/grid/gridStyles';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { ListContainer, ExpandableItems, NestedListA} from '@/componentsStyles/list/listStyles';
+import { ListContainer, ExpandableItems, NestedListA } from '@/componentsStyles/list/listStyles';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Image from 'next/image';
@@ -12,8 +12,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Input } from '@/components/Forms/newInputs/InputClassic';
 import { useForm } from "react-hook-form";
-
-
+import ActiveTag from '@/components/ActiveTag';
+import LinearWithValueLabel from '@/components/LinearProgressWithLabel';
 const CategoriesTreeGrid = () => {
 
     const [data, setData] = useState([])
@@ -37,77 +37,80 @@ const CategoriesTreeGrid = () => {
         setExpand([index])
         setShowNested(false)
     }
-  
+
     const handleShowNested = () => {
         setShowNested(prev => !prev)
     }
 
 
     return (
-        <IndexWrapper p="0px" className="box">
+        <div p="0px" >
             <div className="header">
                 <h2 className="boxHeader">Κατηγoρίες</h2>
             </div>
-            <div className="innerContainer" >
-                <>
-                    {data.map((item, index) => {
-                        console.log('CATEGORIES ITEM  ' + JSON.stringify(item.groups))
-                        let condition = expand.includes(index)
-                        return (
-                            <>
-                                 <ListContainer>
-                                 <div className='list-header-div' onClick={() => handleExpand(index)} >
-                                     <div >
-                                         <span>Ονομα:</span>
-                                         <span>{item.categoryName}</span>
-                                     </div>
-                                     {expand ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />}
-                                 </div>
-                                 {expand.includes(index) ? (
-                                     <ExpandableItems>
-                                         <div className='divider'></div>
+            <div>
+                {data.map((item, index) => {
+                    return (
+                        <div key={item}>
+                            <ListContainer>
+                                <div className='list-header-div' onClick={() => handleExpand(index)} >
+                                    <div className="list-header-div-left">
+                                        <div >
+                                            <span>Ονομα:</span>
+                                            <span>{item.categoryName}</span>
+                                        </div>
+                                        <div>
+                                        <ActiveTag isActive={true} />
+                                        </div>
+                                    </div>
+                                    <div className="list-header-div-rigth">
+                                          {!expand.includes(index) ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />} 
+                                    </div>
+                                </div>
+                                {expand.includes(index) ? (
+                                    <ExpandableItems>
                                         {!showNested ? (
-                                          <div >
-                                          <Input
-                                              label="Όνομα"
-                                              name="softOne.NAME"
-                                              type="text"
-                                              value={item.categoryName}
-                                              disabled={true}
-                                              required={true}
-                                          />
-                                          <Input
-                                              label="Softone Όνομα"
-                                              name="softOne.NAME"
-                                              type="text"
-                                              value={item.categoryName}
-                                              disabled={true}
-                                              required={true}
-                                          />
-                                          </div>
-                                        ): null}
-                                         {/* INNER MAP */}
-                                         <button onClick={handleShowNested}>
-                                         <KeyboardArrowDownIcon />
-                                             Group
-                                         </button>
-                                         {showNested ? <NestedList groups={item.groups} /> : null}
-                                            
+                                            <div >
+                                                <Input
+                                                    label="Όνομα"
+                                                    name="softOne.NAME"
+                                                    type="text"
+                                                    value={item.categoryName}
+                                                    disabled={true}
+                                                    required={true}
+                                                />
+                                                <Input
+                                                    label="Softone Όνομα"
+                                                    name="softOne.NAME"
+                                                    type="text"
+                                                    value={item.categoryName}
+                                                    disabled={true}
+                                                    required={true}
+                                                />
+                                            </div>
+                                        ) : null}
+                                        {/* INNER MAP */}
+                                        <button onClick={handleShowNested}>
+                                            <KeyboardArrowDownIcon />
+                                            Group
+                                        </button>
 
-                                     </ExpandableItems>
-                                 ) : null}
-                             </ ListContainer >
-                             
-                            </>
-                        )
-                    })}
-                </>
+                                    </ExpandableItems>
+                                ) : null}
 
+                            </ ListContainer >
+                            {showNested ? <NestedList groups={item.groups} /> : null}
+                        </div>
+                    )
+                })}
             </div>
 
-        </IndexWrapper>
+        </div>
     );
 }
+
+
+
 
 const NestedList = ({ groups }) => {
     const [subexpand, setSubexpand] = useState([])
@@ -121,7 +124,6 @@ const NestedList = ({ groups }) => {
     return (
         <NestedListA>
             {groups.map((group, indexGroup) => {
-                console.log(indexGroup)
                 return (
                     <div className="inner-items" key={indexGroup}>
                         <div className='list-header-div inner-items-header' onClick={() => handleSubExpand(indexGroup)}>
@@ -129,29 +131,27 @@ const NestedList = ({ groups }) => {
                                 <span>Ονομα Group:</span>
                                 <span>{group.groupName}</span>
                             </div>
-                               
-
-                            {subexpand.includes(indexGroup)? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />}
+                            {subexpand.includes(indexGroup) ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />}
                         </div>
                         {subexpand.includes(indexGroup) ? (
-                           <div className='inner-items-expand'>
-                             <Input
-                                label="Όνομα"
-                                name="softOne.NAME"
-                                type="text"
-                                value={group.groupName}
-                                disabled={true}
-                                required={true}
-                            />
-                             <div className="inner-items-btn-container">
+                            <div className='inner-items-expand'>
+                                <Input
+                                    label="Όνομα"
+                                    name="softOne.NAME"
+                                    type="text"
+                                    value={group.groupName}
+                                    disabled={true}
+                                    required={true}
+                                />
+                                <div className="inner-items-btn-container">
                                     <button onClick={() => handleSubExpand(indexGroup)}>
                                         < EditIcon />
                                     </button>
                                     <button>
-                                        < DeleteIcon/>
+                                        < DeleteIcon />
                                     </button>
                                 </div>
-                           </div>
+                            </div>
                         ) : null}
 
                     </div>
@@ -160,6 +160,9 @@ const NestedList = ({ groups }) => {
         </NestedListA>
     )
 }
+
+
+
 
 
 export default CategoriesTreeGrid;

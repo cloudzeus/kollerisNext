@@ -23,15 +23,13 @@ const BigSidebar = () => {
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
       <SidebarItem to="/dashboard/product/brands" label="Μάρκες" />
       <SidebarItem to="/dashboard/product/categories" label="Κατηγορίες" />
-      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
-      {/* <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>
-        <SidebarItem to="/dashboard/page2" label="SpreadSheet01" />
+      <SidebarItem to="/dashboard/users" label="Χρήστες" />
+      {/* <Divider variant="middle" sx={{ my: 2 }} />  */}
+      <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>
         <SidebarItem to="/dashboard/page2" label="SpreadSheet01" />
       </SidebarExpandableItem>
-      <SidebarExpandableItem label="Προϊόν" open={open} setOpen={onClick}>
-        <SidebarItem to="/dashboard/product/brands" label="Mάρκες" />
-      </SidebarExpandableItem>
-      {data?.user?.role === 'admin' && (
+     
+      {/* {data?.user?.role === 'admin' && (
          <SidebarExpandableItem label="Admin Pages" open={open} setOpen={onClick}>
          <SidebarItem to="/dashboard/admin" label="Page1" />
          <SidebarItem to="/dashboard/admin/page" label="Page2" />
