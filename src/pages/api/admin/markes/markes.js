@@ -31,10 +31,18 @@ export default async function handler(req, res) {
 
 	if (action === 'findAll') {
 		try {
+			console.log('fin all markes')
 			await connectMongo();
 			const markes = await Markes.find({});
 			if (markes) {
 				// console.log(markes)
+				function findCompletion(markes) {
+					for(let item of markes) {
+						console.log(item)
+					}
+				}
+				
+				
 				return res.status(200).json({ success: true, markes: markes });
 
 			}
@@ -50,10 +58,9 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'create') {
-		console.log('create')
 		let { data } = req.body
 		try {
-			let URL = `https://${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
 			let softoneResponse = await axios.post(URL, {
 				username: 'Service',
 				password: 'Service',
@@ -205,6 +212,25 @@ export default async function handler(req, res) {
 			}
 		}
 
+		// if(body.softOneName ) {
+		// 	let URL = `https://${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/updateMtrMark`;
+		// 	let softoneResponse = await axios.post(URL, {
+		// 		username: 'Service',
+		// 		password: 'Service',
+		// 		company: '1001',
+		// 		sodtype: '51',
+		// 		mtrcode: 1497,
+		// 		name: "fixed name"
+		// 	})
+
+		// 	if(!softoneResponse.data.success) {
+		// 		return res.status(200).json({ success: false, result: softoneResponse.data, error: 'Δεν έγινε update της μάκρας στο softone' });
+		// 	}
+		// 	console.log('Softone update Markes: ' + JSON.stringify(softoneResponse.data))
+		// 	return res.status(200).json({ success: true, result: softoneResponse.data, error: null });
+
+		// }	
+
 		console.log(updateBody)
 		try {
 			await connectMongo();
@@ -240,58 +266,58 @@ export default async function handler(req, res) {
 		}
 	}
 
-	if (action === 'sync') {
-		console.log('sync')
-		try {
-			let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
-			let { data } = await axios.post(URL)
-			let softOneArray = data.result;
-			await connectMongo();
-			const mongoArray = await Markes.find({}, { softOne: 1 });
-			let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
-			if (newArray) {
-				return res.status(200).json({ success: true, markes: newArray });
-			}
-			else {
-				return res.status(200).json({ success: false, markes: [] });
-			}
+	// if (action === 'sync') {
+	// 	console.log('sync')
+	// 	try {
+	// 		let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
+	// 		let { data } = await axios.post(URL)
+	// 		let softOneArray = data.result;
+	// 		await connectMongo();
+	// 		const mongoArray = await Markes.find({}, { softOne: 1 });
+	// 		let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
+	// 		if (newArray) {
+	// 			return res.status(200).json({ success: true, markes: newArray });
+	// 		}
+	// 		else {
+	// 			return res.status(200).json({ success: false, markes: [] });
+	// 		}
 
-		}
-		catch (error) {
-			return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού', markes: [] });
-		}
-	}
+	// 	}
+	// 	catch (error) {
+	// 		return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού', markes: [] });
+	// 	}
+	// }
 
-	if (action === 'syncAndUpdate') {
+	// if (action === 'syncAndUpdate') {
 
-		let data = req.body.data;
+	// 	let data = req.body.data;
 
-		try {
-			await connectMongo();
-			if (req.body.syncTo == 'Εμάς') {
-				let updated = await Markes.updateOne(
-					{ "softOne.MTRMARK": parseInt(data.MTRMARK) },
-					{ $set: { "softOne.NAME": data.NAME } }
-				);
+	// 	try {
+	// 		await connectMongo();
+	// 		if (req.body.syncTo == 'Εμάς') {
+	// 			let updated = await Markes.updateOne(
+	// 				{ "softOne.MTRMARK": parseInt(data.MTRMARK) },
+	// 				{ $set: { "softOne.NAME": data.NAME } }
+	// 			);
 
-				if (updated.modifiedCount === 0) {
-					return res.status(200).json({ success: false, updated: false });
-				}
+	// 			if (updated.modifiedCount === 0) {
+	// 				return res.status(200).json({ success: false, updated: false });
+	// 			}
 
-				return res.status(200).json({ success: true, updated: true });
-			}
+	// 			return res.status(200).json({ success: true, updated: true });
+	// 		}
 
-			if (req.body.syncTo == 'Softone') {
-				return res.status(200).json({ success: false, updated: false });
-			}
+	// 		if (req.body.syncTo == 'Softone') {
+	// 			return res.status(200).json({ success: false, updated: false });
+	// 		}
 
-			// console.log('200')
-			// return res.status(200).json({ success: true, markes: null });
-		} catch (e) {
-			return res.status(500).json({ success: false, error: error.message });
-		}
+	// 		// console.log('200')
+	// 		// return res.status(200).json({ success: true, markes: null });
+	// 	} catch (e) {
+	// 		return res.status(500).json({ success: false, error: error.message });
+	// 	}
 
-	}
+	// }
 
 	if (action === 'findExtraSoftone') {
 		await connectMongo();
@@ -330,7 +356,7 @@ export default async function handler(req, res) {
 
 
 const fetchSoftoneMarkes = async () => {
-	let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
+	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`;
 	let { data } = await axios.post(URL)
 	return data;
 }

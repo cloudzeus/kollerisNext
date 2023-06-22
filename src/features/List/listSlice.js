@@ -2,18 +2,13 @@ import { createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedId: null,
-	action: null,
-	gridRowData: [],
-	gridSelectedFile: null,
-	loading: false,
-	success: false,
-	editData: [],
+
 }
 
 
 
-const gridSlice = createSlice({
-	name: 'grid',
+const listSlice = createSlice({
+	name: 'list',
 	initialState,
 	reducers: {
 		setSelectedId: (state, action) => {
@@ -37,5 +32,5 @@ const gridSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAction} = gridSlice.actions;
-export default gridSlice.reducer;
+export const {setSelectedId, setGridRowData, setSelectedFile, setAction} = listSlice .actions;
+export default listSlice .reducer;

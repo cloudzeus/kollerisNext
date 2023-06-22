@@ -22,9 +22,9 @@ const BigSidebar = () => {
     <Wrapper isSidebarOpen={isSidebarOpen} >
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
       <SidebarItem to="/dashboard/product/brands" label="Μάρκες" />
-      <SidebarItem to="/dashboard/admin/admin-panel-users" label="Χρήστες" />
+      <SidebarItem to="/dashboard/product/categories" label="Κατηγορίες" />
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
-      <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>
+      {/* <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>
         <SidebarItem to="/dashboard/page2" label="SpreadSheet01" />
         <SidebarItem to="/dashboard/page2" label="SpreadSheet01" />
       </SidebarExpandableItem>
@@ -36,7 +36,7 @@ const BigSidebar = () => {
          <SidebarItem to="/dashboard/admin" label="Page1" />
          <SidebarItem to="/dashboard/admin/page" label="Page2" />
        </SidebarExpandableItem>
-      )}
+      )} */}
     </Wrapper>
 
 

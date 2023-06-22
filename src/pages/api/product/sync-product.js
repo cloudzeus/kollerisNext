@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
 
 const fetchSoftoneMarkes = async () => {
-    let URL = `https://${process.env.SERIAL_NO}.${process.env.DOMAIN}/s1services/JS/mbmv.mtrMark/getMtrMark`;
+    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`;
     let { data } = await axios.post(URL)
     return data;
 }
