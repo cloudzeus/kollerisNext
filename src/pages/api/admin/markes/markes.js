@@ -36,13 +36,6 @@ export default async function handler(req, res) {
 			const markes = await Markes.find({});
 			if (markes) {
 				// console.log(markes)
-				function findCompletion(markes) {
-					for(let item of markes) {
-						console.log(item)
-					}
-				}
-				
-				
 				return res.status(200).json({ success: true, markes: markes });
 
 			}
