@@ -1,8 +1,8 @@
 import { createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-	selectedId: null,
-
+	childListData: [],
+	parentCategory: ''
 }
 
 
@@ -11,20 +11,13 @@ const listSlice = createSlice({
 	name: 'list',
 	initialState,
 	reducers: {
-		setSelectedId: (state, action) => {
-			state.selectedId = action.payload;
-		},
-		setAction: (state, action) => {
+		setChildListData: (state, action) => {
+			console.log('action.payload')
 			console.log(action.payload)
-			state.action = action.payload;
+			state.childListData = action.payload.groups;
+			state.parentCategory = action.payload.categoryName
 		},
-		setGridRowData: (state, action) => {
-			state.gridRowData = action.payload;
-		},
-		setSelectedFile: (state, action) => {
-			console.log(action.payload)
-			state.gridSelectedFile = action.payload;
-		},
+		
 		
 		
 	},
@@ -32,5 +25,5 @@ const listSlice = createSlice({
 })
 
 
-export const {setSelectedId, setGridRowData, setSelectedFile, setAction} = listSlice .actions;
+export const {setChildListData} = listSlice .actions;
 export default listSlice .reducer;
