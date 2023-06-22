@@ -13,7 +13,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Input } from '@/components/Forms/newInputs/InputClassic';
 import { useForm } from "react-hook-form";
 import ActiveTag from '@/components/ActiveTag';
-import LinearWithValueLabel from '@/components/LinearProgressWithLabel';
+
+
+
 const CategoriesTreeGrid = () => {
 
     const [data, setData] = useState([])
@@ -114,6 +116,7 @@ const CategoriesTreeGrid = () => {
 
 const NestedList = ({ groups }) => {
     const [subexpand, setSubexpand] = useState([])
+    const [showSubNested, setShowSubNested] = useState(false);
     const handleSubExpand = (index) => {
         if (subexpand.includes(index)) {
             setSubexpand([])
@@ -122,11 +125,13 @@ const NestedList = ({ groups }) => {
         setSubexpand([index])
     }
     return (
-        <NestedListA>
+       <>
             {groups.map((group, indexGroup) => {
                 return (
-                    <div className="inner-items" key={indexGroup}>
-                        <div className='list-header-div inner-items-header' onClick={() => handleSubExpand(indexGroup)}>
+                    <div key={indexGroup}>
+                         <NestedListA  >
+                    <div className="inner-items">
+                        <div className='inner-items-header' onClick={() => handleSubExpand(indexGroup)}>
                             <div >
                                 <span>Ονομα Group:</span>
                                 <span>{group.groupName}</span>
@@ -151,13 +156,19 @@ const NestedList = ({ groups }) => {
                                         < DeleteIcon />
                                     </button>
                                 </div>
+                                <button onClick={() => setShowSubNested(prev => !prev)} >show subnested</button>
                             </div>
                         ) : null}
-
+                       
                     </div>
+                    </NestedListA>
+                    </div>
+                   
                 )
             })}
-        </NestedListA>
+        
+       
+       </>
     )
 }
 

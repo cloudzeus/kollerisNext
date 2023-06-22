@@ -1,13 +1,126 @@
-import AdminLayout from "@/layouts/Admin/AdminLayout";
-import React from 'react'
-import GridTable from "@/components/Grids/GridMarkes";
-import CategoriesTreeGrid from "@/components/Grids/GridCategories";
-const Categories = () => {
-  return (
-    <AdminLayout>
-        <CategoriesTreeGrid  />
-    </AdminLayout>
-  )
+
+import React from 'react';
+import { IndexWrapper } from '@/componentsStyles/grid/gridStyles';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { ListContainer, ExpandableItems, NestedListA } from '@/componentsStyles/list/listStyles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Image from 'next/image';
+import { Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Input } from '@/components/Forms/newInputs/InputClassic';
+import { useForm } from "react-hook-form";
+import ActiveTag from '@/components/ActiveTag';
+import AdminLayout from '@/layouts/Admin/AdminLayout';
+import { IconButton } from '@/componentsStyles/buttons/buttonStyles';
+import { useRouter } from 'next/router'
+import NavigateBtn from '@/components/Buttons/NavigateBtn';
+
+
+const CategoriesTreeGrid = () => {
+
+    const [data, setData] = useState([])
+    const router = useRouter();
+    const [expand, setExpand] = useState([])
+    const [showNested, setShowNested] = useState(false);
+
+    useEffect(() => {
+        const handleFetch = async () => {
+            let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
+            setData(res.data.result)
+        }
+        handleFetch()
+    }, [])
+
+    const handleExpand = (index) => {
+        if (expand.includes(index)) {
+            setExpand([])
+            return;
+        }
+        setExpand([index])
+        setShowNested(false)
+    }
+
+   
+
+    return (
+      <AdminLayout>
+            <div className="header">
+                <h2 className="boxHeader">Κατηγoρίες</h2>
+            </div>
+                {data.map((item, index) => {
+                    return (
+                        <div key={item}>
+                            <ListContainer>
+                                <div className='list-header-div' onClick={() => handleExpand(index)} >
+                                    <div className="list-header-div-left">
+                                        <div >
+                                            <span>Ονομα:</span>
+                                            <span>{item.categoryName}</span>
+                                        </div>
+                                        <div>
+                                        <ActiveTag isActive={true} />
+                                        </div>
+                                    </div>
+                                    <div className="list-header-div-rigth">
+                                        {!expand.includes(index) ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />} 
+                                    </div>
+                                </div>
+                                {expand.includes(index) ? (
+                                    <ExpandableItems>
+                                        {!showNested ? (
+                                            <div >
+                                                <Input
+                                                    label="Όνομα"
+                                                    name="softOne.NAME"
+                                                    type="text"
+                                                    value={item.categoryName}
+                                                    disabled={true}
+                                                    required={true}
+                                                />
+                                                <Input
+                                                    label="Softone Όνομα"
+                                                    name="softOne.NAME"
+                                                    type="text"
+                                                    value={item.categoryName}
+                                                    disabled={true}
+                                                    required={true}
+                                                />
+                                            </div>
+                                        ) : null}
+                                        <div className="list-bottom-actions-div">
+                                        <NavigateBtn text={'Groups'} url={'/dashboard/product/categories-groups'} />
+                                        <div className="list-bottom-actions-div_actions">
+                                            <button>
+                                                <EditIcon />
+                                            </button>
+                                            <button>
+                                                <DeleteIcon />
+                                            </button>
+                                        </div>
+                                        </div>
+                                        
+
+                                    </ExpandableItems>
+                                ) : null}
+                            </ ListContainer >
+                        </div>
+                    )
+                })}
+      </AdminLayout>
+       
+    );
 }
 
-export default Categories;
+
+
+
+
+
+
+
+
+
+export default CategoriesTreeGrid;

@@ -24,11 +24,9 @@ const BigSidebar = () => {
       <SidebarItem to="/dashboard/product/brands" label="Μάρκες" />
       <SidebarItem to="/dashboard/product/categories" label="Κατηγορίες" />
       <SidebarItem to="/dashboard/users" label="Χρήστες" />
-      {/* <Divider variant="middle" sx={{ my: 2 }} />  */}
       <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>
         <SidebarItem to="/dashboard/page2" label="SpreadSheet01" />
       </SidebarExpandableItem>
-     
       {/* {data?.user?.role === 'admin' && (
          <SidebarExpandableItem label="Admin Pages" open={open} setOpen={onClick}>
          <SidebarItem to="/dashboard/admin" label="Page1" />
