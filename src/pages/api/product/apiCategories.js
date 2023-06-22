@@ -32,13 +32,13 @@ export default async function handler(req, res) {
 		console.log('find all')
 
 		try {
-
+			await connectMongo();
 			let categories = await MtrCategory.find({})
 			.populate({
 				path: 'groups',
 				populate: { path: 'subGroups' }
 			  });
-
+			console.log('categories 2 ' + JSON.stringify(categories))
 			return res.status(200).json({ success: true, result: categories });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
