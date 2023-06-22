@@ -11,6 +11,7 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body;
+		console.log(data)
 		try {
 			await connectMongo();
 			const category = await MtrCategory.create({
