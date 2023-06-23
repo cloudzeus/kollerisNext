@@ -43,7 +43,7 @@ const SidebarContainer = styled.div`
     top: 70px;
     left: ${({ isSidebarOpen }) => isSidebarOpen ? '260px' : '0'};
     width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 260px)' : '100%'};
-    padding: 100px;
+    padding: 40px;
     overflow-y:scroll;
     background-color: ${({ theme }) => theme.palette.background};
     height: calc(100vh - 70px);
