@@ -15,10 +15,14 @@ import { ImageInput } from '@/components/Forms/newInputs/ImageInput';
 import BrandDialog from '@/GridDialogs/brandDialog';
 import { useDispatch } from 'react-redux';
 import { setBrandDialog } from '@/features/brand/brandSlice';
+import { Galleria } from 'primereact/galleria';
+import Link from 'next/link'
+
+
 
 export default function TemplateDemo() {
-    const [brandData, setBrandData] = useState([]);
-    const [brandDialog, setBrandDialog] = useState(false);
+    const [editData, setEditData] = useState([]);
+    const [dialog, setDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
@@ -101,10 +105,30 @@ export default function TemplateDemo() {
     };
 
     const rowExpansionTemplate = (data) => {
-     
+        console.log('sefsfe')
+        console.log(data)
         return (
-            <div className="p-3">
-                <h5>Orders for {JSON.stringify(data)}</h5>
+            < ShowDetails >
+                <div className="list-item">
+                    <span>Ιστοσελίδα:</span>
+                    <Link className="grid-link" href={data.webSiteUrl}>{data.webSiteUrl}</Link>
+                </div>
+                <div className="divider"></div>
+                <div className="list-item">
+                    <span>Ιnstagram:</span>
+                    <span>{data.instagramUrl}</span>
+                </div>
+                <div className="divider"></div>
+                <div className="list-item">
+                    <span>URL καταλόγου:</span>
+                    <span>{data.officialCatalogueUrl}</span>
+                </div>
+                <div className="divider"></div>
+                <div className="list-item">
+                    <span>Εικόνες:</span>
+                    
+                </div>
+                
                 {/* <DataTable 
                     value={data.orders}
                     expandedRows={expandedRows} 
@@ -122,7 +146,7 @@ export default function TemplateDemo() {
                     <Column field="status" header="Status" body={statusOrderBodyTemplate} sortable></Column>
                     <Column headerStyle={{ width: '4rem' }} body={searchBodyTemplate}></Column>
                 </DataTable> */}
-            </div>
+            </ ShowDetails >
         );
     };
 
@@ -146,17 +170,12 @@ export default function TemplateDemo() {
     //Edit:
     const editProduct = (product) => {
         console.log('product: ' + JSON.stringify(product))
-        // dispatch(setBrand({ ...product }))
-        // dispatch(setBrandDialog(true))
-        setData({ ...product })
+       
+        setEditData({ ...product })
         setDialog(true)
     };
 
-    const openNew = () => {
-        setData(null);
-        setSubmitted(false);
-        setDialog(true);
-    };
+   
 
     const hideDialog = () => {
         console.log('hide dialog action')
@@ -230,9 +249,9 @@ export default function TemplateDemo() {
 
             </DataTable>
             <BrandDialog 
-                data={brandData} 
-                dialog={brandDialog} 
-                setDialog={setBrandDialog}
+                data={editData} 
+                dialog={dialog} 
+                setDialog={setDialog}
                 hideDialog={hideDialog}
                 saveProduct={saveProduct}
                 submitted={submitted}
@@ -257,7 +276,6 @@ const ActiveTempate = ({softOne}) => {
     )
 
 }
-
 
 
 
@@ -290,12 +308,38 @@ const ActionDiv = styled.span`
         margin-left: 2px;
         margin-right: 2px;
     }
-   
-  
-    /* span.pi-trash{
-        color: red;
+
+
+`
+
+
+
+
+const ShowDetails = styled.div`
+    border: 1px solid #e0e0e0;
+    div {
+        padding: 20px;
     }
-    span.pi-pencil{
-        color: orange;
-    } */
+    .list-item  {
+        padding: 20px;
+        /* border-bottom: 1px solid #e0e0e0; */
+     
+    } 
+    .list-item span:nth-child(1) {
+        font-weight: bold;
+        margin-right: 20px;
+    }
+   
+
+    .divider {
+        padding: 0px;
+        height: 1px;
+        background-color: #e0e0e0;
+    }
+
+    .grid-link {
+        color: #0d6efd;
+        cursor: pointer;
+
+    }
 `
