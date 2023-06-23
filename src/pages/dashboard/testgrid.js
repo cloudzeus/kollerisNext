@@ -16,6 +16,7 @@ import BrandDialog from '@/GridDialogs/brandDialog';
 import { useDispatch } from 'react-redux';
 import { setBrandDialog } from '@/features/brand/brandSlice';
 import { Galleria } from 'primereact/galleria';
+import GalleryImages from '@/components/Gallery';
 import Link from 'next/link'
 
 
@@ -23,6 +24,7 @@ import Link from 'next/link'
 export default function TemplateDemo() {
     const [editData, setEditData] = useState([]);
     const [dialog, setDialog] = useState(false);
+    
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
@@ -31,12 +33,15 @@ export default function TemplateDemo() {
        
     });
 
+    //
+    const [images, setImages] = useState([])
+
     const handleFetchUser = async () => {
         try {
             const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
-            // console.log('resp.data.markes')
-            // console.log(resp.data.markes)
+           
             setData(resp.data.markes)
+            setImages(resp.data.images)
 
         } catch (error) {
             console.log(error)
@@ -45,11 +50,11 @@ export default function TemplateDemo() {
 
 
     useEffect(() => {
-        handleFetchUser();
+         handleFetchUser();
+      
     }, []);
 
  
-
    
 
     const logoTemplate = (data) => {
@@ -105,8 +110,7 @@ export default function TemplateDemo() {
     };
 
     const rowExpansionTemplate = (data) => {
-        console.log('sefsfe')
-        console.log(data)
+   
         return (
             < ShowDetails >
                 <div className="list-item">
@@ -126,7 +130,7 @@ export default function TemplateDemo() {
                 <div className="divider"></div>
                 <div className="list-item">
                     <span>Εικόνες:</span>
-                    
+                    < GalleryImages images={images} />
                 </div>
                 
                 {/* <DataTable 
@@ -169,7 +173,6 @@ export default function TemplateDemo() {
   
     //Edit:
     const editProduct = (product) => {
-        console.log('product: ' + JSON.stringify(product))
        
         setEditData({ ...product })
         setDialog(true)
@@ -178,14 +181,12 @@ export default function TemplateDemo() {
    
 
     const hideDialog = () => {
-        console.log('hide dialog action')
         setSubmitted(false);
         setDialog(false);
     };
 
     const saveProduct = () => {
         setSubmitted(true);
-        console.log('save Product')
         // if (product.name.trim()) {
         //     let _products = [...products];
         //     let _product = { ...product };

@@ -36,14 +36,18 @@ export default async function handler(req, res) {
 			const markes = await Markes.find({});
 			if (markes) {
 				// console.log(markes)
-				function findCompletion(markes) {
-					for(let item of markes) {
-						console.log(item)
+				const arrayImages = []
+				for(let item of markes) {
+					for(let image of item?.photosPromoList ?? []) {
+						if(image?.photosPromoUrl) {
+							arrayImages.push(image?.photosPromoUrl)
+						}
+						
+						
 					}
 				}
 				
-				
-				return res.status(200).json({ success: true, markes: markes });
+				return res.status(200).json({ success: true, markes: markes, images: arrayImages});
 
 			}
 			else {
@@ -77,8 +81,6 @@ export default async function handler(req, res) {
 			console.log(softoneResponse.data)
 			let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
 			console.log(SOFTONE_MTRMARK)
-
-
 			const object = {
 				name: data.name,
 				description: data.description,
@@ -140,8 +142,16 @@ export default async function handler(req, res) {
 				name: '',
 				description: '',
 				logo: '',
-				videoPromoList: [],
-				photoPromoList: [],
+				videoPromoList: [
+					{
+						name: '',
+						videoPromoUrl: ''
+					}
+				],
+				photoPromoList: [{
+					name: '',
+					photosPromoUrl: ''
+				}],
 				pimAccess: {
 					pimUrl: '',
 					pimUserName: '',

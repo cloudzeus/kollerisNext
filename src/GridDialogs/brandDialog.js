@@ -12,11 +12,9 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 
-
-const BrandDialog = ({data, dialog, hideDialog, saveProduct}) => {
+const BrandDialog = ({data, dialog, hideDialog, saveProduct, submitted}) => {
 
     console.log('succesfull brand data: ' + JSON.stringify(data))
-    const [submitted, setSubmitted] = useState(false);
 
     const productDialogFooter = (
         <React.Fragment>
