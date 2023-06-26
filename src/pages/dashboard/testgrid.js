@@ -247,7 +247,7 @@ export default function TemplateDemo() {
             >
                 {/* <Column field="softOne.MTRMARK" header="MTRMARK" sortable></Column> */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
+                {/* <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column> */}
                 <Column field="softOne.NAME" header="Ονομα" sortable></Column>
                 <Column field="softOne.ISACTIVE" header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 {/* <Column header="Actions"  body={actionsTemplate} tableStyle={{ width: '80px'}}></Column> */}

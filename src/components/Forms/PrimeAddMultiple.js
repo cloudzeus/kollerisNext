@@ -19,7 +19,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
         setFormData(updatedVideoList);
     };
 
-    const handleVideoUrlChange = (event ,index) => {
+    const handleVideoUrlChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {
             ...updatedVideoList[index],
@@ -42,13 +42,14 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
         const updatedList = [...formData];
         updatedList.splice(index, 1);
         setFormData(updatedList);
-      };
+    };
 
     return (
         <Container>
-                <label>
-                    {label}
-                </label>
+            <label>
+                {label}
+            </label>
+            <div className="content">
                 {formData.map((video, index) => (
                     <div key={index} className="add_more_double_input_div">
                         <InputText
@@ -56,7 +57,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
                             value={video.name}
                             onChange={event => handleNameChange(event, index)}
                             placeholder="Ονομα:"
-                            placeholderSize="12"
+
                         />
                         <InputText
                             type="text"
@@ -64,19 +65,21 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
                             onChange={event => handleVideoUrlChange(event, index)}
                             placeholder="https://"
                         />
-                        {index > 0 && <Button icon="pi pi-times" size="small" severity="danger" aria-label="Cancel" onClick={() => deleteInputFields(index)}  />}
+                        {index > 0 && <Button icon="pi pi-times" size="small" severity="danger" aria-label="Cancel" onClick={() => deleteInputFields(index)} />}
 
                     </div>
                 ))}
                 <div className="button-container">
-                <Button 
-                 onClick={addVideo} 
-                label="Προσθηκη" raised />
+                    <Button
+                        size="small"
+                        onClick={addVideo}
+                        label="Προσθηκη" raised />
                 </div>
-               
+
+            </div>
 
 
-                {/* <button onClick={(e) => addVideo(e)}>Add Video</button> */}
+            {/* <button onClick={(e) => addVideo(e)}>Add Video</button> */}
         </Container>
     )
 }
@@ -86,8 +89,6 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
 const borderColor = '#e8e8e8';
 const Container = styled.div`
-    background-color: #eeefee;
-    padding: 14px;
     margin: 10px 0;
     /* border: 1px solid ${({ theme }) => theme.palette.border}; */
     border-radius: 4px;
@@ -107,7 +108,11 @@ const Container = styled.div`
         margin: 10px 0px;
 
     }
-    
+    .content {
+        background-color: #eeefee;
+        padding: 10px;
+        margin-top: 5px;
+    }
    
    input::placeholder {
     font-weight: bold;

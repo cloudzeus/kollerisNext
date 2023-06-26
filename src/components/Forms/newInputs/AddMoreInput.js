@@ -48,6 +48,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
     return (
         <Container>
+            <label>{label}</label>
             <div >
                 {formData.map((video, index) => (
                     <div key={index} className="add_more_double_input_div">
@@ -82,6 +83,9 @@ const Container = styled.div`
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 10px;
+    label {
+        margin-bottom: 5px;
+    }
     .add_more_double_input_div {
         display: grid;
         grid-template-columns: 1fr 2fr 40px 40px;
