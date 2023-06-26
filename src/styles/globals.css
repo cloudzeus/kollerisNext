@@ -19,8 +19,13 @@
 
 
 
+.p-fileupload .p-fileupload-content {
+  padding: 10px;
+}
 
-
+.p-fileupload .p-fileupload-row > div {
+  padding: 5px 0;
+}
 
 html,
 body {

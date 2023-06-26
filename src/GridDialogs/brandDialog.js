@@ -8,6 +8,8 @@ import Input from '@/components/Forms/PrimeInput';
 import ImageUploads from '@/components/Forms/PrimeImagesUpload';
 import Gallery from '@/components/GalleryList';
 import GallerySmall from '@/components/GalleryListSmall';
+import UploadFiles from '@/components/uploadFiles';
+import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
 const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData }) => {
     console.log(data)
     console.log('brand data: ' + JSON.stringify(data))
@@ -71,22 +73,59 @@ const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData 
 }
 
 
-const AddDialog = ({ data, dialog, hideDialog, saveProduct, submitted }) => {
-    console.log('succesfull brand data: ' + JSON.stringify(data))
+const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog}) => {
+    const [data, setData] = useState({
+        name: '',
+        description: '',
+    })
+    const [videoList, setVideoList] = useState([{
+        name: '',
+        videoUrl: ''
+    }])
 
+    const onInputChange = (e) => {
+        const { name, value } = e.target;
+        setData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleAdd = () => {
+        console.log('add')
+        console.log(data)
+        setSubmitted(true)
+        setDialog(false)
+    }
 
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+            <Button label="Save" icon="pi pi-check" onClick={handleAdd} />
         </React.Fragment>
     );
     // const {brandDialog} = useSelector(state => state.brand)
-    console.log(dialog)
     return (
         <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+               <Input
+                label={'Όνομα'}
+                name={'name'}
+                value={data.name}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+               <Input
+                label={'Περιγραφή'}
+                name={'description'}
+                value={data.description}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+            <AddMoreInput  
+                label="Video"
+                htmlName1="name"
+                htmlName2="videoUrl"
+                setFormData={setVideoList}
+                formData={videoList} />
             <p>addf Dialog</p>
-
+            <UploadFiles />
         </Dialog>
     )
 

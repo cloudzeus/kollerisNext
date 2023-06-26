@@ -14,33 +14,33 @@ export const config = {
 
 export default async function handler(req, res) {
 
- 
+ console.log(req.body)
   // Use the multer middleware to handle multiple file uploads
-  upload.array('files')(req, res, async function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error uploading files' });
-    }
+  // upload.array('files')(req, res, async function (err) {
+  //   if (err) {
+  //     console.error(err);
+  //     return res.status(500).json({ error: 'Error uploading files' });
+  //   }
 
-    const { files } = req;
+  //   const { files } = req;
 
-    const uploadedURLs = [];
-    // Process each uploaded file
-    for (const file of files) {
-      const timestamp = Date.now();
-      const newFileName = `${timestamp}-${file.originalname}`;
+  //   const uploadedURLs = [];
+  //   // Process each uploaded file
+  //   for (const file of files) {
+  //     const timestamp = Date.now();
+  //     const newFileName = `${timestamp}-${file.originalname}`;
 
-      try {
-        fs.renameSync(file.path, path.join('public/uploads/', newFileName));
+  //     try {
+  //       fs.renameSync(file.path, path.join('public/uploads/', newFileName));
 
-        const publicURL = `${newFileName}`;
-        uploadedURLs.push(publicURL);
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, error: 'Error saving files',urls: null });
-      }
-    }
+  //       const publicURL = `${newFileName}`;
+  //       uploadedURLs.push(publicURL);
+  //     } catch (error) {
+  //       console.error(error);
+  //       return res.status(500).json({ success: false, error: 'Error saving files',urls: null });
+  //     }
+  //   }
 
-    return res.status(200).json({success: true, urls: uploadedURLs });
-  });
+  //   return res.status(200).json({success: true, urls: uploadedURLs });
+  // });
 }
