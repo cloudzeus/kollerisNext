@@ -11,16 +11,16 @@ import { Toast } from 'primereact/toast'
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
-import BrandDialog from '@/GridDialogs/brandDialog';
+import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import Gallery from '@/components/GalleryList';
 import Link from 'next/link'
 
 import { TabView, TabPanel } from 'primereact/tabview';
 
 export default function TemplateDemo() {
-    const [editData, setEditData] = useState([]);
-    const [dialog, setDialog] = useState(false);
-
+    const [brand, setBrand] = useState([]);
+    const [editDialog, setEditDialog] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
@@ -28,7 +28,6 @@ export default function TemplateDemo() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-
     //
     const [images, setImages] = useState([])
 
@@ -129,10 +128,10 @@ export default function TemplateDemo() {
                 </div> */}
                     <div className="card">
             <TabView>
-                <TabPanel header="Header I">
+                <TabPanel header="Φωτογραφίες">
                     <Gallery  />
                 </TabPanel>
-                <TabPanel header="Header II">
+                <TabPanel header="Βίντεο">
                     <p className="m-0">
                         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
                         eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
@@ -140,7 +139,7 @@ export default function TemplateDemo() {
                         ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
                     </p>
                 </TabPanel>
-                <TabPanel header="Header III">
+                <TabPanel header="Λεπτομέριες">
                     <p className="m-0">
                         At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti 
                         quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
@@ -148,7 +147,6 @@ export default function TemplateDemo() {
                         Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
                     </p>
                 </TabPanel>
-                <TabPanel header="Header IV" disabled></TabPanel>
             </TabView>
         </div>
             </ ShowDetails >
@@ -158,7 +156,7 @@ export default function TemplateDemo() {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={() => console.log('add new')} />
+                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
             </div>
         );
     };
@@ -169,25 +167,33 @@ export default function TemplateDemo() {
                 <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} />
             </>
         );
+
     };
 
 
     //Edit:
     const editProduct = (product) => {
-
-        setEditData({ ...product })
-        setDialog(true)
+        setBrand({ ...product })
+        setEditDialog(true)
     };
 
+    //Add product
+    const openNew = () => {
+        setBrand([]);
+        setSubmitted(false);
+        setAddDialog(true);
+    };
 
 
     const hideDialog = () => {
         setSubmitted(false);
-        setDialog(false);
+        setEditDialog(false);
+        setAddDialog(false);
     };
 
     const saveProduct = () => {
         setSubmitted(true);
+        console.log('brand: ' + JSON.stringify(brand))
         // if (product.name.trim()) {
         //     let _products = [...products];
         //     let _product = { ...product };
@@ -243,17 +249,27 @@ export default function TemplateDemo() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" sortable></Column>
-                <Column field="description" header="Περιγραφή" tableStyle={{ width: 'auto' }}></Column>
                 <Column field="softOne.ISACTIVE" header="Status" tableStyle={{ width: '100px' }} body={ActiveTempate}></Column>
                 {/* <Column header="Actions"  body={actionsTemplate} tableStyle={{ width: '80px'}}></Column> */}
                 {/* <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-                <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ minWidth: '12rem' }}></Column>
+                <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '100px' }}></Column>
 
             </DataTable>
-            <BrandDialog
-                data={editData}
-                dialog={dialog}
-                setDialog={setDialog}
+            <EditDialog
+                data={brand}
+                setData={setBrand}
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                saveProduct={saveProduct}
+                submitted={submitted}
+                setSubmitted={setSubmitted}
+            />
+            <AddDialog
+                data={brand}
+                setData={setBrand}
+                dialog={addDialog}
+                setDialog={setAddDialog}
                 hideDialog={hideDialog}
                 saveProduct={saveProduct}
                 submitted={submitted}

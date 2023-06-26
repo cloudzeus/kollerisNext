@@ -20,12 +20,8 @@ const LargeImageContainer = styled.div`
 `;
 const LargeImage = styled.div`
   /* flex: 0 0 auto; */
-  width: 300px;
-  height: 300px;
-  @media (max-width: 716px) {
-    width: 200px;
-    height: 200px;
-  }
+  width: 200px;
+  height: 200px;
   position: relative;
   border-radius: 4px;
   overflow: hidden;
@@ -40,34 +36,20 @@ const ThumbnailContainer = styled.div`
   /* flex: 0 0 auto; */
   max-width: 700px;
   overflow-y: auto;
-  height: 300px;
-  @media (max-width: 716px) {
-    height: 200px;
-  }
+  overflow-x: hidden;
+  height: 200px;
   padding: 0 10px;
 `;
 
 const ThumbnailGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
   justify-items: center;
   grid-gap: 5px;
-
-    @media (max-width: 1064px) {
-        grid-template-columns: repeat(5, 1fr);
-    }
-    @media (max-width: 956px) {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    @media (max-width: 854px) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    @media (max-width: 696px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-   
-   
+  -webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+} 
 `;
 
 const Thumbnail = styled.div`
@@ -144,7 +126,7 @@ const images = [
     // Add more image paths here
 ];
 
-const Gallery = () => {
+const GallerySmall = () => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const handleImageSelect = (image) => {
@@ -171,7 +153,7 @@ const Gallery = () => {
     return (
         <>  
         <label style={{marginBottom: '5px'}}>
-            Φωτογραφίες
+            Φωτογραφίες SMall
         </label>
               <GalleryContainer>
            <LargeImageContainer>
@@ -210,7 +192,7 @@ const Gallery = () => {
                            </button> */}
                        </Thumbnail>
                    ))}
-               </ThumbnailGrid>
+                    </ThumbnailGrid>
            </ThumbnailContainer>
        </GalleryContainer>
         </>
@@ -222,4 +204,4 @@ const Gallery = () => {
 
 
 
-export default Gallery;
+export default GallerySmall;

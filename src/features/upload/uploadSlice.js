@@ -6,6 +6,18 @@ const initialState = {
 }
 
 
+export const deleteImage = createAsyncThunk(
+	//action:
+	'upload/deleteImage',
+	async (user, thunkApi) => {
+		try {
+			// const resp = await axios.post('/api/user/fetchuser', user)
+			// return resp.data;
+		} catch (error) {
+			return thunkApi.rejectWithValue(error.response.data)
+		}
+	})
+
 const uploadSlice = createSlice({
 	name: 'upload',
 	initialState,
@@ -19,6 +31,24 @@ const uploadSlice = createSlice({
 			state.uploadedImages = [];
 		}
 	},
+	extraReducers: (builder) => {
+		builder
+			// LOGIN USER:
+			.addCase(deleteImage.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(deleteImage.fulfilled, (state, { payload }) => {
+				state.uploadedImages = state.uploadedImages.filter(image => image !== payload);
+				
+			})
+			.addCase(deleteImage.rejected, (state, { payload }) => {
+				state.isLoading = false;
+
+			})
+
+
+		
+	}
 	
 })
 

@@ -1,20 +1,79 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Toast } from 'primereact/toast';
+
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
-import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
+
 import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
+import Input from '@/components/Forms/PrimeInput';
+import ImageUploads from '@/components/Forms/PrimeImagesUpload';
+import Gallery from '@/components/GalleryList';
+import GallerySmall from '@/components/GalleryListSmall';
+const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData }) => {
+    console.log(data)
+    console.log('brand data: ' + JSON.stringify(data))
 
-const BrandDialog = ({data, dialog, hideDialog, saveProduct, submitted}) => {
+  
+    const onInputChange = (e) => {
+       const { name, value } = e.target;
+    
+    //      setData(prev => ({}))
+        setData(prev => ({ ...prev, [name]: value}))
+    }
 
+
+    const productDialogFooter = (
+        <React.Fragment>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+        </React.Fragment>
+    );
+
+    return (
+        <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+            <Input
+                label={'Name'}
+                name={'name'}
+                value={data.name}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+            <Input
+                label={'Περιγραφή'}
+                name={'description'}
+                value={data.description}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+            <GallerySmall  />
+            <Input
+                label={'Περιγραφή'}
+                name={'description'}
+                value={data.description}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+            <Input
+                label={'Περιγραφή'}
+                name={'description'}
+                value={data.description}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+            <Input
+                label={'Περιγραφή'}
+                name={'description'}
+                value={data.description}
+                required={true}
+                onChange={(e) => onInputChange(e)}
+            />
+        </Dialog>
+    )
+}
+
+
+const AddDialog = ({ data, dialog, hideDialog, saveProduct, submitted }) => {
     console.log('succesfull brand data: ' + JSON.stringify(data))
+
 
     const productDialogFooter = (
         <React.Fragment>
@@ -26,24 +85,11 @@ const BrandDialog = ({data, dialog, hideDialog, saveProduct, submitted}) => {
     console.log(dialog)
     return (
         <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-        <div className="field">
-            <label htmlFor="name" className="font-bold">
-                Name
-            </label>
-            <InputText id="name" value={data.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !data.name })} />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-            <label htmlFor="description" className="font-bold">
-                Description
-            </label>
-            <InputTextarea id="description" value={data.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-        </div>
+            <p>addf Dialog</p>
 
-    
-    </Dialog>
+        </Dialog>
     )
+
 }
 
-
-export default BrandDialog;
+export { EditDialog, AddDialog }
