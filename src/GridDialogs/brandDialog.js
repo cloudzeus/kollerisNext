@@ -13,7 +13,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FormTitle } from '@/componentsStyles/dialogforms';
+import { FormTitle, Divider } from '@/componentsStyles/dialogforms';
 
 
 const EditDialog = ({dialog, hideDialog, setData, data }) => {
@@ -23,11 +23,14 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
         defaultValues: {gridRowData}
     });
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
-    
+    console.log('images')
+    console.log(images)
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
-        for(let image of gridRowData?.photosPromoList) {
-            setImages(prev => [...prev, image.photosPromoUrl])
+        if(gridRowData?.photosPromoList && gridRowData?.photosPromoList.length > 0) {
+            for(let image of gridRowData?.photosPromoList) {
+                setImages(prev => [...prev, image.photosPromoUrl])
+            }
         }
     }, [gridRowData])
 
@@ -73,6 +76,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                 register={register}
                 defaultValue={gridRowData.description}
             />
+            < Divider />
             <FormTitle>Φωτογραφίες</FormTitle>
             <GallerySmall  
                 images={images}
