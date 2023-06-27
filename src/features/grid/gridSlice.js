@@ -1,7 +1,6 @@
 import { createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-
 	gridRowData: [],
 }
 
@@ -14,6 +13,11 @@ const gridSlice = createSlice({
 		setGridRowData: (state, action) => {
 			state.gridRowData = action.payload;
 		},
+		resetGridRowData: (state, action) => {
+			state.gridRowData = [];
+			console.log('reset gird row data')
+			console.log(state.gridRowData)
+		},
 		
 		
 		
@@ -22,5 +26,5 @@ const gridSlice = createSlice({
 })
 
 
-export const { setGridRowData} = gridSlice.actions;
+export const { setGridRowData, resetGridRowData} = gridSlice.actions;
 export default gridSlice.reducer;

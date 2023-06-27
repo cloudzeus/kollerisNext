@@ -14,7 +14,7 @@ import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import Gallery from '@/components/GalleryList';
 import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
-import { setGridRowData } from '@/features/grid/gridSlice';
+import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
     const [editData, setEditData] = useState(null)
@@ -34,7 +34,7 @@ export default function TemplateDemo() {
     //
 
 
-    const handleFetchUser = async () => {
+    const handleFetch = async () => {
         setLoading(true)
         try {
             let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll'})
@@ -52,9 +52,14 @@ export default function TemplateDemo() {
 
 
     useEffect(() => {
-        handleFetchUser();
+        handleFetch();
+        
     }, []);
 
+    //Refetch on add edit:
+    useEffect(() => {
+        if(submitted) handleFetch()
+    }, [submitted])
 
 
 
@@ -153,9 +158,10 @@ export default function TemplateDemo() {
 
 
     //Edit:
-    const editProduct = (product) => {
-        // console.log('edit product')
-        // console.log(product)
+    const editProduct = async (product) => {
+        // console.log('edit product: ' + JSON.stringify(product))
+     
+        setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
     };
@@ -172,13 +178,11 @@ export default function TemplateDemo() {
         setSubmitted(false);
         setEditDialog(false);
         setAddDialog(false);
+        dispatch(resetGridRowData())
+      
     };
 
-    const saveProduct = () => {
-        setSubmitted(true);
-        console.log('brand: ' + JSON.stringify(brand))
-    
-    }
+ 
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
@@ -214,7 +218,7 @@ export default function TemplateDemo() {
                 {/* <Column field="softOne.MTRMARK" header="MTRMARK" sortable></Column> */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="softOne.NAME" header="Ονομα" sortable></Column>
+                <Column field="name" header="Ονομα" sortable></Column>
                 <Column field="softOne.ISACTIVE" header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 {/* <Column header="Actions"  body={actionsTemplate} tableStyle={{ width: '80px'}}></Column> */}
                 {/* <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
@@ -227,7 +231,6 @@ export default function TemplateDemo() {
                 dialog={editDialog}
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
-                submitted={submitted}
                 setSubmitted={setSubmitted}
             />
             <AddDialog
@@ -236,8 +239,6 @@ export default function TemplateDemo() {
                 dialog={addDialog}
                 setDialog={setAddDialog}
                 hideDialog={hideDialog}
-                saveProduct={saveProduct}
-                submitted={submitted}
                 setSubmitted={setSubmitted}
             />
         </AdminLayout >

@@ -4,9 +4,24 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { Button } from "primereact/button";
 import { InputText } from 'primereact/inputtext';
+import { useEffect } from "react";
 
 
 export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
+    console.log('formData')
+    console.log(formData)
+
+    useEffect(() => {
+        if(formData.length === 0) {
+            setFormData([
+                {
+                    name: '',
+                    videoUrl: ''
+                }
+            ])
+        }
+    }, [formData, setFormData])
+
     const handleNameChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {
@@ -16,6 +31,7 @@ export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
         setFormData(updatedVideoList);
     };
 
+
     const handleVideoUrlChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {
@@ -24,6 +40,8 @@ export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
         };
         setFormData(updatedVideoList);
     };
+
+
 
     const addVideo = (e) => {
         e.preventDefault();

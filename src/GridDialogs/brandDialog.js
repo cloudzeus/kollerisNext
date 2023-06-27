@@ -14,9 +14,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider } from '@/componentsStyles/dialogforms';
+import { resetGridRowData } from '@/features/grid/gridSlice';
 
-
-const EditDialog = ({dialog, hideDialog, setData, data }) => {
+const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
+    const dispatch = useDispatch();
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
     const toast = useRef(null);
@@ -25,9 +26,13 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
         defaultValues: gridRowData
     });
 
-    console.log(logo)
-    console.log('logoooooo: ' + JSON.stringify(logo))
 
+    useEffect(() => {
+        // Reset the form values with defaultValues when gridRowData changes
+        reset({ ...gridRowData });
+      }, [gridRowData, reset]);
+
+  
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
@@ -54,6 +59,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                 }
                 if(resp.data.success) {
                     showSuccess()
+                    setSubmitted(true)
                 }
                
         } catch (e) {
@@ -69,9 +75,15 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
+
+    const handleClose = () => {
+        dispatch(resetGridRowData())
+        hideDialog()
+    }
+
     const productDialogFooter = (
         <React.Fragment>
-            <Button label="Ακύρωση" icon="pi pi-times" severity="info"  outlined onClick={hideDialog} />
+            <Button label="Ακύρωση" icon="pi pi-times" severity="info"  outlined onClick={handleClose} />
             <Button label="Αποθήκευση" icon="pi pi-check" severity="info"  onClick={handleSubmit(handleEdit)} />
         </React.Fragment>
     );
@@ -121,13 +133,11 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
             />
              < Divider />
               <FormTitle>Βίντεο</FormTitle>
-             <AddMoreInput
-                    htmlName1="name"
-                    htmlName2="videoUrl"
+             {/* <AddMoreInput
                     setFormData={setVideoList}
                     formData={videoList}
                     mb={'30px'}
-                />
+                /> */}
                   < Divider />
                  <FormTitle>Pim Access:</FormTitle>
                  <Input
@@ -197,9 +207,7 @@ const addSchema = yup.object().shape({
 const AddDialog = ({
     dialog,
     hideDialog,
-    submitted,
     setSubmitted,
-    setDialog
 }) => {
     const dispatch = useDispatch();
 
