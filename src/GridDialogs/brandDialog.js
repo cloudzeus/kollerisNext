@@ -24,10 +24,14 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
     });
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
     
-    console.log('gridRowData: ' + JSON.stringify(gridRowData))
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
+        for(let image of gridRowData?.photosPromoList) {
+            setImages(prev => [...prev, image.photosPromoUrl])
+        }
     }, [gridRowData])
+
+
     const handleEdit = (data) => {
         console.log('edit Data: ' + JSON.stringify(data))
 
@@ -47,7 +51,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                 visible={dialog} 
                 style={{ width: '32rem', maxWidth: '80rem' }} 
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
-                header="Product Details" 
+                header="Διόρθωση Προϊόντος" 
                 modal 
                 className="p-fluid" 
                 footer={productDialogFooter} 

@@ -8,21 +8,23 @@ const ActionsDiv = styled.div`
 const GalleryContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  
  
 `;
 
 const LargeImageContainer = styled.div`
     position: relative;
-
+    width: 250px;
+    margin-right: 10px;
 `;
 const LargeImage = styled.div`
   /* flex: 0 0 auto; */
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 220px;
   position: relative;
   border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dfdedf;
   img {
     object-fit: cover;
   }
@@ -30,24 +32,19 @@ const LargeImage = styled.div`
 `;
 
 const ThumbnailContainer = styled.div`
-  width: 70%;
+  width: calc(100% - 250px);
   /* flex: 0 0 auto; */
-  max-width: 700px;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 200px;
+  height: 220px;
   padding: 0 10px;
 `;
 
 const ThumbnailGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  align-items: center;
-  justify-items: center;
-  grid-gap: 5px;
-  -webkit-scrollbar-thumb {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-} 
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 10px;
+ 
 `;
 
 const Thumbnail = styled.div`
@@ -59,8 +56,10 @@ const Thumbnail = styled.div`
   width: 100px;
   height: 100px;
   overflow: hidden;
-  opacity: ${(props) => (props.isSelected ? 1 : 0.3)};
-
+  border: 1px solid #dfdedf;
+  opacity: ${(props) => (props.isSelected ? 1 : 0.5)};
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
+  margin: 5px;
   img {
     object-fit: cover;
   }

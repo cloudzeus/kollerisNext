@@ -47,7 +47,8 @@ const GallerySmall = ({ label, images }) => {
     const [imagesToUpload, setImagesToUpload] = useState([])
     const toast = useRef(null);
 
-
+    console.log('images')
+    console.log(images)
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
