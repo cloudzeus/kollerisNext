@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 
@@ -134,6 +134,7 @@ const DeleteButton = styled.div`
 const Gallery = ({ label, images, updateUrl }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
     const [uploadImages, setUploadImages] = useState(images)
+    const [imagesToUpload, setImagesToUpload] = useState([])
     const [show, setShow] = useState(true);
     const toast = useRef(null);
 
@@ -141,6 +142,16 @@ const Gallery = ({ label, images, updateUrl }) => {
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
+
+    //If images are added trigger databaseupdate:
+    useEffect(() => {
+        const handleAdd = async () => {
+            // let resp = await axios.post('api/product/apiImages', {action: "addMoreImages", id: '1', images: imagesToUpload})
+        }
+        if (imagesToUpload.length > 0) {
+
+        }
+    })
 
     const handleDeleteImage = async (image) => {
         // Implement your delete logic here
@@ -154,7 +165,7 @@ const Gallery = ({ label, images, updateUrl }) => {
         const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
         setSelectedImage(uploadImages[nextIndex]);
         //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: 'updateImages', image: image })
+        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image })
         if (resp) {
             showSuccess()
         } else (
@@ -183,70 +194,69 @@ const Gallery = ({ label, images, updateUrl }) => {
     return (
         <>
             <TopDiv>
-
                 <Toast ref={toast} />
                 <label style={{ marginBottom: '5px' }}>
                     {label}
                 </label>
                 <ActionsDiv>
-                <span className="p-buttonset">
-                    <Button label="Gallery" icon="pi pi-images" onClick={() => setShow(prev => !prev)}/>
-                    <Button label="Προσθήκη" icon="pi pi-images" onClick={() => setShow(prev => !prev)} />
-                </span>
+                    <span className="p-buttonset">
+                        <Button label="Gallery" icon="pi pi-images" size="small" onClick={() => setShow(prev => !prev)} />
+                        <Button label="Προσθήκη" icon="pi pi-images" size="small" onClick={() => setShow(prev => !prev)} />
+                    </span>
                 </ActionsDiv>
                 {show ? (
-                     <GalleryContainer>
-                     <LargeImageContainer>
-                         <LargeImage>
-                             <Image src={`/uploads/${selectedImage}`} alt="Large" fill={true} />
-                         </LargeImage>
-                         <ArrowContainer>
-                             {uploadImages.length > 1 && (
-                                 <>
-                                     {selectedImage !== uploadImages[0] && (
-                                         <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                                     )}
-                                     {selectedImage !== uploadImages[uploadImages.length - 1] && (
-                                         <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
-                                     )}
-                                 </>
-                             )}
-                         </ArrowContainer>
-                         <DeleteButton>
-                             <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
- 
-                         </DeleteButton>
-                     </LargeImageContainer>
-                     <ThumbnailContainer>
-                         <ThumbnailGrid>
-                             {uploadImages.map((image, index) => (
-                                 <Thumbnail key={index} isSelected={image === selectedImage}>
-                                     <Image
-                                         src={`/uploads/${image}`}
-                                         alt={`Thumbnail ${index}`}
-                                         fill={true}
-                                         onClick={() => handleImageSelect(image)} />
-                                     {/* <button onClick={() => handleDeleteImage(image)}>
+                    <GalleryContainer>
+                        <LargeImageContainer>
+                            <LargeImage>
+                                <Image src={`/uploads/${selectedImage}`} alt="Large" fill={true} />
+                            </LargeImage>
+                            <ArrowContainer>
+                                {uploadImages.length > 1 && (
+                                    <>
+                                        {selectedImage !== uploadImages[0] && (
+                                            <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
+                                        )}
+                                        {selectedImage !== uploadImages[uploadImages.length - 1] && (
+                                            <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                                        )}
+                                    </>
+                                )}
+                            </ArrowContainer>
+                            <DeleteButton>
+                                <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
+
+                            </DeleteButton>
+                        </LargeImageContainer>
+                        <ThumbnailContainer>
+                            <ThumbnailGrid>
+                                {uploadImages.map((image, index) => (
+                                    <Thumbnail key={index} isSelected={image === selectedImage}>
+                                        <Image
+                                            src={`/uploads/${image}`}
+                                            alt={`Thumbnail ${index}`}
+                                            fill={true}
+                                            onClick={() => handleImageSelect(image)} />
+                                        {/* <button onClick={() => handleDeleteImage(image)}>
                                 <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
                             </button> */}
-                                 </Thumbnail>
-                             ))}
-                         </ThumbnailGrid>
-                     </ThumbnailContainer>
-                 </GalleryContainer>
+                                    </Thumbnail>
+                                ))}
+                            </ThumbnailGrid>
+                        </ThumbnailContainer>
+                    </GalleryContainer>
                 ) : (
                     <PrimeUploads
-                    label={'Φωτογραφίες'}
-                    saveToState={setUploadImages}
-                    multiple={true}
-                    mb={'30px'} />
+                        label={'Φωτογραφίες'}
+                        setState={setImagesToUpload}
+                        multiple={true}
+                        mb={'30px'} />
                 )}
-               
-           
+
+
             </TopDiv>
 
-                
-         
+
+
 
         </>
     );

@@ -380,25 +380,38 @@ export default async function handler(req, res) {
 
 	}
 
-	if(action === 'updateImages') {
+	if(action === 'deleteImages') {
 		console.log('update Images')
 		let id = req.body._id;
 		let image = req.body.image;
 		try {
 			await connectMongo();
 			await Markes.updateOne({ _id: id }, 
-			{ $pull: { photosPromoList: {
+			{ $pull: { photosPromoList: [{
 				name: image,
 				photosPromoUrl: image
-			 } } }
+			 }]}}
 			);
 			return res.status(200).json({ success: true, message:'Έγινε update', error: null });
 		} catch (e) {
 			return res.status(500).json({ success: false, error:'Δεν έγινε update', message: null });
 		}
-		
+	}
 
-		
+	if(action == 'addMoreImages') {
+		console.log('add new Images to the database')
+		let id = req.body._id;
+		//Images must be and array
+		let images = req.body.images;
+		try {
+			await connectMongo();
+			await Markes.updateOne({ _id: id }, 
+				{ $push: { images: { $each: [...images] } } }
+			);
+			return res.status(200).json({ success: true, message:'Έγινε update', error: null });
+		} catch (e) {
+			return res.status(500).json({ success: false, error:'Δεν έγινε update', message: null });
+		}
 	}
 }
 

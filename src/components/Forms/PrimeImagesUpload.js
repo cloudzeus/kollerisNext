@@ -13,7 +13,7 @@ import { useMountEffect } from 'primereact/hooks';
 import { Message } from 'primereact/message';
 
 
-export default function PrimeUploads({label, multiple, mt, mb, saveToState, }) {
+export default function PrimeUploads({label, multiple, mt, mb, setState}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ export default function PrimeUploads({label, multiple, mt, mb, saveToState, }) {
                 console.log(urls)
                
                 if(urls) {
-                    dispatch(saveToState(urls))
+                    setState(urls)
                     setDidUpload(true)
                 }
             } else {

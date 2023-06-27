@@ -7,7 +7,6 @@ import { InputText } from 'primereact/inputtext';
 
 
 export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
-
     const handleNameChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {

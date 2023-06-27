@@ -4,8 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import styled from 'styled-components';
 
 
-const Input = ({label, required, name, error, mb, mt, register}) => {
-
+const Input = ({label, required, name, error, mb, mt, register, defaultValue}) => {
     return (
     < InputContainer mb={mb} mt={mt} error={error}>
         <label htmlFor={name} >
@@ -14,13 +13,12 @@ const Input = ({label, required, name, error, mb, mt, register}) => {
         <InputText 
             id={name} 
             name={name} 
-            // value={value} 
             {...register(name)}
-            // onChange={onChange} 
             required={required} 
             autoFocus 
             className={error ? 'p-invalid' : null  }
             error={error}
+            defaultValue={defaultValue}
             />
 
              <div className="error-div">

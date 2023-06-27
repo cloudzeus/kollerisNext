@@ -12,15 +12,17 @@ import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import Gallery from '@/components/GalleryList';
-
+import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
-
+import { setGridRowData } from '@/features/grid/gridSlice';
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
+    const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
+    const dispatch = useDispatch();
     //Images to use for the gallery:
     const [images, setImages] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
@@ -37,6 +39,7 @@ export default function TemplateDemo() {
         try {
             let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll'})
             setData(resp.data.markes)
+            console.log("rendered data " + JSON.stringify(data))
             // setImages(resp.data.images)
             setImages(resp.data.images)
             setLoading(false)
@@ -94,18 +97,11 @@ export default function TemplateDemo() {
     };
 
 
-
     const allowExpansion = (rowData) => {
-        // 
         return rowData
     };
 
-    const onRowCollapse = (event) => {
-        // toast.current.show({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
-    };
-    const onRowExpand = (event) => {
-        // toast.current.show({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
-    };
+   
 
     const rowExpansionTemplate = (data) => {
 
@@ -158,8 +154,10 @@ export default function TemplateDemo() {
 
     //Edit:
     const editProduct = (product) => {
-        setBrand({ ...product })
+        console.log('edit product')
+        console.log(product)
         setEditDialog(true)
+        dispatch(setGridRowData(product))
     };
 
     //Add product
@@ -179,25 +177,7 @@ export default function TemplateDemo() {
     const saveProduct = () => {
         setSubmitted(true);
         console.log('brand: ' + JSON.stringify(brand))
-        // if (product.name.trim()) {
-        //     let _products = [...products];
-        //     let _product = { ...product };
-
-        //     if (product.id) {
-        //         const index = findIndexById(product.id);
-
-        //         _products[index] = _product;
-        //         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-        //     } else {
-        //         _product.id = createId();
-        //         _product.image = 'product-placeholder.svg';
-        //         _products.push(_product);
-        //         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-        //     }
-
-        //     setProducts(_products);
-        //     setProductDialog(false);
-        //     setProduct(emptyProduct);
+    
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
@@ -223,8 +203,6 @@ export default function TemplateDemo() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-                onRowExpand={onRowExpand}
-                onRowCollapse={onRowCollapse}
                 dataKey="softOne.MTRMARK"
                 filters={filters} onFilter={(e) => setFilters(e.filters)}
                 //edit:
@@ -242,12 +220,11 @@ export default function TemplateDemo() {
 
             </DataTable>
             <EditDialog
-                data={brand}
-                setData={setBrand}
+                data={editData}
+                setData={setEditData}
                 dialog={editDialog}
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
-                saveProduct={saveProduct}
                 submitted={submitted}
                 setSubmitted={setSubmitted}
             />

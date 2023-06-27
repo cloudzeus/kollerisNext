@@ -1,4 +1,4 @@
-
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -12,69 +12,129 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
-import { setUploadImages, setLogo } from '@/features/upload/uploadSlice';
-import { resetUploadImages, resetLogo } from '@/features/upload/uploadSlice';
+
+import { FormTitle } from '@/componentsStyles/dialogforms';
 
 
-const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData }) => {
-    console.log(data)
-    console.log('brand data: ' + JSON.stringify(data))
+const EditDialog = ({dialog, hideDialog, setData, data }) => {
+    const [images, setImages] = useState([])
+    const {gridRowData} = useSelector(store => store.grid)
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+        defaultValues: {gridRowData}
+    });
+    const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
+    
+    console.log('gridRowData: ' + JSON.stringify(gridRowData))
+    useEffect(() => {
+        setVideoList(gridRowData?.videoPromoList)
+    }, [gridRowData])
+    const handleEdit = (data) => {
+        console.log('edit Data: ' + JSON.stringify(data))
 
-
-    const onInputChange = (e) => {
-        const { name, value } = e.target;
-
-        //      setData(prev => ({}))
-        setData(prev => ({ ...prev, [name]: value }))
     }
-
 
     const productDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+            <Button label="Ακύρωση" icon="pi pi-times" severity="info"  outlined onClick={hideDialog} />
+            <Button label="Αποθήκευση" icon="pi pi-check" severity="info"  onClick={handleSubmit(handleEdit)} />
         </React.Fragment>
     );
 
     return (
-        <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+        <form>
+          
+              <Dialog 
+                visible={dialog} 
+                style={{ width: '32rem', maxWidth: '80rem' }} 
+                breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
+                header="Product Details" 
+                modal 
+                className="p-fluid" 
+                footer={productDialogFooter} 
+                onHide={hideDialog}
+                maximizable 
+                >
+            <FormTitle>Λεπτομέριες</FormTitle>     
             <Input
-                label={'Name'}
+                label={'Όνομα'}
                 name={'name'}
-                value={data.name}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                register={register}
+                defaultValue={gridRowData.name}
             />
             <Input
                 label={'Περιγραφή'}
                 name={'description'}
-                value={data.description}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                register={register}
+                defaultValue={gridRowData.description}
             />
-            <GallerySmall />
-            <Input
-                label={'Περιγραφή'}
-                name={'description'}
-                value={data.description}
+            <FormTitle>Φωτογραφίες</FormTitle>
+            <GallerySmall  
+                images={images}
+            />
+              <FormTitle>Βίντεο</FormTitle>
+             <AddMoreInput
+                    htmlName1="name"
+                    htmlName2="videoUrl"
+                    setFormData={setVideoList}
+                    formData={videoList}
+                    mb={'30px'}
+                />
+                 <FormTitle>Pim Access:</FormTitle>
+                 <Input
+                label={'Pim url:'}
+                name={'pimAccess.pimUrl'}
                 required={true}
-                onChange={(e) => onInputChange(e)}
-            />
-            <Input
-                label={'Περιγραφή'}
-                name={'description'}
-                value={data.description}
+                register={register}
+                defaultValue={gridRowData?.pimAccess?.pimUrl}
+                />
+                 <Input
+                label={'Pim url:'}
+                name={'pimAccess.pimUserName'}
                 required={true}
-                onChange={(e) => onInputChange(e)}
-            />
-            <Input
-                label={'Περιγραφή'}
-                name={'description'}
-                value={data.description}
+                register={register}
+                defaultValue={gridRowData?.pimAccess?.pimUserName}
+                />
+                 <Input
+                label={'Pim url:'}
+                name={'pimAccess.pimPassword'}
                 required={true}
-                onChange={(e) => onInputChange(e)}
-            />
+                register={register}
+                defaultValue={gridRowData?.pimAccess?.pimPassword}
+                />
+                <FormTitle>Url</FormTitle>
+                <Input
+                label={'Url Ιστοσελίδας:'}
+                name={'websSiteUrl'}
+                required={true}
+                register={register}
+                defaultValue={gridRowData?.webSiteUrl}
+                />
+                <Input
+                label={'Url Καταλόγου:'}
+                name={'officialCatalogueUrl'}
+                required={true}
+                register={register}
+                defaultValue={gridRowData?.officialCatalogueUrl}
+                />
+                <Input
+                label={'Url Facebook:'}
+                name={'facebookUrl'}
+                required={true}
+                register={register}
+                defaultValue={gridRowData?.facebookUrl}
+                />
+                <Input
+                label={'Url Instagram:'}
+                name={'instagramUrl'}
+                required={true}
+                register={register}
+                defaultValue={gridRowData?.instagramUrl}
+                />
+           
         </Dialog>
+        </form>
     )
 }
 
@@ -98,9 +158,8 @@ const AddDialog = ({
         resolver: yupResolver(addSchema),
     });
     const [disabled, setDisabled] = useState(false)
-    const { uploadedImages, logo } = useSelector(state => state.upload)
-    const [submitImages, setSubitImages] = useState(false);
-    const [submitLogo, setSumbitLogo] = useState(false);
+    const [logo, setLogo] = useState('')
+    const [images, setImages] = useState([])
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
@@ -113,7 +172,7 @@ const AddDialog = ({
     const handleAdd = async (data) => {
         setDisabled(false)
         let dataImages = []
-        for (let i of uploadedImages) {
+        for (let i of images) {
             dataImages.push({
                 name: i,
                 photosPromoUrl: i
@@ -123,15 +182,15 @@ const AddDialog = ({
             ...data,
             photosPromoList: dataImages,
             videoPromoList: videoList,
-            logo: logo,
+            logo: logo[0],
         }
 
         console.log('body')
         console.log(body)
         let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
         if (res) {
-            dispatch(resetUploadImages())
-            dispatch(resetLogo())
+            // dispatch(resetUploadImages())
+            // dispatch(resetLogo())
             setDisabled(true)
         }
     
@@ -180,7 +239,8 @@ const AddDialog = ({
 
                 <PrimeUploads
                     label='Λογότυπο'
-                    saveToState={setLogo}
+                    // saveToState={setLogo}
+                    setState={setLogo}
                     multiple={false}
                     mb={'30px'} />
                 <AddMoreInput
@@ -194,7 +254,7 @@ const AddDialog = ({
 
                 <PrimeUploads
                     label={'Φωτογραφίες'}
-                    saveToState={setUploadImages}
+                    setState={setImages}
                     multiple={true}
                     mb={'30px'} />
                 <FormTitle>Pim Access</FormTitle>
@@ -255,22 +315,8 @@ const AddDialog = ({
 
 }
 
-const FormTitle = styled.h2`
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    margin-top: 10px;
-    position: relative;
-    &:after {
-        content: '';
-        display: block;
-        width: 20px;
-        height: 3px;
-        border-radius: 30px;
-        position: absolute;
-        left: 0;
-        bottom: -7px;
-        background-color: ${props => props.theme.palette.primary.main};
-    }
-`
+
+
+
 
 export { EditDialog, AddDialog }
