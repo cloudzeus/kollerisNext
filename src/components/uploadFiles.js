@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import axios from 'axios';
 
-export default function UploadFiles() {
+export default function UploadFiles({mb, mt}) {
     const toast = useRef(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
@@ -124,9 +124,8 @@ export default function UploadFiles() {
     };
 
     return (
-        <Container>
+        <Container mb={mb} mt={mt}>
             <Toast ref={toast}></Toast>
-            
             <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
             <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
             <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
@@ -153,11 +152,14 @@ export default function UploadFiles() {
 const Container = styled.div`
     width: 100%;
     min-width: 400px;
+  
+    /* border: 1px solid #ccc; */
+    margin-bottom: ${props => props.mb ? props.mb : '0px'};
+    margin-top: ${props => props.mt ? props.mt : '0px'};
+
     .p-fluid .p-fileupload .p-button {
         width: 40px;
     }
-    /* border: 1px solid #ccc; */
-
 `
 const ImageContainer = styled.div`
     width: 60px;

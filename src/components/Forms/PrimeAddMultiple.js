@@ -4,11 +4,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { Button } from "primereact/button";
 import { InputText } from 'primereact/inputtext';
-export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register }) => {
 
 
-
-
+export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
 
     const handleNameChange = (event, index) => {
         const updatedVideoList = [...formData];
@@ -45,7 +43,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
     };
 
     return (
-        <Container>
+        <Container mb={mb} mt={mt}>
             <label>
                 {label}
             </label>
@@ -65,8 +63,9 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
                             onChange={event => handleVideoUrlChange(event, index)}
                             placeholder="https://"
                         />
+                        <div className="delete_row_button">
                         {index > 0 && <Button icon="pi pi-times" size="small" severity="danger" aria-label="Cancel" onClick={() => deleteInputFields(index)} />}
-
+                        </div>
                     </div>
                 ))}
                 <div className="button-container">
@@ -93,24 +92,34 @@ const Container = styled.div`
     /* border: 1px solid ${({ theme }) => theme.palette.border}; */
     border-radius: 4px;
     position:relative;
-    /* padding: 10px; */
-    margin-bottom: 10px;
+    margin-bottom: ${props => props.mb ? props.mb : '0px'};
+    margin-top: ${props => props.mt ? props.mt : '0px'};
     .add_more_double_input_div {
-        display: grid;
-        grid-template-columns: 1fr 2fr  40px;
-        grid-gap: 10px;
+        display: flex;
+        flex-direction: column;
+        /* grid-template-columns: 1fr 2fr  40px;
+        grid-gap: 10px; */
         margin: 5px 0;
         position: relative;
+        border: 1px solid ${borderColor};
+        padding: 10px;
     }
 
     .button-container {
-        width: 120px;
+        width: 100px;
         margin: 10px 0px;
-
     }
     .content {
-        background-color: #eeefee;
-        padding: 10px;
+      
+        margin-top: 5px;
+    }
+
+    .delete_row_button {
+        width: 15%;
+    }
+
+    input {
+        margin-bottom: 5px;
         margin-top: 5px;
     }
    

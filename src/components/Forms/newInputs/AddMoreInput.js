@@ -9,9 +9,6 @@ import { setVideoUrl } from "@/features/grid/gridSlice";
 export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register }) => {
 
 
-
-
-
     const handleNameChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {

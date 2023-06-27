@@ -9,7 +9,9 @@ import { setUploadImages } from '@/features/upload/uploadSlice';
 import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
-export default function PrimeUploads() {
+
+
+export default function PrimeUploads({label, multiple, mt, mb}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -142,15 +144,15 @@ export default function PrimeUploads() {
 
 
 return (
-    <Container >
+    <Container mb={mb} mt={mt} >
         <Toast ref={toast}></Toast>
         <p>
-            Φωτογραφίες
+           {label}
         </p>
         <FileUpload
             ref={fileUploadRef}
             name="demo[]"
-            multiple
+            multiple={multiple}
             accept="image/*"
             maxFileSize={1000000}
             customUpload
@@ -176,6 +178,8 @@ const styledBtn = styled.button`
 `
 
 const Container = styled.div`
+    margin-top: ${props => props.mt ? props.mt : '0px'};
+    margin-bottom: ${props => props.mb ? props.mb : '0px'};
     p {
         margin-bottom: 5px;
     }

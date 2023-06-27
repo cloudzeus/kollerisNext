@@ -1,25 +1,40 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import styled from 'styled-components';
 
-const Input = ({label, submitted, value, required, onChange, name}) => {
+
+const Input = ({label, value, required, onChange, name, error, mb, mt}) => {
+
     
     return (
-    < InputContainer >
+    < InputContainer mb={mb} mt={mt}>
         <label htmlFor={name} >
             {label}
         </label>
-        <InputText id={name} name={name} value={value} onChange={onChange} required={required} autoFocus className={classNames({ 'p-invalid': submitted && !value })} />
-        {submitted && !value && <small className="p-error">Name is required.</small>}
+        <InputText 
+            
+            id={name} 
+            name={name} 
+            value={value} 
+            onChange={onChange} 
+            required={required} 
+            autoFocus 
+            />
+        {/* {error && (
+          <span>{error}</span>
+        )} */}
+        {error && error.map((err, index) => (
+            <span key={index}>{err}</span>
+        ))}
     </ InputContainer >
     )
 }
 
 
 const InputContainer = styled.div`
- margin-bottom: 10px;
+    margin-bottom: ${props => props.mb ? props.mb : '10px'};
+    margin-top: ${props => props.mt ? props.mt : '0px'};
     
     input {
         margin-top: 5px;

@@ -144,7 +144,7 @@ const images = [
     // Add more image paths here
 ];
 
-const Gallery = () => {
+const Gallery = ({label}) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const handleImageSelect = (image) => {
@@ -171,7 +171,7 @@ const Gallery = () => {
     return (
         <>  
         <label style={{marginBottom: '5px'}}>
-            Φωτογραφίες
+            {label}
         </label>
               <GalleryContainer>
            <LargeImageContainer>
