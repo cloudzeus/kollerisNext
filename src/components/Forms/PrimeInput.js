@@ -4,29 +4,28 @@ import { InputText } from 'primereact/inputtext';
 import styled from 'styled-components';
 
 
-const Input = ({label, value, required, onChange, name, error, mb, mt}) => {
+const Input = ({label, required, name, error, mb, mt, register}) => {
 
-    
     return (
-    < InputContainer mb={mb} mt={mt}>
+    < InputContainer mb={mb} mt={mt} error={error}>
         <label htmlFor={name} >
             {label}
         </label>
         <InputText 
-            
             id={name} 
             name={name} 
-            value={value} 
-            onChange={onChange} 
+            // value={value} 
+            {...register(name)}
+            // onChange={onChange} 
             required={required} 
             autoFocus 
+            className={error ? 'p-invalid' : null  }
+            error={error}
             />
-        {/* {error && (
-          <span>{error}</span>
-        )} */}
-        {error && error.map((err, index) => (
-            <span key={index}>{err}</span>
-        ))}
+
+             <div className="error-div">
+			{error && <span className="error-text">{error.message}</span>}
+			</div>
     </ InputContainer >
     )
 }
@@ -37,7 +36,16 @@ const InputContainer = styled.div`
     margin-top: ${props => props.mt ? props.mt : '0px'};
     
     input {
-        margin-top: 5px;
+        margin-top: 7px;
+    }
+   
+    label {
+        color: ${props => props.error ? 'red' : null};
+    }
+    .error-div {
+        color: red;
+        margin-top: 4px;
+        font-size: 14px;
     }
 `
 

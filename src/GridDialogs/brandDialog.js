@@ -10,7 +10,9 @@ import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
 
 import styled from 'styled-components';
 import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
-import * as Yup from 'yup';
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { Message } from 'primereact/message';
 
@@ -78,10 +80,22 @@ const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData 
 
 
 
+const addSchema = yup.object().shape({
+	name: yup.string().required('Συμπληρώστε το όνομα'),
+});
 
-const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog }) => {
-    
-    const [errors, setErrors] = useState(false)
+
+const AddDialog = ({ 
+    dialog, 
+    hideDialog, 
+    submitted, 
+    setSubmitted, 
+    setDialog 
+    }) => {
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+        resolver: yupResolver(addSchema),
+    });
     const [data, setData] = useState({
         name: '',
         description: '',
@@ -95,10 +109,6 @@ const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog }) =
         videoUrl: ''
     }])
  
-    const schema = Yup.object().shape({
-        name: Yup.string().required('Username is required'),
-        description: Yup.string().required('Password is required'),
-      });
     
 
     const onInputChange = (e) => {
@@ -108,7 +118,9 @@ const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog }) =
  
   
 
-    const handleAdd = () => {
+    const handleAdd = (data) => {
+        console.log('on submit data')
+        console.log(data)
         // console.log('add')
         // console.log(data)
         // console.log('videoList')
@@ -131,30 +143,33 @@ const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog }) =
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={handleAdd} />
+            <Button label="Save" icon="pi pi-check" type='submit' onClick={handleSubmit(handleAdd)} />
         </React.Fragment>
     );
 
   
     // const {brandDialog} = useSelector(state => state.brand)
     return (
+        <form  noValidate>
         <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+            
             <Input
                 label={'Όνομα'}
                 name={'name'}
-                value={data.name}
                 required={true}
-                onChange={(e) => onInputChange(e)}
                 mb={'10px'}
+                register={register}
+                error={errors.name}
             />
         
             <Input
                 label={'Περιγραφή'}
                 name={'description'}
-                value={data.description}
+                // value={data.description}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
+                register={register}
             />
              <PrimeUploads 
                 label='Λογότυπο' 
@@ -178,28 +193,32 @@ const AddDialog = ({ dialog, hideDialog, submitted, setSubmitted, setDialog }) =
                 name={'pimURL'}
                 value={data.pimURL}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
+                register={register}
             />
             <Input
                 label={'Pim Username'}
                 name={'pimUserName'}
                 value={data.pimUserName}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
+                register={register}
             />
             <Input
                 label={'Pim Password'}
                 name={'pimPassword'}
                 value={data.pimPassword}
                 required={true}
-                onChange={(e) => onInputChange(e)}
+                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
+                register={register}
             />
-                
+      
 
         </Dialog>
+        </form>
     )
 
 }
