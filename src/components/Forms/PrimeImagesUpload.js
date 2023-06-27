@@ -11,7 +11,7 @@ import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 
 
-export default function PrimeUploads({label, multiple, mt, mb}) {
+export default function PrimeUploads({label, multiple, mt, mb, saveToState}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export default function PrimeUploads({label, multiple, mt, mb}) {
                 console.log(urls)
                
                 if(urls) {
-                    dispatch(setUploadImages(urls))
+                    dispatch(saveToState(urls))
                     setLoading(false)
                 }
             } else {

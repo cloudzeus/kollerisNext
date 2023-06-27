@@ -13,9 +13,9 @@ import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-import { Message } from 'primereact/message';
-
+import { useSelector } from 'react-redux';
+import { setUploadImages, setLogo } from '@/features/upload/uploadSlice';
+import { DataObject } from '@mui/icons-material';
 const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData }) => {
     console.log(data)
     console.log('brand data: ' + JSON.stringify(data))
@@ -96,14 +96,8 @@ const AddDialog = ({
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(addSchema),
     });
-    const [data, setData] = useState({
-        name: '',
-        description: '',
-        pimUrl: '',
-        pimUserName: '',
-        pimPassword: '',
-
-    })
+    const {uploadedImages, logo} = useSelector(state => state.upload)
+  
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
@@ -111,47 +105,57 @@ const AddDialog = ({
  
     
 
-    const onInputChange = (e) => {
-        const { name, value } = e.target;
-        setData(prev => ({ ...prev, [name]: value }))
-    }
- 
   
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
         console.log('on submit data')
         console.log(data)
-        // console.log('add')
-        // console.log(data)
-        // console.log('videoList')
-        // console.log(videoList)
-        // console.log()
-    // if(!validateEmptyInput([data.name, data.description])) {
-    //     setError(prev => ({ ...prev, name: 'Το πεδίο είναι υποχρεωτικό' }))
-    // }
-    // if(!validateString(data.name)) {
-    //     console.log('sesese')
-    //     setError(prev => ({ ...prev, isString: 'Λάθος format' }))
-    // }
-    setSubmitted(true)
-        
-        // setDialog(false)
+        console.log('uploadedImages')
+        console.log(uploadedImages)
+        console.log('logo')
+        console.log(logo)
+        let dataImages = [{
+            name: '',
+            photosPromoUrl: ''
+            
+        }]
+        for(let i of uploadedImages) {
+            dataImages.push({
+                name: i,
+                photosPromoUrl: i
+            })
+        }
+        const body = {
+            ...data,
+            photosPromoList: dataImages,
+            videoPromoList:videoList
+        }
+        // let res = await axios.post('/api/products/apiMarkes', data)
+        setSubmitted(true)
     }
     
     
    
     const productDialogFooter = (
-        <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" type='submit' onClick={handleSubmit(handleAdd)} />
-        </React.Fragment>
+        <>
+            <Button label="Ακύρωση" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Αποθήκευση" icon="pi pi-check" type='submit' onClick={handleSubmit(handleAdd)} />
+        </>
     );
 
   
     // const {brandDialog} = useSelector(state => state.brand)
     return (
         <form  noValidate>
-        <Dialog visible={dialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+        <Dialog 
+            visible={dialog} 
+            style={{ width: '32rem' }} 
+            breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
+            header="Προσθήκη Μάρκας" 
+            modal 
+            className="p-fluid" 
+            footer={productDialogFooter} 
+            onHide={hideDialog}>
             
             <Input
                 label={'Όνομα'}
@@ -165,14 +169,14 @@ const AddDialog = ({
             <Input
                 label={'Περιγραφή'}
                 name={'description'}
-                // value={data.description}
                 required={true}
-                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
                 register={register}
             />
+
              <PrimeUploads 
-                label='Λογότυπο' 
+                label='Λογότυπο'
+                saveToState={setLogo}
                 multiple={false} 
                 mb={'30px'}/>
             <AddMoreInput
@@ -183,39 +187,63 @@ const AddDialog = ({
                 formData={videoList} 
                 mb={'30px'}
                 />
+
             <PrimeUploads 
                 label={'Φωτογραφίες'} 
+                saveToState={setUploadImages}
                 multiple={true} 
                 mb={'30px'}/>
             <FormTitle>Pim Access</FormTitle>
             <Input
                 label={'Pim URL'}
                 name={'pimURL'}
-                value={data.pimURL}
                 required={true}
-                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
                 register={register}
             />
             <Input
                 label={'Pim Username'}
                 name={'pimUserName'}
-                value={data.pimUserName}
                 required={true}
-                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
                 register={register}
             />
             <Input
                 label={'Pim Password'}
                 name={'pimPassword'}
-                value={data.pimPassword}
                 required={true}
-                // onChange={(e) => onInputChange(e)}
                 mb={'20px'}
                 register={register}
             />
-      
+            <FormTitle>Urls:</FormTitle>
+            <Input
+                label={'URL Ιστοσελίδας'}
+                name={'webSiteUrl'}
+                required={true}
+                mb={'20px'}
+                register={register}
+            />
+            <Input
+                label={'URL Kαταλόγου'}
+                name={'officialCatalogueUrl'}
+                required={true}
+                mb={'20px'}
+                register={register}
+            />
+            <Input
+                label={'URL facebook'}
+                name={'facebookUrl'}
+                required={true}
+                mb={'20px'}
+                register={register}
+            />
+            <Input
+                label={'URL instagram'}
+                name={'instagramUrl'}
+                required={true}
+                mb={'20px'}
+                register={register}
+            />
 
         </Dialog>
         </form>

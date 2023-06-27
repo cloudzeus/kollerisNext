@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
     uploadedImages:[],
+	logo: null
 }
 
 
@@ -27,9 +28,15 @@ const uploadSlice = createSlice({
 			console.log(action.payload)
 			state.uploadedImages = [...state.uploadedImages, ...action.payload];
 		},
+		setLogo: (state, action) => {
+			console.log('-------- setLogo ------------')
+			console.log(action.payload)
+			state.logo = action.payload;
+		},
 		resetUploadImages: (state) => {
 			state.uploadedImages = [];
 		}
+		
 	},
 	extraReducers: (builder) => {
 		builder
@@ -53,5 +60,5 @@ const uploadSlice = createSlice({
 })
 
 
-export const { setUploadImages, resetUploadImages} = uploadSlice.actions;
+export const { setUploadImages, resetUploadImages, setLogo} = uploadSlice.actions;
 export default uploadSlice.reducer;
