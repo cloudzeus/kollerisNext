@@ -1,13 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-
 import { Button } from 'primereact/button';
-
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
 import GallerySmall from '@/components/GalleryListSmall';
 import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
-
+import axios from 'axios';
 import styled from 'styled-components';
 import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
@@ -15,7 +13,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from 'react-redux';
 import { setUploadImages, setLogo } from '@/features/upload/uploadSlice';
-import { DataObject } from '@mui/icons-material';
+
+
+
 const EditDialog = ({ data, dialog, hideDialog, saveProduct, submitted, setData }) => {
     console.log(data)
     console.log('brand data: ' + JSON.stringify(data))
@@ -97,7 +97,8 @@ const AddDialog = ({
         resolver: yupResolver(addSchema),
     });
     const {uploadedImages, logo} = useSelector(state => state.upload)
-  
+    const [submitImages, setSubitImages] = useState(false);
+    const [submitLogo, setSumbitLogo] = useState(false);
     const [videoList, setVideoList] = useState([{
         name: '',
         videoUrl: ''
@@ -108,17 +109,8 @@ const AddDialog = ({
   
 
     const handleAdd = async (data) => {
-        console.log('on submit data')
-        console.log(data)
-        console.log('uploadedImages')
-        console.log(uploadedImages)
-        console.log('logo')
-        console.log(logo)
-        let dataImages = [{
-            name: '',
-            photosPromoUrl: ''
-            
-        }]
+     
+        let dataImages = []
         for(let i of uploadedImages) {
             dataImages.push({
                 name: i,
@@ -128,9 +120,15 @@ const AddDialog = ({
         const body = {
             ...data,
             photosPromoList: dataImages,
-            videoPromoList:videoList
+            videoPromoList: videoList,
+            logo: logo,
         }
-        // let res = await axios.post('/api/products/apiMarkes', data)
+
+        console.log('body')
+        console.log(body)
+        let res = await axios.post('/api/product/apiMarkes', {action: 'create', data: body})
+        console.log('res')
+        console.log(res);
         setSubmitted(true)
     }
     
@@ -177,7 +175,7 @@ const AddDialog = ({
              <PrimeUploads 
                 label='Λογότυπο'
                 saveToState={setLogo}
-                multiple={false} 
+                multiple={false}
                 mb={'30px'}/>
             <AddMoreInput
                 label="Video"
@@ -220,28 +218,28 @@ const AddDialog = ({
                 label={'URL Ιστοσελίδας'}
                 name={'webSiteUrl'}
                 required={true}
-                mb={'20px'}
+                mb={'10px'}
                 register={register}
             />
             <Input
                 label={'URL Kαταλόγου'}
                 name={'officialCatalogueUrl'}
                 required={true}
-                mb={'20px'}
+                mb={'10px'}
                 register={register}
             />
             <Input
                 label={'URL facebook'}
                 name={'facebookUrl'}
                 required={true}
-                mb={'20px'}
+                mb={'10px'}
                 register={register}
             />
             <Input
                 label={'URL instagram'}
                 name={'instagramUrl'}
                 required={true}
-                mb={'20px'}
+                mb={'10px'}
                 register={register}
             />
 

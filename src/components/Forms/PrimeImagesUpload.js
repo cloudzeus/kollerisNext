@@ -9,13 +9,16 @@ import { setUploadImages } from '@/features/upload/uploadSlice';
 import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
+import { useMountEffect } from 'primereact/hooks';
+import { Message } from 'primereact/message';
 
 
-export default function PrimeUploads({label, multiple, mt, mb, saveToState}) {
+export default function PrimeUploads({label, multiple, mt, mb, saveToState, }) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
+    const [didUpload, setDidUpload] = useState(false)
 
     console.log('totel size' + totalSize)
     const dispatch = useDispatch();
@@ -28,7 +31,7 @@ export default function PrimeUploads({label, multiple, mt, mb, saveToState}) {
             formData.append('files', file);
         });
         try {
-            console.log('sfseffesf')
+            setDidUpload(false)
             setLoading(true)
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
@@ -42,11 +45,11 @@ export default function PrimeUploads({label, multiple, mt, mb, saveToState}) {
                
                 if(urls) {
                     dispatch(saveToState(urls))
-                    setLoading(false)
+                    setDidUpload(true)
                 }
             } else {
                 console.error('Error uploading files');
-                setLoading(false)
+                setDidUpload(false)
             }
         } catch (error) {
             console.error(error);
@@ -86,7 +89,7 @@ export default function PrimeUploads({label, multiple, mt, mb, saveToState}) {
         setTotalSize(0);
     };
 
-
+  
 
 
     const headerTemplate = (options) => {
@@ -150,6 +153,7 @@ return (
            {label}
         </p>
         <FileUpload
+            
             ref={fileUploadRef}
             name="demo[]"
             multiple={multiple}
@@ -168,14 +172,19 @@ return (
             cancelOptions={{icon: 'pi pi-fw pi-times', className: 'p-button-primary p-mr-2', iconOnly: true, style:{ width: '40px' } }}
             emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>}
         />
+         <div className="card flex justify-content-center">
+            {didUpload ? (
+                <Message severity="success" text="Eπιτυχής ανέβασμα" />
+            ) : (
+                <Message severity="warn" text="Πατήστε Upload" />
+
+            )}
+        </div>
     </Container >
 )
 }
 
 
-const styledBtn = styled.button`
-    width: 40px;
-`
 
 const Container = styled.div`
     margin-top: ${props => props.mt ? props.mt : '0px'};
