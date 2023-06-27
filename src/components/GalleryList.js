@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 
 import { Button } from 'primereact/button';
-
+import axios from 'axios';
+import { Toast } from 'primereact/toast';
+import PrimeUploads from './Forms/PrimeImagesUpload';
+import { setUploadImages } from '@/features/upload/uploadSlice';
+import { Add } from '@mui/icons-material';
 
 
 
@@ -22,6 +26,8 @@ const LargeImage = styled.div`
   /* flex: 0 0 auto; */
   width: 300px;
   height: 300px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.08);
   @media (max-width: 716px) {
     width: 200px;
     height: 200px;
@@ -41,6 +47,7 @@ const ThumbnailContainer = styled.div`
   max-width: 700px;
   overflow-y: auto;
   height: 300px;
+ 
   @media (max-width: 716px) {
     height: 200px;
   }
@@ -80,6 +87,7 @@ const Thumbnail = styled.div`
   height: 100px;
   overflow: hidden;
   opacity: ${(props) => (props.isSelected ? 1 : 0.3)};
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.05);
 
   img {
     object-fit: cover;
@@ -121,105 +129,141 @@ const DeleteButton = styled.div`
     z-index: 1;
 `
 
-const images = [
-    'addidas1.jpg',
-    'addidas2.jpg',
-    'addidas3.jpg',
-    'addidas4.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
-    'addidas5.jpg',
 
 
-
-    // Add more image paths here
-];
-
-const Gallery = ({label}) => {
+const Gallery = ({ label, images, updateUrl }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
+    const [uploadImages, setUploadImages] = useState(images)
+    const [show, setShow] = useState(true);
+    const toast = useRef(null);
 
+    console.log('Images on the gallery componet: ' + JSON.stringify(images))
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
 
-    const handleDeleteImage = (image) => {
+    const handleDeleteImage = async (image) => {
         // Implement your delete logic here
         console.log(`Deleting image: ${image}`);
+        let newArray = uploadImages.filter(prev => prev !== image)
+        console.log(newArray)
+        setUploadImages(newArray)
+
+        //after deletion set another images as the main slideshow image:
+        const currentIndex = uploadImages.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
+        setSelectedImage(uploadImages[nextIndex]);
+        //perfrom the database update upon deletion:
+        let resp = await axios.post(updateUrl, { action: 'updateImages', image: image })
+        if (resp) {
+            showSuccess()
+        } else (
+            showError()
+        )
     };
 
     const handlePrevImage = () => {
-        const currentIndex = images.indexOf(selectedImage);
-        const prevIndex = (currentIndex - 1 + images.length) % images.length;
-        setSelectedImage(images[prevIndex]);
+        const currentIndex = uploadImages.indexOf(selectedImage);
+        const prevIndex = (currentIndex - 1 + uploadImages.length) % uploadImages.length;
+        setSelectedImage(uploadImages[prevIndex]);
     };
 
     const handleNextImage = () => {
-        const currentIndex = images.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1) % images.length;
-        setSelectedImage(images[nextIndex]);
+        const currentIndex = uploadImages.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1) % uploadImages.length;
+        setSelectedImage(uploadImages[nextIndex]);
     };
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Message Content', life: 3000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Message Content', life: 3000 });
+    }
 
     return (
-        <>  
-        <label style={{marginBottom: '5px'}}>
-            {label}
-        </label>
-              <GalleryContainer>
-           <LargeImageContainer>
-               <LargeImage>
-                   <Image src={`/uploads/${selectedImage}`} alt="Large" fill={true} />
-               </LargeImage>
-               <ArrowContainer>
-                   {images.length > 1 && (
-                       <>
-                           {selectedImage !== images[0] && (
-                               <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined  aria-label="Favorite" />
-                           )}
-                           {selectedImage !== images[images.length - 1] && (
-                               <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined  aria-label="Favorite" />
-                           )}
-                       </>
-                   )}
-               </ArrowContainer>
-               <DeleteButton>
-               <Button onClick={() => handleDeleteImage(selectedImage)}  icon="pi pi-times" severity="danger" aria-label="Cancel" />
+        <>
+            <TopDiv>
 
-                 
-               </DeleteButton>
-           </LargeImageContainer>
-           <ThumbnailContainer>
-               <ThumbnailGrid>
-                   {images.map((image, index) => (
-                       <Thumbnail key={index} isSelected={image === selectedImage}>
-                           <Image
-                               src={`/uploads/${image}`}
-                               alt={`Thumbnail ${index}`}
-                               fill={true}
-                               onClick={() => handleImageSelect(image)} />
-                           {/* <button onClick={() => handleDeleteImage(image)}>
-                               <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
-                           </button> */}
-                       </Thumbnail>
-                   ))}
-               </ThumbnailGrid>
-           </ThumbnailContainer>
-       </GalleryContainer>
+                <Toast ref={toast} />
+                <label style={{ marginBottom: '5px' }}>
+                    {label}
+                </label>
+                <ActionsDiv>
+                <span className="p-buttonset">
+                    <Button label="Gallery" icon="pi pi-images" onClick={() => setShow(prev => !prev)}/>
+                    <Button label="Προσθήκη" icon="pi pi-images" onClick={() => setShow(prev => !prev)} />
+                </span>
+                </ActionsDiv>
+                {show ? (
+                     <GalleryContainer>
+                     <LargeImageContainer>
+                         <LargeImage>
+                             <Image src={`/uploads/${selectedImage}`} alt="Large" fill={true} />
+                         </LargeImage>
+                         <ArrowContainer>
+                             {uploadImages.length > 1 && (
+                                 <>
+                                     {selectedImage !== uploadImages[0] && (
+                                         <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
+                                     )}
+                                     {selectedImage !== uploadImages[uploadImages.length - 1] && (
+                                         <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                                     )}
+                                 </>
+                             )}
+                         </ArrowContainer>
+                         <DeleteButton>
+                             <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
+ 
+                         </DeleteButton>
+                     </LargeImageContainer>
+                     <ThumbnailContainer>
+                         <ThumbnailGrid>
+                             {uploadImages.map((image, index) => (
+                                 <Thumbnail key={index} isSelected={image === selectedImage}>
+                                     <Image
+                                         src={`/uploads/${image}`}
+                                         alt={`Thumbnail ${index}`}
+                                         fill={true}
+                                         onClick={() => handleImageSelect(image)} />
+                                     {/* <button onClick={() => handleDeleteImage(image)}>
+                                <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
+                            </button> */}
+                                 </Thumbnail>
+                             ))}
+                         </ThumbnailGrid>
+                     </ThumbnailContainer>
+                 </GalleryContainer>
+                ) : (
+                    <PrimeUploads
+                    label={'Φωτογραφίες'}
+                    saveToState={setUploadImages}
+                    multiple={true}
+                    mb={'30px'} />
+                )}
+               
+           
+            </TopDiv>
+
+                
+         
+
         </>
     );
 };
 
 
 
+const TopDiv = styled.div`
 
+`
 
+const ActionsDiv = styled.div`
+    margin-bottom: 20px;
+`
+const AddPhotosDiv = styled.div`
+    margin-top: 40px;
+    margin-bottom: 20px;
+`
 
 export default Gallery;

@@ -113,6 +113,7 @@ export default async function handler(req, res) {
 			console.log('object')
 			console.log(object)
 
+
 		// 	// if (softoneResponse.data.success) {
 		// 	// 	await connectMongo();
 		// 	// 	const newMarkes = await Markes.create({
@@ -128,18 +129,18 @@ export default async function handler(req, res) {
 		// 	// 	}
 		// 	// }
 
-		// 	await connectMongo();
-		// 		const newMarkes = await Markes.create({
-		// 			...object,
-		// 		});
+			await connectMongo();
+				const newMarkes = await Markes.create({
+					...object,
+				});
 
 
-		// 		if (newMarkes) {
-		// 			return res.status(200).json({ success: true, markes: newMarkes, error: null });
+				if (newMarkes) {
+					return res.status(200).json({ success: true, markes: newMarkes, error: null });
 
-		// 		} else {
-		// 			return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
-		// 		}
+				} else {
+					return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
+				}
 
 
 		// } catch (error) {
@@ -377,6 +378,27 @@ export default async function handler(req, res) {
 
 		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone, percentageAriadne: percentageAriadne });
 
+	}
+
+	if(action === 'updateImages') {
+		console.log('update Images')
+		let id = req.body._id;
+		let image = req.body.image;
+		try {
+			await connectMongo();
+			await Markes.updateOne({ _id: id }, 
+			{ $pull: { photosPromoList: {
+				name: image,
+				photosPromoUrl: image
+			 } } }
+			);
+			return res.status(200).json({ success: true, message:'Έγινε update', error: null });
+		} catch (e) {
+			return res.status(500).json({ success: false, error:'Δεν έγινε update', message: null });
+		}
+		
+
+		
 	}
 }
 

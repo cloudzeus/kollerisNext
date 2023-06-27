@@ -7,13 +7,11 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
 import styled from 'styled-components';
 import { Tag } from 'primereact/tag';
-import { Toast } from 'primereact/toast'
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import Gallery from '@/components/GalleryList';
-import Link from 'next/link'
 
 import { TabView, TabPanel } from 'primereact/tabview';
 
@@ -23,30 +21,35 @@ export default function TemplateDemo() {
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
+    //Images to use for the gallery:
+    const [images, setImages] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
     //
-    const [images, setImages] = useState([])
+
 
     const handleFetchUser = async () => {
+        setLoading(true)
         try {
-            const resp = await axios.post('/api/admin/markes/markes', { action: 'findAll' })
-
+            let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll'})
             setData(resp.data.markes)
+            // setImages(resp.data.images)
             setImages(resp.data.images)
+            setLoading(false)
 
         } catch (error) {
             console.log(error)
+            setLoading(false)
         }
     }
 
 
     useEffect(() => {
         handleFetchUser();
-
     }, []);
 
 
@@ -108,47 +111,29 @@ export default function TemplateDemo() {
 
         return (
             < ShowDetails >
-                {/* <div className="list-item">
-                    <span>Ιστοσελίδα:</span>
-                    <Link className="grid-link" href={data.webSiteUrl}>{data.webSiteUrl}</Link>
+                <div className="card">
+                    <TabView>
+                        <TabPanel header="Φωτογραφίες">
+                            <Gallery images={images} updateUrl={'/api/product/apiMarkes'}/>
+                        </TabPanel>
+                        <TabPanel header="Βίντεο">
+                            <p className="m-0">
+                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam,
+                                eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                                enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
+                                ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                            </p>
+                        </TabPanel>
+                        <TabPanel header="Λεπτομέριες">
+                            <p className="m-0">
+                                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti
+                                quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                                culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                            </p>
+                        </TabPanel>
+                    </TabView>
                 </div>
-                <div className="divider"></div>
-                <div className="list-item">
-                    <span>Ιnstagram:</span>
-                    <span>{data.instagramUrl}</span>
-                </div>
-                <div className="divider"></div>
-                <div className="list-item">
-                    <span>URL καταλόγου:</span>
-                    <span>{data.officialCatalogueUrl}</span>
-                </div>
-                <div className="divider"></div>
-                <div className="list-item">
-                    <span>Εικόνες:</span>
-                </div> */}
-                    <div className="card">
-            <TabView>
-                <TabPanel header="Φωτογραφίες">
-                    <Gallery />
-                </TabPanel>
-                <TabPanel header="Βίντεο">
-                    <p className="m-0">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
-                        eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui 
-                        ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                    </p>
-                </TabPanel>
-                <TabPanel header="Λεπτομέριες">
-                    <p className="m-0">
-                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti 
-                        quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
-                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. 
-                        Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-                    </p>
-                </TabPanel>
-            </TabView>
-        </div>
             </ ShowDetails >
         );
     };
@@ -243,6 +228,7 @@ export default function TemplateDemo() {
                 dataKey="softOne.MTRMARK"
                 filters={filters} onFilter={(e) => setFilters(e.filters)}
                 //edit:
+                loading={loading}
                 editMode="row"
             >
                 {/* <Column field="softOne.MTRMARK" header="MTRMARK" sortable></Column> */}

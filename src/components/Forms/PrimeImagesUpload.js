@@ -83,10 +83,12 @@ export default function PrimeUploads({label, multiple, mt, mb, saveToState, }) {
     const onTemplateRemove = (file, callback) => {
         setTotalSize(totalSize - file.size);
         callback();
+        setDidUpload(false)
     };
 
     const onTemplateClear = () => {
         setTotalSize(0);
+        setDidUpload(false)
     };
 
   
@@ -170,15 +172,18 @@ return (
             chooseOptions={{icon: 'pi pi-fw pi-images', className: 'p-button-primary p-mr-2', iconOnly: true, style:{ width: '40px' } }}
             uploadOptions={{icon: 'pi pi-fw pi-upload', className: 'p-button-primary p-mr-2', iconOnly: true, style:{ width: '40px' } }}
             cancelOptions={{icon: 'pi pi-fw pi-times', className: 'p-button-primary p-mr-2', iconOnly: true, style:{ width: '40px' } }}
-            emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>}
+            emptyTemplate={<p className="m-0">Σείρετε εικόνες για ανέβασμα.</p>}
         />
          <div className="card flex justify-content-center">
             {didUpload ? (
                 <Message severity="success" text="Eπιτυχής ανέβασμα" />
             ) : (
-                <Message severity="warn" text="Πατήστε Upload" />
-
+                null
             )}
+            {totalSize > 0 && !didUpload ? (
+                    <Message severity="warn" text="Πατήστε upload" />
+
+            ) : null}
         </div>
     </Container >
 )
