@@ -11,10 +11,14 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
-import Gallery from '@/components/GalleryList';
+import Gallery from '@/components/Gallery';
 import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
+import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
+import { Link } from '@mui/material';
+
+
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
     const [editData, setEditData] = useState(null)
@@ -106,32 +110,58 @@ export default function TemplateDemo() {
         return rowData
     };
 
-   
+    
 
     const rowExpansionTemplate = (data) => {
 
         return (
             < ShowDetails >
-                <div className="card">
+                <div className="card p-20">
                     <TabView>
                         <TabPanel header="Φωτογραφίες">
-                            <Gallery images={images} updateUrl={'/api/product/apiMarkes'}/>
+                            <Gallery images={images}/>
                         </TabPanel>
                         <TabPanel header="Βίντεο">
-                            <p className="m-0">
-                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam,
-                                eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                                enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
-                                ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                            </p>
+                            {data?.videoPromoList?.map((video, index) => {
+                                return (
+                                    <div key={index} className="video-div">
+                                       { JSON.stringify(video)}
+                                    </div>
+                                )
+                            })}
                         </TabPanel>
                         <TabPanel header="Λεπτομέριες">
-                            <p className="m-0">
-                                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti
-                                quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
-                                culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-                            </p>
+                            <DropDownDetails>
+                                <div className="tab-div">
+                                    <span className='tab-title'>Περιγραφή</span>
+                                    <p className='tab-details'>{data.description}</p>
+                                </div>
+                                <div className="tab-div">
+                                    <span className='tab-title'>URL Pim</span>
+                                    <Link className="tab-url" >{data?.pimAccess?.pimUrl}</Link>
+                                </div>
+                                <div className="tab-div">
+                                    <span className='tab-title'>Pim Όνομα Χρήστη</span>
+                                    <p className='tab-details'>{data?.pimAccess?.pimUserName}</p>
+                                </div>
+                                <div className="tab-div">
+                                    <span className='tab-title'>URL Ιστοσελίδας</span>
+                                    <Link className="tab-url" >{data?.pimAccess?.pimUrl}</Link>
+                                </div>
+                                <div className="tab-div">
+                                    <span className='tab-title'>URL Facebook</span>
+                                    <Link className="tab-url" >{data?.facebookUrl}</Link>
+                                </div>
+                                <div className="tab-div">
+                                    <span className='tab-title'>URL Instagram</span>
+                                    <Link className="tab-url" >{data?.instagramUrl}</Link>
+                                </div>
+                               
+                              
+                            
+                            </DropDownDetails>
+                          
+                            
                         </TabPanel>
                     </TabView>
                 </div>
@@ -210,10 +240,12 @@ export default function TemplateDemo() {
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="softOne.MTRMARK"
                 filters={filters} 
+                paginatorLeft={true}
                 onFilter={(e) => setFilters(e.filters)}
                 //edit:
                 loading={loading}
                 editMode="row"
+                selectOnEdit
             >
                 {/* <Column field="softOne.MTRMARK" header="MTRMARK" sortable></Column> */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
@@ -222,7 +254,7 @@ export default function TemplateDemo() {
                 <Column field="softOne.ISACTIVE" header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 {/* <Column header="Actions"  body={actionsTemplate} tableStyle={{ width: '80px'}}></Column> */}
                 {/* <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-                <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '100px' }}></Column>
+                <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
             <EditDialog
@@ -267,34 +299,7 @@ const ActiveTempate = ({ softOne }) => {
 
 
 
-const ImageDiv = styled.div`
-    width: 55px;
-    height: 40px;
-    padding: 10px;
-    /* border-radius: 50%; */
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-   
-    img {
-        object-fit: contain;
-    }
-`
 
-const ActionDiv = styled.span`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    button {
-        box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-        margin-left: 2px;
-        margin-right: 2px;
-    }
-
-
-`
 
 
 

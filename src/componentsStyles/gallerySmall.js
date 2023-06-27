@@ -8,7 +8,7 @@ const ActionsDiv = styled.div`
 const GalleryContainer = styled.div`
   display: flex;
   align-items: flex-start;
- 
+  max-width: 1400px;
 `;
 
 const LargeImageContainer = styled.div`
