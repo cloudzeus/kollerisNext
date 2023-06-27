@@ -36,10 +36,14 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
+        //handle images:
+        let newArray = []
         if(gridRowData?.photosPromoList && gridRowData?.photosPromoList.length > 0) {
+
             for(let image of gridRowData?.photosPromoList) {
-                setImages(prev => [...prev, image.photosPromoUrl])
+                newArray.push(image.photosPromoUrl)    
             }
+            setImages(newArray)
         }
     }, [gridRowData])
 

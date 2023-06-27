@@ -45,7 +45,7 @@ export default function TemplateDemo() {
             setData(resp.data.markes)
             // console.log("rendered data " + JSON.stringify(resp.data.markes))
             // setImages(resp.data.images)
-            setImages(resp.data.images)
+            // setImages(resp.data.images)
             setLoading(false)
 
         } catch (error) {
@@ -113,13 +113,17 @@ export default function TemplateDemo() {
     
 
     const rowExpansionTemplate = (data) => {
+            let newArray = []
+            for(let image of data.photosPromoList) {
+            newArray.push(image.photosPromoUrl)
+        }
 
         return (
             < ShowDetails >
                 <div className="card p-20">
                     <TabView>
                         <TabPanel header="Φωτογραφίες">
-                            <Gallery images={images}/>
+                            <Gallery images={newArray}/>
                         </TabPanel>
                         <TabPanel header="Βίντεο">
                             {data?.videoPromoList?.map((video, index) => {

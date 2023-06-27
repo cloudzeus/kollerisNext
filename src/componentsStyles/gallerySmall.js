@@ -81,7 +81,7 @@ const ArrowContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    .p-button  {
+    /* .p-button  {
         background-color: #fff;
         opacity: 70%;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -89,7 +89,7 @@ const ArrowContainer = styled.div`
     .p-button:enabled:hover, .p-button:not(button):not(a):not(.p-disabled):hover {
         background-color: #fff;
         opacity: 70%;
-    } 
+    }  */
     
 `;
 

@@ -37,7 +37,7 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
     useEffect(() => {
         const handleAdd = async () => {
             let resp = await axios.post('/api/product/apiImages', {action: "addImages", id: id, images: imagesToUpload})
-            console.log(resp)
+            console.log(resp.data)
             if(resp.data.success) {
                 showSuccess()
             } else {
@@ -56,13 +56,13 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
         console.log(newArray)
         setUploadImages(newArray)
 
-        //after deletion set another images as the main slideshow image:
+        // //after deletion set another images as the main slideshow image:
         const currentIndex = uploadImages.indexOf(selectedImage);
         const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
         setSelectedImage(uploadImages[nextIndex]);
         //perfrom the database update upon deletion:
         let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
-        if (resp.success) {
+        if (resp.data.success) {
             showSuccess()
         } else (
             showError()
@@ -77,7 +77,7 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
 
     const handleNextImage = () => {
         const currentIndex = images.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1) % images.length;
+        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
         setSelectedImage(images[nextIndex]);
     };
 
@@ -112,16 +112,8 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
                             />
                         </LargeImage>
                         <ArrowContainer>
-                            {images.length > 1 && (
-                                <>
-                                    {selectedImage !== images[0] && (
-                                        <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                                    )}
-                                    {selectedImage !== images[images.length - 1] && (
-                                        <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
-                                    )}
-                                </>
-                            )}
+                            <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
+                            <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
                         </ArrowContainer>
                         <DeleteButton>
                             <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
@@ -130,7 +122,7 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
                     </LargeImageContainer>
                     <ThumbnailContainer>
                         <ThumbnailGrid>
-                            {images.map((image, index) => (
+                            {uploadImages.map((image, index) => (
                                 <Thumbnail key={index} isSelected={image === selectedImage}>
                                     <Image
                                         src={`/uploads/${image}`}
