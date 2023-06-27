@@ -3,7 +3,7 @@ import styled from "styled-components";
 const FormTitle = styled.h2`
     font-size: 1.2rem;
     margin-bottom: 15px;
-    margin-top: 20px;
+    margin-top: 15px;
     position: relative;
     &:after {
         content: '';
@@ -22,6 +22,7 @@ const Divider = styled.div`
     width: 100%;
     height: 1px;
     background-color: #e8e8e8;
+    margin: 40px 0;
 `
 
 export {

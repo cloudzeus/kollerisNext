@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import PrimeUploads from './Forms/PrimeImagesUpload';
 import { Toast } from 'primereact/toast';
+import axios from 'axios';
 import { Button } from 'primereact/button';
 import {
     ActionsDiv, GalleryContainer,
@@ -41,17 +42,33 @@ const images = [
     // Add more image paths here
 ];
 
-const GallerySmall = ({ label, images }) => {
+const GallerySmall = ({ label, images, updateUrl, id }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
     const [show, setShow] = useState(false)
     const [imagesToUpload, setImagesToUpload] = useState([])
+    const [uploadImages, setUploadImages] = useState(images)
+
     const toast = useRef(null);
 
-    console.log('images')
-    console.log(images)
+
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
+
+    useEffect(() => {
+        const handleAdd = async () => {
+            let resp = await axios.post('/api/product/apiImages', {action: "addImages", id: id, images: imagesToUpload})
+            console.log(resp)
+            if(resp.data.success) {
+                showSuccess()
+            } else {
+                showError()
+            }
+        }
+        if (imagesToUpload.length > 0) {
+            handleAdd();
+        }
+    }, [imagesToUpload, id])
 
     const handleDeleteImage = async (image) => {
         // Implement your delete logic here
@@ -65,8 +82,8 @@ const GallerySmall = ({ label, images }) => {
         const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
         setSelectedImage(uploadImages[nextIndex]);
         //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image })
-        if (resp) {
+        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
+        if (resp.success) {
             showSuccess()
         } else (
             showError()
@@ -86,14 +103,15 @@ const GallerySmall = ({ label, images }) => {
     };
 
     const showSuccess = () => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Message Content', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
     }
     const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Message Content', life: 3000 });
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
     return (
         <>
+            <Toast ref={toast} />
             <label style={{ marginBottom: '5px' }}>
                 {label}
             </label>
@@ -107,7 +125,12 @@ const GallerySmall = ({ label, images }) => {
                 <GalleryContainer>
                     <LargeImageContainer>
                         <LargeImage>
-                            <Image src={`/uploads/${selectedImage}`} alt="Large" fill={true} />
+                            <Image
+                                src={`/uploads/${selectedImage}`}
+                                alt="Large"
+                                fill={true}
+                                sizes="220px"
+                            />
                         </LargeImage>
                         <ArrowContainer>
                             {images.length > 1 && (
@@ -134,6 +157,7 @@ const GallerySmall = ({ label, images }) => {
                                         src={`/uploads/${image}`}
                                         alt={`Thumbnail ${index}`}
                                         fill={true}
+                                        sizes="100px"
                                         onClick={() => handleImageSelect(image)} />
                                     {/* <button onClick={() => handleDeleteImage(image)}>
                                <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>

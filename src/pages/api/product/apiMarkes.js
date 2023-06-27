@@ -209,37 +209,21 @@ export default async function handler(req, res) {
 
 	}
 	if (action === 'update') {
-		// await connectMongo();
+		
 		let body = req.body.data;
-		console.log('body data')
-		let updateBody = {
-			name: body.name,
-			description: body.description,
-			logo: body.logo,
-			videoPromoList: body.videoPromoList,
-			photosPromoList: {
-				name: 'name',
-				photosPromoUrl: body.photosPromoUrl
-			},
-			pimAccess: {
-				pimUrl: body.pimUrl,
-				pimUserName: body.pimUserName,
-				pimPassword: body.pimPassword
-			},
-			webSiteUrl: body.webSiteUrl,
-			officialCatalogueUrl: body.officialCatalogueUrl,
-			facebookUrl: body.facebookUrl,
-			instagramUrl: body.instagramUrl,
-			softOne: {
-				COMPANY: '1001',
-				SODTYPE: '200',
-				MTRMARK: body.softOneMTRMARK,
-				CODE: '51',
-				NAME: body.softOneName,
-				ISACTIVE: 1
-			}
+		let id = req.body.id
+		const filter = { _id: id };
+		const update = { $set: body };
+		try {
+			await connectMongo();
+			const result = await Markes.updateOne(filter, update);
+		
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
 		}
-
+    
+	
 		// if(body.softOneName ) {
 		// 	let URL = `https://${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/updateMtrMark`;
 		// 	let softoneResponse = await axios.post(URL, {
@@ -259,22 +243,8 @@ export default async function handler(req, res) {
 
 		// }	
 
-		console.log(updateBody)
-		try {
-			await connectMongo();
-			await Markes.updateOne({ _id: body._id }, { ...updateBody });
-			const markes = await Markes.findOne({ _id: body._id });
-			if (markes) {
-				return res.status(200).json({ success: true, result: markes });
-			} else {
-				res.status(200).json({ success: false, result: null });
-			}
-
-
-		} catch (error) {
-			res.status(400).json({ success: false, result: null });
-
-		}
+		// console.log(updateBody)
+	
 
 	}
 
@@ -294,59 +264,7 @@ export default async function handler(req, res) {
 		}
 	}
 
-	// if (action === 'sync') {
-	// 	console.log('sync')
-	// 	try {
-	// 		let URL = `${process.env.URL}/JS/mbmv.mtrMark/getMtrMark`;
-	// 		let { data } = await axios.post(URL)
-	// 		let softOneArray = data.result;
-	// 		await connectMongo();
-	// 		const mongoArray = await Markes.find({}, { softOne: 1 });
-	// 		let newArray = compareArrays(mongoArray, softOneArray, ['NAME'], 'MTRMARK')
-	// 		if (newArray) {
-	// 			return res.status(200).json({ success: true, markes: newArray });
-	// 		}
-	// 		else {
-	// 			return res.status(200).json({ success: false, markes: [] });
-	// 		}
-
-	// 	}
-	// 	catch (error) {
-	// 		return res.status(400).json({ success: false, error: 'Aδυναμία Εύρεσης Στοιχείων Συγχρονισμού', markes: [] });
-	// 	}
-	// }
-
-	// if (action === 'syncAndUpdate') {
-
-	// 	let data = req.body.data;
-
-	// 	try {
-	// 		await connectMongo();
-	// 		if (req.body.syncTo == 'Εμάς') {
-	// 			let updated = await Markes.updateOne(
-	// 				{ "softOne.MTRMARK": parseInt(data.MTRMARK) },
-	// 				{ $set: { "softOne.NAME": data.NAME } }
-	// 			);
-
-	// 			if (updated.modifiedCount === 0) {
-	// 				return res.status(200).json({ success: false, updated: false });
-	// 			}
-
-	// 			return res.status(200).json({ success: true, updated: true });
-	// 		}
-
-	// 		if (req.body.syncTo == 'Softone') {
-	// 			return res.status(200).json({ success: false, updated: false });
-	// 		}
-
-	// 		// console.log('200')
-	// 		// return res.status(200).json({ success: true, markes: null });
-	// 	} catch (e) {
-	// 		return res.status(500).json({ success: false, error: error.message });
-	// 	}
-
-	// }
-
+	
 	if (action === 'findExtraSoftone') {
 		await connectMongo();
 		const mongoArray = await Markes.find();
@@ -379,40 +297,7 @@ export default async function handler(req, res) {
 		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone, percentageAriadne: percentageAriadne });
 
 	}
-
-	if(action === 'deleteImages') {
-		console.log('update Images')
-		let id = req.body._id;
-		let image = req.body.image;
-		try {
-			await connectMongo();
-			await Markes.updateOne({ _id: id }, 
-			{ $pull: { photosPromoList: [{
-				name: image,
-				photosPromoUrl: image
-			 }]}}
-			);
-			return res.status(200).json({ success: true, message:'Έγινε update', error: null });
-		} catch (e) {
-			return res.status(500).json({ success: false, error:'Δεν έγινε update', message: null });
-		}
-	}
-
-	if(action == 'addMoreImages') {
-		console.log('add new Images to the database')
-		let id = req.body._id;
-		//Images must be and array
-		let images = req.body.images;
-		try {
-			await connectMongo();
-			await Markes.updateOne({ _id: id }, 
-				{ $push: { images: { $each: [...images] } } }
-			);
-			return res.status(200).json({ success: true, message:'Έγινε update', error: null });
-		} catch (e) {
-			return res.status(500).json({ success: false, error:'Δεν έγινε update', message: null });
-		}
-	}
+	
 }
 
 

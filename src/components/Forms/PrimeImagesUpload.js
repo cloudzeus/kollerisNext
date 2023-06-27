@@ -20,8 +20,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
     const toast = useRef(null);
     const [didUpload, setDidUpload] = useState(false)
 
-    console.log('totel size' + totalSize)
-    const dispatch = useDispatch();
 
     const uploadHandler = async (e) => {
         let formData = new FormData();

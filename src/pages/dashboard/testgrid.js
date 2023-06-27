@@ -39,7 +39,7 @@ export default function TemplateDemo() {
         try {
             let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll'})
             setData(resp.data.markes)
-            console.log("rendered data " + JSON.stringify(data))
+            // console.log("rendered data " + JSON.stringify(resp.data.markes))
             // setImages(resp.data.images)
             setImages(resp.data.images)
             setLoading(false)
@@ -154,8 +154,8 @@ export default function TemplateDemo() {
 
     //Edit:
     const editProduct = (product) => {
-        console.log('edit product')
-        console.log(product)
+        // console.log('edit product')
+        // console.log(product)
         setEditDialog(true)
         dispatch(setGridRowData(product))
     };
@@ -182,6 +182,7 @@ export default function TemplateDemo() {
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
+        // console.log('row data: ' + JSON.stringify(rowData))
         return (
             <ActionDiv>
                 <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
@@ -204,7 +205,8 @@ export default function TemplateDemo() {
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="softOne.MTRMARK"
-                filters={filters} onFilter={(e) => setFilters(e.filters)}
+                filters={filters} 
+                onFilter={(e) => setFilters(e.filters)}
                 //edit:
                 loading={loading}
                 editMode="row"

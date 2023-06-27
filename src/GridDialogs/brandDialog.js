@@ -12,19 +12,23 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
-
+import { Toast } from 'primereact/toast';
 import { FormTitle, Divider } from '@/componentsStyles/dialogforms';
 
 
 const EditDialog = ({dialog, hideDialog, setData, data }) => {
     const [images, setImages] = useState([])
+    const [logo, setLogo] = useState([])
+    const toast = useRef(null);
     const {gridRowData} = useSelector(store => store.grid)
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
-        defaultValues: {gridRowData}
+        defaultValues: gridRowData
     });
+
+    console.log(logo)
+    console.log('logoooooo: ' + JSON.stringify(logo))
+
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
-    console.log('images')
-    console.log(images)
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
         if(gridRowData?.photosPromoList && gridRowData?.photosPromoList.length > 0) {
@@ -35,9 +39,34 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
     }, [gridRowData])
 
 
-    const handleEdit = (data) => {
-        console.log('edit Data: ' + JSON.stringify(data))
+    const handleEdit = async (data) => {
+      
+        const object = {
+            ...data,
+            videoPromoList: videoList,
+            logo: logo[0]
+        }
 
+        try {
+            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: object, id: gridRowData._id})
+                if(!resp.data.success) {
+                    showError()
+                }
+                if(resp.data.success) {
+                    showSuccess()
+                }
+               
+        } catch (e) {
+            console.log(e)
+        }
+       
+    }
+
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
     const productDialogFooter = (
@@ -49,7 +78,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
 
     return (
         <form>
-          
+            <Toast ref={toast} />
               <Dialog 
                 visible={dialog} 
                 style={{ width: '32rem', maxWidth: '80rem' }} 
@@ -76,11 +105,21 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                 register={register}
                 defaultValue={gridRowData.description}
             />
+             < Divider />
+             <FormTitle>Λογότυπο	</FormTitle>
+              <PrimeUploads
+                    setState={setLogo}
+                    multiple={false}
+                    // mb={'30px'}
+                    />
             < Divider />
             <FormTitle>Φωτογραφίες</FormTitle>
             <GallerySmall  
                 images={images}
+                updateUrl={'/api/product/apiImages'}
+                id={gridRowData._id}
             />
+             < Divider />
               <FormTitle>Βίντεο</FormTitle>
              <AddMoreInput
                     htmlName1="name"
@@ -89,6 +128,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                     formData={videoList}
                     mb={'30px'}
                 />
+                  < Divider />
                  <FormTitle>Pim Access:</FormTitle>
                  <Input
                 label={'Pim url:'}
@@ -111,6 +151,7 @@ const EditDialog = ({dialog, hideDialog, setData, data }) => {
                 register={register}
                 defaultValue={gridRowData?.pimAccess?.pimPassword}
                 />
+                 < Divider />
                 <FormTitle>Url</FormTitle>
                 <Input
                 label={'Url Ιστοσελίδας:'}
