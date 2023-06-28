@@ -64,6 +64,7 @@ export default async function handler(req, res) {
 		console.log('data: ' + JSON.stringify(data))
 		try {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
+			console.log(URL)
 			let softoneResponse = await axios.post(URL, {
 				username: 'Service',
 				password: 'Service',
@@ -71,12 +72,12 @@ export default async function handler(req, res) {
 				sodtype: '51',
 				name: data.name
 			})
-
-			if (!softoneResponse.data.success) {
-				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone' });
-			}
 			console.log('softone response data')
 			console.log(softoneResponse.data)
+			if (!softoneResponse.data.success) {
+				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone', softoneError: softoneResponse.data.error });
+			}
+			
 			let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
 			console.log(SOFTONE_MTRMARK)
 

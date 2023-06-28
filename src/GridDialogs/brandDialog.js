@@ -213,11 +213,12 @@ const AddDialog = ({
     hideDialog,
     setSubmitted,
 }) => {
-    const dispatch = useDispatch();
+   
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(addSchema),
     });
+    const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
     const [logo, setLogo] = useState('')
     const [images, setImages] = useState([])
@@ -249,13 +250,14 @@ const AddDialog = ({
         console.log('body')
         console.log(body)
         let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
-        if (res) {
-            // dispatch(resetUploadImages())
-            // dispatch(resetLogo())
+        console.log('res data:')
+        console.log(res.data)
+            if(!res.data.success) return showError(res.data.softoneError)
             setDisabled(true)
-        }
+            setSubmitted(true)
+            showSuccess()
     
-        setSubmitted(true)
+       
     }
 
 
@@ -267,10 +269,17 @@ const AddDialog = ({
         </>
     );
 
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
+    }
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
+    }
 
     // const {brandDialog} = useSelector(state => state.brand)
     return (
         <form noValidate>
+              <Toast ref={toast} />
             <Dialog
                 visible={dialog}
                 style={{ width: '32rem' }}
