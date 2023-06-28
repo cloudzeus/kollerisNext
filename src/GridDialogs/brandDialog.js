@@ -22,11 +22,21 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
     const toast = useRef(null);
+    const inputref = useRef(null);
     const {gridRowData} = useSelector(store => store.grid)
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
+    const formRef = useRef(null);
+    const inputRef = useRef(null);
+  
+    useEffect(() => {
+      if ( inputRef.current) {
+        inputRef.current.focus();
+        formRef.current.scrollTo(0, 0); // Scroll to top of the form
+      }
+    }, []);
  
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
@@ -97,7 +107,7 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
 
     return (
         < Container>
-          <form>
+          <form ref={formRef}>
             <Toast ref={toast} />
               <Dialog 
                  aria-modal={true}
@@ -113,6 +123,7 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
                 >
             <FormTitle>Λεπτομέριες</FormTitle>     
             <Input
+                ref={inputref}
                 label={'Όνομα'}
                 name={'name'}
                 required={true}

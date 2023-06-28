@@ -22,7 +22,8 @@ import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
-
+import { Badge } from 'primereact/badge';
+import SyncBrand from '@/GridSync/SyncBrand';
 
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
@@ -33,8 +34,6 @@ export default function TemplateDemo() {
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
-    //Images to use for the gallery:
-    const [images, setImages] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
@@ -196,6 +195,7 @@ export default function TemplateDemo() {
     const rightToolbarTemplate = () => {
         return (
             <>
+            <SyncBrand data={data} />
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
