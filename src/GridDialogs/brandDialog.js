@@ -65,6 +65,7 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
                 if(resp.data.success) {
                     showSuccess()
                     setSubmitted(true)
+                    hideDialog()
                 }
                
         } catch (e) {
@@ -251,14 +252,12 @@ const AddDialog = ({
         console.log('body')
         console.log(body)
         let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
-        console.log('res data:')
-        console.log(res.data)
+        
             if(!res.data.success) return showError(res.data.softoneError)
             setDisabled(true)
             setSubmitted(true)
             showSuccess()
-    
-       
+            hideDialog()
     }
 
 

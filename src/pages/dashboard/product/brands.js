@@ -21,6 +21,7 @@ import DeletePopup from '@/components/deletePopup';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import UrlInput from '@/components/Forms/PrimeUrlInput';
+import { Toast } from 'primereact/toast';
 
 
 export default function TemplateDemo() {
@@ -31,6 +32,7 @@ export default function TemplateDemo() {
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const dispatch = useDispatch();
+    const toast = useRef(null);
     //Images to use for the gallery:
     const [images, setImages] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
@@ -108,7 +110,6 @@ export default function TemplateDemo() {
 
 
     const allowExpansion = (rowData) => {
-        
         return rowData
 
     };
@@ -226,12 +227,12 @@ export default function TemplateDemo() {
 
     };
 
-    const onDelete = async (item) => {
-        console.log('delete')
-        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: item._id })
-        if (res.data.success) {
-            handleFetch()
-        }
+    const onDelete = async (id) => {
+        
+        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        if(!res.data.success) return showError()
+        handleFetch()
+        showSuccess()
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
@@ -240,14 +241,21 @@ export default function TemplateDemo() {
         return (
             <ActionDiv>
                 <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={onDelete} status={rowData.status} />
+                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
                 {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
             </ActionDiv>
         );
     };
+
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    }
     return (
         <AdminLayout >
-            {/* <Toast ref={toast} /> */}
+            <Toast ref={toast} />
             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
                 header={header}

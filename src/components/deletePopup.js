@@ -9,12 +9,9 @@ export default function DeletePopup({onDelete, status}) {
     const buttonEl = useRef(null);
     const accept = () => {
         onDelete();
-        toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
     };
 
-    const reject = () => {
-        // toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-    };
+   
     
    
 
@@ -31,7 +28,7 @@ export default function DeletePopup({onDelete, status}) {
                 acceptLabel={'Ναι'}
                 rejectLabel={'Όχι'}
                 accept={accept} 
-                reject={reject} />
+                 />
             <div className="card flex flex-wrap gap-2 justify-content-center">
                 <Button 
                     disabled={!status}
