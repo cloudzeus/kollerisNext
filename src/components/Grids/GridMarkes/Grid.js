@@ -117,7 +117,7 @@ const Grid = ({ id, setId }) => {
                     <ColumnDirective field='softOne.NAME' headerText='Softone Όνομα' width='140' ></ColumnDirective>
                     <ColumnDirective field='name' headerText='Όνομα' width='140' ></ColumnDirective>
                     <ColumnDirective field='description' headerText='Περιγραφή' width='100'  ></ColumnDirective>
-                    <ColumnDirective  headerText='Ποσ.Ολοκλήρωσης' width='100' template={completionTemplate}  textAlign="Right" ></ColumnDirective>
+                    {/* <ColumnDirective  headerText='Ποσ.Ολοκλήρωσης' width='100' template={completionTemplate}  textAlign="Right" ></ColumnDirective> */}
 
                     {/* <ColumnDirective field='photosPromoList' headerText='Video' width='100'></ColumnDirective>
                 <ColumnDirective field='pimAccess.pimUrl' headerText='pimAccess' width='100'></ColumnDirective> */}

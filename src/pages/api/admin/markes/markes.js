@@ -36,6 +36,7 @@ export default async function handler(req, res) {
 			const markes = await Markes.find({});
 			if (markes) {
 				// console.log(markes)
+
 				const arrayImages = []
 				for(let item of markes) {
 					for(let image of item?.photosPromoList ?? []) {

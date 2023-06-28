@@ -6,7 +6,6 @@ import Button from "@/components/Buttons/Button";
 import { InputVar1 } from "@/components/Forms/newInputs/InputClassic";
 import { useSelector } from "react-redux";
 import { ImageInput } from "@/components/Forms/newInputs/ImageInput";
-import YupForm from "@/components/Forms/YupForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch } from "react-redux";
 import { AddMoreInput } from "@/components/Forms/newInputs/AddMoreInput";
