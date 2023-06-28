@@ -215,7 +215,7 @@ export default function TemplateDemo() {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
             </div>
         );
     };
@@ -223,7 +223,7 @@ export default function TemplateDemo() {
     const rightToolbarTemplate = () => {
         return (
             <>
-                <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} />
+                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
 
