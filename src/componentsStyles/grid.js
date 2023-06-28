@@ -4,6 +4,9 @@ import styled from "styled-components";
 const DropDownDetails = styled.div`
     .tab-div {
         margin-bottom: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
     }
     .tab-title {
         font-size: 1rem;
@@ -49,8 +52,22 @@ const ActionDiv = styled.span`
 
 `
 
+const  DisabledDisplay  = styled.div`
+    .disabled-card{
+        margin-bottom: 10px;
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        & label {
+            margin-bottom: 5px;
+        }
+    }
+
+`
+
 export {
-    DropDownDetails
-    , ImageDiv
-    , ActionDiv
+    DropDownDetails,
+    ImageDiv, 
+    ActionDiv,
+    DisabledDisplay ,
 };

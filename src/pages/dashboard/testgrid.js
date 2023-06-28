@@ -16,8 +16,12 @@ import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
 import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
-import { Link } from '@mui/material';
+import { Input, Link } from '@mui/material';
 import DeletePopup from '@/components/deletePopup';
+import { DisabledDisplay } from '@/componentsStyles/grid';
+import { InputTextarea } from 'primereact/inputtextarea';
+import UrlInput from '@/components/Forms/PrimeUrlInput';
+
 
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
@@ -35,13 +39,13 @@ export default function TemplateDemo() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-    
+
 
 
     const handleFetch = async () => {
         setLoading(true)
         try {
-            let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll'})
+            let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll' })
             setData(resp.data.markes)
             // console.log("rendered data " + JSON.stringify(resp.data.markes))
             // setImages(resp.data.images)
@@ -57,12 +61,12 @@ export default function TemplateDemo() {
 
     useEffect(() => {
         handleFetch();
-        
+
     }, []);
 
     //Refetch on add edit:
     useEffect(() => {
-        if(submitted) handleFetch()
+        if (submitted) handleFetch()
     }, [submitted])
 
 
@@ -107,18 +111,18 @@ export default function TemplateDemo() {
 
 
     const allowExpansion = (rowData) => {
-        if(rowData.status) {
+        if (rowData.status) {
             return rowData
         }
         return;
-        
+
     };
 
-    
+
 
     const rowExpansionTemplate = (data) => {
-            let newArray = []
-            for(let image of data.photosPromoList) {
+        let newArray = []
+        for (let image of data.photosPromoList) {
             newArray.push(image.photosPromoUrl)
         }
 
@@ -127,49 +131,80 @@ export default function TemplateDemo() {
                 <div className="card p-20">
                     <TabView>
                         <TabPanel header="Φωτογραφίες">
-                            <Gallery images={newArray}/>
+                            <Gallery images={newArray} />
                         </TabPanel>
                         <TabPanel header="Βίντεο">
-                            {data?.videoPromoList?.map((video, index) => {
-                                return (
-                                    <div key={index} className="video-div">
-                                       { JSON.stringify(video)}
-                                    </div>
-                                )
-                            })}
+                            < DisabledDisplay  >
+                                {data?.videoPromoList?.map((video, index) => {
+                                    return (
+                                         <UrlInput 
+                                         key={index}
+                                         label={video.name}
+                                         value={video.videoUrl}
+                                     />
+                                    )
+                                })}
+                            </ DisabledDisplay  >
+
+
                         </TabPanel>
                         <TabPanel header="Λεπτομέριες">
-                            <DropDownDetails>
-                                <div className="tab-div">
-                                    <span className='tab-title'>Περιγραφή</span>
-                                    <p className='tab-details'>{data.description}</p>
+                            < DisabledDisplay  >
+                                <div className="disabled-card">
+                                    <label>
+                                        Περιγραφή
+                                    </label>
+                                    <InputTextarea autoResize disabled value={data.description} />
                                 </div>
-                                <div className="tab-div">
-                                    <span className='tab-title'>URL Pim</span>
-                                    <Link className="tab-url" >{data?.pimAccess?.pimUrl}</Link>
+                                <UrlInput 
+                                    label={'URL Iστοσελίδας'}
+                                    value={data.webSiteUrl}
+                                />
+                                <UrlInput 
+                                    label={'URL Ιnstagram'}
+                                    value={data.instagramUrl}
+                                />
+                                <UrlInput 
+                                    label={'URL Facebook'}
+                                    value={data.facebookUrl}
+                                />
+                                <UrlInput 
+                                    label={'URL Pim'}
+                                    value={data?.pimAccess?.pimUrl}
+                                />
+                                <div className="disabled-card">
+                                    <label>
+                                       URL Facebook
+                                    </label>
+                                    <Link href={'https://google.com'}>
+                                        <div className="p-inputgroup">
+                                            <div className="p-inputgroup flex-1">
+                                                    <span className="p-inputgroup-addon">
+                                                        <i className="pi pi-link"></i>
+                                                    </span>
+                                                    <InputText disabled value={data.facebookUrl} />
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
-                                <div className="tab-div">
-                                    <span className='tab-title'>Pim Όνομα Χρήστη</span>
-                                    <p className='tab-details'>{data?.pimAccess?.pimUserName}</p>
+                                <div className="disabled-card">
+                                    <label>
+                                       URL Instagram
+                                    </label>
+                                    <Link href={'https://google.com'}>
+                                        <div className="p-inputgroup">
+                                            <div className="p-inputgroup flex-1">
+                                                    <span className="p-inputgroup-addon">
+                                                        <i className="pi pi-link"></i>
+                                                    </span>
+                                                    <InputText disabled value={data.instagramUrl} />
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
-                                <div className="tab-div">
-                                    <span className='tab-title'>URL Ιστοσελίδας</span>
-                                    <Link className="tab-url" >{data?.pimAccess?.pimUrl}</Link>
-                                </div>
-                                <div className="tab-div">
-                                    <span className='tab-title'>URL Facebook</span>
-                                    <Link className="tab-url" >{data?.facebookUrl}</Link>
-                                </div>
-                                <div className="tab-div">
-                                    <span className='tab-title'>URL Instagram</span>
-                                    <Link className="tab-url" >{data?.instagramUrl}</Link>
-                                </div>
-                               
-                              
-                            
-                            </DropDownDetails>
-                          
-                            
+                             
+                            </DisabledDisplay>
+
                         </TabPanel>
                     </TabView>
                 </div>
@@ -198,7 +233,7 @@ export default function TemplateDemo() {
     //Edit:
     const editProduct = async (product) => {
         // console.log('edit product: ' + JSON.stringify(product))
-     
+
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -216,13 +251,13 @@ export default function TemplateDemo() {
         setSubmitted(false);
         setEditDialog(false);
         setAddDialog(false);
-      
+
     };
 
     const onDelete = async (item) => {
         console.log('delete')
         let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: item._id })
-        if(res.data.success) {
+        if (res.data.success) {
             handleFetch()
         }
     }
@@ -233,7 +268,7 @@ export default function TemplateDemo() {
         return (
             <ActionDiv>
                 <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup  onDelete={onDelete} status={rowData.status} />
+                <DeletePopup onDelete={onDelete} status={rowData.status} />
                 {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
             </ActionDiv>
         );
@@ -253,9 +288,9 @@ export default function TemplateDemo() {
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="softOne.MTRMARK"
-                filters={filters} 
+                filters={filters}
                 paginatorRight={true}
-        
+
                 onFilter={(e) => setFilters(e.filters)}
                 //edit:
                 loading={loading}
@@ -293,8 +328,8 @@ export default function TemplateDemo() {
 }
 
 
-const ActiveTempate = ({status}) => {
-   
+const ActiveTempate = ({ status }) => {
+
     return (
         <div>
             {status ? (
