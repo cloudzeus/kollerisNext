@@ -14,7 +14,6 @@ import styled from 'styled-components';
 import { IconBtn } from './Buttons/Button';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import GoToTop from './Buttons/GoToTop';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 

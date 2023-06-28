@@ -62,28 +62,24 @@ export default async function handler(req, res) {
 	if (action === 'create') {
 		let { data } = req.body
 		console.log('data: ' + JSON.stringify(data))
-		await connectMongo();
-		// try {
-		// 	// let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
-			
-		// 	// let softoneResponse = await axios.post(URL, {
-		// 	// 	username: 'Service',
-		// 	// 	password: 'Service',
-		// 	// 	company: '1001',
-		// 	// 	sodtype: '51',
-		// 	// 	name: data.name
-		// 	// })
+		try {
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
+			let softoneResponse = await axios.post(URL, {
+				username: 'Service',
+				password: 'Service',
+				company: '1001',
+				sodtype: '51',
+				name: data.name
+			})
 
-		// 	// if (!softoneResponse.data.success) {
-		// 	// 	return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone' });
-		// 	// }
+			if (!softoneResponse.data.success) {
+				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone' });
+			}
+			console.log('softone response data')
+			console.log(softoneResponse.data)
+			let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
+			console.log(SOFTONE_MTRMARK)
 
-		// 	// console.log('softone response data')
-		// 	// console.log(softoneResponse.data)
-		// 	// let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
-		// 	// console.log(SOFTONE_MTRMARK)
-			
-			
 			const object = {
 				name: data.name,
 				description: data.description,
@@ -102,8 +98,8 @@ export default async function handler(req, res) {
 				softOne: {
 					COMPANY: '1001',
 					SODTYPE: '51',
-					// MTRMARK: parseInt(SOFTONE_MTRMARK),
-					// CODE: SOFTONE_MTRMARK.toString(),
+					MTRMARK: parseInt(SOFTONE_MTRMARK),
+					CODE: SOFTONE_MTRMARK.toString(),
 					MTRMARK: 2000,
 					CODE: '2000',
 					NAME: data.name,
@@ -111,42 +107,20 @@ export default async function handler(req, res) {
 				},
 				status: true,
 			}
-			console.log('object')
-			console.log(object)
-
-
-		// 	// if (softoneResponse.data.success) {
-		// 	// 	await connectMongo();
-		// 	// 	const newMarkes = await Markes.create({
-		// 	// 		...object,
-		// 	// 	});
-
-
-		// 	// 	if (newMarkes) {
-		// 	// 		return res.status(200).json({ success: true, markes: newMarkes, error: null });
-
-		// 	// 	} else {
-		// 	// 		return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
-		// 	// 	}
-		// 	// }
 
 			await connectMongo();
-				const newMarkes = await Markes.create({
-					...object,
-				});
+			const newMarkes = await Markes.create({...object});
+
+			if (!newMarkes) return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
+			return res.status(200).json({ success: true, markes: newMarkes, error: null });
 
 
-				if (newMarkes) {
-					return res.status(200).json({ success: true, markes: newMarkes, error: null });
-
-				} else {
-					return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
-				}
-
-
-		// } catch (error) {
-		// 	return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
-		// }
+		} catch (e) {
+			return res.status(400).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
+		}
+			
+			
+		
 	}
 	if (action === 'createMany') {
 		let { data } = req.body
