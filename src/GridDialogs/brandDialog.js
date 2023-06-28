@@ -26,8 +26,7 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
         defaultValues: gridRowData
     });
 
-    console.log('gridRowData')
-    console.log(gridRowData)
+ 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
@@ -56,7 +55,8 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
             videoPromoList: videoList,
             logo: logo[0]
         }
-
+        console.log('object')
+        console.log(object)
         try {
             let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: object, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
                 if(!resp.data.success) {

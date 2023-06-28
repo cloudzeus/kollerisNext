@@ -187,9 +187,9 @@ export default async function handler(req, res) {
 		
 
 		let mtrmark = req.body.mtrmark;
-
-
 		let body = req.body.data;
+		console.log('update brand body')
+		console.log(body)
 		let id = req.body.id
 
 		if(req.body.data?.name) {
@@ -199,10 +199,12 @@ export default async function handler(req, res) {
 				password: 'Service',
 				company: '1001',
 				sodtype: '51',
-				name: data.name
+				mtrmark: mtrmark,
+				name: body.name
 			})
+			console.log(softoneResponse)
 		}
-		console.log(softoneResponse)
+		
 		const filter = { _id: id };
 		const update = { $set: body };
 		try {
@@ -215,26 +217,7 @@ export default async function handler(req, res) {
 		}
     
 	
-		// if(body.softOneName ) {
-		// 	let URL = `https://${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/updateMtrMark`;
-		// 	let softoneResponse = await axios.post(URL, {
-		// 		username: 'Service',
-		// 		password: 'Service',
-		// 		company: '1001',
-		// 		sodtype: '51',
-		// 		mtrcode: 1497,
-		// 		name: "fixed name"
-		// 	})
-
-		// 	if(!softoneResponse.data.success) {
-		// 		return res.status(200).json({ success: false, result: softoneResponse.data, error: 'Δεν έγινε update της μάκρας στο softone' });
-		// 	}
-		// 	console.log('Softone update Markes: ' + JSON.stringify(softoneResponse.data))
-		// 	return res.status(200).json({ success: true, result: softoneResponse.data, error: null });
-
-		// }	
-
-		// console.log(updateBody)
+		
 	
 
 	}
