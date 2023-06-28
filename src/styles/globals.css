@@ -1,5 +1,9 @@
 
 @import "./material.css";
+@import "primereact/resources/themes/lara-light-indigo/theme.css";     
+@import "primereact/resources/primereact.min.css"; 
+@import 'primeicons/primeicons.css';
+
 
 *,
 *::before,
@@ -15,8 +19,13 @@
 
 
 
+.p-fileupload .p-fileupload-content {
+  padding: 10px;
+}
 
-
+.p-fileupload .p-fileupload-row > div {
+  padding: 5px 0;
+}
 
 html,
 body {
@@ -24,13 +33,14 @@ body {
   overflow: hidden;
   padding: 0;
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   height: 100vh;
   font-family: 'Roboto', sans-serif;
   color: #575353;
   font-weight: 300;
   overflow: hidden;
   background-color: #f0f0f0;
+  /* font-family: var(--font-family); */
 }
 
 input {
@@ -72,11 +82,7 @@ h3 {
 }
 
 
-p,
-input,
-span {
-  color: #373737;
-}
+
 /* Custom ScrollBar */
 
 form {

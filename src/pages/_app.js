@@ -7,7 +7,6 @@ import { registerLicense } from '@syncfusion/ej2-base';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from '@/theme/theme';
-
 import { SessionProvider } from "next-auth/react"
 
 

@@ -9,9 +9,6 @@ import { setVideoUrl } from "@/features/grid/gridSlice";
 export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName2, register }) => {
 
 
-
-
-
     const handleNameChange = (event, index) => {
         const updatedVideoList = [...formData];
         updatedVideoList[index] = {
@@ -48,6 +45,7 @@ export const AddMoreInput = ({ setFormData, formData, label, htmlName1, htmlName
 
     return (
         <Container>
+            <label>{label}</label>
             <div >
                 {formData.map((video, index) => (
                     <div key={index} className="add_more_double_input_div">
@@ -82,6 +80,9 @@ const Container = styled.div`
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 10px;
+    label {
+        margin-bottom: 5px;
+    }
     .add_more_double_input_div {
         display: grid;
         grid-template-columns: 1fr 2fr 40px 40px;

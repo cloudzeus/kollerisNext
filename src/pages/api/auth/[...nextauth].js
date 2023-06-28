@@ -16,14 +16,12 @@ export default NextAuth({
         credentials: {},
        
         async authorize(credentials, req) {
-            console.log('CREDENTIALS IN NEXTAUTH:' + JSON.stringify(credentials))
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/login`, {
               method: "POST",
               body: JSON.stringify(credentials),
               headers: { "Content-Type": "application/json" },
             });
             const user = await res.json();
-            console.log('USER IN NEXTAUTH:' + JSON.stringify(user))
 			
             if (user && user.success == true) {
               return user;

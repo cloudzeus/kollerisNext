@@ -17,10 +17,12 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { IconButton } from '@/componentsStyles/buttons/buttonStyles';
 import { useRouter } from 'next/router'
 import NavigateBtn from '@/components/Buttons/NavigateBtn';
-
-
+import { NavigateArrowButton } from '@/componentsStyles/buttons/buttonStyles';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { useDispatch } from 'react-redux';
+import { setChildListData } from '@/features/List/listSlice';
 const CategoriesTreeGrid = () => {
-
+    const dispatch = useDispatch();
     const [data, setData] = useState([])
     const router = useRouter();
     const [expand, setExpand] = useState([])
@@ -43,7 +45,11 @@ const CategoriesTreeGrid = () => {
         setShowNested(false)
     }
 
-   
+   const handleNavigation = (item) => {
+    console.log(item)
+    dispatch(setChildListData(item))
+    router.push('/dashboard/product/categories-groups')
+   }
 
     return (
       <AdminLayout>
@@ -52,7 +58,7 @@ const CategoriesTreeGrid = () => {
             </div>
                 {data.map((item, index) => {
                     return (
-                        <div key={item}>
+                        <div key={index}>
                             <ListContainer>
                                 <div className='list-header-div' onClick={() => handleExpand(index)} >
                                     <div className="list-header-div-left">
@@ -70,7 +76,7 @@ const CategoriesTreeGrid = () => {
                                 </div>
                                 {expand.includes(index) ? (
                                     <ExpandableItems>
-                                        {!showNested ? (
+                                     
                                             <div >
                                                 <Input
                                                     label="Όνομα"
@@ -89,9 +95,11 @@ const CategoriesTreeGrid = () => {
                                                     required={true}
                                                 />
                                             </div>
-                                        ) : null}
                                         <div className="list-bottom-actions-div">
-                                        <NavigateBtn text={'Groups'} url={'/dashboard/product/categories-groups'} />
+                                        <button onClick={() => handleNavigation(item)}>
+                                            Groups
+                                            <NavigateNextIcon />
+                                        </button>
                                         <div className="list-bottom-actions-div_actions">
                                             <button>
                                                 <EditIcon />
