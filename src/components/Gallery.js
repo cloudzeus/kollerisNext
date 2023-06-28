@@ -16,12 +16,20 @@ import {
 } from '@/componentsStyles/gallerySmall';
 
 
-
-
-
-
-
 const GallerySmall = ({ label, images }) => {
+    if(images.length === 0) {
+        return <p>Δεν υπάρχουν φωτογραφίες</p>
+    } 
+
+    return (
+        <Gallery label={label} images={images} />
+    )
+}
+
+
+
+
+const Gallery = ({images, label}) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const handleImageSelect = (image) => {
@@ -43,9 +51,10 @@ const GallerySmall = ({ label, images }) => {
         setSelectedImage(images[nextIndex]);
     };
 
+  
 
     return (
-        <>
+        <>  
             <label style={{ marginBottom: '5px' }}>
                 {label}
             </label>

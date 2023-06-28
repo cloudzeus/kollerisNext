@@ -101,8 +101,6 @@ export default async function handler(req, res) {
 					SODTYPE: '51',
 					MTRMARK: parseInt(SOFTONE_MTRMARK),
 					CODE: SOFTONE_MTRMARK.toString(),
-					MTRMARK: 2000,
-					CODE: '2000',
 					NAME: data.name,
 					ISACTIVE: 1
 				},
@@ -187,8 +185,24 @@ export default async function handler(req, res) {
 	}
 	if (action === 'update') {
 		
+
+		let mtrmark = req.body.mtrmark;
+
+
 		let body = req.body.data;
 		let id = req.body.id
+
+		if(req.body.data?.name) {
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/updateMtrMark`;
+			let softoneResponse = await axios.post(URL, {
+				username: 'Service',
+				password: 'Service',
+				company: '1001',
+				sodtype: '51',
+				name: data.name
+			})
+		}
+		console.log(softoneResponse)
 		const filter = { _id: id };
 		const update = { $set: body };
 		try {

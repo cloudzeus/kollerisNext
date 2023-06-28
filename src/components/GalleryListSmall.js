@@ -101,43 +101,14 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
                 </span>
             </ActionsDiv>
             {show ? (
-                <GalleryContainer>
-                    <LargeImageContainer>
-                        <LargeImage>
-                            <Image
-                                src={`/uploads/${selectedImage}`}
-                                alt="Large"
-                                fill={true}
-                                sizes="220px"
-                            />
-                        </LargeImage>
-                        <ArrowContainer>
-                            <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                            <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
-                        </ArrowContainer>
-                        <DeleteButton>
-                            <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
-
-                        </DeleteButton>
-                    </LargeImageContainer>
-                    <ThumbnailContainer>
-                        <ThumbnailGrid>
-                            {uploadImages.map((image, index) => (
-                                <Thumbnail key={index} isSelected={image === selectedImage}>
-                                    <Image
-                                        src={`/uploads/${image}`}
-                                        alt={`Thumbnail ${index}`}
-                                        fill={true}
-                                        sizes="100px"
-                                        onClick={() => handleImageSelect(image)} />
-                                    {/* <button onClick={() => handleDeleteImage(image)}>
-                               <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
-                           </button> */}
-                                </Thumbnail>
-                            ))}
-                        </ThumbnailGrid>
-                    </ThumbnailContainer>
-                </GalleryContainer>
+               <GalleryNotEmpty 
+                uploadImages={uploadImages}
+                images={images}
+                selectedImage={selectedImage}
+                handlePrevImage={handlePrevImage}
+                handleNextImage={handleNextImage}
+                handleDeleteImage={handleDeleteImage}
+               />
             ) : (
                 <PrimeUploads
                     setState={setImagesToUpload}
@@ -151,7 +122,59 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
 
 
 
+const GalleryNotEmpty = ({
+    images, 
+    selectedImage, 
+    handlePrevImage, 
+    handleNextImage, 
+    uploadImages, 
+    handleDeleteImage}) => {
+    return (
+        <>
+            {images.length > 0 ? (
+                 <GalleryContainer>
+                 <LargeImageContainer>
+                     <LargeImage>
+                         <Image
+                             src={`/uploads/${selectedImage}`}
+                             alt="Large"
+                             fill={true}
+                             sizes="220px"
+                         />
+                     </LargeImage>
+                     <ArrowContainer>
+                         <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
+                         <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                     </ArrowContainer>
+                     <DeleteButton>
+                         <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
 
+                     </DeleteButton>
+                 </LargeImageContainer>
+                 <ThumbnailContainer>
+                     <ThumbnailGrid>
+                         {uploadImages.map((image, index) => (
+                             <Thumbnail key={index} isSelected={image === selectedImage}>
+                                 <Image
+                                     src={`/uploads/${image}`}
+                                     alt={`Thumbnail ${index}`}
+                                     fill={true}
+                                     sizes="100px"
+                                     onClick={() => handleImageSelect(image)} />
+                                 {/* <button onClick={() => handleDeleteImage(image)}>
+                            <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
+                        </button> */}
+                             </Thumbnail>
+                         ))}
+                     </ThumbnailGrid>
+                 </ThumbnailContainer>
+             </GalleryContainer>
+            ) : (
+                <p>Δεν υπάρχουν φωτογραφίες</p>
+            )}
+        </>
+    )
+}
 
 
 export default GallerySmall;

@@ -8,8 +8,7 @@ import { useEffect } from "react";
 
 
 export const AddMoreInput = ({ setFormData, formData, label, mb, mt }) => {
-    console.log('formData')
-    console.log(formData)
+
 
     useEffect(() => {
         if(formData.length === 0) {
