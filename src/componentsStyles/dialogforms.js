@@ -25,7 +25,15 @@ const Divider = styled.div`
     margin: 40px 0;
 `
 
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+   
+`
 export {
     FormTitle,
-    Divider 
+    Divider,
+    Container
 }

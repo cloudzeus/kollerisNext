@@ -253,6 +253,15 @@ export default function TemplateDemo() {
     const showError = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
+
+    const dialogStyle = {
+        marginTop: '10vh', // Adjust the top margin as needed
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+       
+      };
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -288,6 +297,7 @@ export default function TemplateDemo() {
 
             </DataTable>
             <EditDialog
+                style={dialogStyle}
                 data={editData}
                 setData={setEditData}
                 dialog={editDialog}

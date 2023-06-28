@@ -13,8 +13,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle, Divider } from '@/componentsStyles/dialogforms';
+import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { resetGridRowData } from '@/features/grid/gridSlice';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
     const dispatch = useDispatch();
@@ -95,9 +96,11 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
     );
 
     return (
-        <form>
+        < Container>
+          <form>
             <Toast ref={toast} />
               <Dialog 
+                 aria-modal={true}
                 visible={dialog} 
                 style={{ width: '32rem', maxWidth: '80rem' }} 
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
@@ -116,7 +119,10 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
                 register={register}
                 defaultValue={gridRowData.name}
             />
-            <Input
+            <label>Περιγραφή</label>
+            <InputTextarea
+                style={{marginTop: '10px'}}
+                autoResize
                 label={'Περιγραφή'}
                 name={'description'}
                 required={true}
@@ -200,6 +206,8 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
            
         </Dialog>
         </form>
+        </Container>
+      
     )
 }
 
