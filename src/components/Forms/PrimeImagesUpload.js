@@ -9,7 +9,6 @@ import { setUploadImages } from '@/features/upload/uploadSlice';
 import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
-import { useMountEffect } from 'primereact/hooks';
 import { Message } from 'primereact/message';
 
 

@@ -8,7 +8,7 @@ const UrlInput =({label, value, }) => {
         <label>
            {label}
         </label>
-        <Link href={value}>
+        <Link href={value ? value : ''}>
             <div className="p-inputgroup">
                 <div className="p-inputgroup flex-1">
                         <span className="p-inputgroup-addon">

@@ -47,9 +47,6 @@ export default function TemplateDemo() {
         try {
             let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll' })
             setData(resp.data.markes)
-            // console.log("rendered data " + JSON.stringify(resp.data.markes))
-            // setImages(resp.data.images)
-            // setImages(resp.data.images)
             setLoading(false)
 
         } catch (error) {
@@ -111,10 +108,8 @@ export default function TemplateDemo() {
 
 
     const allowExpansion = (rowData) => {
-        if (rowData.status) {
-            return rowData
-        }
-        return;
+        
+        return rowData
 
     };
 
@@ -156,6 +151,12 @@ export default function TemplateDemo() {
                                     </label>
                                     <InputTextarea autoResize disabled value={data.description} />
                                 </div>
+                                <div className="disabled-card">
+                                    <label>
+                                       Pim Username
+                                    </label>
+                                    <InputText disabled value={data?.pimAccess?.pimUserName} />
+                                </div>
                                 <UrlInput 
                                     label={'URL Iστοσελίδας'}
                                     value={data.webSiteUrl}
@@ -172,36 +173,7 @@ export default function TemplateDemo() {
                                     label={'URL Pim'}
                                     value={data?.pimAccess?.pimUrl}
                                 />
-                                <div className="disabled-card">
-                                    <label>
-                                       URL Facebook
-                                    </label>
-                                    <Link href={'https://google.com'}>
-                                        <div className="p-inputgroup">
-                                            <div className="p-inputgroup flex-1">
-                                                    <span className="p-inputgroup-addon">
-                                                        <i className="pi pi-link"></i>
-                                                    </span>
-                                                    <InputText disabled value={data.facebookUrl} />
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
-                                <div className="disabled-card">
-                                    <label>
-                                       URL Instagram
-                                    </label>
-                                    <Link href={'https://google.com'}>
-                                        <div className="p-inputgroup">
-                                            <div className="p-inputgroup flex-1">
-                                                    <span className="p-inputgroup-addon">
-                                                        <i className="pi pi-link"></i>
-                                                    </span>
-                                                    <InputText disabled value={data.instagramUrl} />
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
+                              
                              
                             </DisabledDisplay>
 
@@ -287,7 +259,7 @@ export default function TemplateDemo() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-                dataKey="softOne.MTRMARK"
+                dataKey="_id"
                 filters={filters}
                 paginatorRight={true}
 
