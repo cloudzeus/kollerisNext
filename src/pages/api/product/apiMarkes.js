@@ -78,7 +78,7 @@ export default async function handler(req, res) {
 				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone', softoneError: softoneResponse.data.error });
 			}
 			
-			let SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.mtrcode
+			const SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.MTRMARK
 			console.log(SOFTONE_MTRMARK)
 
 			const object = {
@@ -108,7 +108,8 @@ export default async function handler(req, res) {
 				},
 				status: true,
 			}
-
+			console.log('object');
+			console.log(object);
 			await connectMongo();
 			const newMarkes = await Markes.create({...object});
 
