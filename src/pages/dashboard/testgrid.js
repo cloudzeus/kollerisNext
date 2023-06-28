@@ -107,7 +107,11 @@ export default function TemplateDemo() {
 
 
     const allowExpansion = (rowData) => {
-        return rowData
+        if(rowData.status) {
+            return rowData
+        }
+        return;
+        
     };
 
     
@@ -250,7 +254,8 @@ export default function TemplateDemo() {
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="softOne.MTRMARK"
                 filters={filters} 
-                paginatorLeft={true}
+                paginatorRight={true}
+        
                 onFilter={(e) => setFilters(e.filters)}
                 //edit:
                 loading={loading}
