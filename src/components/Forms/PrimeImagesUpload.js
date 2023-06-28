@@ -20,7 +20,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
     const toast = useRef(null);
     const [didUpload, setDidUpload] = useState(false)
 
-
     const uploadHandler = async (e) => {
         let formData = new FormData();
         let acceptedFiles = e.files
