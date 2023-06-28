@@ -49,47 +49,74 @@ const GallerySmall = ({ label, images }) => {
             <label style={{ marginBottom: '5px' }}>
                 {label}
             </label>
-                <GalleryContainer>
-                    <LargeImageContainer>
-                        <LargeImage>
-                            <Image
-                                src={`/uploads/${selectedImage}`}
-                                alt="Large"
-                                fill={true}
-                                sizes="220px"
-                            />
-                        </LargeImage>
-                        <ArrowContainer>
-                                        <Button onClick={handlePrevImage} size='large' icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                                        <Button onClick={handleNextImage} size='small' icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
-                        </ArrowContainer>
-
-                    </LargeImageContainer>
-                    <ThumbnailContainer>
-                        <ThumbnailGrid>
-                            {images.map((image, index) => (
-                                <Thumbnail key={index} isSelected={image === selectedImage}>
-                                    <Image
-                                        src={`/uploads/${image}`}
-                                        alt={`Thumbnail ${index}`}
-                                        fill={true}
-                                        sizes="100px"
-                                        onClick={() => handleImageSelect(image)} />
-                                    {/* <button onClick={() => handleDeleteImage(image)}>
-                               <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
-                           </button> */}
-                                </Thumbnail>
-                            ))}
-                        </ThumbnailGrid>
-                    </ThumbnailContainer>
-                </GalleryContainer>
+               {images ? (
+                     <GalleryContainer>
+                     <LargeImageContainer>
+                         <LargeImage>
+                             <Image
+                                 src={`/uploads/${selectedImage}`}
+                                 alt="Large"
+                                 fill={true}
+                                 sizes="220px"
+                             />
+                         </LargeImage>
+                         <ArrowContainer>
+                                         <Button onClick={handlePrevImage} size='large' icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
+                                         <Button onClick={handleNextImage} size='small' icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                         </ArrowContainer>
+                     </LargeImageContainer>
+                     <ThumbnailContainer>
+                         <ThumbnailGrid>
+                             {images.map((image, index) => (
+                                 <Thumbnail key={index} isSelected={image === selectedImage}>
+                                     <Image
+                                         src={`/uploads/${image}`}
+                                         alt={`Thumbnail ${index}`}
+                                         fill={true}
+                                         sizes="100px"
+                                         onClick={() => handleImageSelect(image)} />
+                                     {/* <button onClick={() => handleDeleteImage(image)}>
+                                <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
+                            </button> */}
+                                 </Thumbnail>
+                             ))}
+                         </ThumbnailGrid>
+                     </ThumbnailContainer>
+                 </GalleryContainer>
+               ) : <GalllerySkeleton images={images}/>}
         </>
     );
 };
 
 
 
+import React from 'react';
+import { Skeleton } from 'primereact/skeleton';
 
+ function GalllerySkeleton({images}) {
+    return (
+        <GalleryContainer>
+                    <LargeImageContainer>
+                        <LargeImage>
+                            <Skeleton  width="250px" height="220px"></Skeleton>
+                        </LargeImage>
+                       
+                    </LargeImageContainer>
+                    <ThumbnailContainer>
+                        <ThumbnailGrid>
+                           
+                            {images.map((image, index) => (
+                                    <Thumbnail key={index}>
+                                        <Skeleton  width="100px" height="100px"></Skeleton>
+                                    </Thumbnail>
+                                ))}
+                          
+                        </ThumbnailGrid>
+                    </ThumbnailContainer>
+                </GalleryContainer>
+        
+    );
+}
 
 
 export default GallerySmall;
