@@ -17,7 +17,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
 import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
 import { Link } from '@mui/material';
-
+import DeletePopup from '@/components/deletePopup';
 
 export default function TemplateDemo() {
     const [brand, setBrand] = useState([]);
@@ -35,7 +35,7 @@ export default function TemplateDemo() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-    //
+    
 
 
     const handleFetch = async () => {
@@ -212,19 +212,25 @@ export default function TemplateDemo() {
         setSubmitted(false);
         setEditDialog(false);
         setAddDialog(false);
-        dispatch(resetGridRowData())
       
     };
 
- 
+    const onDelete = async (item) => {
+        console.log('delete')
+        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: item._id })
+        if(res.data.success) {
+            handleFetch()
+        }
+    }
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
         // console.log('row data: ' + JSON.stringify(rowData))
         return (
             <ActionDiv>
-                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
-                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} />
+                <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <DeletePopup  onDelete={onDelete} status={rowData.status} />
+                {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
             </ActionDiv>
         );
     };
@@ -282,14 +288,14 @@ export default function TemplateDemo() {
 }
 
 
-const ActiveTempate = ({ softOne }) => {
-    const isActive = softOne.ISACTIVE
+const ActiveTempate = ({status}) => {
+   
     return (
         <div>
-            {isActive == 1 ? (
+            {status ? (
                 <Tag severity="success" value=" active "></Tag>
             ) : (
-                <Tag severity="Danger" value="deleted" ></Tag>
+                <Tag severity="danger" value="deleted" ></Tag>
             )}
 
         </div>

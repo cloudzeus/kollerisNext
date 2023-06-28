@@ -46,7 +46,8 @@ const markesSchema = new mongoose.Schema({
         CODE: String,
         NAME: String,
         ISACTIVE:Number
-    }
+    },
+    status: Boolean,
     
   
 });

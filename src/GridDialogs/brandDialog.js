@@ -137,11 +137,11 @@ const EditDialog = ({dialog, hideDialog, setSubmitted }) => {
             />
              < Divider />
               <FormTitle>Βίντεο</FormTitle>
-             {/* <AddMoreInput
+             <AddMoreInput
                     setFormData={setVideoList}
                     formData={videoList}
                     mb={'30px'}
-                /> */}
+                />
                   < Divider />
                  <FormTitle>Pim Access:</FormTitle>
                  <Input

@@ -108,7 +108,8 @@ export default async function handler(req, res) {
 					CODE: '2000',
 					NAME: data.name,
 					ISACTIVE: 1
-				}
+				},
+				status: true,
 			}
 			console.log('object')
 			console.log(object)
@@ -254,13 +255,17 @@ export default async function handler(req, res) {
 		let id = req.body.id;
 		console.log('backend id')
 		console.log(id)
+		const filter = { _id: id };
+		const update = { $set: {
+			status: false
+		} };
 		try {
-			let deletedOne = await Markes.findByIdAndDelete(id);
-			return res.status(200).json({ success: true, markes: deletedOne });
-		}
-		catch (error) {
-			console.log(error)
-			return res.status(400).json({ success: false, error: 'Αποτυχία διαγραφής' });
+			await connectMongo();
+			const result = await Markes.updateOne(filter, update);
+			console.log(result)
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null});
 		}
 	}
 
