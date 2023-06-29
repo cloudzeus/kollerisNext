@@ -70,16 +70,25 @@ export default function TemplateDemo() {
 
 
     const logoTemplate = (data) => {
-        let logo = data.logo ? data.logo : 'notfound.jpg'
+        let logo = data?.logo 
+
         return (
             <ImageDiv>
-                <Image
+                {logo ? (
+                    <Image
                     src={`/uploads/${logo}`}
                     alt="mountain"
                     sizes="40px"
                     fill={true}
 
                 />
+                ) : (
+                    <>
+                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
+                    </>
+                    
+                )}
+                
             </ImageDiv>
 
         )
@@ -195,7 +204,10 @@ export default function TemplateDemo() {
     const rightToolbarTemplate = () => {
         return (
             <>
-            <SyncBrand data={data} />
+            <SyncBrand 
+                refreshGrid={handleFetch}  
+                addToDatabaseURL= '/api/product/apiMarkes'
+            />
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
@@ -264,6 +276,7 @@ export default function TemplateDemo() {
             <Toast ref={toast} />
             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
+          
                 header={header}
                 value={data}
                 paginator
@@ -276,20 +289,18 @@ export default function TemplateDemo() {
                 dataKey="_id"
                 filters={filters}
                 paginatorRight={true}
-
+                removableSort
                 onFilter={(e) => setFilters(e.filters)}
                 //edit:
                 loading={loading}
                 editMode="row"
                 selectOnEdit
             >
-                {/* <Column field="softOne.MTRMARK" header="MTRMARK" sortable></Column> */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                {/* <Column header="Actions"  body={actionsTemplate} tableStyle={{ width: '80px'}}></Column> */}
-                {/* <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
+               
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>

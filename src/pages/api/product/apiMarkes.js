@@ -132,7 +132,7 @@ export default async function handler(req, res) {
 		for (let item of data) {
 			console.log(item)
 			const object = {
-				name: '',
+				name: item.NAME,
 				description: '',
 				logo: '',
 				videoPromoList: [
@@ -157,6 +157,7 @@ export default async function handler(req, res) {
 				softOne: {
 					...item
 				},
+				status: true,
 			}
 
 			newArray.push(object)

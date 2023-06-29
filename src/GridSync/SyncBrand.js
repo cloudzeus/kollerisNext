@@ -9,45 +9,60 @@ import { Badge } from 'primereact/badge';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
+import axios from 'axios';
+import { SyncButtonContainer } from '@/componentsStyles/grid';
+import GridSyncButton from '@/components/Grids/gridSyncButton';
 
-const SyncBrand  = () => {
+    export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
-        // console.log(dataNotFoundInAriadne)
+        const [selectedProduct, setSelectedProduct] = useState(null);
+        const op = useRef(null);
+        const toast = useRef(null);
         const dispatch = useDispatch();
+
+        const findExtraSoftone = async () => {
+            dispatch(notFoundAriadneApi())
+        }
+
         useEffect(() => {
-            const findExtraSoftone = async () => {
-                dispatch(notFoundAriadneApi())
-            }
             findExtraSoftone();
-        }, [dispatch])
+        }, [])
+  
+
+
+    const handleSyncRowClick = async () => {
+      
+        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct })
+        console.log(res.data)
+        if(!res.data.success) showError()
+        showSuccess()
+        findExtraSoftone();
+        refreshGrid();
+    }
+    
+    
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής Προσθήκη στο σύστημα μας', life: 5000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία προσθήκης', life: 4000 });
+    }
+
+
+    const footerTemplate = (data) => {
         return (
-            <>
-                <SyncData data={dataNotFoundInAriadne} />
-            </>
-        )
-}
-
-
-    function SyncData({data}) {
-
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const op = useRef(null);
-    const toast = useRef(null);
-
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <span>
-                   <Button  icon="pi pi-sync" onClick={() => console.log('click')} />
-            </span>
-            
+            <div>
+                <Button label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
+            </div>
         );
-    };
-
+    }
 
 
     return (
         <div className="card flex flex-column align-items-center gap-3">
             <Toast ref={toast} />
+            < SyncButtonContainer >
+            
             <Button 
                 type="button" 
                 icon="pi pi-sync"  
@@ -57,12 +72,23 @@ const SyncBrand  = () => {
                 Πατήστε για να δείτε τις εγγραφές'
                 tooltipOptions={{ position: 'left' }}
                 onClick={(e) => op.current.toggle(e)}>
-                <Badge value="8" severity="warning"></Badge>
+                <Badge value={dataNotFoundInAriadne.length} severity="danger" />
             </Button>
+            </ SyncButtonContainer>
+           
+
             <OverlayPanel ref={op} showCloseIcon>
-                <DataTable value={data} selectionMode="single" paginator rows={5} selection={selectedProduct} onSelectionChange={(e) => setSelectedProduct(e.value)}>
-                    <Column field="NAME" header="Name" sortable style={{minWidth: '12rem'}} />
-                    <Column body={actionBodyTemplate} textAlign="right"  style={{minWidth: '12rem'}} />
+                <DataTable 
+                    value={dataNotFoundInAriadne} 
+                    selectionMode="single" 
+                    paginator 
+                    rows={5} 
+                    selection={selectedProduct} 
+                    footer={footerTemplate}
+                    onSelectionChange={(e) => setSelectedProduct(e.value)}>
+                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+                    <Column field="NAME" header="Όνομα Softone" sortable style={{minWidth: '12rem'}} />
+                    {/* <Column body={actionBodyTemplate} bodyStyle={{ textAlign: 'right' }}   style={{minWidth: '12rem'}} /> */}
                 </DataTable>
             </OverlayPanel>
         </div>
@@ -70,4 +96,3 @@ const SyncBrand  = () => {
 }
         
 
-export default SyncBrand;

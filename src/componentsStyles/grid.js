@@ -65,9 +65,14 @@ const  DisabledDisplay  = styled.div`
 
 `
 
+const SyncButtonContainer = styled.div`
+    position: relative;
+`
+
 export {
     DropDownDetails,
     ImageDiv, 
     ActionDiv,
     DisabledDisplay ,
+    SyncButtonContainer,
 };
