@@ -23,13 +23,22 @@ import {
 
 const GallerySmall = ({ label, images, updateUrl, id }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
-    const [show, setShow] = useState(false)
     const [imagesToUpload, setImagesToUpload] = useState([])
     const [uploadImages, setUploadImages] = useState(images)
 
+    const [showGallery, setShowGallery] = useState(true);
+    const [showUploads, setShowUploads] = useState(false);
     const toast = useRef(null);
 
 
+    const handleShowGallery = () => {
+        setShowGallery (true);
+        setShowUploads(false);
+    }
+    const handleShowUploads = () => {
+        setShowGallery (false);
+        setShowUploads(true);
+    }
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
@@ -88,6 +97,38 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
+    const ComponentGallery = () => {
+        return (
+            <>
+                {showGallery ? (
+                     <GalleryNotEmpty
+                     isSmall={true}
+                     uploadImages={uploadImages}
+                     images={images}
+                     selectedImage={selectedImage}
+                     handlePrevImage={handlePrevImage}
+                     handleNextImage={handleNextImage}
+                     handleDeleteImage={handleDeleteImage}
+                     handleImageSelect={handleImageSelect}
+                    />
+                ) : null}
+            </>
+        )
+    }
+
+    const ComponentUploads = () => {
+        return (
+            <>
+                {showUploads ? (
+                    <PrimeUploads
+                        setState={setImagesToUpload}
+                        multiple={true}
+                        mb={'30px'} />
+                ) : null}
+            </>
+        )
+    }
+
     return (
         <>
             <Toast ref={toast} />
@@ -96,28 +137,12 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
             </label>
             <ActionsDiv>
                 <span className="p-buttonset">
-                    <Button label="Gallery" icon="pi pi-images" size="small" onClick={() => setShow(prev => !prev)} />
-                    <Button label="Προσθήκη" icon="pi pi-images" size="small" onClick={() => setShow(prev => !prev)} />
+                    <Button label="Gallery" icon="pi pi-images" size="small" onClick={handleShowGallery} />
+                    <Button label="Προσθήκη" icon="pi pi-images" size="small" onClick={handleShowUploads} />
                 </span>
             </ActionsDiv>
-            {show ? (
-               <GalleryNotEmpty
-                isSmall={true}
-                uploadImages={uploadImages}
-                images={images}
-                selectedImage={selectedImage}
-                handlePrevImage={handlePrevImage}
-                handleNextImage={handleNextImage}
-                handleDeleteImage={handleDeleteImage}
-                handleImageSelect={handleImageSelect}
-               />
-            ) : (
-                <PrimeUploads
-                    setState={setImagesToUpload}
-                    multiple={true}
-                    mb={'30px'} />
-            )}
-
+            <ComponentGallery />
+            <ComponentUploads />
         </>
     );
 };
