@@ -17,6 +17,8 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { resetGridRowData } from '@/features/grid/gridSlice';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
+import { PrimeInputPass } from '@/components/Forms/PrimeInputPassword';
+import PrimeSelect from '@/components/Forms/PrimeSelect';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const dispatch = useDispatch();
@@ -125,72 +127,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     />
                     < Divider />
                     <FormTitle>Λογότυπο	</FormTitle>
-                    <PrimeUploads
-                        setState={setLogo}
-                        multiple={false}
-                    // mb={'30px'}
-                    />
-                    < Divider />
-                    <FormTitle>Φωτογραφίες</FormTitle>
-                    <GallerySmall
-                        images={images}
-                        updateUrl={'/api/product/apiImages'}
-                        id={gridRowData._id}
-                    />
-                    < Divider />
-                    <FormTitle>Βίντεο</FormTitle>
-                    <AddMoreInput
-                        setFormData={setVideoList}
-                        formData={videoList}
-                        mb={'30px'}
-                    />
-                    < Divider />
-                    <FormTitle>Pim Access:</FormTitle>
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimUserName'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimPassword'}
-                        required={true}
-                        control={control}
-                    />
-                    < Divider />
-                    <FormTitle>Url</FormTitle>
-                    <Input
-                        label={'Url Ιστοσελίδας:'}
-                        name={'websSiteUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Καταλόγου:'}
-                        name={'officialCatalogueUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Facebook:'}
-                        name={'facebookUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Instagram:'}
-                        name={'instagramUrl'}
-                        required={true}
-                        control={control}
-                    />
-
+                   
                 </Dialog>
             </form>
         </Container>
@@ -216,31 +153,21 @@ const AddDialog = ({
         control,
         formState: { errors },
         handleSubmit,
-        getValues,
         reset
     } = useForm({
-        resolver: yupResolver(addSchema),
+        // resolver: yupResolver(addSchema),
         defaultValues: {
-            name: '',
-            description: '',
-            pimUrl: '',
-            pimUserName: '',
-            pimPassword: '',
-            webSiteUrl: '',
-            officialCatalogueUrl: '',
-            facebookUrl: '',
-            instagramUrl: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            role: '',
         }
     });
 
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-    const [logo, setLogo] = useState('')
-    const [images, setImages] = useState([])
-    const [videoList, setVideoList] = useState([{
-        name: '',
-        videoUrl: ''
-    }])
+  
 
 
     const cancel = () => {
@@ -251,33 +178,18 @@ const AddDialog = ({
 
     const handleAdd = async (data) => {
         console.log('data')
+        console.log(data)
         setDisabled(false)
-        let dataImages = []
-        for (let i of images) {
-            dataImages.push({
-                name: i,
-                photosPromoUrl: i
-            })
-        }
-        const body = {
-            ...data,
-            photosPromoList: dataImages,
-            videoPromoList: videoList,
-            logo: logo[0],
-        }
-
-        console.log('body')
-        console.log(body)
-        // let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
-        // if(!res.data.success) return showError(res.data.softoneError)
-        // setDisabled(true)
-        // setSubmitted(true)
-        // showSuccess()
-        // hideDialog()
-        // reset();
+      
+      
+        let res = await axios.post('/api/user/apiUser', { action: 'create', data: data })
+        if(!res.data.success) return showError()
+        setDisabled(true)
+        setSubmitted(true)
+        showSuccess()
+        hideDialog()
+        reset();
     }
-
-
 
     const productDialogFooter = (
         <>
@@ -300,83 +212,52 @@ const AddDialog = ({
                 visible={dialog}
                 style={{ width: '32rem' }}
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                header="Προσθήκη Μάρκας"
+                header="Προσθήκη Χρήστη"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
                 onHide={hideDialog}>
-                <FormTitle>Λεπτομέριες</FormTitle>
+               
                 <Input
                     label={'Όνομα'}
-                    name={'name'}
+                    name={'firstName'}
                     mb={'10px'}
                     required
                     control={control}
-                    error={errors.name}
                 />
-
-                <Input
-                    label={'Περιγραφή'}
-                    name={'description'}
-                    mb={'20px'}
+                 <Input
+                    label={'Eπώνυμο'}
+                    name={'lastName'}
+                    mb={'10px'}
+                    required
                     control={control}
                 />
-                <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    setState={setLogo}
-                    multiple={false}
-                    mb={'20px'} />
-
-
-                <FormTitle>Βίντεο</FormTitle>
-                <AddMoreInput
-                    setFormData={setVideoList}
-                    formData={videoList}
-                    mb={'20px'}
-                />
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <PrimeUploads
-                    setState={setImages}
-                    multiple={true}
-                    mb={'30px'} />
-                <FormTitle>Pim Access</FormTitle>
-                <Input
-                    label={'Pim URL'}
-                    name={'pimURL'}
+                 <Input
+                    label={'Εmail'}
+                    name={'email'}
+                    mb={'10px'}
+                    required
                     control={control}
                 />
-                <Input
-                    label={'Pim Username'}
-                    name={'pimUserName'}
+               
+                <PrimeInputPass
                     control={control}
+                    name="password"
                 />
-                <Input
-                    label={'Pim Password'}
-                    name={'pimPassword'}
+                <PrimeSelect 
                     control={control}
-                />
-                <FormTitle>Urls:</FormTitle>
-                <Input
-                    label={'URL Ιστοσελίδας'}
-                    name={'webSiteUrl'}
-                    control={control}
-                />
-                <Input
-                    label={'URL Kαταλόγου'}
-                    name={'officialCatalogueUrl'}
-                    control={control}
-                />
-                <Input
-                    label={'URL facebook'}
-                    name={'facebookUrl'}
-                    control={control}
-                />
-                <Input
-                    label={'URL instagram'}
-                    name={'instagramUrl'}
-                    control={control}
-                />
-
+                    name="role"
+                    required
+                    label={'Δικαιώματα Χρήστη'}
+                    values={[
+                            { role: 'user' },
+                            { role: 'employee' },
+                            { role: 'manager' },
+                            { role: 'admin' },
+                         
+                        ]}
+                  
+                    />
             </Dialog>
         </form>
     )

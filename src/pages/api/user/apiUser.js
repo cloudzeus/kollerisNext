@@ -29,60 +29,23 @@ export default async function handler(req, res) {
 		let { data } = req.body
 		console.log('data: ' + JSON.stringify(data))
 		try {
-			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
-			console.log(URL)
-			let softoneResponse = await axios.post(URL, {
-				username: 'Service',
-				password: 'Service',
-				company: '1001',
-				sodtype: '51',
-				name: data.name
-			})
-			console.log('softone response data')
-			console.log(softoneResponse.data)
-			if (!softoneResponse.data.success) {
-				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone', softoneError: softoneResponse.data.error });
-			}
-			
-			const SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.MTRMARK
-			console.log(SOFTONE_MTRMARK)
-
-			const object = {
-				name: data.name,
-				description: data.description,
-				logo: data.logo,
-				videoPromoList: data.videoPromoList,
-				photosPromoList: data.photosPromoList,
-				pimAccess: {
-					pimUrl: data.pimUrl,
-					pimUserName: data.pimUserName,
-					pimPassword: data.pimPassword
-				},
-				webSiteUrl: data.webSiteUrl,
-				officialCatalogueUrl: data.officialCatalogueUrl,
-				facebookUrl: data.facebookUrl,
-				instagramUrl: data.instagramUrl,
-				softOne: {
-					COMPANY: '1001',
-					SODTYPE: '51',
-					MTRMARK: parseInt(SOFTONE_MTRMARK),
-					CODE: SOFTONE_MTRMARK.toString(),
-					NAME: data.name,
-					ISACTIVE: 1
-				},
-				status: true,
-			}
-			console.log('object');
-			console.log(object);
+            let object = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+                role: data?.role?.role,
+                status: true,
+            }
+            console.log(object)
 			await connectMongo();
-			const newMarkes = await Markes.create({...object});
-
-			if (!newMarkes) return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
-			return res.status(200).json({ success: true, markes: newMarkes, error: null });
-
+			const user = await User.create({...object});
+            console.log(user)
+			if (!user) return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
+			return res.status(200).json({ success: true, result: user, error: null });
 
 		} catch (e) {
-			return res.status(400).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
+			return res.status(400).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
 		}
 			
 			

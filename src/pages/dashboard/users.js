@@ -17,7 +17,7 @@ import { Tag } from 'primereact/tag';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
-import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
+import { AddDialog, EditDialog } from '@/GridDialogs/userDialog';
 
 import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
@@ -29,6 +29,7 @@ import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
+import GridIconTemplate from '@/components/grid/gridIconTemplate';
 
 
 
@@ -49,12 +50,12 @@ export default function TemplateDemo() {
 
 
 
-    const handleFetchUser = async () => {
+    const handleFetch = async () => {
 
     try {
         const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
-        setData(resp.data.user)
-
+        // console.log(resp.data.result)
+        setData(resp.data.result)
     } catch (error) {
         console.log(error)
 
@@ -62,7 +63,7 @@ export default function TemplateDemo() {
 }
 
     useEffect(() => {
-        handleFetchUser();
+        handleFetch();
     }, [])
 
     //Refetch on add edit:
@@ -73,30 +74,7 @@ export default function TemplateDemo() {
 
 
 
-    const logoTemplate = (data) => {
-        let logo = data?.logo 
-
-        return (
-            <ImageDiv>
-                {logo ? (
-                    <Image
-                    src={`/uploads/${logo}`}
-                    alt="mountain"
-                    sizes="40px"
-                    fill={true}
-
-                />
-                ) : (
-                    <>
-                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
-                    </>
-                    
-                )}
-                
-            </ImageDiv>
-
-        )
-    }
+   
     //TEMPLATES
 
     const renderHeader = () => {
@@ -121,14 +99,6 @@ export default function TemplateDemo() {
     };
 
 
-    const allowExpansion = (rowData) => {
-        return rowData
-
-    };
-
-
-
- 
 
     const leftToolbarTemplate = () => {
         return (
@@ -197,6 +167,9 @@ export default function TemplateDemo() {
        
       };
 
+
+
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -218,10 +191,10 @@ export default function TemplateDemo() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="firstName" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="LastName" header="Ονομα" sortable></Column>
-                <Column field="email"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-               
+                <Column field="firstName" header="'Ονομα" body={nameTemplate} ></Column>
+                <Column field="lastName" header="Επώνυμο" sortable></Column>
+                <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
+                <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
@@ -263,6 +236,28 @@ const ActiveTempate = ({ status }) => {
 
 
 
+const emailTemplate = (data) => {
+    return (
+        <div>  
+            <GridIconTemplate 
+                value={data.email} 
+                icon="pi pi-envelope"
+                color="#0d6efd"
+            />
+        </div>
+    )
+}
+const nameTemplate = (data) => {
+    return (
+        <div>  
+            <GridIconTemplate 
+                value={data.firstName} 
+                icon="pi pi-user"
+                color="#0d6efd"
+            />
+        </div>
+    )
+}
 
 
 
@@ -271,30 +266,3 @@ const ActiveTempate = ({ status }) => {
 
 
 
-
-const ShowDetails = styled.div`
-    border: 1px solid #e0e0e0;
-   
-    .list-item  {
-        padding: 20px;
-        /* border-bottom: 1px solid #e0e0e0; */
-     
-    } 
-    .list-item span:nth-child(1) {
-        font-weight: bold;
-        margin-right: 20px;
-    }
-   
-
-    .divider {
-        padding: 0px;
-        height: 1px;
-        background-color: #e0e0e0;
-    }
-
-    .grid-link {
-        color: #0d6efd;
-        cursor: pointer;
-
-    }
-`

@@ -5,7 +5,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { IconButton } from '@mui/material';
 
 
-export const InputPass = ({ error, name, label, placeholder, register }) => {
+export const InputPass = ({ error, name, label, placeholder, register, type }) => {
 	
 	const [showPass, setShowPass] = React.useState(false);
 	return (
@@ -13,6 +13,7 @@ export const InputPass = ({ error, name, label, placeholder, register }) => {
 			<div className="input"  >
 				<label htmlFor={name}>{label}</label>
 				<input
+					type={type}
 					name={name}
 					type={showPass ? 'text' : 'password'}
 					placeholder={placeholder}

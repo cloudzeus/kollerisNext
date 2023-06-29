@@ -9,7 +9,7 @@ import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 
 
-const Input = ({ label, name, mb, mt, control, required, error }) => {
+const Input = ({ label, name, mb, mt, control, required, error, type }) => {
     return (
 
         < InputContainer mb={mb} mt={mt} error={error}>
@@ -25,6 +25,7 @@ const Input = ({ label, name, mb, mt, control, required, error }) => {
                         </label>
                         <span >
                             <InputText
+                                type={type}
                                 id={field.name}
                                 value={field.value}
                                 className={classNames({ 'p-invalid': fieldState.error })}
@@ -40,6 +41,9 @@ const Input = ({ label, name, mb, mt, control, required, error }) => {
         </ InputContainer >
     )
 }
+
+
+
 export const TextAreaInput = ({ label, name, mb, mt, control, error, autoResize, rows, cols, disabled, required }) => {
     return (
 
@@ -77,13 +81,13 @@ export const TextAreaInput = ({ label, name, mb, mt, control, error, autoResize,
 }
 
 
-const InputContainer = styled.div`
+export const InputContainer = styled.div`
     margin-bottom: ${props => props.mb ? props.mb : '10px'};
     margin-top: ${props => props.mt ? props.mt : '0px'};
     
     
     
-    label {
+    & label {
         color: ${props => props.error ? 'red' : null};
         font-size: 14px;
         display: block;

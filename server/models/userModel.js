@@ -72,14 +72,6 @@ const userSchema = new mongoose.Schema({
   phones: {
     type: phoneSchema,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  },
     status: Boolean,
 },
 {

@@ -36,7 +36,7 @@ body {
   font-size: 15px;
   height: 100vh;
   font-family: 'Roboto', sans-serif;
-  color: #575353;
+  /* color: #575353; */
   font-weight: 300;
   overflow: hidden;
   background-color: #f0f0f0;
@@ -53,24 +53,16 @@ a {
   text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin: 0;
-}
 
-h1,
+
+/* h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
   color: #1f2020;
-}
+} */
 
 
 h2 {
@@ -103,57 +95,5 @@ form {
   border-radius: 10px;
 }
 
-.mb20 {
-  margin-bottom: 20px;
-}
-
-.mb10 {
-  margin-bottom: 10px;
-}
 
 
-/* STYLE THE GRID */
-/* 
-.e-grid .e-headercell {
-  color: darkblue;
-  background-color: #F9FAFB;
-}
-.e-grid .e-gridheader {
-  background-color: red;
-}
-.e-control .e-toolbar{
-  border-radius: 6px 6px 0px 0px;
-  border-top: none;
-}
-.e-gridpager  {
-  border-radius: 0px 0px 6px 6px;
-}
-
-/* SPREADSHIT */
-
-/* .e-lib {
-  border-radius: 6px 6px 0px 0px;
-
-  border: none;
-} */
-/* //marerial css */
-/* .e-sheet-tab-panel {
-  border-radius: 0px 0px 6px 6px;
-} */
-
-/* .e-spreadsheet {
-  border: none;
-} */
-
-
-
-/* CHART 2 */
-/* #charts2 {
-    text-align: left;
-    width: 100%;
-}
-.e.chart {
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-} */
