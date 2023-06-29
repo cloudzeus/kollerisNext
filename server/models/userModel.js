@@ -72,19 +72,20 @@ const userSchema = new mongoose.Schema({
   phones: {
     type: phoneSchema,
   },
-    status: Boolean,
+  status: {
+    type: Boolean,
+  },
 },
 {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 }
 );
 
+mongoose.model('User').schema.add({status: Boolean});
 
 
 
 
 
 const User = models.User || model('User', userSchema);
-// const Test = models.Test || model('Test', testSchema);
 export default User
-// export default Test

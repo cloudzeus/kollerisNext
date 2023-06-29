@@ -7,7 +7,7 @@ import { classNames } from 'primereact/utils';
 
 
 
-export function PrimeInputPass({ name, mb, mt, control, required, error, onChange }) {
+export function PrimeInputPass({ name, mb, mt, control, required, error, label, onChange }) {
 
     return (
         <InputContainer mb={mb} mt={mt} error={error}>
@@ -17,11 +17,15 @@ export function PrimeInputPass({ name, mb, mt, control, required, error, onChang
                     render={({ field, fieldState }) => (
                         <>
                             <label htmlFor={field.name} >
-                                Password
+                                {label}
                             </label>
                             <Password 
+                                toggleMask
                                 id={field.name} 
                                 {...field}
+                                weakLabel="Αδύναμος"
+                                mediumLabel="Μέτριος"
+                                strongLabel="Ισχυρός"
                                 value={field.value}
                                 inputRef={field.ref} 
                                 onChange={(e) => field.onChange(e.target.value)}
