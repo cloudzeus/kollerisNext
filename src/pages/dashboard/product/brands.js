@@ -64,7 +64,7 @@ export default function TemplateDemo() {
     //Refetch on add edit:
     useEffect(() => {
         console.log('submitted: ' + submitted)
-        if (submitted) return handleFetch()
+        if (submitted) handleFetch()
     }, [submitted])
 
 
