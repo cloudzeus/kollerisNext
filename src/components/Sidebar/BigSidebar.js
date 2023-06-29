@@ -22,7 +22,6 @@ const BigSidebar = () => {
     <Wrapper isSidebarOpen={isSidebarOpen} >
       <SidebarItem to="/dashboard" label="Πίνακας Ελέγχου" />
       <SidebarItem to="/dashboard/product/brands" label="Μάρκες" />
-      <SidebarItem to="/dashboard/product/sync-items" label="Συγχρονισμός" />
       {/* <SidebarItem to="/dashboard/product/categories" label="Κατηγορίες" /> */}
       <SidebarItem to="/dashboard/users" label="Χρήστες" />
       {/* <SidebarExpandableItem label="SpreadSheet" open={open} setOpen={onClick}>

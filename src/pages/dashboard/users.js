@@ -1,168 +1,300 @@
 'use client'
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Toolbar, Edit, Inject, Filter } from '@syncfusion/ej2-react-grids';
+
+
+
+
+
+
+import React, { useState, useEffect, useRef, useReducer } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import Image from 'next/image';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
+import axios from 'axios';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
+import { Tag } from 'primereact/tag';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { InputText } from 'primereact/inputtext';
+import { Toolbar } from 'primereact/toolbar';
+import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 
-function DialogEdit() {
+import { useDispatch } from 'react-redux';
+import { TabView, TabPanel } from 'primereact/tabview';
+import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
+import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
 
-    return (
-        <AdminLayout>
-            <GridTable />
-        </AdminLayout>
-    );
-}
+import DeletePopup from '@/components/deletePopup';
+import { DisabledDisplay } from '@/componentsStyles/grid';
+import { InputTextarea } from 'primereact/inputtextarea';
+import UrlInput from '@/components/Forms/PrimeUrlInput';
+import { Toast } from 'primereact/toast';
 
-const GridTable = () => {
 
-    const [grid, setGrid] = useState(null);
-    const [flag, setFlag] = useState(false)
-    const [error, setError] = useState(false)
+
+export default function TemplateDemo() {
+    const [editData, setEditData] = useState(null)
+    const [editDialog, setEditDialog] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
+    const dispatch = useDispatch();
+    const toast = useRef(null);
+    const [expandedRows, setExpandedRows] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
-    const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
-    const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
-    const editparams = { params: { popupHeight: '300px' } };
-    const validationRules = { required: true };
-    const pageSettings = { pageCount: 5 };
-    const loadingIndicator = { indicatorType: 'Shimmer' }
+    });
 
-    const passwordValidation = {
-        minLength: [5, 'Τουλάχιστον 5 χαρακτήρες'],
-    }
+
 
     const handleFetchUser = async () => {
 
-        try {
-            const resp = await axios.post('/api/admin/users', { action: 'findAll' })
-            setData(resp.data.user)
+    try {
+        const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
+        setData(resp.data.user)
 
-        } catch (error) {
-            console.log(error)
+    } catch (error) {
+        console.log(error)
 
-        }
     }
+}
 
     useEffect(() => {
         handleFetchUser();
     }, [])
 
+    //Refetch on add edit:
+    useEffect(() => {
+        console.log('submitted: ' + submitted)
+        if (submitted) handleFetch()
+    }, [submitted])
 
 
 
+    const logoTemplate = (data) => {
+        let logo = data?.logo 
 
-    const actionBegin = (e) => {
+        return (
+            <ImageDiv>
+                {logo ? (
+                    <Image
+                    src={`/uploads/${logo}`}
+                    alt="mountain"
+                    sizes="40px"
+                    fill={true}
 
-        if (!flag && grid) {
-            if (e.requestType == 'save' && e.action == 'edit') {
-                e.cancel = true;
-                let editedData = e.data;
-                const handleCRUD = async (data, action) => {
-                    try {
-                        const res = await axios.post('/api/admin/users', { action: action, ...data })
+                />
+                ) : (
+                    <>
+                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
+                    </>
                     
-                        if (res.data.success == true) {
-                            grid.endEdit();
-                            setFlag(() => true)
-                        }
-                        if (res.data.success == false) {
-                            toast.error(res.data.error)
-                            setFlag(false)
+                )}
+                
+            </ImageDiv>
 
-                        }
+        )
+    }
+    //TEMPLATES
 
-                    } catch (error) {
-                        console.log(error)
-                    }
-                }
-                handleCRUD(editedData, 'edit')
-            }
+    const renderHeader = () => {
+        const value = filters['global'] ? filters['global'].value : '';
+
+        return (
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+            </span>
+        );
+    };
+    const header = renderHeader();
+
+    const onGlobalFilterChange = (event) => {
+        const value = event.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+    };
 
 
-            //ADD USER:
-            if (e.requestType == 'save' && e.action == 'add') {
+    const allowExpansion = (rowData) => {
+        return rowData
 
-                let editedData = e.data;
-                // e.cancel = true
-                const handleCrud = async (data, action) => {
-                    try {
-                        const res = await axios.post('/api/admin/users', { action: action, ...data })
-                        handleFetchUser()
-                        if (res.data.success) {
-                           
-                        }
+    };
 
-                        if (res.data.success == false) {
-                        
-                            toast.error(res.data.error)
-                            setError(res.data.error)
-                        }
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
-                handleCrud(editedData, 'add')
-            }
 
-        }
+
+ 
+
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
+
+    
+
+
+    //Edit:
+    const editProduct = async (product) => {
+        // console.log('edit product: ' + JSON.stringify(product))
+
+        setSubmitted(false);
+        setEditDialog(true)
+        dispatch(setGridRowData(product))
+    };
+
+    //Add product
+    const openNew = () => {
+        setSubmitted(false);
+        setAddDialog(true);
+    };
+
+
+    const hideDialog = () => {
+        setEditDialog(false);
+        setAddDialog(false);
+    };
+
+    const onDelete = async (id) => {
+        
+        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        if(!res.data.success) return showError()
+        handleFetch()
+        showSuccess()
     }
 
+    // CUSTOM TEMPLATES FOR COLUMNS
+    const actionBodyTemplate = (rowData) => {
+        // console.log('row data: ' + JSON.stringify(rowData))
+        return (
+            <ActionDiv>
+                <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
+                {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
+            </ActionDiv>
+        );
+    };
 
-
-    //Αdd and save user
-    const actionComplete = (e) => {
-      
-        setFlag(false)
-        if (e.requestType === 'save' && e.action === 'add') {
-            console.log('On action complete: SAVE')
-        }
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
-    const handleGrid = (g) => {
-        setGrid(g)
-    }
-
+    const dialogStyle = {
+        marginTop: '10vh', // Adjust the top margin as needed
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+       
+      };
 
     return (
-        <>
-            <Container p="0px" className="box">
-                <h2 className="boxHeader">Χρήστες</h2>
-                <GridComponent
-                    dataSource={data}
-                    toolbar={toolbarOptions}
-                    allowPaging={true}
-                    editSettings={editSettings}
-                    pageSettings={pageSettings}
-                    loadingIndicator={loadingIndicator}
-                    actionBegin={actionBegin}
-                    actionComplete={actionComplete}
-                    ref={g => handleGrid(g)}
-                        // autoFit ={true}
-                        >
-                            <ColumnsDirective  >
-                                <ColumnDirective field='firstName' headerText='Όνομα' width='100' validationRules={validationRules}></ColumnDirective>
-                                <ColumnDirective field='lastName' headerText='Eπώνυμο' width='100' validationRules={validationRules}></ColumnDirective>
-                                <ColumnDirective field='email' headerText='Email' width='180' validationRules={validationRules}></ColumnDirective>
-                                <ColumnDirective field='password' headerText='Kωδικός' width='100' validationRules={passwordValidation} template={rowData => '••••••••••'}  ></ColumnDirective>
-                                <ColumnDirective field='role' headerText='Ρόλος' width='150' editType='dropdownedit' edit={editparams} validationRules={validationRules}></ColumnDirective>
-                            </ColumnsDirective>
-                            <Inject services={[Page, Edit, Toolbar, Filter]} />
-                        </GridComponent>
-                    </Container>
-        </>
+        <AdminLayout >
+            <Toast ref={toast} />
+            <Toolbar className="mb-4" left={leftToolbarTemplate} ></Toolbar>
+            <DataTable
+                header={header}
+                value={data}
+                paginator
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                showGridlines
+                onRowToggle={(e) => setExpandedRows(e.data)}
+                dataKey="_id"
+                filters={filters}
+                paginatorRight={true}
+                removableSort
+                onFilter={(e) => setFilters(e.filters)}
+                loading={loading}
+                editMode="row"
+                selectOnEdit
+            >
+                <Column field="firstName" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="LastName" header="Ονομα" sortable></Column>
+                <Column field="email"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+               
+                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
+            </DataTable>
+            <EditDialog
+                style={dialogStyle}
+                data={editData}
+                setData={setEditData}
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+              
+            />
+            <AddDialog
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
+        </AdminLayout >
+    );
+}
+
+
+const ActiveTempate = ({ status }) => {
+
+    return (
+        <div>
+            {status ? (
+                <Tag severity="success" value=" active "></Tag>
+            ) : (
+                <Tag severity="danger" value="deleted" ></Tag>
+            )}
+
+        </div>
     )
 
 }
 
 
-const Container = styled.div`
-    padding: 0px;
+
+
+
+
+
+
+
+
+
+
+const ShowDetails = styled.div`
+    border: 1px solid #e0e0e0;
+   
+    .list-item  {
+        padding: 20px;
+        /* border-bottom: 1px solid #e0e0e0; */
+     
+    } 
+    .list-item span:nth-child(1) {
+        font-weight: bold;
+        margin-right: 20px;
+    }
+   
+
+    .divider {
+        padding: 0px;
+        height: 1px;
+        background-color: #e0e0e0;
+    }
+
+    .grid-link {
+        color: #0d6efd;
+        cursor: pointer;
+
+    }
 `
-
-
-
-
-export default DialogEdit;

@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
-import GridSyncButton from '@/components/Grids/gridSyncButton';
 
     export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
@@ -31,7 +30,6 @@ import GridSyncButton from '@/components/Grids/gridSyncButton';
 
 
     const handleSyncRowClick = async () => {
-      
         let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct })
         console.log(res.data)
         if(!res.data.success) showError()

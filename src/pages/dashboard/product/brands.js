@@ -14,9 +14,9 @@ import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import Gallery from '@/components/Gallery';
 import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
-import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
+import { setGridRowData } from '@/features/grid/gridSlice';
 import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
-import { Input, Link } from '@mui/material';
+
 import DeletePopup from '@/components/deletePopup';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -131,7 +131,7 @@ export default function TemplateDemo() {
         }
 
         return (
-            < ShowDetails >
+            <  >
                 <div className="card p-20">
                     <TabView>
                         <TabPanel header="Φωτογραφίες">
@@ -189,7 +189,7 @@ export default function TemplateDemo() {
                         </TabPanel>
                     </TabView>
                 </div>
-            </ ShowDetails >
+            </ >
         );
     };
 

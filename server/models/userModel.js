@@ -31,7 +31,8 @@ const addressSchema = new mongoose.Schema({
     type: String,
   },
 
-});
+}
+);
 
 
 
@@ -78,8 +79,13 @@ const userSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
-});
+  },
+    status: Boolean,
+},
+{
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+}
+);
 
 
 
