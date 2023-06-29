@@ -26,7 +26,6 @@ import { Badge } from 'primereact/badge';
 import SyncBrand from '@/GridSync/SyncBrand';
 
 export default function TemplateDemo() {
-    const [brand, setBrand] = useState([]);
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -64,7 +63,8 @@ export default function TemplateDemo() {
 
     //Refetch on add edit:
     useEffect(() => {
-        if (submitted) handleFetch()
+        console.log('submitted: ' + submitted)
+        if (submitted) return handleFetch()
     }, [submitted])
 
 
@@ -214,17 +214,14 @@ export default function TemplateDemo() {
 
     //Add product
     const openNew = () => {
-        setBrand([]);
         setSubmitted(false);
         setAddDialog(true);
     };
 
 
     const hideDialog = () => {
-        setSubmitted(false);
         setEditDialog(false);
         setAddDialog(false);
-
     };
 
     const onDelete = async (id) => {
@@ -304,10 +301,9 @@ export default function TemplateDemo() {
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
+              
             />
             <AddDialog
-                data={brand}
-                setData={setBrand}
                 dialog={addDialog}
                 setDialog={setAddDialog}
                 hideDialog={hideDialog}

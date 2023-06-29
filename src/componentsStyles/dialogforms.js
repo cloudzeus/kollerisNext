@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 const FormTitle = styled.h2`
     font-size: 1.2rem;
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-bottom: 20px;
+    margin-top: 30px;
     position: relative;
     &:after {
         content: '';

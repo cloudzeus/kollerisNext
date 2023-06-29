@@ -12,7 +12,7 @@ import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadn
 
 const SyncBrand  = () => {
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
-        console.log(dataNotFoundInAriadne)
+        // console.log(dataNotFoundInAriadne)
         const dispatch = useDispatch();
         useEffect(() => {
             const findExtraSoftone = async () => {
