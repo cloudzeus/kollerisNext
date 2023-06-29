@@ -194,6 +194,7 @@ export default function TemplateDemo() {
                 <Column field="firstName" header="'Ονομα" body={nameTemplate} ></Column>
                 <Column field="lastName" header="Επώνυμο" sortable></Column>
                 <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
+                <Column field="createdAt"  body={userCreate} sortable header="Ημερομηνία Δημιουργίας" tableStyle={{ width: '5rem' }}></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
@@ -268,7 +269,9 @@ const nameTemplate = (data) => {
 
 
 
-
+const userCreate = ({createdAt}) => {
+    return createdAt.split('T')[0]
+}
 
 
 
