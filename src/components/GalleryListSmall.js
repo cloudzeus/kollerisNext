@@ -101,13 +101,15 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
                 </span>
             </ActionsDiv>
             {show ? (
-               <GalleryNotEmpty 
+               <GalleryNotEmpty
+                isSmall={true}
                 uploadImages={uploadImages}
                 images={images}
                 selectedImage={selectedImage}
                 handlePrevImage={handlePrevImage}
                 handleNextImage={handleNextImage}
                 handleDeleteImage={handleDeleteImage}
+                handleImageSelect={handleImageSelect}
                />
             ) : (
                 <PrimeUploads
@@ -128,13 +130,16 @@ const GalleryNotEmpty = ({
     handlePrevImage, 
     handleNextImage, 
     uploadImages, 
-    handleDeleteImage}) => {
+    handleImageSelect,
+    handleDeleteImage,
+    isSmall
+    }) => {
     return (
         <>
             {images.length > 0 ? (
-                 <GalleryContainer>
-                 <LargeImageContainer>
-                     <LargeImage>
+                 <GalleryContainer isSmall={isSmall}>
+                 <LargeImageContainer  isSmall={isSmall}>
+                     <LargeImage isSmall={isSmall}>
                          <Image
                              src={`/uploads/${selectedImage}`}
                              alt="Large"
@@ -143,15 +148,15 @@ const GalleryNotEmpty = ({
                          />
                      </LargeImage>
                      <ArrowContainer>
-                         <Button onClick={handlePrevImage} icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                         <Button onClick={handleNextImage} icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                        <Button onClick={handlePrevImage} size='small' icon="pi  pi-angle-left" severity="primary" aria-label="Favorite" />
+                        <Button onClick={handleNextImage} icon="pi  pi-angle-right" severity="primary"  aria-label="Favorite" />
                      </ArrowContainer>
                      <DeleteButton>
                          <Button onClick={() => handleDeleteImage(selectedImage)} icon="pi pi-trash" severity="danger" aria-label="Cancel" />
 
                      </DeleteButton>
                  </LargeImageContainer>
-                 <ThumbnailContainer>
+                 <ThumbnailContainer isSmall={isSmall} >
                      <ThumbnailGrid>
                          {uploadImages.map((image, index) => (
                              <Thumbnail key={index} isSelected={image === selectedImage}>

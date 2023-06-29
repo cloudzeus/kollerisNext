@@ -2,19 +2,21 @@ import styled from "styled-components"
 import Link from "next/link"
 import { InputText } from 'primereact/inputtext';
 const UrlInput =({label, value, }) => {
+  
+
     return (
         <DisabledDisplay>
              <div className="disabled-card">
         <label>
            {label}
         </label>
-        <Link href={value ? value : ''}>
+        <Link target="_blank" href={value ? value : null}>
             <div className="p-inputgroup">
                 <div className="p-inputgroup flex-1">
                         <span className="p-inputgroup-addon">
                             <i className="pi pi-link"></i>
                         </span>
-                        <InputText disabled value={value} />
+                        <InputText type="url"   disabled value={value} />
                 </div>
             </div>
         </Link>

@@ -70,8 +70,8 @@ const Gallery = ({images, label}) => {
                              />
                          </LargeImage>
                          <ArrowContainer>
-                                         <Button onClick={handlePrevImage} size='large' icon="pi pi-angle-left" rounded outlined aria-label="Favorite" />
-                                         <Button onClick={handleNextImage} size='small' icon="pi pi-angle-right" rounded outlined aria-label="Favorite" />
+                                <Button onClick={handlePrevImage} size='small' icon="pi  pi-angle-left" severity="primary" aria-label="Favorite" />
+                                <Button onClick={handleNextImage} icon="pi  pi-angle-right" severity="primary"  aria-label="Favorite" />
                          </ArrowContainer>
                      </LargeImageContainer>
                      <ThumbnailContainer>

@@ -6,33 +6,40 @@ const ActionsDiv = styled.div`
     margin-top: 30px;
 `
 const GalleryContainer = styled.div`
+  background-color: #f6f6f6;
+  border-radius: 4px;
+  border: 1px solid #dfdedf;
+  padding: 20px;
   display: flex;
   align-items: flex-start;
   max-width: 1400px;
+  
 `;
 
 const LargeImageContainer = styled.div`
     position: relative;
-    width: 250px;
-    margin-right: 10px;
+    width: 220px;
+    margin-right: 5px;
+    border-radius: 4px;
 `;
 const LargeImage = styled.div`
   /* flex: 0 0 auto; */
-  width: 250px;
   height: 220px;
+  width: 220px;
   position: relative;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
-  border: 1px solid #dfdedf;
+  border: 2px solid var(--primary-color);
   img {
     object-fit: cover;
+    border-radius: 2px;
   }
 
 `;
 
-const ThumbnailContainer = styled.div`
-  width: calc(100% - 250px);
+const ThumbnailContainer = styled.div` 
+  width: ${props => props.isSmall ? 'calc(100% - 200px)' : 'calc(100% - 250px)'};
   /* flex: 0 0 auto; */
   overflow-y: auto;
   overflow-x: hidden;
@@ -43,8 +50,7 @@ const ThumbnailContainer = styled.div`
 const ThumbnailGrid = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-right: 10px;
- 
+
 `;
 
 const Thumbnail = styled.div`
@@ -57,39 +63,24 @@ const Thumbnail = styled.div`
   height: 100px;
   overflow: hidden;
   border: 1px solid #dfdedf;
-  opacity: ${(props) => (props.isSelected ? 1 : 0.5)};
+  filter: ${props => props.isSelected ? 'brightness(1.2)' : 'brightness(0.45)'};
   box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
   margin: 5px;
   img {
     object-fit: cover;
   }
 
-  button {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-  }
+ 
 `;
 
 const ArrowContainer = styled.div`
     position: absolute;
-    bottom: 10px;
-    /* transform: translateY(-50%); */
+    bottom: 2px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    /* .p-button  {
-        background-color: #fff;
-        opacity: 70%;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    } 
-    .p-button:enabled:hover, .p-button:not(button):not(a):not(.p-disabled):hover {
-        background-color: #fff;
-        opacity: 70%;
-    }  */
     
 `;
 
