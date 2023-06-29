@@ -18,7 +18,7 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/userDialog';
-
+import UserRoleChip from '@/components/RoleChip';
 import { useDispatch } from 'react-redux';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
@@ -195,6 +195,7 @@ export default function TemplateDemo() {
                 <Column field="lastName" header="Επώνυμο" sortable></Column>
                 <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+                <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
@@ -234,7 +235,13 @@ const ActiveTempate = ({ status }) => {
 
 }
 
+const RoleTemplate = ({ role }) => {
+    switch (role) {
+        case 'admin':
+            return 
+    }
 
+}
 
 const emailTemplate = (data) => {
     return (
