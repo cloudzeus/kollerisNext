@@ -193,7 +193,7 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
         console.log(data)
         setDisabled(false)
       
-        let resp = await axios.post('/api/user/apiUser', { action: 'create', data: data, updatedFrom: updatedFrom })
+        let resp = await axios.post('/api/user/apiUser', { action: 'create', data: data })
         if(!resp.data.success) return showError(resp.data.error)
         setDisabled(true)
         setSubmitted(true)

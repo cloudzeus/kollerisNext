@@ -142,7 +142,6 @@ export default function TemplateDemo() {
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
-        // console.log('row data: ' + JSON.stringify(rowData))
         return (
             <ActionDiv>
                 <Button size="small" style={{width: '40px', height: '40px'}}  /*disabled={!rowData.status}*/ icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
