@@ -64,10 +64,7 @@ export default function Categories() {
 
 
 
-    const logoTemplate = (data) => {
-       return <GridLogoTemplate data={data} />
-    }
-    //TEMPLATES
+   
 
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
@@ -154,6 +151,13 @@ export default function Categories() {
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
+    const logoTemplate = (data) => {
+        return <GridLogoTemplate logo={data.categoryIcon} />
+     }
+    const imageTemplate = (data) => {
+        return <GridLogoTemplate logo={data.categoryImage} />
+     }
+    
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
@@ -210,6 +214,7 @@ export default function Categories() {
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} ></Column>
                 <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
                 <Column body={LocaleTemplate} header="Localized" sortable></Column>
                 <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
@@ -299,6 +304,7 @@ const RowExpansionGrid = ({ groups }) => {
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data?.groupIcon} />
     }
+  
     //function to set data to the subnested grid:
     const SubRowExpansionTemplate = (data) => {
         return <SubRowExpansionGrid subGroups={data.subGroups} />
