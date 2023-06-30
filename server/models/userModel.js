@@ -66,22 +66,23 @@ const userSchema = new mongoose.Schema({
     default: 'user',
     enum: ['user', 'employee', 'manager', 'admin']
   },
+  status: {
+    type: Boolean,
+  },
   address: {
     type: addressSchema,
   },
   phones: {
     type: phoneSchema,
   },
-  status: {
-    type: Boolean,
-  },
+  
 },
 {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 }
 );
 
-mongoose.model('User').schema.add({status: Boolean});
+
 
 
 

@@ -26,7 +26,7 @@ export default async function handler(req, res) {
    
 
 
-    const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: 'user' })
+    const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: 'user', status: true })
     console.log('CREATE USER IN DATABASE:' + JSON.stringify(user))
     if(user) {
         handleApi(user)

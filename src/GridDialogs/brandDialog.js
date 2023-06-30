@@ -268,13 +268,13 @@ const AddDialog = ({
 
         console.log('body')
         console.log(body)
-        // let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
-        // if(!res.data.success) return showError(res.data.softoneError)
-        // setDisabled(true)
-        // setSubmitted(true)
-        // showSuccess()
-        // hideDialog()
-        // reset();
+        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
+        if(!res.data.success) return showError(res.data.softoneError)
+        setDisabled(true)
+        setSubmitted(true)
+        showSuccess()
+        hideDialog()
+        reset();
     }
 
 
