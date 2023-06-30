@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { Avatar } from 'primereact/avatar';
-import { Badge } from 'primereact/badge';
+import { TemplateContainer } from "@/componentsStyles/grid/gridStyles";
+
+
 const GridIconTemplate = ({value, icon, color, backgroundColor }) => {
 
     return (
@@ -12,18 +14,7 @@ const GridIconTemplate = ({value, icon, color, backgroundColor }) => {
     )
 }
 
-const TemplateContainer = styled.div`
-    display: flex;
-    align-items: center;
-    
-    span.value {
-        margin-left: 10px;
-    }
-    .p-avatar .p-avatar-icon {
-        font-size: 12px;
-    }
 
-`
 
 
 

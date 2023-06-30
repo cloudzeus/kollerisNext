@@ -11,8 +11,9 @@ import { useSelector } from 'react-redux';
 import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
-
+import { useSession } from 'next-auth/react';
     export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
+        const { data: session, status } = useSession()
         const [loading, setLoading] = useState(false);
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
         const [selectedProduct, setSelectedProduct] = useState(null);
@@ -32,9 +33,13 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
 
     const handleSyncRowClick = async () => {
         setLoading(true)
-        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct })
+        let user = session.user.user.lastName
+        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct, createdFrom: user })
         console.log(res.data)
-        if(!res.data.success) showError()
+        if(!res.data.success) {
+            showError()
+            setLoading(false)
+        }
         showSuccess()
         findExtraSoftone();
         refreshGrid();
@@ -53,7 +58,7 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
     const footerTemplate = (data) => {
         return (
             <div>
-                <Button label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
+                <Button  loading={loading} label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
             </div>
         );
     }
@@ -65,7 +70,7 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
             < SyncButtonContainer >
             
             <Button 
-                loading={loading}
+              
                 type="button" 
                 icon="pi pi-sync"  
                 label="sync"

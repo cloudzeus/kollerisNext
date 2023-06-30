@@ -269,8 +269,8 @@ const AddDialog = ({
         }
 
         console.log('body')
-        console.log(body)
-        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
+        let createdFrom = session.user.user.lastName
+        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: {...body, createdFrom: createdFrom } })
         if(!res.data.success) return showError(res.data.softoneError)
         setDisabled(true)
         setSubmitted(true)
