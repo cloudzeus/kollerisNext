@@ -1,125 +1,421 @@
-
-import React from 'react';
-import { IndexWrapper } from '@/componentsStyles/grid/gridStyles';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { ListContainer, ExpandableItems, NestedListA } from '@/componentsStyles/list/listStyles';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
 import Image from 'next/image';
-import { Button } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Input } from '@/components/Forms/newInputs/InputClassic';
-import { useForm } from "react-hook-form";
-import ActiveTag from '@/components/ActiveTag';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { IconButton } from '@/componentsStyles/buttons/buttonStyles';
-import { useRouter } from 'next/router'
-import NavigateBtn from '@/components/Buttons/NavigateBtn';
-import { NavigateArrowButton } from '@/componentsStyles/buttons/buttonStyles';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import axios from 'axios';
+import { Tag } from 'primereact/tag';
+import { FilterMatchMode } from 'primereact/api';
+import { InputText } from 'primereact/inputtext';
+import { Toolbar } from 'primereact/toolbar';
+import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import { useDispatch } from 'react-redux';
-import { setChildListData } from '@/features/List/listSlice';
-const CategoriesTreeGrid = () => {
-    const dispatch = useDispatch();
+import { setGridRowData } from '@/features/grid/gridSlice';
+import { ImageDiv, ActionDiv,  SubGridStyles } from '@/componentsStyles/grid';
+
+import DeletePopup from '@/components/deletePopup';
+import { Toast } from 'primereact/toast';
+import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
+
+import { OverlayPanel } from 'primereact/overlaypanel';
+
+
+export default function Categories() {
+    const [editData, setEditData] = useState(null)
+    const [editDialog, setEditDialog] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
-    const router = useRouter();
-    const [expand, setExpand] = useState([])
-    const [showNested, setShowNested] = useState(false);
+    const dispatch = useDispatch();
+    const toast = useRef(null);
+    const [expandedRows, setExpandedRows] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+
+    });
+    //Set the toggled columns
+   
+
+  
 
     useEffect(() => {
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
+            // console.log('DATA RESULT')
+            // console.log(res.data.result)
             setData(res.data.result)
+
         }
         handleFetch()
     }, [])
 
-    const handleExpand = (index) => {
-        if (expand.includes(index)) {
-            setExpand([])
-            return;
-        }
-        setExpand([index])
-        setShowNested(false)
+
+
+    //Refetch on add edit:
+    useEffect(() => {
+        console.log('submitted: ' + submitted)
+        if (submitted) handleFetch()
+    }, [submitted])
+
+
+
+    const logoTemplate = (data) => {
+        let logo = data?.logo
+
+        return (
+            <ImageDiv>
+                {logo ? (
+                    <Image
+                        src={`/uploads/${logo}`}
+                        alt={'logo'}
+                        sizes="40px"
+                        fill={true}
+
+                    />
+                ) : (
+                    <>
+                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
+                    </>
+
+                )}
+
+            </ImageDiv>
+
+        )
+    }
+    //TEMPLATES
+
+    const renderHeader = () => {
+        const value = filters['global'] ? filters['global'].value : '';
+
+        return (
+            <>
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+                </span>
+            </>
+        );
+    };
+    const header = renderHeader();
+
+    const onGlobalFilterChange = (event) => {
+        const value = event.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+    };
+
+
+    const allowExpansion = (rowData) => {
+        return rowData
+
+    };
+
+
+
+
+
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
+
+    const rightToolbarTemplate = () => {
+        return (
+            <>
+                {/* <SyncBrand 
+                refreshGrid={handleFetch}  
+                addToDatabaseURL= '/api/product/apiMarkes'
+            /> */}
+                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
+            </>
+        );
+
+    };
+
+
+    //Edit:
+    const editProduct = async (product) => {
+        // console.log('edit product: ' + JSON.stringify(product))
+
+        setSubmitted(false);
+        setEditDialog(true)
+        dispatch(setGridRowData(product))
+    };
+
+    //Add product
+    const openNew = () => {
+        setSubmitted(false);
+        setAddDialog(true);
+    };
+
+
+    const hideDialog = () => {
+        setEditDialog(false);
+        setAddDialog(false);
+    };
+
+    const onDelete = async (id) => {
+
+        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        if (!res.data.success) return showError()
+        handleFetch()
+        showSuccess()
     }
 
-   const handleNavigation = (item) => {
-    console.log(item)
-    dispatch(setChildListData(item))
-    router.push('/dashboard/product/categories-groups')
-   }
+    // CUSTOM TEMPLATES FOR COLUMNS
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <ActionDiv>
+                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
+            </ActionDiv>
+        );
+    };
+
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    }
+
+    const dialogStyle = {
+        marginTop: '10vh', // Adjust the top margin as needed
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+
+    };
+
+
+    const RowExpansionTemplate = (data) => {
+        return <RowExpansionGrid groups={data.groups} />
+    }
 
     return (
-      <AdminLayout>
-            <div className="header">
-                <h2 className="boxHeader">Κατηγoρίες</h2>
-            </div>
-                {data.map((item, index) => {
-                    return (
-                        <div key={index}>
-                            <ListContainer>
-                                <div className='list-header-div' onClick={() => handleExpand(index)} >
-                                    <div className="list-header-div-left">
-                                        <div >
-                                            <span>Ονομα:</span>
-                                            <span>{item.categoryName}</span>
-                                        </div>
-                                        <div>
-                                        <ActiveTag isActive={true} />
-                                        </div>
-                                    </div>
-                                    <div className="list-header-div-rigth">
-                                        {!expand.includes(index) ? <KeyboardArrowDownIcon /> : < KeyboardArrowUpIcon />} 
-                                    </div>
-                                </div>
-                                {expand.includes(index) ? (
-                                    <ExpandableItems>
-                                     
-                                            <div >
-                                                <Input
-                                                    label="Όνομα"
-                                                    name="softOne.NAME"
-                                                    type="text"
-                                                    value={item.categoryName}
-                                                    disabled={true}
-                                                    required={true}
-                                                />
-                                                <Input
-                                                    label="Softone Όνομα"
-                                                    name="softOne.NAME"
-                                                    type="text"
-                                                    value={item.categoryName}
-                                                    disabled={true}
-                                                    required={true}
-                                                />
-                                            </div>
-                                        <div className="list-bottom-actions-div">
-                                        <button onClick={() => handleNavigation(item)}>
-                                            Groups
-                                            <NavigateNextIcon />
-                                        </button>
-                                        <div className="list-bottom-actions-div_actions">
-                                            <button>
-                                                <EditIcon />
-                                            </button>
-                                            <button>
-                                                <DeleteIcon />
-                                            </button>
-                                        </div>
-                                        </div>
-                                        
+        <AdminLayout >
+            <Toast ref={toast} />
+            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <DataTable
 
-                                    </ExpandableItems>
-                                ) : null}
-                            </ ListContainer >
-                        </div>
-                    )
-                })}
-      </AdminLayout>
-       
+                header={header}
+                value={data}
+                paginator
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                showGridlines
+                rowExpansionTemplate={RowExpansionTemplate}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+                dataKey="_id"
+                filters={filters}
+                paginatorRight={true}
+                removableSort
+                onFilter={(e) => setFilters(e.filters)}
+                //edit:
+                loading={loading}
+                editMode="row"
+                selectOnEdit
+            >
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
+                <Column body={LocaleTemplate} header="Localized" sortable></Column>
+                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
+                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+
+            </DataTable>
+            <EditDialog
+                style={dialogStyle}
+                data={editData}
+                setData={setEditData}
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+
+            />
+            <AddDialog
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
+        </AdminLayout >
     );
+}
+
+
+const ActiveTempate = ({ status }) => {
+
+    return (
+        <div>
+            {status ? (
+                <Tag severity="success" value=" active "></Tag>
+            ) : (
+                <Tag severity="danger" value="deleted" ></Tag>
+            )}
+
+        </div>
+    )
+
+}
+
+
+const LocaleTemplate = ({ localized }) => {
+    const op = useRef(null);
+    return (
+        <div className="card flex justify-content-center">
+            <Button type="button" icon="pi pi-image" label="Image" onClick={(e) => op.current.toggle(e)} />
+            <OverlayPanel ref={op}>
+                <DataTable
+                    value={localized}
+                    paginator
+                    rows={8}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    showGridlines
+                    dataKey="_id"
+                    paginatorRight={true}
+                    removableSort
+                >
+                    <Column field="locale" header="Locale" ></Column>
+                    <Column field="name" header="Name" ></Column>
+
+
+                </DataTable>
+            </OverlayPanel>
+        </div>
+    )
+
+}
+
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
+    return (
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
+
+    )
+}
+const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
+    return (
+        <RegisterUserActions
+            actionFrom={createdFrom}
+            at={createdAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--green-400)'
+        />
+
+    )
+}
+
+
+
+//The component for the nested grid:
+const RowExpansionGrid = ({groups}) => {
+    // console.log('GROUPS: ' + JSON.stringify(groups))
+    const [expanded, setExpanded] = useState(null);
+
+
+    const logoTemplate = (data) => {
+        console.log('data: ' + JSON.stringify(data))
+        let logo = data?.groupIcon
+        console.log(logo)
+        return (
+            <ImageDiv>
+                {logo ? (
+                    <Image
+                        className="shadow-4"
+                        src={`/uploads/${logo}`}
+                        alt="groupLogo"
+                        sizes="40px"
+                        fill={true}
+                    />
+                ) : (
+                    <>
+                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
+                    </>
+
+                )}
+
+            </ImageDiv>
+
+        )
+    }
+    //function to set data to the subnested grid:
+    const  SubRowExpansionTemplate = (data) => {
+        return <SubRowExpansionGrid subGroups={data.subGroups} />
+    }
+    return (
+       <SubGridStyles>
+         <span className="subgrid-title" >Groups:</span>
+        <div className="data-table">
+        <DataTable
+            value={groups}
+            rows={8}
+            srollable
+            showGridlines
+            dataKey="_id"
+            rowExpansionTemplate={SubRowExpansionTemplate}
+            expandedRows={expanded}
+            onRowToggle={(e) => setExpanded(e.data)}
+        >
+            <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
+            <Column field="groupIcon" body={logoTemplate} header="Λογότυπο"></Column>
+            <Column field="groupName" header="'Ονομα"></Column>
+            <Column field="groupImage" header="Φωτογραφία"></Column>
+          
+            {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
+        </DataTable>
+        </div>
+       </SubGridStyles>
+    );
+};
+
+const SubRowExpansionGrid = ({subGroups}) => {
+    console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
+   
+    return (
+        < SubGridStyles>
+        <span className="subgrid-title" >SubGroups:</span>
+        <DataTable
+            value={subGroups}
+            showGridlines
+            dataKey="_id"
+            removableSort
+            scrollable
+        >
+            <Column field="subGroupName" header="Softone Όνομα"></Column>
+            <Column field="subGroupIcon" header="Λογότυπο"></Column>
+            <Column field="subGroupImage" header="Φωτογραφία"></Column>
+            <Column field="createdAt" header="createdAt"></Column>
+            {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
+        </DataTable>
+       </ SubGridStyles>
+    )
+
 }
 
 
@@ -131,4 +427,7 @@ const CategoriesTreeGrid = () => {
 
 
 
-export default CategoriesTreeGrid;
+
+
+
+

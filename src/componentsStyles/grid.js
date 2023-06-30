@@ -68,6 +68,36 @@ const  DisabledDisplay  = styled.div`
 const SyncButtonContainer = styled.div`
     position: relative;
 `
+const  SubGridStyles = styled.div`
+    padding: 20px;
+    /* padding-top: 20px;
+    padding-bottom: 20px; */
+    .subgrid-title {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        margin-left: 2px;
+    }
+    .data-table {
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 3px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+    }
+
+`
+
+
+const TemplateContainer = styled.div`
+    display: flex;
+    align-items: center;
+    
+    span.value {
+        margin-left: 10px;
+    }
+    .p-avatar .p-avatar-icon {
+        font-size: 12px;
+    }
+
+`
 
 export {
     DropDownDetails,
@@ -75,4 +105,6 @@ export {
     ActionDiv,
     DisabledDisplay ,
     SyncButtonContainer,
+    SubGridStyles,
+    TemplateContainer
 };
