@@ -22,8 +22,9 @@ import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
-import { Badge } from 'primereact/badge';
 import SyncBrand from '@/GridSync/SyncBrand';
+import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
+
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -246,12 +247,10 @@ export default function TemplateDemo() {
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
-        // console.log('row data: ' + JSON.stringify(rowData))
         return (
             <ActionDiv>
-                <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <Button disabled={!rowData.status} style={{width: '40px', height: '40px'}} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
                 <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-                {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
             </ActionDiv>
         );
     };
@@ -300,7 +299,8 @@ export default function TemplateDemo() {
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-               
+                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
@@ -343,6 +343,30 @@ const ActiveTempate = ({ status }) => {
 
 
 
+const UpdatedFromTemplate = ({updatedFrom, updatedAt}) => {
+    return (
+       <RegisterUserActions
+       actionFrom={updatedFrom}
+        at={updatedAt}
+        icon="pi pi-user"
+        color="#fff"
+        backgroundColor= 'var(--yellow-500)'
+       />
+        
+    )
+}
+const CreatedFromTemplate = ({createdFrom, createdAt}) => {
+    return (
+       <RegisterUserActions
+        actionFrom={createdFrom}
+        at={createdAt}
+        icon="pi pi-user"
+        color="#fff"
+        backgroundColor= 'var(--green-400)'
+       />
+        
+    )
+}
 
 
 
@@ -350,30 +374,3 @@ const ActiveTempate = ({ status }) => {
 
 
 
-
-const ShowDetails = styled.div`
-    border: 1px solid #e0e0e0;
-   
-    .list-item  {
-        padding: 20px;
-        /* border-bottom: 1px solid #e0e0e0; */
-     
-    } 
-    .list-item span:nth-child(1) {
-        font-weight: bold;
-        margin-right: 20px;
-    }
-   
-
-    .divider {
-        padding: 0px;
-        height: 1px;
-        background-color: #e0e0e0;
-    }
-
-    .grid-link {
-        color: #0d6efd;
-        cursor: pointer;
-
-    }
-`

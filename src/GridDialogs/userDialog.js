@@ -3,29 +3,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
-import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
+
 import axios from 'axios';
-import styled from 'styled-components';
-import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-import { resetGridRowData } from '@/features/grid/gridSlice';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
+
 import { PrimeInputPass } from '@/components/Forms/PrimeInputPassword';
 import PrimeSelect from '@/components/Forms/PrimeSelect';
+import { useSession } from "next-auth/react"
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
+
     const dispatch = useDispatch();
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
+    const { data: session, status } = useSession()
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             firstName: gridRowData?.firstName,
@@ -50,18 +49,20 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         const object = {
             ...data,
         }
-      
         try {
-            let resp = await axios.post('/api/user/apiUser', {action: "update", data: object, id: gridRowData._id})
-            console.log(resp.data)
-                if(!resp.data.success) {
-                    showError(resp.data.error)
-                }
-                if(resp.data.success) {
-                    showSuccess()
-                    setSubmitted(true)
-                    hideDialog()
-                }
+            const updatedFrom = session.user.user.lastName
+
+            let resp = await axios.post('/api/user/apiUser', 
+            {
+                action: "update", 
+                data: {...object, updatedFrom: updatedFrom}, 
+                id: gridRowData._id
+            })
+            
+            if(!resp.data.success) showError(resp.data.error)
+            showSuccess()
+            setSubmitted(true)
+            hideDialog()
                
         } catch (e) {
             console.log(e)
@@ -157,11 +158,7 @@ const addSchema = yup.object().shape({
 });
 
 
-const AddDialog = ({
-    dialog,
-    hideDialog,
-    setSubmitted
-}) => {
+const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
 
 
     const {
@@ -182,7 +179,7 @@ const AddDialog = ({
 
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-  
+    
 
 
     const cancel = () => {
@@ -195,7 +192,6 @@ const AddDialog = ({
         console.log('data')
         console.log(data)
         setDisabled(false)
-      
       
         let resp = await axios.post('/api/user/apiUser', { action: 'create', data: data })
         if(!resp.data.success) return showError(resp.data.error)
@@ -254,10 +250,10 @@ const AddDialog = ({
                     required
                     control={control}
                 />
-               
                 <PrimeInputPass
                     control={control}
                     name="password"
+                    label={'Κωδικός'}
                 />
                 <PrimeSelect 
                     control={control}
@@ -265,13 +261,11 @@ const AddDialog = ({
                     required
                     label={'Δικαιώματα Χρήστη'}
                     values={[
-                            { role: 'user' },
-                            { role: 'employee' },
-                            { role: 'manager' },
-                            { role: 'admin' },
-                         
-                        ]}
-                  
+                        { role: 'user' },
+                        { role: 'employee' },
+                        { role: 'manager' },
+                        { role: 'admin' },
+                    ]}
                     />
             </Dialog>
         </form>

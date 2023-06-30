@@ -23,7 +23,8 @@ export default async function handler(req, res) {
           country:body.country,
           city: body.city,
           postalcode: body.postalcode,
-        }
+        },
+        status: true,
       });
 
     const user = await User.findOne({ _id: body._id});

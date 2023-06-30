@@ -40,16 +40,17 @@ export default async function handler(req, res) {
             let object = {
                 firstName: data.firstName,
                 lastName: data.lastName,
+				status: true,
                 email: data.email,
                 password: hashPassword,
                 role: data?.role?.role,
-                status: true,
             }
+
 			await connectMongo();
 			const alreadyEmailCheck = await User.findOne({ email: data.email })
 			if(alreadyEmailCheck) {
 				console.log(alreadyEmailCheck)
-			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', user: null})
+			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
 			}
             console.log(object)
 
@@ -119,7 +120,7 @@ export default async function handler(req, res) {
 		} };
 		try {
 			await connectMongo();
-			const result = await Markes.updateOne(filter, update);
+			const result = await User.updateOne(filter, update);
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
@@ -132,10 +133,5 @@ export default async function handler(req, res) {
 
 
 
-const fetchSoftoneMarkes = async () => {
-	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`;
-	let { data } = await axios.post(URL)
-	return data;
-}
 
 

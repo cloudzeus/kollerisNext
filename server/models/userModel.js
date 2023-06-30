@@ -66,22 +66,43 @@ const userSchema = new mongoose.Schema({
     default: 'user',
     enum: ['user', 'employee', 'manager', 'admin']
   },
+ 
   address: {
-    type: addressSchema,
+    country: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    postalcode: {
+      type: String,
+    },
+    shippingAddress: {
+      type: String,
+    },
+  
   },
-  phones: {
-    type: phoneSchema,
-  },
-  status: {
-    type: Boolean,
-  },
+  phones:{
+    mobile: {
+      type: String,
+    },
+    landline: {
+      type: String,
+    }
+  }, 
+  status: Boolean,
+  updatedFrom: String,
+  
 },
 {
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: true,
 }
 );
 
-mongoose.model('User').schema.add({status: Boolean});
+
 
 
 

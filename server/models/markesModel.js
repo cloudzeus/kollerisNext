@@ -48,8 +48,12 @@ const markesSchema = new mongoose.Schema({
         ISACTIVE:Number
     },
     status: Boolean,
-    
+    updatedFrom: String,
+    createdFrom: String,
+    deletedFrom: String,
   
+},{
+    timestamps: true
 });
 
 

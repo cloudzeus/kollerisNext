@@ -14,11 +14,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-import { resetGridRowData } from '@/features/grid/gridSlice';
-import { InputTextarea } from 'primereact/inputtextarea';
+
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
+import { useSession } from "next-auth/react"
+
+
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
+    const { data: session, status } = useSession()
     const dispatch = useDispatch();
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
@@ -61,15 +64,14 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         console.log('object')
         console.log(object)
         try {
-            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: object, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
+            let user = session.user.user.lastName
+            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
                 if(!resp.data.success) {
-                    showError()
+                    return showError(resp.data.softoneError)
                 }
-                if(resp.data.success) {
-                    showSuccess()
-                    setSubmitted(true)
-                    hideDialog()
-                }
+                showSuccess()
+                setSubmitted(true)
+                hideDialog()
                
         } catch (e) {
             console.log(e)
@@ -232,7 +234,7 @@ const AddDialog = ({
             instagramUrl: '',
         }
     });
-
+    const { data: session, status } = useSession()
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
     const [logo, setLogo] = useState('')
@@ -267,14 +269,14 @@ const AddDialog = ({
         }
 
         console.log('body')
-        console.log(body)
-        // let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body })
-        // if(!res.data.success) return showError(res.data.softoneError)
-        // setDisabled(true)
-        // setSubmitted(true)
-        // showSuccess()
-        // hideDialog()
-        // reset();
+        let createdFrom = session.user.user.lastName
+        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body, createdFrom: createdFrom })
+        if(!res.data.success) return showError(res.data.softoneError)
+        setDisabled(true)
+        setSubmitted(true)
+        showSuccess()
+        hideDialog()
+        reset();
     }
 
 

@@ -7,7 +7,7 @@ import { classNames } from 'primereact/utils';
 
 
 
-export function PrimeInputPass({ name, mb, mt, control, required, error, label, onChange }) {
+export function PrimeInputPass({ name, mb, mt, control,error, label,  }) {
 
     return (
         <InputContainer mb={mb} mt={mt} error={error}>

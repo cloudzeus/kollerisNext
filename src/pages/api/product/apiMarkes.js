@@ -61,6 +61,7 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body
+		let {createdFrom} = req.body
 		console.log('data: ' + JSON.stringify(data))
 		try {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
@@ -104,6 +105,7 @@ export default async function handler(req, res) {
 					NAME: data.name,
 					ISACTIVE: 1
 				},
+				createdFrom: createdFrom,
 				status: true,
 			}
 			console.log('object');
@@ -124,10 +126,7 @@ export default async function handler(req, res) {
 	}
 	if (action === 'createMany') {
 		let { data } = req.body
-		// console.log('data')
-		// console.log(data)
-
-
+		let {createdFrom} = req.body
 		let newArray = [];
 		for (let item of data) {
 			console.log(item)
@@ -158,6 +157,7 @@ export default async function handler(req, res) {
 					...item
 				},
 				status: true,
+				createdFrom: createdFrom
 			}
 
 			newArray.push(object)
@@ -203,7 +203,6 @@ export default async function handler(req, res) {
 				mtrmark: mtrmark,
 				name: body.name
 			})
-			console.log(softoneResponse)
 		}
 		
 		const filter = { _id: id };

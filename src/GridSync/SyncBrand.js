@@ -11,8 +11,11 @@ import { useSelector } from 'react-redux';
 import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
+import { useSession } from 'next-auth/react';
 
-    export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
+export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
+        const { data: session, status } = useSession()
+        const [loading, setLoading] = useState(false);
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
         const [selectedProduct, setSelectedProduct] = useState(null);
         const op = useRef(null);
@@ -30,12 +33,18 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
 
 
     const handleSyncRowClick = async () => {
-        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct })
+        setLoading(true)
+        let user = session.user.user.lastName
+        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct, createdFrom: user })
         console.log(res.data)
-        if(!res.data.success) showError()
+        if(!res.data.success) {
+            showError()
+            setLoading(false)
+        }
         showSuccess()
         findExtraSoftone();
         refreshGrid();
+        setLoading(false)
     }
     
     
@@ -47,10 +56,10 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
     }
 
 
-    const footerTemplate = (data) => {
+    const footerTemplate = () => {
         return (
             <div>
-                <Button label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
+                <Button  loading={loading} label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
             </div>
         );
     }
@@ -60,7 +69,6 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
         <div className="card flex flex-column align-items-center gap-3">
             <Toast ref={toast} />
             < SyncButtonContainer >
-            
             <Button 
                 type="button" 
                 icon="pi pi-sync"  
@@ -74,7 +82,6 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
             </Button>
             </ SyncButtonContainer>
            
-
             <OverlayPanel ref={op} showCloseIcon>
                 <DataTable 
                     value={dataNotFoundInAriadne} 
@@ -86,7 +93,6 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
                     onSelectionChange={(e) => setSelectedProduct(e.value)}>
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="NAME" header="Όνομα Softone" sortable style={{minWidth: '12rem'}} />
-                    {/* <Column body={actionBodyTemplate} bodyStyle={{ textAlign: 'right' }}   style={{minWidth: '12rem'}} /> */}
                 </DataTable>
             </OverlayPanel>
         </div>

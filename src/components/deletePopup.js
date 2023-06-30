@@ -11,9 +11,6 @@ export default function DeletePopup({onDelete, status}) {
         onDelete();
     };
 
-   
-    
-   
 
     return (
         <>
@@ -31,6 +28,8 @@ export default function DeletePopup({onDelete, status}) {
                  />
             <div className="card flex flex-wrap gap-2 justify-content-center">
                 <Button 
+                    size="small"
+                    style={{width: '40px', height: '40px'}}
                     disabled={!status}
                     ref={buttonEl} 
                     onClick={() => setVisible(prev => !prev)} 
