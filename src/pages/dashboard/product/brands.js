@@ -24,7 +24,7 @@ import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
 import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-
+import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -71,26 +71,8 @@ export default function TemplateDemo() {
 
 
     const logoTemplate = (data) => {
-        let logo = data?.logo 
-
         return (
-            <ImageDiv>
-                {logo ? (
-                    <Image
-                    src={`/uploads/${logo}`}
-                    alt="mountain"
-                    sizes="40px"
-                    fill={true}
-
-                />
-                ) : (
-                    <>
-                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
-                    </>
-                    
-                )}
-                
-            </ImageDiv>
+           <GridLogoTemplate logo={data?.logo} />
 
         )
     }

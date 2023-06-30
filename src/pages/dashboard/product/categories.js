@@ -12,14 +12,15 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ImageDiv, ActionDiv,  SubGridStyles } from '@/componentsStyles/grid';
+import { ImageDiv, ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
 
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-
 import { OverlayPanel } from 'primereact/overlaypanel';
-
+import GridIconTemplate from '@/components/grid/gridIconTemplate';
+import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
+import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
 
 export default function Categories() {
     const [editData, setEditData] = useState(null)
@@ -38,9 +39,9 @@ export default function Categories() {
 
     });
     //Set the toggled columns
-   
 
-  
+
+
 
     useEffect(() => {
         const handleFetch = async () => {
@@ -64,28 +65,7 @@ export default function Categories() {
 
 
     const logoTemplate = (data) => {
-        let logo = data?.logo
-
-        return (
-            <ImageDiv>
-                {logo ? (
-                    <Image
-                        src={`/uploads/${logo}`}
-                        alt={'logo'}
-                        sizes="40px"
-                        fill={true}
-
-                    />
-                ) : (
-                    <>
-                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
-                    </>
-
-                )}
-
-            </ImageDiv>
-
-        )
+       return <GridLogoTemplate data={data} />
     }
     //TEMPLATES
 
@@ -276,28 +256,8 @@ const ActiveTempate = ({ status }) => {
 
 
 const LocaleTemplate = ({ localized }) => {
-    const op = useRef(null);
     return (
-        <div className="card flex justify-content-center">
-            <Button type="button" icon="pi pi-image" label="Image" onClick={(e) => op.current.toggle(e)} />
-            <OverlayPanel ref={op}>
-                <DataTable
-                    value={localized}
-                    paginator
-                    rows={8}
-                    rowsPerPageOptions={[5, 10, 25, 50]}
-                    showGridlines
-                    dataKey="_id"
-                    paginatorRight={true}
-                    removableSort
-                >
-                    <Column field="locale" header="Locale" ></Column>
-                    <Column field="name" header="Name" ></Column>
-
-
-                </DataTable>
-            </OverlayPanel>
-        </div>
+        <GridLanguageTemplate localized={localized} />
     )
 
 }
@@ -330,90 +290,68 @@ const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
 
 
 //The component for the nested grid:
-const RowExpansionGrid = ({groups}) => {
+const RowExpansionGrid = ({ groups }) => {
     // console.log('GROUPS: ' + JSON.stringify(groups))
     const [expanded, setExpanded] = useState(null);
 
+  
 
     const logoTemplate = (data) => {
-        console.log('data: ' + JSON.stringify(data))
-        let logo = data?.groupIcon
-        console.log(logo)
-        return (
-            <ImageDiv>
-                {logo ? (
-                    <Image
-                        className="shadow-4"
-                        src={`/uploads/${logo}`}
-                        alt="groupLogo"
-                        sizes="40px"
-                        fill={true}
-                    />
-                ) : (
-                    <>
-                        <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
-                    </>
-
-                )}
-
-            </ImageDiv>
-
-        )
+        return <GridLogoTemplate logo={data?.groupIcon} />
     }
     //function to set data to the subnested grid:
-    const  SubRowExpansionTemplate = (data) => {
+    const SubRowExpansionTemplate = (data) => {
         return <SubRowExpansionGrid subGroups={data.subGroups} />
     }
     return (
-       <SubGridStyles>
-         <span className="subgrid-title" >Groups:</span>
-        <div className="data-table">
-        <DataTable
-            value={groups}
-            rows={8}
-            srollable
-            showGridlines
-            dataKey="_id"
-            rowExpansionTemplate={SubRowExpansionTemplate}
-            expandedRows={expanded}
-            onRowToggle={(e) => setExpanded(e.data)}
-        >
-            <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
-            <Column field="groupIcon" body={logoTemplate} header="Λογότυπο"></Column>
-            <Column field="groupName" header="'Ονομα"></Column>
-            <Column field="groupImage" header="Φωτογραφία"></Column>
-          
-            {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+        <SubGridStyles>
+            <span className="subgrid-title" >Groups:</span>
+            <div className="data-table">
+                <DataTable
+                    value={groups}
+                    rows={8}
+                    srollable
+                    showGridlines
+                    dataKey="_id"
+                    rowExpansionTemplate={SubRowExpansionTemplate}
+                    expandedRows={expanded}
+                    onRowToggle={(e) => setExpanded(e.data)}
+                >
+                    <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
+                    <Column field="groupIcon" body={logoTemplate} header="Λογότυπο"></Column>
+                    <Column field="groupName" header="'Ονομα"></Column>
+                    <Column field="groupImage" header="Φωτογραφία"></Column>
+
+                    {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
             <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
             <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
-        </DataTable>
-        </div>
-       </SubGridStyles>
+                </DataTable>
+            </div>
+        </SubGridStyles>
     );
 };
 
-const SubRowExpansionGrid = ({subGroups}) => {
+const SubRowExpansionGrid = ({ subGroups }) => {
     console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
-   
+
     return (
         < SubGridStyles>
-        <span className="subgrid-title" >SubGroups:</span>
-        <DataTable
-            value={subGroups}
-            showGridlines
-            dataKey="_id"
-            removableSort
-            scrollable
-        >
-            <Column field="subGroupName" header="Softone Όνομα"></Column>
-            <Column field="subGroupIcon" header="Λογότυπο"></Column>
-            <Column field="subGroupImage" header="Φωτογραφία"></Column>
-            <Column field="createdAt" header="createdAt"></Column>
-            {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+            <span className="subgrid-title" >SubGroups:</span>
+            <DataTable
+                value={subGroups}
+                showGridlines
+                dataKey="_id"
+                removableSort
+            >
+                <Column field="subGroupName" header="Softone Όνομα"></Column>
+                <Column field="subGroupIcon" header="Λογότυπο"></Column>
+                <Column field="subGroupImage" header="Φωτογραφία"></Column>
+                <Column field="createdAt" header="createdAt"></Column>
+                {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
             <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
             <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
-        </DataTable>
-       </ SubGridStyles>
+            </DataTable>
+        </ SubGridStyles>
     )
 
 }

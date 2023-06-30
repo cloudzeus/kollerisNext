@@ -24,8 +24,8 @@ const DropDownDetails = styled.div`
 `
 
 const ImageDiv = styled.div`
-    width: 55px;
-    height: 40px;
+    width: 70px;
+    height: 60px;
     padding: 10px;
     /* border-radius: 50%; */
     overflow: hidden;
@@ -33,6 +33,8 @@ const ImageDiv = styled.div`
     justify-content: center;
     align-items: center;
     position: relative;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border-radius: 4px;
    
     img {
         object-fit: contain;
