@@ -44,13 +44,13 @@ export default async function handler(req, res) {
                 email: data.email,
                 password: hashPassword,
                 role: data?.role?.role,
-               
             }
+
 			await connectMongo();
 			const alreadyEmailCheck = await User.findOne({ email: data.email })
 			if(alreadyEmailCheck) {
 				console.log(alreadyEmailCheck)
-			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', user: null})
+			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
 			}
             console.log(object)
 

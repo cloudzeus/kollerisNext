@@ -50,6 +50,8 @@ const markesSchema = new mongoose.Schema({
     status: Boolean,
     
   
+},{
+    timestamps: true
 });
 
 

@@ -13,6 +13,7 @@ import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
 
     export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
+        const [loading, setLoading] = useState(false);
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
         const [selectedProduct, setSelectedProduct] = useState(null);
         const op = useRef(null);
@@ -30,12 +31,14 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
 
 
     const handleSyncRowClick = async () => {
+        setLoading(true)
         let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct })
         console.log(res.data)
         if(!res.data.success) showError()
         showSuccess()
         findExtraSoftone();
         refreshGrid();
+        setLoading(false)
     }
     
     
@@ -62,6 +65,7 @@ import { SyncButtonContainer } from '@/componentsStyles/grid';
             < SyncButtonContainer >
             
             <Button 
+                loading={loading}
                 type="button" 
                 icon="pi pi-sync"  
                 label="sync"

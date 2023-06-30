@@ -246,12 +246,10 @@ export default function TemplateDemo() {
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
-        // console.log('row data: ' + JSON.stringify(rowData))
         return (
             <ActionDiv>
-                <Button disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <Button disabled={!rowData.status} style={{width: '40px', height: '40px'}} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
                 <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-                {/* <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => console.log('delete')} /> */}
             </ActionDiv>
         );
     };
