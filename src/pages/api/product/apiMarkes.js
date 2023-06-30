@@ -61,6 +61,7 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body
+		let {createdFrom} = req.body
 		console.log('data: ' + JSON.stringify(data))
 		try {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
@@ -104,7 +105,7 @@ export default async function handler(req, res) {
 					NAME: data.name,
 					ISACTIVE: 1
 				},
-				createdFrom: data.createdFrom,
+				createdFrom: createdFrom,
 				status: true,
 			}
 			console.log('object');

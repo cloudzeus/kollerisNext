@@ -12,7 +12,8 @@ import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadn
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
 import { useSession } from 'next-auth/react';
-    export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
+
+export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
         const { data: session, status } = useSession()
         const [loading, setLoading] = useState(false);
         const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
@@ -55,7 +56,7 @@ import { useSession } from 'next-auth/react';
     }
 
 
-    const footerTemplate = (data) => {
+    const footerTemplate = () => {
         return (
             <div>
                 <Button  loading={loading} label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSyncRowClick}/>
@@ -68,9 +69,7 @@ import { useSession } from 'next-auth/react';
         <div className="card flex flex-column align-items-center gap-3">
             <Toast ref={toast} />
             < SyncButtonContainer >
-            
             <Button 
-              
                 type="button" 
                 icon="pi pi-sync"  
                 label="sync"
@@ -83,7 +82,6 @@ import { useSession } from 'next-auth/react';
             </Button>
             </ SyncButtonContainer>
            
-
             <OverlayPanel ref={op} showCloseIcon>
                 <DataTable 
                     value={dataNotFoundInAriadne} 
@@ -95,7 +93,6 @@ import { useSession } from 'next-auth/react';
                     onSelectionChange={(e) => setSelectedProduct(e.value)}>
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="NAME" header="Όνομα Softone" sortable style={{minWidth: '12rem'}} />
-                    {/* <Column body={actionBodyTemplate} bodyStyle={{ textAlign: 'right' }}   style={{minWidth: '12rem'}} /> */}
                 </DataTable>
             </OverlayPanel>
         </div>

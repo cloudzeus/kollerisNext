@@ -234,7 +234,7 @@ const AddDialog = ({
             instagramUrl: '',
         }
     });
-
+    const { data: session, status } = useSession()
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
     const [logo, setLogo] = useState('')
@@ -270,7 +270,7 @@ const AddDialog = ({
 
         console.log('body')
         let createdFrom = session.user.user.lastName
-        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: {...body, createdFrom: createdFrom } })
+        let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body, createdFrom: createdFrom })
         if(!res.data.success) return showError(res.data.softoneError)
         setDisabled(true)
         setSubmitted(true)
