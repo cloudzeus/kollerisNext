@@ -10,14 +10,23 @@ import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
-
-
+import axios from 'axios';
 export default function PrimeUploads({label, multiple, mt, mb, setState}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const [didUpload, setDidUpload] = useState(false)
+  
+
+    const handleDeleteImage = async (name) => {
+        try {
+          const response = await axios.post(`/api/uploads/deleteImage`, {name: name});
+          console.log(response)
+        } catch (error) {
+          console.error('Failed to delete image:');
+        }
+      };
 
     const uploadHandler = async (e) => {
         let formData = new FormData();
@@ -33,6 +42,7 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
                 method: 'POST',
                 body: formData,
             });
+            console.log(response)
            
             if (response.ok) {
                 const { urls } = await response.json();
@@ -80,6 +90,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
         setTotalSize(totalSize - file.size);
         callback();
         setDidUpload(false)
+        handleDeleteImage(file.name)
+
+     
     };
 
     const onTemplateClear = () => {
@@ -99,10 +112,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
             <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
                 {chooseButton}
                 {uploadButton}
-                {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{formatedValue} / 1 MB</span>
-                    <ProgressBar value={value} showValue={false} style={{ width: '100%', height: '8px' }}></ProgressBar>
+                    <ProgressBar value={value} showValue={false} style={{ width: '10rem', height: '12px' }}></ProgressBar>
                 </div>
                
             </div>
@@ -136,7 +148,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
                     </div>
                     
                 </div>
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-danger" style={{width: '30px', height: '30px'}} onClick={() => onTemplateRemove(file, props.onRemove)} />
+                {!didUpload ? (
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-danger" style={{width: '30px', height: '30px'}} onClick={() => onTemplateRemove(file, props.onRemove)} />
+                ) : null}
             </ItemTemplate>
         );
     };
@@ -155,6 +169,7 @@ return (
             multiple={multiple}
             accept="image/*"
             maxFileSize={1000000}
+            url="/api/uploads/saveImageMulter"
             customUpload
             uploadHandler={uploadHandler}
             onUpload={onTemplateUpload}

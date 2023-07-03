@@ -17,8 +17,7 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
-
-
+import AddDeleteImages from '@/components/GalleryListSmall';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
@@ -138,8 +137,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         multiple={false}
                     // mb={'30p0x'}
                     />
-                    <GallerySmall
+                    <AddDeleteImages 
                         state={logo}
+                        multiple={false}
                         setState={ setLogo}
                         updateUrl={'/api/product/apiMarkes'}
                         id={gridRowData._id}

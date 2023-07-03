@@ -12,93 +12,130 @@ import {
     ThumbnailContainer,
     LargeImageContainer,
     LargeImage,
-    ThumbnailGrid
+    ThumbnailGrid,
+    TabButton
 } from '@/componentsStyles/gallerySmall';
 
 
 import { Galleria } from 'primereact/galleria';
 
- function ControlledDemo({images}) {
-    const [activeIndex, setActiveIndex] = useState(0)
 
-    const responsiveOptions = [
-        {
-            breakpoint: '991px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '767px',
-            numVisible: 3
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
+import { TabView, TabPanel } from 'primereact/tabview';
 
-   
+export default function AddDeleteImages({label, state, setState, updateUrl, id, multiple }) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [selectedImage, setSelectedImage] = useState( state[0]);
+    const [uploadImages, setUploadImages] = useState( state)
 
-    const next = () => {
-        setActiveIndex(prevState => (prevState === images.length - 1) ? 0 : prevState + 1)
+    const [showGallery, setShowGallery] = useState(true);
+    const [showUploads, setShowUploads] = useState(false);
+    const toast = useRef(null);
+
+
+    const handleShowGallery = () => {
+        setShowGallery (true);
+        setShowUploads(false);
+    }
+    const handleShowUploads = () => {
+        setShowGallery (false);
+        setShowUploads(true);
+    }
+    const handleImageSelect = (image) => {
+        setSelectedImage(image);
+    };
+
+
+    const handleDeleteImage = async (image) => {
+        // Implement your delete logic here
+        console.log(`Deleting image: ${image}`);
+        let newArray = uploadImages.filter(prev => prev !== image)
+        console.log('newArray ' + newArray)
+        setUploadImages(newArray)
+
+        const currentIndex = uploadImages.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
+        setSelectedImage(uploadImages[nextIndex]);
+        console.log(updateUrl)
+        //perfrom the database update upon deletion:
+        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
+        if (resp.data.success) {
+            showSuccess()
+        } else (
+            showError()
+        )
+    };
+
+    const handlePrevImage = () => {
+        const currentIndex = state.indexOf(selectedImage);
+        const prevIndex = (currentIndex - 1 + state.length) % state.length;
+        setSelectedImage(state[prevIndex]);
+    };
+
+    const handleNextImage = () => {
+        const currentIndex = state.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
+        setSelectedImage(state[nextIndex]);
+    };
+
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
-    const prev = () => {
-        setActiveIndex(prevState => (prevState === images.length + 1) ? 0 : prevState - 1)
-    }
-
-    const itemTemplate = (item) => {
-        console.log(item)
+    const tab1HeaderTemplate = (options) => {
         return (
-            <Image
-            src={`/uploads/${item}`}
-            alt="Large"
-            width={600}
-            height={220}
-            sizes="220px"
-        />
+            <TabButton>
+                 <button type="tab-button " onClick={options.onClick} className={options.className}>
+                <i className="pi pi-trash mr-4" />
+                {options.titleElement}
+            </button>
+            </TabButton>
+           
         );
-       
-    }
-
-    const thumbnailTemplate = (item) => {
-        console.log(item)
+    };
+    const tab2HeaderTemplate = (options) => {
         return (
-                  <Image
-            src={`/uploads/${item}`}
-            alt="Large"
-            width={60}
-            height={60}
-        />
+            <TabButton>
+                 <button type="tab-button " onClick={options.onClick} className={options.className}>
+                <i className="pi pi-image mr-4" />
+                {options.titleElement}
+            </button>
+            </TabButton>
+           
         );
-    }
+    };
 
     return (
         <div className="card">
-            <div className="mb-3">
-                <Button icon="pi pi-minus" onClick={prev} />
-                <Button icon="pi pi-plus" onClick={next} className="p-button-secondary ml-2" />
-            </div>
-
-            <Galleria
-                value={images}
-                activeIndex={activeIndex}
-                onItemChange={(e) => setActiveIndex(e.index)}
-                responsiveOptions={responsiveOptions}
-                numVisible={5}
-                item={itemTemplate}
-                thumbnail={thumbnailTemplate}
-                style={{ maxWidth: '640px' }}
-            />
+            <Toast ref={toast} />
+            <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} >
+                <TabPanel header="Διαγραφή"  headerTemplate={tab1HeaderTemplate}>
+                <GalleryNotEmpty
+                     isSmall={true}
+                     uploadImages={uploadImages}
+                     images={state}
+                     selectedImage={selectedImage}
+                     handlePrevImage={handlePrevImage}
+                     handleNextImage={handleNextImage}
+                     handleDeleteImage={handleDeleteImage}
+                     handleImageSelect={handleImageSelect}
+                    />
+                </TabPanel>
+                <TabPanel header="Προσθήκη" headerTemplate={tab2HeaderTemplate}>
+                <PrimeUploads
+                        setState={setState}
+                        multiple={multiple}
+                        mb={'30px'} />
+                </TabPanel>
+            
+            </TabView>
         </div>
     )
 }
-        
 
-
-
-
-
-const GallerySmall = ({ label, state, setState, updateUrl, id }) => {
+const GallerySmall = ({ label, state, setState, updateUrl, id, multiple }) => {
     const [selectedImage, setSelectedImage] = useState( state[0]);
     const [uploadImages, setUploadImages] = useState( state)
 
@@ -164,18 +201,17 @@ const GallerySmall = ({ label, state, setState, updateUrl, id }) => {
         return (
             <>
                 {showGallery ? (
-                    //  <GalleryNotEmpty
-                    //  isSmall={true}
-                    //  uploadImages={uploadImages}
-                    //  images={state}
-                    //  selectedImage={selectedImage}
-                    //  handlePrevImage={handlePrevImage}
-                    //  handleNextImage={handleNextImage}
-                    //  handleDeleteImage={handleDeleteImage}
-                    //  handleImageSelect={handleImageSelect}
-                    // />
-                    <ControlledDemo  uploadImages={uploadImages}
-                     images={state} />
+                     <GalleryNotEmpty
+                     isSmall={true}
+                     uploadImages={uploadImages}
+                     images={state}
+                     selectedImage={selectedImage}
+                     handlePrevImage={handlePrevImage}
+                     handleNextImage={handleNextImage}
+                     handleDeleteImage={handleDeleteImage}
+                     handleImageSelect={handleImageSelect}
+                    />
+                   
                 ) : null}
             </>
         )
@@ -187,7 +223,7 @@ const GallerySmall = ({ label, state, setState, updateUrl, id }) => {
                 {showUploads ? (
                     <PrimeUploads
                         setState={setState}
-                        multiple={true}
+                        multiple={multiple}
                         mb={'30px'} />
                 ) : null}
             </>
@@ -208,6 +244,10 @@ const GallerySmall = ({ label, state, setState, updateUrl, id }) => {
             </ActionsDiv>
             <ComponentGallery />
             <ComponentUploads />
+            <PrimeUploads
+                        setState={setState}
+                        multiple={multiple}
+                        mb={'30px'} />
         </>
     );
 };
@@ -274,4 +314,3 @@ const GalleryNotEmpty = ({
 }
 
 
-export default GallerySmall;

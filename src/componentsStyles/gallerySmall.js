@@ -13,7 +13,6 @@ const GalleryContainer = styled.div`
   display: inline-flex;
   align-items: flex-start;
   max-width: 1400px;
-  
 `;
 
 const LargeImageContainer = styled.div`
@@ -91,6 +90,11 @@ const DeleteButton = styled.div`
     z-index: 1;
 `
 
+const TabButton = styled.div`
+    i {
+      margin-right: 5px;
+    }
+`
 
 
 export {
@@ -102,5 +106,6 @@ export {
     ThumbnailContainer,
     LargeImageContainer,
     LargeImage,
-    ThumbnailGrid 
+    ThumbnailGrid,
+    TabButton
 }
