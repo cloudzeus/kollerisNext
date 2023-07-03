@@ -131,9 +131,7 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
                     <div className="details">
                         <span>
                             { handleFileName(file.name)}
-                         
                         </span>
-                        {/* <small>{new Date().toLocaleDateString()}</small> */}
                         <Tag value={props.formatSize} severity="warning" rounded className="px-3 py-2"  />
                     </div>
                     
@@ -178,7 +176,6 @@ return (
             )}
             {totalSize > 0 && !didUpload ? (
                     <Message severity="warn" text="Πατήστε upload" />
-
             ) : null}
         </div>
     </Container >

@@ -23,60 +23,47 @@ import PrimeSelect from '@/components/Forms/PrimeSelect';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
-    const dispatch = useDispatch();
+    const [parent, setParent] = useState([])
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
+    console.log(gridRowData)
+
+    
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
-  
-   
+
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
-
-
-    const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
-    useEffect(() => {
-        setVideoList(gridRowData?.videoPromoList)
-        //handle images:
-        let newArray = []
-        if (gridRowData?.photosPromoList && gridRowData?.photosPromoList.length > 0) {
-
-            for (let image of gridRowData?.photosPromoList) {
-                newArray.push(image.photosPromoUrl)
-            }
-            setImages(newArray)
-        }
-    }, [gridRowData])
-
+    
+   
 
     const handleEdit = async (data) => {
 
         const object = {
             ...data,
-            videoPromoList: videoList,
-            logo: logo[0]
+        
         }
         console.log('object')
         console.log(object)
-        try {
-            let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
-                if(!resp.data.success) {
-                    return showError(resp.data.softoneError)
-                }
-                showSuccess()
-                setSubmitted(true)
-                hideDialog()
+        // try {
+        //     let user = session.user.user.lastName
+        //     let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
+        //         if(!resp.data.success) {
+        //             return showError(resp.data.softoneError)
+        //         }
+        //         showSuccess()
+        //         setSubmitted(true)
+        //         hideDialog()
                
-        } catch (e) {
-            console.log(e)
-        }
+        // } catch (e) {
+        //     console.log(e)
+        // }
     }
 
     const showSuccess = () => {
@@ -106,94 +93,46 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header="Διόρθωση Προϊόντος"
+                    header= "Διόρθωση Group"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                    <FormTitle>Λεπτομέριες</FormTitle>
-                    <Input
-                        label={'Όνομα'}
-                        name={'name'}
-                        control={control}
-                        required
+                   <FormTitle>Λεπτομέριες</FormTitle>
+                <PrimeSelect
+                    control={control}
+                    name="categoryid"
+                    required
+                    label={'Κατηγορία'}
+                    options={parent}
+                    optionLabel={'label'}
+                    placeholder='label'
+                    optionValue={'value._id'}
+                    // error={errors.categoryName}
                     />
-                    <TextAreaInput
-                        autoResize={true}
-                        label={'Περιγραφή'}
-                        name={'description'}
-                        control={control}
-                    />
-                    < Divider />
-                    <FormTitle>Λογότυπο	</FormTitle>
-                    <PrimeUploads
-                        setState={setLogo}
-                        multiple={false}
-                    // mb={'30px'}
-                    />
-                    < Divider />
-                    <FormTitle>Φωτογραφίες</FormTitle>
-                    <GallerySmall
-                        images={images}
+                <Input
+                    label={'Όνομα Κατηγορίας'}
+                    name={'groupName'}
+                    control={control}
+                    required
+                    // error={errors.groupName}
+                />
+              
+                <FormTitle>Λογότυπο</FormTitle>
+                <GallerySmall
+                        images={[gridRowData?.groupIcon]}
                         updateUrl={'/api/product/apiImages'}
                         id={gridRowData._id}
                     />
-                    < Divider />
-                    <FormTitle>Βίντεο</FormTitle>
-                    <AddMoreInput
-                        setFormData={setVideoList}
-                        formData={videoList}
-                        mb={'30px'}
-                    />
-                    < Divider />
-                    <FormTitle>Pim Access:</FormTitle>
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimUserName'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Pim url:'}
-                        name={'pimAccess.pimPassword'}
-                        required={true}
-                        control={control}
-                    />
-                    < Divider />
-                    <FormTitle>Url</FormTitle>
-                    <Input
-                        label={'Url Ιστοσελίδας:'}
-                        name={'websSiteUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Καταλόγου:'}
-                        name={'officialCatalogueUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Facebook:'}
-                        name={'facebookUrl'}
-                        required={true}
-                        control={control}
-                    />
-                    <Input
-                        label={'Url Instagram:'}
-                        name={'instagramUrl'}
-                        required={true}
-                        control={control}
-                    />
 
+                <FormTitle>Φωτογραφίες</FormTitle>
+               <GallerySmall
+                        images={[gridRowData?.groupImage]}
+                        updateUrl={'/api/product/apiImages'}
+                        id={gridRowData._id}
+                    />
                 </Dialog>
             </form>
         </Container>
@@ -234,7 +173,6 @@ const AddDialog = ({
     const [logo, setLogo] = useState('')
     const [images, setImages] = useState([])
     const [parent, setParent] = useState([])
-    console.log('parent: ' + JSON.stringify(parent))
     const cancel = () => {
         hideDialog()
         reset()
@@ -245,8 +183,6 @@ const AddDialog = ({
         setDisabled(false)
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiGroup', { action: 'findCategoriesNames' })
-            console.log('res')
-            console.log(res.data.result)
             setParent(res.data.result)
 
         }
@@ -256,13 +192,8 @@ const AddDialog = ({
 
 
     const handleAdd = async (data) => {
-        console.log('data')
-        console.log(data)
-        console.log('logo')
-        console.log(logo[0])
-       
+     
         let user = session.user.user.lastName
-        console.log(user)
         const body ={
             ...data,
             groupIcon: logo[0],
@@ -272,7 +203,6 @@ const AddDialog = ({
 
 
         let res = await axios.post('/api/product/apiGroup', { action: 'create', data: body })
-        console.log(res.data)
         if(!res.data.success) return showError(res.data.softoneError)
         let parent = res.data.parent
         setDisabled(true)
