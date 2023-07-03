@@ -13,7 +13,6 @@ const GridLogoTemplate = ({logo}) => {
                       <Image
                 src={`/uploads/${logo}`}
                 alt={logo}
-                sizes="40px"
                 fill={true}
 
             />
@@ -52,7 +51,7 @@ const LargeImage = styled.div`
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     image {
-        object-fit: cover;
+        object-fit: contain;
         border-radius: 5px;
     }
 `
@@ -71,7 +70,7 @@ const ImageDiv = styled.div`
     border-radius: 4px;
    
     img {
-        object-fit: cover;
+        object-fit: contain;
     }
 `
 export default GridLogoTemplate;

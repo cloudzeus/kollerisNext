@@ -31,7 +31,10 @@ export default async function handler(req, res) {
 		try {
 			console.log('fin all markes')
 			await connectMongo();
-			const markes = await Markes.find({});
+			const markes = await Markes.find({})
+			.populate({
+					populate: { path: 'subGroups' }
+				});
 			if (markes) {
 				// console.log(markes)
 				const arrayImages = []
