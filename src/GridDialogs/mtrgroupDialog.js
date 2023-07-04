@@ -19,25 +19,23 @@ import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import AddDeleteImages from '@/components/GalleryListSmall';
+import { original } from '@reduxjs/toolkit';
 
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
-    const [parent, setParent] = useState([])
-   
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
-    console.log(gridRowData)
-
+ 
     //This component has one Image only:
-    const [images, setImages] = useState([gridRowData?.groupImage])
-
+    const [image, setImage] = useState([gridRowData?.groupImage])
     const [logo, setLogo] = useState([gridRowData?.groupIcon])
-    
+    const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
+
 
 
     useEffect(() => {
@@ -46,34 +44,74 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }, [gridRowData, reset]);
     
     useEffect(() => {
-    
+        const handleFetch = async () => {
+            let res = await axios.post('/api/product/apiGroup', { action: 'findCategoriesNames' })
+            setParent(res.data.result)
+
+        }
+        handleFetch()
+
+        //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
+        setLogo(gridRowData?.groupIcon ? [gridRowData?.groupIcon] : [])
+        setImage(gridRowData?.groupImage ? [gridRowData?.groupImage] : [])
     }, [gridRowData])
 
-    const handleEdit = async (data) => {
 
+   
+    const handleEdit = async (data) => {
+        let originalCategory = gridRowData?.category?._id
+        if(typeof data.categoryid === 'undefined') {
+            data.categoryid = gridRowData?.category?._id
+        } 
+
+        
+        let newLogo = logo[0]
+        if(logo.length === 0) {
+            newLogo = ''
+
+        }
+        let newImage = []
+        if(image.length === 0) {
+            newImage = ''
+
+        }
         const object = {
             ...data,
-        
+            groupIcon: newLogo,
+            groupImage: newImage,
+           
         }
-        console.log('object')
-        console.log(object)
-        // try {
-        //     let user = session.user.user.lastName
-        //     let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
-        //         if(!resp.data.success) {
-        //             return showError(resp.data.softoneError)
-        //         }
-        //         showSuccess()
-        //         setSubmitted(true)
-        //         hideDialog()
+
+        console.log('newIamge: ' + JSON.stringify(newImage))
+        console.log('logo: ' + JSON.stringify(logo))
+        let mtrcategory = gridRowData?.category?.softOne?.MTRCATEGORY
+        try {
+            let user = session.user.user.lastName
+            let resp = await axios.post('/api/product/apiGroup', 
+            {
+                action: "update", 
+                data: {...object, updatedFrom: user, }, 
+                id: gridRowData._id, 
+                mtrgroup: gridRowData?.softOne?.MTRGROUP,
+                mtrcategory: mtrcategory,
+                originalCategory: originalCategory
+            })
+            // if(!resp.data.success) {
+            //     return showError(resp.data.softoneError)
+            // }
+           console.log(resp.data)
+            setSubmitted(true)
+            hideDialog()
+        
                
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        } catch (e) {
+            console.log(e)
+        }
+       
     }
 
-    const showSuccess = () => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
     }
     const showError = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
@@ -114,8 +152,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     label={'Κατηγορία'}
                     options={parent}
                     optionLabel={'label'}
-                    placeholder='label'
                     optionValue={'value._id'}
+                    placeholder={gridRowData?.category?.categoryName}
                     // error={errors.categoryName}
                     />
                 <Input
@@ -127,25 +165,22 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 />
               
                 <FormTitle>Λογότυπο</FormTitle>
-                <GallerySmall
-                        images={[gridRowData?.groupIcon]}
-                        updateUrl={'/api/product/apiImages'}
-                        id={gridRowData._id}
-                    />
-                    <AddDeleteImages
+              
+                    <AddDeleteImages 
                         state={logo}
-                        multiple={false}
                         setState={setLogo}
-                        updateUrl={'/api/product/apiMarkes'}
-                        action="deleteLogo"
-                        id={gridRowData._id}
+                        multiple={false}
+                        singleUpload={false}
+                       
                     />
 
                 <FormTitle>Φωτογραφίες</FormTitle>
-               <GallerySmall
-                        images={[gridRowData?.groupImage]}
-                        updateUrl={'/api/product/apiImages'}
-                        id={gridRowData._id}
+                <AddDeleteImages 
+                        state={image}
+                        setState={setImage}
+                        multiple={false}
+                        singleUpload={false}
+                       
                     />
                 </Dialog>
             </form>
@@ -280,6 +315,7 @@ const AddDialog = ({
                 <PrimeUploads
                     setState={setLogo}
                     multiple={false}
+                    singleUpload={true}
                     mb={'20px'} />
 
 
@@ -287,8 +323,9 @@ const AddDialog = ({
                 <PrimeUploads
                     setState={setImages}
                     multiple={false}
-                    mb={'30px'} />
-             
+                    mb={'30px'}
+                    singleUpload={true}
+                    />
                
 
             </Dialog>

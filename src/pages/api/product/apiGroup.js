@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
+import { object } from "yup";
 export default async function handler(req, res) {
 
 	
@@ -104,33 +105,82 @@ export default async function handler(req, res) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
 		}
 	}
+    if (action === 'update') {
+		
+
+		let mtrgroup= req.body.mtrgroup;
+        let mtrcategory = req.body.mtrcategory;
+        let originalCategory = req.body.originalCategory
+		let body = req.body.data;
+
+        //id of the group:
+        let id = req.body.id
+
+        console.log('group id: ' + id)
+	
+        let obj = {
+            category: body.categoryid,
+            groupName: body.groupName,
+            groupIcon: body.groupIcon,
+            groupImage: body.groupImage,
+            softOne: body.softOne,
+            status: true,
+            localized: body.localized,
+            updatedFrom: body?.updatedFrom,
+
+        }
+
+        console.log('obj: ' + JSON.stringify(obj))
+        // let sonftoneObj = {
+        //     mtrgroup: parseInt(mtrgroup),
+        //     username: "Service",
+        //     password: "Service",
+        //     name: body.groupName,
+        //     company: '1001',
+        //     mtrcategory:  parseInt(mtrcategory),
+        // }
+        // console.log('sonftoneObj: ' + JSON.stringify(sonftoneObj))
+   
+		// if(body?.groupName) {
+		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
+        //     console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+            
+		// }
+		
+       
+		try {
+			await connectMongo();
+            const updatedGroup = await MtrGroup.findOneAndUpdate(
+                { _id: id  },
+                obj,
+                { new: true }
+              );
+
+            const updatedCategory = await MtrCategory.updateOne({_id: body.categoryid}, {$push: {groups: id}})
+            let messageArray = []
+            if(updatedCategory) {
+                messageArray.push(`Η κατηγορία ${updatedCategory.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`)
+            }
+
+            console.log('updatedCategory: ' + JSON.stringify(updatedCategory))
+            const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: id}})
+            console.log('pull: ' + JSON.stringify(pull))
+            // if(pull) {
+            //     messageArray.push(`Η κατηγορία ${pull.categoryName} ενημερώθηκε. Μία εγγραφή αφαιρέθηκε από την κατηγορία`)
+            // }
+            console.log('result: ' + JSON.stringify(updatedGroup ))
+			return res.status(200).json({ success: true, result: updatedGroup, message: messageArray });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
+		}
     
-    if (action === 'deleteLogo') {
-        let {id} = req.body;
-		try {
-			await connectMongo();
-			let resp = await Markes.updateOne({ _id: id }, 
-			{ $set: { groupIcon: ''} }
-			);
-			console.log(resp)
-			return res.status(200).json({ success: true, message:'Έγινε update στο λογότυπο', error: null, result: resp });
-		} catch (e) {
-			return res.status(500).json({ success: false, error:'Δεν έγινε update στο λογότυπο', message: null, result: null });
-		}
+	
+		
+	
+
 	}
-    if (action === 'deleteImage') {
-        let {id} = req.body;
-		try {
-			await connectMongo();
-			let resp = await Markes.updateOne({ _id: id }, 
-			{ $set: { groupImage: ''} }
-			);
-			console.log(resp)
-			return res.status(200).json({ success: true, message:'Έγινε update στο λογότυπο', error: null, result: resp });
-		} catch (e) {
-			return res.status(500).json({ success: false, error:'Δεν έγινε update στο λογότυπο', message: null, result: null });
-		}
-	}
+   
 
 }
 

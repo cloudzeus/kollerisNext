@@ -7,7 +7,17 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
 import { InputContainer } from "./PrimeInput";
-export default function PrimeSelect({ control, label, name, required, error, options, optionLabel, optionValue }) {
+export default function PrimeSelect({ 
+        control, 
+        label, 
+        name, 
+        required, 
+        error, 
+        options, 
+        optionLabel, 
+        optionValue,
+        placeholder
+        }) {
 
     return (
         <InputContainer>
@@ -27,8 +37,8 @@ export default function PrimeSelect({ control, label, name, required, error, opt
                                 optionLabel={optionLabel}
                                 optionValue={optionValue}
                                 options={options}
+                                placeholder={placeholder}
                                 focusInputRef={field.ref}
-                                // defaultValue={options[0].label}
                                 value={field.value}
                                 className={error ? classNames({ 'p-invalid': true }) : null}
                                 onChange={(e) => {

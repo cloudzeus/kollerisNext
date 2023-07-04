@@ -21,14 +21,16 @@ import AddDeleteImages from '@/components/GalleryListSmall';
 import { set } from 'mongoose';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
+    const { gridRowData } = useSelector(store => store.grid)
+    console.log('gridrowData: ' + JSON.stringify(gridRowData))
     const { data: session } = useSession()
     const [images, setImages] = useState([])
-    const toast = useRef(null);
-    const { gridRowData } = useSelector(store => store.grid)
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({defaultValues: gridRowData});
     const [logo, setLogo] = useState([])
+
+    const toast = useRef(null);
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({defaultValues: gridRowData});
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
-    console.log(images)
+   
     
    
     useEffect(() => {
