@@ -11,7 +11,7 @@ import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
 import axios from 'axios';
-export default function PrimeUploads({label, multiple, mt, mb, setState}) {
+export default function PrimeUploads({label, multiple, mt, mb, setState, singleUpload}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -29,6 +29,7 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
       };
 
     const uploadHandler = async (e) => {
+
         let formData = new FormData();
         let acceptedFiles = e.files
         formData.append('files', e.files);
@@ -38,23 +39,27 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
         try {
             setDidUpload(false)
             setLoading(true)
+            console.log('form Data ' + JSON.stringify(formData))
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
                 body: formData,
             });
-            console.log(response)
+           
            
             if (response.ok) {
                 const { urls } = await response.json();
-                console.log('uploaded urls')
-                console.log(urls)
+              
                
                 if(urls) {
-                    setState(urls)
+                    if(singleUpload) {
+                        setState(urls)
+                    } else {
+                        setState([...state, ...urls])
+                    }
+                  
                     setDidUpload(true)
                 }
             } else {
-                console.error('Error uploading files');
                 setDidUpload(false)
             }
         } catch (error) {

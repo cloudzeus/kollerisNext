@@ -17,44 +17,33 @@ import {
 } from '@/componentsStyles/gallerySmall';
 
 
-import { Galleria } from 'primereact/galleria';
-
 
 import { TabView, TabPanel } from 'primereact/tabview';
 
-export default function AddDeleteImages({label, state, setState, updateUrl, id, multiple, action }) {
+export default function AddDeleteImages({state, setState,  multiple, handleUploadImages, singleUpload }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [selectedImage, setSelectedImage] = useState( state[0]);
-    const [uploadImages, setUploadImages] = useState( state)
-    const [trigger, setTrigger] = useState(false);
     const toast = useRef(null);
 
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
 
-    console.log('uploadImages')
-    console.log(uploadImages)
+       
 
 
     const handleDeleteImage = async (image) => {
-        // Implement your delete logic here
-        console.log(`Deleting image: ${image}`);
-        let newArray = uploadImages.filter(prev => prev !== image)
-        console.log('newArray ' + newArray)
-        setUploadImages(newArray)
-
-        const currentIndex = uploadImages.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
-        setSelectedImage(uploadImages[nextIndex]);
-        console.log(updateUrl)
-        //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: action, image: image, id: id })
-        if (resp.data.success) {
-            showSuccess()
-        } else (
-            showError()
-        )
+        let newArray = state.filter(prev => prev !== image)
+        console.log(newArray)
+        console.log(newArray)
+        setState(newArray)
+        if(singleUpload) {
+            setSelectedImage('')
+        }
+        const currentIndex = state.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + state.length) % state.length;
+        setSelectedImage(state[nextIndex]);
+      
     };
 
     const handlePrevImage = () => {
@@ -65,7 +54,7 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
 
     const handleNextImage = () => {
         const currentIndex = state.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
+        const nextIndex = (currentIndex + 1 + state.length) % state.length;
         setSelectedImage(state[nextIndex]);
     };
 
@@ -99,16 +88,16 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
         );
     };
 
+
     return (
         <div className="card">
             <Toast ref={toast} />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} >
                 <TabPanel header="Διαγραφή"  headerTemplate={tab1HeaderTemplate}>
-                {uploadImages.length !== 0 ? (
+                {state.length > 0 ? (
                      <GalleryNotEmpty
-                     isSmall={true}
-                     uploadImages={uploadImages}
                      images={state}
+                     isSmall={true}
                      selectedImage={selectedImage}
                      handlePrevImage={handlePrevImage}
                      handleNextImage={handleNextImage}
@@ -121,9 +110,13 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
                 </TabPanel>
                 <TabPanel header="Προσθήκη" headerTemplate={tab2HeaderTemplate}>
                 <PrimeUploads
-                        setState={setState}
-                        multiple={multiple}
-                        mb={'30px'} />
+                    singleUpload={singleUpload}
+                    state={state}
+                    handleUploadImages={handleUploadImages}
+                    setState={setState}
+                    multiple={multiple}
+                    mb={'30px'} 
+                />
                 </TabPanel>
             
             </TabView>
@@ -131,131 +124,14 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
     )
 }
 
-const GallerySmall = ({ label, state, setState, updateUrl, id, multiple }) => {
-    const [selectedImage, setSelectedImage] = useState( state[0]);
-    const [uploadImages, setUploadImages] = useState( state)
-
-    const [showGallery, setShowGallery] = useState(true);
-    const [showUploads, setShowUploads] = useState(false);
-    const toast = useRef(null);
-
-
-    const handleShowGallery = () => {
-        setShowGallery (true);
-        setShowUploads(false);
-    }
-    const handleShowUploads = () => {
-        setShowGallery (false);
-        setShowUploads(true);
-    }
-    const handleImageSelect = (image) => {
-        setSelectedImage(image);
-    };
-
-
-    const handleDeleteImage = async (image) => {
-        // Implement your delete logic here
-        console.log(`Deleting image: ${image}`);
-        let newArray = uploadImages.filter(prev => prev !== image)
-        console.log('newArray ' + newArray)
-        setUploadImages(newArray)
-
-        // //after deletion set another images as the main slideshow image:
-        const currentIndex = uploadImages.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
-        setSelectedImage(uploadImages[nextIndex]);
-        console.log(updateUrl)
-        //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
-        if (resp.data.success) {
-            showSuccess()
-        } else (
-            showError()
-        )
-    };
-
-    const handlePrevImage = () => {
-        const currentIndex = state.indexOf(selectedImage);
-        const prevIndex = (currentIndex - 1 + state.length) % state.length;
-        setSelectedImage(state[prevIndex]);
-    };
-
-    const handleNextImage = () => {
-        const currentIndex = state.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
-        setSelectedImage(state[nextIndex]);
-    };
-
-    const showSuccess = () => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής ενημέρωση στην βάση', life: 4000 });
-    }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
-    }
-
-    const ComponentGallery = () => {
-        return (
-            <>
-                {showGallery ? (
-                     <GalleryNotEmpty
-                     isSmall={true}
-                     uploadImages={uploadImages}
-                     images={state}
-                     selectedImage={selectedImage}
-                     handlePrevImage={handlePrevImage}
-                     handleNextImage={handleNextImage}
-                     handleDeleteImage={handleDeleteImage}
-                     handleImageSelect={handleImageSelect}
-                    />
-                   
-                ) : null}
-            </>
-        )
-    }
-
-    const ComponentUploads = () => {
-        return (
-            <>
-                {showUploads ? (
-                    <PrimeUploads
-                        setState={setState}
-                        multiple={multiple}
-                        mb={'30px'} />
-                ) : null}
-            </>
-        )
-    }
-
-    return (
-        <>
-            <Toast ref={toast} />
-            <label style={{ marginBottom: '5px' }}>
-                {label}
-            </label>
-            <ActionsDiv>
-                <span className="p-buttonset">
-                    <Button label="Διαγραφή" icon="pi pi-images" size="small" onClick={handleShowGallery} />
-                    <Button label="Προσθήκη" icon="pi pi-images" size="small" onClick={handleShowUploads} />
-                </span>
-            </ActionsDiv>
-            <ComponentGallery />
-            <ComponentUploads />
-            <PrimeUploads
-                        setState={setState}
-                        multiple={multiple}
-                        mb={'30px'} />
-        </>
-    );
-};
 
 
 
 const GalleryNotEmpty = ({
-    images, 
-    selectedImage, 
+    selectedImage,
+    images,
     handlePrevImage, 
     handleNextImage, 
-    uploadImages, 
     handleImageSelect,
     handleDeleteImage,
     isSmall
@@ -281,10 +157,10 @@ const GalleryNotEmpty = ({
 
                      </DeleteButton>
                  </LargeImageContainer>
-                    {uploadImages.length > 1 ? (
+                    { images.length > 1 ? (
                          <ThumbnailContainer isSmall={isSmall} >
                          <ThumbnailGrid>
-                             {uploadImages.map((image, index) => (
+                             { images.map((image, index) => (
                                  <Thumbnail key={index} isSelected={image === selectedImage}>
                                      <Image
                                          src={`/uploads/${image}`}

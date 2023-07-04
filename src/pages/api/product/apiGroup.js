@@ -104,7 +104,33 @@ export default async function handler(req, res) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
 		}
 	}
-	
+    
+    if (action === 'deleteLogo') {
+        let {id} = req.body;
+		try {
+			await connectMongo();
+			let resp = await Markes.updateOne({ _id: id }, 
+			{ $set: { groupIcon: ''} }
+			);
+			console.log(resp)
+			return res.status(200).json({ success: true, message:'Έγινε update στο λογότυπο', error: null, result: resp });
+		} catch (e) {
+			return res.status(500).json({ success: false, error:'Δεν έγινε update στο λογότυπο', message: null, result: null });
+		}
+	}
+    if (action === 'deleteImage') {
+        let {id} = req.body;
+		try {
+			await connectMongo();
+			let resp = await Markes.updateOne({ _id: id }, 
+			{ $set: { groupImage: ''} }
+			);
+			console.log(resp)
+			return res.status(200).json({ success: true, message:'Έγινε update στο λογότυπο', error: null, result: resp });
+		} catch (e) {
+			return res.status(500).json({ success: false, error:'Δεν έγινε update στο λογότυπο', message: null, result: null });
+		}
+	}
 
 }
 

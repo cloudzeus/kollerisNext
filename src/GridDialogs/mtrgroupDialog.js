@@ -18,18 +18,22 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
+import AddDeleteImages from '@/components/GalleryListSmall';
 
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const [parent, setParent] = useState([])
-    const [images, setImages] = useState([])
-    const [logo, setLogo] = useState([])
+   
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     console.log(gridRowData)
 
+    //This component has one Image only:
+    const [images, setImages] = useState([gridRowData?.groupImage])
+
+    const [logo, setLogo] = useState([gridRowData?.groupIcon])
     
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -41,7 +45,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
-   
+    useEffect(() => {
+    
+    }, [gridRowData])
 
     const handleEdit = async (data) => {
 
@@ -124,6 +130,14 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 <GallerySmall
                         images={[gridRowData?.groupIcon]}
                         updateUrl={'/api/product/apiImages'}
+                        id={gridRowData._id}
+                    />
+                    <AddDeleteImages
+                        state={logo}
+                        multiple={false}
+                        setState={setLogo}
+                        updateUrl={'/api/product/apiMarkes'}
+                        action="deleteLogo"
                         id={gridRowData._id}
                     />
 
