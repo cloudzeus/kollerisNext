@@ -22,19 +22,19 @@ import { Galleria } from 'primereact/galleria';
 
 import { TabView, TabPanel } from 'primereact/tabview';
 
-export default function AddDeleteImages({label, state, setState, updateUrl, id, multiple }) {
+export default function AddDeleteImages({label, state, setState, updateUrl, id, multiple, action }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [selectedImage, setSelectedImage] = useState( state[0]);
     const [uploadImages, setUploadImages] = useState( state)
-
-    console.log('state' + state)
+    const [trigger, setTrigger] = useState(false);
     const toast = useRef(null);
 
-
-  
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
+
+    console.log('uploadImages')
+    console.log(uploadImages)
 
 
     const handleDeleteImage = async (image) => {
@@ -49,7 +49,7 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
         setSelectedImage(uploadImages[nextIndex]);
         console.log(updateUrl)
         //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
+        let resp = await axios.post(updateUrl, { action: action, image: image, id: id })
         if (resp.data.success) {
             showSuccess()
         } else (
@@ -104,7 +104,8 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
             <Toast ref={toast} />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} >
                 <TabPanel header="Διαγραφή"  headerTemplate={tab1HeaderTemplate}>
-                <GalleryNotEmpty
+                {uploadImages.length !== 0 ? (
+                     <GalleryNotEmpty
                      isSmall={true}
                      uploadImages={uploadImages}
                      images={state}
@@ -114,6 +115,9 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
                      handleDeleteImage={handleDeleteImage}
                      handleImageSelect={handleImageSelect}
                     />
+                ) : (
+                    <p>Δεν υπάρχουν φωτογραφίες</p>
+                )}
                 </TabPanel>
                 <TabPanel header="Προσθήκη" headerTemplate={tab2HeaderTemplate}>
                 <PrimeUploads
@@ -258,7 +262,6 @@ const GalleryNotEmpty = ({
     }) => {
     return (
         <>
-            {images.length > 0 ? (
                  <GalleryContainer isSmall={isSmall}>
                  <LargeImageContainer  isSmall={isSmall}>
                      <LargeImage isSmall={isSmall}>
@@ -298,9 +301,7 @@ const GalleryNotEmpty = ({
                      </ThumbnailContainer>
                     ) : null}
              </GalleryContainer>
-            ) : (
-                <p>Δεν υπάρχουν φωτογραφίες</p>
-            )}
+           
         </>
     )
 }
