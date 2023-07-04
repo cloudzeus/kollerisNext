@@ -94,9 +94,8 @@ export default async function handler(req, res) {
                 }}
             )
             console.log(updateGroups)
-            // console.log('updateCategories: ' + JSON.stringify(updateCategories))
-            // let parentName = updateGroups.groupName
-            // return res.status(200).json({ success: true, result: group, error: null, parent: parentName  });
+            let parentName = updateGroups.groupName
+            return res.status(200).json({ success: true, result: group, error: null, parent: parentName  });
                 
 
 		} catch (error) {

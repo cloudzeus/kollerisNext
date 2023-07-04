@@ -40,6 +40,10 @@ import { model, models, Schema } from 'mongoose';
             }
         }
     ],
+    status: Boolean,
+    updatedFrom: String,
+    createdFrom: String,
+    deletedFrom: String,
     groups: [{ type: Schema.Types.ObjectId, ref: "MtrGroup" }],
 }, {
 
@@ -142,7 +146,11 @@ const MtrSubGroupSchema = new mongoose.Schema({
                 type: String
             }
         }
-    ]
+    ],
+    status: Boolean,
+    updatedFrom: String,
+    createdFrom: String,
+    deletedFrom: String,
 }, {
 
     timestamps: true,

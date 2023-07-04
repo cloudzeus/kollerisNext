@@ -45,7 +45,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     
     useEffect(() => {
         const handleFetch = async () => {
-            let res = await axios.post('/api/product/apiGroup', { action: 'findCategoriesNames' })
+            let res = await axios.post('/api/product/apiSubGroup', { action: 'findGroupNames' })
             setParent(res.data.result)
 
         }
@@ -55,6 +55,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         setLogo(gridRowData?.groupIcon ? [gridRowData?.groupIcon] : [])
         setImage(gridRowData?.groupImage ? [gridRowData?.groupImage] : [])
     }, [gridRowData])
+
+
+    useEffect(() => {
+       
+    }, [])
 
 
    
@@ -155,12 +160,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     options={parent}
                     optionLabel={'label'}
                     optionValue={'value._id'}
-                    placeholder={gridRowData?.category?.categoryName}
+                    placeholder={gridRowData?.group?.groupName}
                     // error={errors.categoryName}
                     />
                 <Input
-                    label={'Όνομα Κατηγορίας'}
-                    name={'groupName'}
+                    label={'Όνομα Sub Group'}
+                    name={'subGroupName'}
                     control={control}
                     required
                     // error={errors.groupName}
