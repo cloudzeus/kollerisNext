@@ -213,10 +213,10 @@ export default function Categories() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                <Column field="groupIcon" header="Λογότυπο" body={imageTemplate} ></Column>
                 <Column field="category.categoryName" header="Κατηγορία" sortable ></Column>
                 <Column field="groupName" header="Όνομα Group" sortable ></Column>
                 <Column field="groupImage" header="Φωτογραφία Group" body={logoTemplate} ></Column>
-                <Column field="groupIcon" header="Λογότυπο" body={imageTemplate} ></Column>
                 <Column body={LocaleTemplate} header="Localized" ></Column>
                 <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>

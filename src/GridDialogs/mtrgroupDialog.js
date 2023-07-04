@@ -70,7 +70,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             newLogo = ''
 
         }
-        let newImage = []
+        let newImage = image[0]
         if(image.length === 0) {
             newImage = ''
 
@@ -101,8 +101,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             // }
            console.log(resp.data)
             setSubmitted(true)
+            showSuccess('Η εγγραφή ενημερώθηκε')
+            showSuccess(resp.data.message)
             hideDialog()
-        
+            
                
         } catch (e) {
             console.log(e)
@@ -165,7 +167,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 />
               
                 <FormTitle>Λογότυπο</FormTitle>
-              
                     <AddDeleteImages 
                         state={logo}
                         setState={setLogo}

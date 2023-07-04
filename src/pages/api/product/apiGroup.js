@@ -158,19 +158,16 @@ export default async function handler(req, res) {
               );
 
             const updatedCategory = await MtrCategory.updateOne({_id: body.categoryid}, {$push: {groups: id}})
-            let messageArray = []
-            if(updatedCategory) {
-                messageArray.push(`Η κατηγορία ${updatedCategory.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`)
-            }
-
-            console.log('updatedCategory: ' + JSON.stringify(updatedCategory))
             const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: id}})
-            console.log('pull: ' + JSON.stringify(pull))
-            // if(pull) {
-            //     messageArray.push(`Η κατηγορία ${pull.categoryName} ενημερώθηκε. Μία εγγραφή αφαιρέθηκε από την κατηγορία`)
-            // }
+            let message;
+
+
+            if(updatedCategory) {
+                message = `Η κατηγορία ${body.category.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`
+            }
+           
             console.log('result: ' + JSON.stringify(updatedGroup ))
-			return res.status(200).json({ success: true, result: updatedGroup, message: messageArray });
+			return res.status(200).json({ success: true, result: updatedGroup, message: message });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
 		}
