@@ -11,7 +11,7 @@ import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
 import axios from 'axios';
-export default function PrimeUploads({label, multiple, mt, mb, setState, singleUpload}) {
+export default function PrimeUploads({label, multiple, mt, mb, setState, singleUpload, state}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
