@@ -27,19 +27,11 @@ export default function AddDeleteImages({label, state, setState, updateUrl, id, 
     const [selectedImage, setSelectedImage] = useState( state[0]);
     const [uploadImages, setUploadImages] = useState( state)
 
-    const [showGallery, setShowGallery] = useState(true);
-    const [showUploads, setShowUploads] = useState(false);
+    console.log('state' + state)
     const toast = useRef(null);
 
 
-    const handleShowGallery = () => {
-        setShowGallery (true);
-        setShowUploads(false);
-    }
-    const handleShowUploads = () => {
-        setShowGallery (false);
-        setShowUploads(true);
-    }
+  
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };

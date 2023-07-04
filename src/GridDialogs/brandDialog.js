@@ -21,17 +21,17 @@ import AddDeleteImages from '@/components/GalleryListSmall';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
-    const dispatch = useDispatch();
     const [images, setImages] = useState([])
-    const [newImages, setNewImages] = useState([])
-    console.log(newImages)
-    const [logo, setLogo] = useState([])
+   
+    const [logo, setLogo] = useState([gridRowData?.logo])
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
+    console.log('gridRowData')
+    console.log(gridRowData.logo)
     
    
     useEffect(() => {
@@ -66,8 +66,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         console.log(object)
         try {
             let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK, newImages: newImages})
-            let respImage = await axios.post('/api/product/apiMarkes', {action: "addImages", id: gridRowData._id, images: newImages})
+            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
+            let respImage = await axios.post('/api/product/apiMarkes', {action: "addImages", id: gridRowData._id, images: images})
             console.log('respImages: ' + JSON.stringify(respImage.data))
             if(!resp.data.success) {
                 return showError(resp.data.softoneError)
@@ -132,26 +132,24 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     />
                     < Divider />
                     <FormTitle>Λογότυπο	</FormTitle>
-                    <PrimeUploads
-                        setState={setLogo}
-                        multiple={false}
-                    // mb={'30p0x'}
-                    />
+                   
                     <AddDeleteImages 
                         state={logo}
                         multiple={false}
-                        setState={ setLogo}
+                        setState={setLogo}
                         updateUrl={'/api/product/apiMarkes'}
                         id={gridRowData._id}
                     />
                     < Divider />
                     <FormTitle>Φωτογραφίες</FormTitle>
-                    <GallerySmall
+                    <AddDeleteImages 
                         state={images}
-                        setState={setNewImages}
+                        multiple={false}
+                        setState={setImages}
                         updateUrl={'/api/product/apiMarkes'}
                         id={gridRowData._id}
                     />
+                   
                     < Divider />
                     <FormTitle>Βίντεο</FormTitle>
                     <AddMoreInput
