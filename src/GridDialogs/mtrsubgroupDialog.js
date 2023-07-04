@@ -29,8 +29,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
  
     //This component has one Image only:
-    const [image, setImage] = useState([gridRowData?.groupImage])
-    const [logo, setLogo] = useState([gridRowData?.groupIcon])
+    const [image, setImage] = useState([gridRowData?.subGroupImage])
+    const [logo, setLogo] = useState([gridRowData?.subGroupIcon])
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -52,8 +52,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         handleFetch()
 
         //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
-        setLogo(gridRowData?.groupIcon ? [gridRowData?.groupIcon] : [])
-        setImage(gridRowData?.groupImage ? [gridRowData?.groupImage] : [])
+        setLogo(gridRowData?.subGroupIcon ? [gridRowData?.subGroupIcon] : [])
+        setImage(gridRowData?.subGroupImage ? [gridRowData?.subGroupImage] : [])
     }, [gridRowData])
 
 
@@ -64,11 +64,16 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
    
     const handleEdit = async (data) => {
-        let originalCategory = gridRowData?.category?._id
-        if(typeof data.groupid === 'undefined') {
-            data. groupid = gridRowData?.category?._id
+        console.log(gridRowData )
+        let user = session.user.user.lastName
+        let originalGroup = gridRowData?.group
+   
+        //User hasn't selected a new group, so we keep the original one
+        if(typeof data.categoryid === 'undefined') {
+            data.groupid = gridRowData?.group
         } 
-
+        console.log('originalGroup: ' + JSON.stringify(originalGroup))
+      
         
         let newLogo = logo[0]
         if(logo.length === 0) {
@@ -87,28 +92,31 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
            
         }
 
-        console.log('newIamge: ' + JSON.stringify(newImage))
-        console.log('logo: ' + JSON.stringify(logo))
-        let mtrcategory = gridRowData?.category?.softOne?.MTRCATEGORY
+        // console.log('object: ' + JSON.stringify(object))
+
+        // console.log('newIamge: ' + JSON.stringify(newImage))
+        // console.log('logo: ' + JSON.stringify(logo))
+        //cccSubgroup2 to update the softone table:
+        let cccSubgroup2 = gridRowData?.softOne?.cccSubgroup2
+
         try {
-            let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiGroup', 
+           
+            let resp = await axios.post('/api/product/apiSubGroup', 
             {
                 action: "update", 
                 data: {...object, updatedFrom: user, }, 
                 id: gridRowData._id, 
-                mtrgroup: gridRowData?.softOne?.MTRGROUP,
-                mtrcategory: mtrcategory,
-                originalCategory: originalCategory
+                cccSubgroup2:cccSubgroup2 ,
+                originalGroup: originalGroup
             })
             // if(!resp.data.success) {
             //     return showError(resp.data.softoneError)
             // }
-           console.log(resp.data)
-            setSubmitted(true)
-            showSuccess('Η εγγραφή ενημερώθηκε')
-            showSuccess(resp.data.message)
-            hideDialog()
+        //    console.log(resp.data)
+        //     setSubmitted(true)
+        //     showSuccess('Η εγγραφή ενημερώθηκε')
+        //     showSuccess(resp.data.message)
+        //     hideDialog()
             
                
         } catch (e) {
@@ -154,13 +162,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    <FormTitle>Λεπτομέριες</FormTitle>
                 <PrimeSelect
                     control={control}
-                    name="categoryid"
+                    name="groupid"
                     required
-                    label={'Κατηγορία'}
+                    label={'Yποκατηγορία'}
                     options={parent}
                     optionLabel={'label'}
                     optionValue={'value._id'}
-                    placeholder={gridRowData?.group?.groupName}
+                    placeholder={gridRowData?.group?.subGroupName}
                     // error={errors.categoryName}
                     />
                 <Input

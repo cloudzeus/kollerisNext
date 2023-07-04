@@ -103,7 +103,78 @@ export default async function handler(req, res) {
 		}
 	}
 	
+    if (action === 'update') {
+		
 
+        let {originalGroup} = req.body
+		let body = req.body.data;
+        console.log('body: ' + JSON.stringify(body))
+        //id of the group:
+        let id = req.body.id
+
+        console.log('group id: ' + id)
+	
+        let obj = {
+            group: body.groupid,
+            subGroupName: body.subGroupName,
+            subGroupIcon: body.subGroupIcon,
+            subGroupImage: body.subGroupImage,
+            softOne: body.softOne,
+            status: true,
+            localized: body.localized,
+            updatedFrom: body?.updatedFrom,
+
+        }
+
+        console.log('obj: ' + JSON.stringify(obj))
+        let sonftoneObj = {
+            username:"Service",
+            password: "Service",
+            cccSubgroup2: body.cccSubgroup2,
+            short: 1107,
+            name: "ΔΙΑΦΟΡΑ 01",
+            mtrgroup : data.originalGroup
+        }
+
+
+        console.log('sonftoneObj: ' + JSON.stringify(sonftoneObj))
+   
+		// if(body?.groupName) {
+		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
+        //     console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+            
+		// }
+		
+       
+		// try {
+		// 	await connectMongo();
+        //     const updatedGroup = await MtrGroup.findOneAndUpdate(
+        //         { _id: id  },
+        //         obj,
+        //         { new: true }
+        //       );
+
+        //     const updatedCategory = await MtrCategory.updateOne({_id: body.categoryid}, {$push: {groups: id}})
+        //     const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: id}})
+        //     let message;
+
+
+        //     if(updatedCategory) {
+        //         message = `Η κατηγορία ${body.category.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`
+        //     }
+           
+        //     console.log('result: ' + JSON.stringify(updatedGroup ))
+		// 	return res.status(200).json({ success: true, result: updatedGroup, message: message });
+		// } catch (error) {
+		// 	return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
+		// }
+    
+	
+		
+	
+
+	}
 	
 
 }
