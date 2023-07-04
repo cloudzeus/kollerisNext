@@ -108,8 +108,6 @@ export default async function handler(req, res) {
     if (action === 'update') {
 		
 
-		let mtrgroup= req.body.mtrgroup;
-        let mtrcategory = req.body.mtrcategory;
         let originalCategory = req.body.originalCategory
 		let body = req.body.data;
 

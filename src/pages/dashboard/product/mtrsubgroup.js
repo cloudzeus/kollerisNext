@@ -8,7 +8,7 @@ import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
-import { AddDialog, EditDialog } from '@/GridDialogs/mtrgroupDialog';
+import { AddDialog, EditDialog } from '@/GridDialogs/mtrsubgroupDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
 import {  ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
@@ -42,7 +42,8 @@ export default function Categories() {
 
 
     const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiGroup', { action: 'findAll' })
+        let res = await axios.post('/api/product/apiSubGroup', { action: 'findAll' })
+        console.log(res.data)
         setData(res.data.result)
 
     }
@@ -149,12 +150,12 @@ export default function Categories() {
 
     // CUSTOM TEMPLATES FOR COLUMNS
     const logoTemplate = (data) => {
-        return <GridLogoTemplate logo={data.groupIcon} />
+        return <GridLogoTemplate logo={data.subGroupIcon} />
      }
 
 
     const imageTemplate = (data) => {
-        return <GridLogoTemplate logo={data.groupImage} />
+        return <GridLogoTemplate logo={data.subGroupImage} />
      }
     
     const actionBodyTemplate = (rowData) => {
@@ -182,9 +183,7 @@ export default function Categories() {
     };
 
 
-    const RowExpansionTemplate = (data) => {
-        return <RowExpansionGrid subGroups={data.subGroups} />
-    }
+  
 
     return (
         <AdminLayout >
@@ -197,25 +196,20 @@ export default function Categories() {
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
-                rowExpansionTemplate={RowExpansionTemplate}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="_id"
                 filters={filters}
                 paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
-                //edit:
                 loading={loading}
                 editMode="row"
                 selectOnEdit
             >
-                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="groupIcon" header="Λογότυπο" body={imageTemplate} ></Column>
-                <Column field="category.categoryName" header="Κατηγορία" sortable ></Column>
-                <Column field="groupName" header="Όνομα Group" sortable ></Column>
-                <Column field="groupImage" header="Φωτογραφία Group" body={logoTemplate} ></Column>
-                  {/* <Column body={LocaleTemplate} header="Localized" ></Column> */}
+                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="subGroupName" header="Κατηγορία" sortable ></Column>
+                <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
+                <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column>
+                  <Column body={LocaleTemplate} header="Localized" ></Column>
               
                 <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
@@ -262,7 +256,9 @@ const ActiveTempate = ({ status }) => {
 
 const LocaleTemplate = ({ localized }) => {
     return (
-        <GridLanguageTemplate localized={localized} />
+        <>
+            {localized.length > 0 ? ( <GridLanguageTemplate localized={localized} />) : null}
+        </>
     )
 
 }
@@ -295,66 +291,7 @@ const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
 
 
 //The component for the nested grid:
-const RowExpansionGrid = ({ subGroups }) => {
-    // console.log('GROUPS: ' + JSON.stringify(groups))
-    console.log(subGroups)
-    const logoTemplate = (data) => {
-        return <GridLogoTemplate logo={data?.groupIcon} />
-    }
-  
-   
-    return (
-        <>
-            {subGroups.length > 0 ? (
-                 <SubGridStyles>
-                 <span className="subgrid-title" >Subgroups:</span>
-                 <div className="data-table">
-                     <DataTable
-                         value={subGroups}
-                         rows={8}
-                         srollable
-                         showGridlines
-                         dataKey="_id"
-     
-                         >
-                         <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο"></Column>
-                         <Column field="subGroupName" header="'Ονομα"></Column>
-     
-                         {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                 <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                 <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
-                     </DataTable>
-                 </div>
-             </SubGridStyles>
-            ): <p>Δεν υπάρχουν subGroups</p>}
-        </>
-    );
-};
 
-const SubRowExpansionGrid = ({ subGroups }) => {
-    console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
-
-    return (
-        < SubGridStyles>
-            <span className="subgrid-title" >SubGroups:</span>
-            <DataTable
-                value={subGroups}
-                showGridlines
-                dataKey="_id"
-                removableSort
-            >
-                <Column field="subGroupName" header="Softone Όνομα"></Column>
-                <Column field="subGroupIcon" header="Λογότυπο"></Column>
-                <Column field="subGroupImage" header="Φωτογραφία"></Column>
-                <Column field="createdAt" header="createdAt"></Column>
-                {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
-            </DataTable>
-        </ SubGridStyles>
-    )
-
-}
 
 
 
