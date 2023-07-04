@@ -17,21 +17,19 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
-
-
+import AddDeleteImages from '@/components/GalleryListSmall';
+import { set } from 'mongoose';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
-    const { data: session, status } = useSession()
-    const dispatch = useDispatch();
+    const { data: session } = useSession()
     const [images, setImages] = useState([])
-    const [logo, setLogo] = useState([])
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
-        defaultValues: gridRowData
-    });
-
-  
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({defaultValues: gridRowData});
+    const [logo, setLogo] = useState([])
+    const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
+    console.log(images)
+    
    
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
@@ -39,7 +37,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }, [gridRowData, reset]);
 
 
-    const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
         //handle images:
@@ -51,27 +48,44 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             }
             setImages(newArray)
         }
+
+        //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
+        setLogo(gridRowData?.logo ? [gridRowData?.logo] : [])
     }, [gridRowData])
 
 
     const handleEdit = async (data) => {
+        console.log('data logo: ' + JSON.stringify(logo))
+        let newLogo = logo[0]
+        if(logo.length === 0) {
+            newLogo = ''
 
+        }
+        let newImages = []
+        for(let image of images) {
+            let obj = {
+                name: image,
+                photosPromoUrl: image
+            }
+            newImages.push(obj)
+        }
         const object = {
             ...data,
             videoPromoList: videoList,
-            logo: logo[0]
+            logo: newLogo ,
+            photosPromoList: newImages 
         }
-        console.log('object')
-        console.log(object)
+      
         try {
             let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user}, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
-                if(!resp.data.success) {
-                    return showError(resp.data.softoneError)
-                }
-                showSuccess()
-                setSubmitted(true)
-                hideDialog()
+            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user, }, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
+            if(!resp.data.success) {
+                return showError(resp.data.softoneError)
+            }
+            showSuccess()
+            setSubmitted(true)
+            hideDialog()
+        
                
         } catch (e) {
             console.log(e)
@@ -90,6 +104,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         hideDialog()
     }
 
+  
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Ακύρωση" icon="pi pi-times" severity="info" outlined onClick={handleClose} />
@@ -127,18 +142,23 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     />
                     < Divider />
                     <FormTitle>Λογότυπο	</FormTitle>
-                    <PrimeUploads
+                   
+                    <AddDeleteImages 
+                        state={logo}
                         setState={setLogo}
                         multiple={false}
-                    // mb={'30px'}
+                        singleUpload={true}
+                        id={gridRowData._id}
                     />
                     < Divider />
                     <FormTitle>Φωτογραφίες</FormTitle>
-                    <GallerySmall
-                        images={images}
-                        updateUrl={'/api/product/apiImages'}
+                    <AddDeleteImages 
+                        state={images}
+                        setState={setImages}
+                        multiple={true}
                         id={gridRowData._id}
                     />
+                   
                     < Divider />
                     <FormTitle>Βίντεο</FormTitle>
                     <AddMoreInput

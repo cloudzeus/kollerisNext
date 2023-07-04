@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
-import { TemplateContainer } from "@/componentsStyles/grid/gridStyles";
 const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
     return (
         <>

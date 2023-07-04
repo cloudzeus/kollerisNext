@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 				status: true,
                 email: data.email,
                 password: hashPassword,
-                role: data?.role?.role,
+                role: data?.role,
             }
 
 			await connectMongo();

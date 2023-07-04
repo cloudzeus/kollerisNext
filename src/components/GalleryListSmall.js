@@ -12,82 +12,50 @@ import {
     ThumbnailContainer,
     LargeImageContainer,
     LargeImage,
-    ThumbnailGrid
+    ThumbnailGrid,
+    TabButton
 } from '@/componentsStyles/gallerySmall';
 
 
 
+import { TabView, TabPanel } from 'primereact/tabview';
 
-
-
-
-const GallerySmall = ({ label, images, updateUrl, id }) => {
-    const [selectedImage, setSelectedImage] = useState(images[0]);
-    const [imagesToUpload, setImagesToUpload] = useState([])
-    const [uploadImages, setUploadImages] = useState(images)
-
-    const [showGallery, setShowGallery] = useState(true);
-    const [showUploads, setShowUploads] = useState(false);
+export default function AddDeleteImages({state, setState,  multiple, handleUploadImages, singleUpload }) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [selectedImage, setSelectedImage] = useState( state[0]);
     const toast = useRef(null);
 
-
-    const handleShowGallery = () => {
-        setShowGallery (true);
-        setShowUploads(false);
-    }
-    const handleShowUploads = () => {
-        setShowGallery (false);
-        setShowUploads(true);
-    }
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
 
-    useEffect(() => {
-        const handleAdd = async () => {
-            let resp = await axios.post('/api/product/apiImages', {action: "addImages", id: id, images: imagesToUpload})
-            console.log(resp.data)
-            if(resp.data.success) {
-                showSuccess()
-            } else {
-                showError()
-            }
-        }
-        if (imagesToUpload.length > 0) {
-            handleAdd();
-        }
-    }, [imagesToUpload, id])
+       
+
 
     const handleDeleteImage = async (image) => {
-        // Implement your delete logic here
-        console.log(`Deleting image: ${image}`);
-        let newArray = uploadImages.filter(prev => prev !== image)
+        let newArray = state.filter(prev => prev !== image)
         console.log(newArray)
-        setUploadImages(newArray)
-
-        // //after deletion set another images as the main slideshow image:
-        const currentIndex = uploadImages.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
-        setSelectedImage(uploadImages[nextIndex]);
-        //perfrom the database update upon deletion:
-        let resp = await axios.post(updateUrl, { action: 'deleteImages', image: image, id: id })
-        if (resp.data.success) {
-            showSuccess()
-        } else (
-            showError()
-        )
+        console.log(newArray)
+        setState(newArray)
+        if(singleUpload) {
+            setSelectedImage('')
+        }
+        const currentIndex = state.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + state.length) % state.length;
+        setSelectedImage(state[nextIndex]);
+      
     };
 
     const handlePrevImage = () => {
-        const currentIndex = images.indexOf(selectedImage);
-        const prevIndex = (currentIndex - 1 + images.length) % images.length;
-        setSelectedImage(images[prevIndex]);
+        const currentIndex = state.indexOf(selectedImage);
+        const prevIndex = (currentIndex - 1 + state.length) % state.length;
+        setSelectedImage(state[prevIndex]);
     };
 
     const handleNextImage = () => {
-        const currentIndex = images.indexOf(selectedImage);
-        const nextIndex = (currentIndex + 1 + uploadImages.length) % uploadImages.length;
-        setSelectedImage(images[nextIndex]);
+        const currentIndex = state.indexOf(selectedImage);
+        const nextIndex = (currentIndex + 1 + state.length) % state.length;
+        setSelectedImage(state[nextIndex]);
     };
 
     const showSuccess = () => {
@@ -97,71 +65,79 @@ const GallerySmall = ({ label, images, updateUrl, id }) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
-    const ComponentGallery = () => {
+    const tab1HeaderTemplate = (options) => {
         return (
-            <>
-                {showGallery ? (
+            <TabButton>
+                 <button type="tab-button " onClick={options.onClick} className={options.className}>
+                <i className="pi pi-trash mr-4" />
+                {options.titleElement}
+            </button>
+            </TabButton>
+           
+        );
+    };
+    const tab2HeaderTemplate = (options) => {
+        return (
+            <TabButton>
+                 <button type="tab-button " onClick={options.onClick} className={options.className}>
+                <i className="pi pi-image mr-4" />
+                {options.titleElement}
+            </button>
+            </TabButton>
+           
+        );
+    };
+
+
+    return (
+        <div className="card">
+            <Toast ref={toast} />
+            <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} >
+                <TabPanel header="Διαγραφή"  headerTemplate={tab1HeaderTemplate}>
+                {state.length > 0 ? (
                      <GalleryNotEmpty
+                     images={state}
                      isSmall={true}
-                     uploadImages={uploadImages}
-                     images={images}
                      selectedImage={selectedImage}
                      handlePrevImage={handlePrevImage}
                      handleNextImage={handleNextImage}
                      handleDeleteImage={handleDeleteImage}
                      handleImageSelect={handleImageSelect}
                     />
-                ) : null}
-            </>
-        )
-    }
+                ) : (
+                    <p>Δεν υπάρχουν φωτογραφίες</p>
+                )}
+                </TabPanel>
+                <TabPanel header="Προσθήκη" headerTemplate={tab2HeaderTemplate}>
+                <PrimeUploads
+                    singleUpload={singleUpload}
+                    state={state}
+                    handleUploadImages={handleUploadImages}
+                    setState={setState}
+                    multiple={multiple}
+                    mb={'30px'} 
+                />
+                </TabPanel>
+            
+            </TabView>
+        </div>
+    )
+}
 
-    const ComponentUploads = () => {
-        return (
-            <>
-                {showUploads ? (
-                    <PrimeUploads
-                        setState={setImagesToUpload}
-                        multiple={true}
-                        mb={'30px'} />
-                ) : null}
-            </>
-        )
-    }
-
-    return (
-        <>
-            <Toast ref={toast} />
-            <label style={{ marginBottom: '5px' }}>
-                {label}
-            </label>
-            <ActionsDiv>
-                <span className="p-buttonset">
-                    <Button label="Gallery" icon="pi pi-images" size="small" onClick={handleShowGallery} />
-                    <Button label="Προσθήκη" icon="pi pi-images" size="small" onClick={handleShowUploads} />
-                </span>
-            </ActionsDiv>
-            <ComponentGallery />
-            <ComponentUploads />
-        </>
-    );
-};
 
 
 
 const GalleryNotEmpty = ({
-    images, 
-    selectedImage, 
+    selectedImage,
+    images,
     handlePrevImage, 
     handleNextImage, 
-    uploadImages, 
     handleImageSelect,
     handleDeleteImage,
     isSmall
     }) => {
     return (
         <>
-            {images.length > 0 ? (
                  <GalleryContainer isSmall={isSmall}>
                  <LargeImageContainer  isSmall={isSmall}>
                      <LargeImage isSmall={isSmall}>
@@ -181,30 +157,29 @@ const GalleryNotEmpty = ({
 
                      </DeleteButton>
                  </LargeImageContainer>
-                 <ThumbnailContainer isSmall={isSmall} >
-                     <ThumbnailGrid>
-                         {uploadImages.map((image, index) => (
-                             <Thumbnail key={index} isSelected={image === selectedImage}>
-                                 <Image
-                                     src={`/uploads/${image}`}
-                                     alt={`Thumbnail ${index}`}
-                                     fill={true}
-                                     sizes="100px"
-                                     onClick={() => handleImageSelect(image)} />
-                                 {/* <button onClick={() => handleDeleteImage(image)}>
-                            <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
-                        </button> */}
-                             </Thumbnail>
-                         ))}
-                     </ThumbnailGrid>
-                 </ThumbnailContainer>
+                    { images.length > 1 ? (
+                         <ThumbnailContainer isSmall={isSmall} >
+                         <ThumbnailGrid>
+                             { images.map((image, index) => (
+                                 <Thumbnail key={index} isSelected={image === selectedImage}>
+                                     <Image
+                                         src={`/uploads/${image}`}
+                                         alt={`Thumbnail ${index}`}
+                                         fill={true}
+                                         sizes="100px"
+                                         onClick={() => handleImageSelect(image)} />
+                                     {/* <button onClick={() => handleDeleteImage(image)}>
+                                <i className="pi pi-times" style={{ fontSize: '1.5rem' }}></i>
+                            </button> */}
+                                 </Thumbnail>
+                             ))}
+                         </ThumbnailGrid>
+                     </ThumbnailContainer>
+                    ) : null}
              </GalleryContainer>
-            ) : (
-                <p>Δεν υπάρχουν φωτογραφίες</p>
-            )}
+           
         </>
     )
 }
 
 
-export default GallerySmall;

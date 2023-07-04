@@ -2,31 +2,27 @@ import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import Image from 'next/image';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
-import styled from 'styled-components';
 import { Tag } from 'primereact/tag';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
-import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
-import Gallery from '@/components/Gallery';
+import { AddDialog, EditDialog } from '@/GridDialogs/mtrgroupDialog';
 import { useDispatch } from 'react-redux';
-import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
+import {  ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
 
 import DeletePopup from '@/components/deletePopup';
-import { DisabledDisplay } from '@/componentsStyles/grid';
-import { InputTextarea } from 'primereact/inputtextarea';
-import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
-import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 
-export default function TemplateDemo() {
+import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
+import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+
+
+
+export default function Categories() {
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -36,31 +32,28 @@ export default function TemplateDemo() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
+
+
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-
+    //Set the toggled columns
 
 
     const handleFetch = async () => {
-        setLoading(true)
-        try {
-            let resp = await axios.post('/api/product/apiMarkes', { action: 'findAll' })
-            setData(resp.data.markes)
-            setLoading(false)
+        let res = await axios.post('/api/product/apiGroup', { action: 'findAll' })
+        console.log('DATA RESULT')
+        console.log(res.data.result)
+        setData(res.data.result)
 
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
     }
 
-
     useEffect(() => {
-        handleFetch();
+        handleFetch()
+    }, [])
 
-    }, []);
+
 
     //Refetch on add edit:
     useEffect(() => {
@@ -70,22 +63,18 @@ export default function TemplateDemo() {
 
 
 
-    const logoTemplate = (data) => {
-        return (
-           <GridLogoTemplate logo={data?.logo} />
-
-        )
-    }
-    //TEMPLATES
+   
 
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
 
         return (
-            <span className="p-input-icon-left">
-                <i className="pi pi-search" />
-                <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
-            </span>
+            <>
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+                </span>
+            </>
         );
     };
     const header = renderHeader();
@@ -107,74 +96,7 @@ export default function TemplateDemo() {
 
 
 
-    const rowExpansionTemplate = (data) => {
-        let newArray = []
-        for (let image of data.photosPromoList) {
-            newArray.push(image.photosPromoUrl)
-        }
 
-        return (
-            <  >
-                <div className="card p-20">
-                    <TabView>
-                        <TabPanel header="Φωτογραφίες">
-                            <Gallery images={newArray} />
-                        </TabPanel>
-                        <TabPanel header="Βίντεο">
-                            < DisabledDisplay  >
-                                {data?.videoPromoList?.map((video, index) => {
-                                    return (
-                                         <UrlInput 
-                                         key={index}
-                                         label={video.name}
-                                         value={video.videoUrl}
-                                     />
-                                    )
-                                })}
-                            </ DisabledDisplay  >
-
-
-                        </TabPanel>
-                        <TabPanel header="Λεπτομέριες">
-                            < DisabledDisplay  >
-                                <div className="disabled-card">
-                                    <label>
-                                        Περιγραφή
-                                    </label>
-                                    <InputTextarea autoResize disabled value={data.description} />
-                                </div>
-                                <div className="disabled-card">
-                                    <label>
-                                       Pim Username
-                                    </label>
-                                    <InputText disabled value={data?.pimAccess?.pimUserName} />
-                                </div>
-                                <UrlInput 
-                                    label={'URL Iστοσελίδας'}
-                                    value={data.webSiteUrl}
-                                />
-                                <UrlInput 
-                                    label={'URL Ιnstagram'}
-                                    value={data.instagramUrl}
-                                />
-                                <UrlInput 
-                                    label={'URL Facebook'}
-                                    value={data.facebookUrl}
-                                />
-                                <UrlInput 
-                                    label={'URL Pim'}
-                                    value={data?.pimAccess?.pimUrl}
-                                />
-                              
-                             
-                            </DisabledDisplay>
-
-                        </TabPanel>
-                    </TabView>
-                </div>
-            </ >
-        );
-    };
 
     const leftToolbarTemplate = () => {
         return (
@@ -187,10 +109,10 @@ export default function TemplateDemo() {
     const rightToolbarTemplate = () => {
         return (
             <>
-            <SyncBrand 
+                {/* <SyncBrand 
                 refreshGrid={handleFetch}  
                 addToDatabaseURL= '/api/product/apiMarkes'
-            />
+            /> */}
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
@@ -220,18 +142,27 @@ export default function TemplateDemo() {
     };
 
     const onDelete = async (id) => {
-        
+
         let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
-        if(!res.data.success) return showError()
+        if (!res.data.success) return showError()
         handleFetch()
         showSuccess()
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
+    const logoTemplate = (data) => {
+        return <GridLogoTemplate logo={data.groupIcon} />
+     }
+
+
+    const imageTemplate = (data) => {
+        return <GridLogoTemplate logo={data.groupImage} />
+     }
+    
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
-                <Button disabled={!rowData.status} style={{width: '40px', height: '40px'}} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
                 <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
             </ActionDiv>
         );
@@ -249,22 +180,26 @@ export default function TemplateDemo() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-       
-      };
+
+    };
+
+
+    const RowExpansionTemplate = (data) => {
+        return <RowExpansionGrid subGroups={data.subGroups} />
+    }
 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-          
                 header={header}
                 value={data}
                 paginator
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
-                rowExpansionTemplate={rowExpansionTemplate}
+                rowExpansionTemplate={RowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="_id"
@@ -278,9 +213,12 @@ export default function TemplateDemo() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="name" header="Ονομα" sortable></Column>
-                <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+                <Column field="category.categoryName" header="Κατηγορία" sortable ></Column>
+                <Column field="groupName" header="Όνομα Group" sortable ></Column>
+                <Column field="groupImage" header="Φωτογραφία Group" body={logoTemplate} ></Column>
+                <Column field="groupIcon" header="Λογότυπο" body={imageTemplate} ></Column>
+                <Column body={LocaleTemplate} header="Localized" ></Column>
+                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
                 <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
@@ -294,9 +232,10 @@ export default function TemplateDemo() {
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-              
+
             />
             <AddDialog
+               
                 dialog={addDialog}
                 setDialog={setAddDialog}
                 hideDialog={hideDialog}
@@ -323,32 +262,108 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-
-
-const UpdatedFromTemplate = ({updatedFrom, updatedAt}) => {
+const LocaleTemplate = ({ localized }) => {
     return (
-       <RegisterUserActions
-       actionFrom={updatedFrom}
-        at={updatedAt}
-        icon="pi pi-user"
-        color="#fff"
-        backgroundColor= 'var(--yellow-500)'
-       />
-        
+        <GridLanguageTemplate localized={localized} />
+    )
+
+}
+
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
+    return (
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
+
     )
 }
-const CreatedFromTemplate = ({createdFrom, createdAt}) => {
+const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
     return (
-       <RegisterUserActions
-        actionFrom={createdFrom}
-        at={createdAt}
-        icon="pi pi-user"
-        color="#fff"
-        backgroundColor= 'var(--green-400)'
-       />
-        
+        <RegisterUserActions
+            actionFrom={createdFrom}
+            at={createdAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--green-400)'
+        />
+
     )
 }
+
+
+
+//The component for the nested grid:
+const RowExpansionGrid = ({ subGroups }) => {
+    // console.log('GROUPS: ' + JSON.stringify(groups))
+    const [expanded, setExpanded] = useState(null);
+
+  
+
+    const logoTemplate = (data) => {
+        return <GridLogoTemplate logo={data?.groupIcon} />
+    }
+  
+  
+   
+    return (
+        <SubGridStyles>
+            <span className="subgrid-title" >Subgroups:</span>
+            <div className="data-table">
+                <DataTable
+                    value={subGroups}
+                    rows={8}
+                    srollable
+                    showGridlines
+                    dataKey="_id"
+
+                    >
+                    <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο"></Column>
+                    <Column field="subGroupName" header="'Ονομα"></Column>
+
+                    {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
+                </DataTable>
+            </div>
+        </SubGridStyles>
+    );
+};
+
+const SubRowExpansionGrid = ({ subGroups }) => {
+    console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
+
+    return (
+        < SubGridStyles>
+            <span className="subgrid-title" >SubGroups:</span>
+            <DataTable
+                value={subGroups}
+                showGridlines
+                dataKey="_id"
+                removableSort
+            >
+                <Column field="subGroupName" header="Softone Όνομα"></Column>
+                <Column field="subGroupIcon" header="Λογότυπο"></Column>
+                <Column field="subGroupImage" header="Φωτογραφία"></Column>
+                <Column field="createdAt" header="createdAt"></Column>
+                {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
+            </DataTable>
+        </ SubGridStyles>
+    )
+
+}
+
+
+
+
+
+
+
 
 
 

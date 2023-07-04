@@ -10,10 +10,9 @@ const GalleryContainer = styled.div`
   border-radius: 4px;
   border: 1px solid #dfdedf;
   padding: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: flex-start;
   max-width: 1400px;
-  
 `;
 
 const LargeImageContainer = styled.div`
@@ -91,6 +90,11 @@ const DeleteButton = styled.div`
     z-index: 1;
 `
 
+const TabButton = styled.div`
+    i {
+      margin-right: 5px;
+    }
+`
 
 
 export {
@@ -102,5 +106,6 @@ export {
     ThumbnailContainer,
     LargeImageContainer,
     LargeImage,
-    ThumbnailGrid 
+    ThumbnailGrid,
+    TabButton
 }

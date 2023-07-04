@@ -1,7 +1,6 @@
-import styled from "styled-components";
-import { Avatar } from 'primereact/avatar';
-import { TemplateContainer } from "@/componentsStyles/grid/gridStyles";
 
+import { Avatar } from 'primereact/avatar';
+import { TemplateContainer } from "@/componentsStyles/grid";
 
 const GridIconTemplate = ({value, icon, color, backgroundColor }) => {
 

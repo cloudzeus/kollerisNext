@@ -1,18 +1,10 @@
 'use client'
-
-
-
-
-
-
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import Image from 'next/image';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
-import styled from 'styled-components';
 import { Tag } from 'primereact/tag';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
@@ -20,17 +12,11 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/userDialog';
 import UserRoleChip from '@/components/RoleChip';
 import { useDispatch } from 'react-redux';
-import { TabView, TabPanel } from 'primereact/tabview';
-import { setGridRowData, resetGridRowData } from '@/features/grid/gridSlice';
-import { DropDownDetails, ImageDiv, ActionDiv } from '@/componentsStyles/grid';
-
+import { setGridRowData } from '@/features/grid/gridSlice';
+import { ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
-import { DisabledDisplay } from '@/componentsStyles/grid';
-import { InputTextarea } from 'primereact/inputtextarea';
-import UrlInput from '@/components/Forms/PrimeUrlInput';
 import { Toast } from 'primereact/toast';
 import GridIconTemplate from '@/components/grid/gridIconTemplate';
-
 
 
 export default function TemplateDemo() {

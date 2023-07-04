@@ -90,7 +90,11 @@ const MtrGroupSchema = new mongoose.Schema({
                 type: String
             }
         }
-    ]
+    ],
+    status: Boolean,
+    updatedFrom: String,
+    createdFrom: String,
+    deletedFrom: String,
 }, {
 
     timestamps: true,

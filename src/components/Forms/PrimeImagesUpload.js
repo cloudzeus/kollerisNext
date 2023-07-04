@@ -10,16 +10,26 @@ import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
-
-
-export default function PrimeUploads({label, multiple, mt, mb, setState}) {
+import axios from 'axios';
+export default function PrimeUploads({label, multiple, mt, mb, setState, singleUpload, state}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const [didUpload, setDidUpload] = useState(false)
+  
+
+    const handleDeleteImage = async (name) => {
+        try {
+          const response = await axios.post(`/api/uploads/deleteImage`, {name: name});
+          console.log(response)
+        } catch (error) {
+          console.error('Failed to delete image:');
+        }
+      };
 
     const uploadHandler = async (e) => {
+
         let formData = new FormData();
         let acceptedFiles = e.files
         formData.append('files', e.files);
@@ -29,22 +39,27 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
         try {
             setDidUpload(false)
             setLoading(true)
+            console.log('form Data ' + JSON.stringify(formData))
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
                 body: formData,
             });
            
+           
             if (response.ok) {
                 const { urls } = await response.json();
-                console.log('uploaded urls')
-                console.log(urls)
+              
                
                 if(urls) {
-                    setState(urls)
+                    if(singleUpload) {
+                        setState(urls)
+                    } else {
+                        setState([...state, ...urls])
+                    }
+                  
                     setDidUpload(true)
                 }
             } else {
-                console.error('Error uploading files');
                 setDidUpload(false)
             }
         } catch (error) {
@@ -80,6 +95,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
         setTotalSize(totalSize - file.size);
         callback();
         setDidUpload(false)
+        handleDeleteImage(file.name)
+
+     
     };
 
     const onTemplateClear = () => {
@@ -99,10 +117,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
             <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
                 {chooseButton}
                 {uploadButton}
-                {cancelButton}
                 <div className="flex align-items-center gap-3 ml-auto">
                     <span>{formatedValue} / 1 MB</span>
-                    <ProgressBar value={value} showValue={false} style={{ width: '100%', height: '8px' }}></ProgressBar>
+                    <ProgressBar value={value} showValue={false} style={{ width: '10rem', height: '12px' }}></ProgressBar>
                 </div>
                
             </div>
@@ -131,14 +148,14 @@ export default function PrimeUploads({label, multiple, mt, mb, setState}) {
                     <div className="details">
                         <span>
                             { handleFileName(file.name)}
-                         
                         </span>
-                        {/* <small>{new Date().toLocaleDateString()}</small> */}
                         <Tag value={props.formatSize} severity="warning" rounded className="px-3 py-2"  />
                     </div>
                     
                 </div>
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-danger" style={{width: '30px', height: '30px'}} onClick={() => onTemplateRemove(file, props.onRemove)} />
+                {!didUpload ? (
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-danger" style={{width: '30px', height: '30px'}} onClick={() => onTemplateRemove(file, props.onRemove)} />
+                ) : null}
             </ItemTemplate>
         );
     };
@@ -157,6 +174,7 @@ return (
             multiple={multiple}
             accept="image/*"
             maxFileSize={1000000}
+            url="/api/uploads/saveImageMulter"
             customUpload
             uploadHandler={uploadHandler}
             onUpload={onTemplateUpload}
@@ -178,7 +196,6 @@ return (
             )}
             {totalSize > 0 && !didUpload ? (
                     <Message severity="warn" text="Πατήστε upload" />
-
             ) : null}
         </div>
     </Container >
