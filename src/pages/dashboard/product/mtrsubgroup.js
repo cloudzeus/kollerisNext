@@ -39,7 +39,7 @@ export default function Categories() {
 
     });
     //Set the toggled columns
-
+    console.log(data)
 
     const handleFetch = async () => {
         let res = await axios.post('/api/product/apiSubGroup', { action: 'findAll' })
@@ -141,8 +141,7 @@ export default function Categories() {
     };
 
     const onDelete = async (id) => {
-
-        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        let res = await axios.post('/api/product/apiSubGroup', { action: 'delete', id: id })
         if (!res.data.success) return showError()
         handleFetch()
         showSuccess()
@@ -206,9 +205,9 @@ export default function Categories() {
                 selectOnEdit
             >
                 <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="subGroupName" header="Κατηγορία" sortable ></Column>
+                <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
                 <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
-                <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column>
+                {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
                   <Column body={LocaleTemplate} header="Localized" ></Column>
               
                 <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>

@@ -153,7 +153,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                    <FormTitle>Λεπτομέριες</FormTitle>
-                {/* <PrimeSelect
+                <PrimeSelect
                     control={control}
                     name="groupid"
                     required
@@ -161,9 +161,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     options={parent}
                     optionLabel={'label'}
                     optionValue={'value._id'}
-                    placeholder={gridRowData?.group?.subGroupName}
+                    placeholder={gridRowData?.group?.groupName}
                     // error={errors.categoryName}
-                    /> */}
+                    />
                 <Input
                     label={'Όνομα Sub Group'}
                     name={'subGroupName'}
@@ -261,14 +261,14 @@ const AddDialog = ({
 
         let res = await axios.post('/api/product/apiSubGroup', { action: 'create', data: body })
         console.log(res.data)
-        // if(!res.data.success) return showError(res.data.softoneError)
-        // // let parent = res.data.parent
-        // setDisabled(true)
-        // setSubmitted(true)
-        // showSuccess('Επιτυχής εισαγωγή στην βάση')
-        // // showSuccess('Eπιτυχής Update στην Κατηγορία: ' + parent)
-        // hideDialog()
-        // reset();
+        if(!res.data.success) return showError(res.data.softoneError)
+        // let parent = res.data.parent
+        setDisabled(true)
+        setSubmitted(true)
+        showSuccess('Επιτυχής εισαγωγή στην βάση')
+        // showSuccess('Eπιτυχής Update στην Κατηγορία: ' + parent)
+        hideDialog()
+        reset();
     }
 
 

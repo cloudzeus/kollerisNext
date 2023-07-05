@@ -13,9 +13,12 @@ export default async function handler(req, res) {
         console.log('find all SubGroups')
 		try {
 			await connectMongo();
-            const mtrgroup = await SubMtrGroup.find({})
-            // console.log('find all groups: ' + JSON.stringify(mtrgroup))
-			return res.status(200).json({ success: true, result: mtrgroup });
+            const subgroup = await SubMtrGroup.find({})
+            .populate( 'group', 'groupName')
+            
+            
+            console.log('find all groups: ' + JSON.stringify(subgroup))
+			return res.status(200).json({ success: true, result: subgroup });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
@@ -99,17 +102,19 @@ export default async function handler(req, res) {
     if (action === 'update') {
       
 
+       
         let {originalGroup, cccSubgroup2} = req.body
         let body = req.body.data;
-        //subgroup id:
-        let id = req.body.id
-        //id of parent element of our database:
         let mtrgroupid;
-      
-
+        let subgroupid = req.body.id
+        let originalGroupID = originalGroup._id
+        let newGroupID = body.groupid || originalGroupID
+       
+        
         try {
+            //find mtrgroup id to update softone
             await connectMongo();
-            const softonegroupid = await MtrGroup.findOne({_id: originalGroup}, {softOne: {MTRGROUP: 1, NAME: 1}})
+            const softonegroupid = await MtrGroup.findOne({_id: originalGroupID}, {softOne: {MTRGROUP: 1, NAME: 1}})
             console.log(softonegroupid) 
             mtrgroupid = softonegroupid.softOne.MTRGROUP
         } catch (e) {
@@ -117,10 +122,10 @@ export default async function handler(req, res) {
         }
 	
 
-        // console.log('group id: ' + id)
+        // // console.log('group id: ' + id)
 	
         let obj = {
-            group: body.groupid,
+            group: newGroupID,
             subGroupName: body.subGroupName,
             subGroupIcon: body.subGroupIcon,
             subGroupImage: body.subGroupImage,
@@ -141,7 +146,6 @@ export default async function handler(req, res) {
             mtrgroup: mtrgroupid,
         }
 
-
 		if(body?.subGroupName) {
             console.log('1')
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/updateCccGroup`;
@@ -156,7 +160,7 @@ export default async function handler(req, res) {
 		try {
 			await connectMongo();
             const updatedsubGroup = await SubMtrGroup.findOneAndUpdate(
-                { _id: id  },
+                { _id: subgroupid  },
                 obj,
                 { new: true }
               );
@@ -170,7 +174,7 @@ export default async function handler(req, res) {
             // if(updatedCategory) {
             //     message = `Η κατηγορία ${body.category.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`
             // }
-           
+           console.log('sefsfef')
 			// return res.status(200).json({ success: true, result: updatedGroup, message: message });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
@@ -182,7 +186,20 @@ export default async function handler(req, res) {
 
 	}
 	
+    if (action === 'delete') {
+        try {
+            let id = req.body.id;
+            const updatedsubGroup = await SubMtrGroup.findOneAndUpdate(
+                { _id: id  },
+                {status: false},
+                { new: true }
+              );
+            return res.status(200).json({ success: true, result: updatedsubGroup, error: null });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
 
+    }
 }
 
 

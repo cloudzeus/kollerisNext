@@ -109,7 +109,7 @@ const MtrGroupSchema = new mongoose.Schema({
 const MtrSubGroupSchema = new mongoose.Schema({
     group: {
         type: Schema.Types.ObjectId,
-        ref: 'MTRGROUP'
+        ref: 'MtrGroup'
     },
     subGroupName: {
         type: String,

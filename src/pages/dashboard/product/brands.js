@@ -278,12 +278,12 @@ export default function TemplateDemo() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="logo" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
-                <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                <Column field="status"  sortable header="Status"  style={{ width: '200px' }} body={ActiveTempate}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom"  style={{ width: '200px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="createdFrom" sortable header="createdFrom"  style={{ width: '200px' }} body={CreatedFromTemplate}></Column>
+                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
             <EditDialog
