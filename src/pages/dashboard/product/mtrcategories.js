@@ -48,7 +48,7 @@ export default function Categories() {
     }
 
     useEffect(() => {
-      
+
         handleFetch()
     }, [])
 
@@ -62,7 +62,7 @@ export default function Categories() {
 
 
 
-   
+
 
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
@@ -151,11 +151,11 @@ export default function Categories() {
     // CUSTOM TEMPLATES FOR COLUMNS
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.categoryIcon} />
-     }
+    }
     const imageTemplate = (data) => {
         return <GridLogoTemplate logo={data.categoryImage} />
-     }
-    
+    }
+
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
@@ -205,20 +205,19 @@ export default function Categories() {
                 paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
-                //edit:
                 loading={loading}
                 editMode="row"
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} ></Column>
+                <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }}></Column>
+                <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
                 <Column body={LocaleTemplate} header="Localized" sortable></Column>
-                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                <Column field="status" sortable header="Status"  body={ActiveTempate} style={{ width: '90px' }}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
             <EditDialog
@@ -297,12 +296,12 @@ const RowExpansionGrid = ({ groups }) => {
     // console.log('GROUPS: ' + JSON.stringify(groups))
     const [expanded, setExpanded] = useState(null);
 
-  
+
 
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data?.groupIcon} />
     }
-  
+
     //function to set data to the subnested grid:
     const SubRowExpansionTemplate = (data) => {
         return <SubRowExpansionGrid subGroups={data.subGroups} />
@@ -322,9 +321,9 @@ const RowExpansionGrid = ({ groups }) => {
                     onRowToggle={(e) => setExpanded(e.data)}
                 >
                     <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
-                    <Column field="groupIcon" body={logoTemplate} header="Λογότυπο"></Column>
+                    <Column field="groupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
                     <Column field="groupName" header="'Ονομα"></Column>
-                    <Column field="groupImage" header="Φωτογραφία"></Column>
+                    <Column field="status" header="Status" body={ActiveTempate} style={{ width: '90px' }}></Column>
 
                     {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
             <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
@@ -337,7 +336,9 @@ const RowExpansionGrid = ({ groups }) => {
 
 const SubRowExpansionGrid = ({ subGroups }) => {
     console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
-
+    const logoTemplate = (data) => {
+        return <GridLogoTemplate logo={data.subGroupIcon} />
+    }
     return (
         < SubGridStyles>
             <span className="subgrid-title" >SubGroups:</span>
@@ -347,10 +348,9 @@ const SubRowExpansionGrid = ({ subGroups }) => {
                 dataKey="_id"
                 removableSort
             >
+                <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
                 <Column field="subGroupName" header="Softone Όνομα"></Column>
-                <Column field="subGroupIcon" header="Λογότυπο"></Column>
-                <Column field="subGroupImage" header="Φωτογραφία"></Column>
-                <Column field="createdAt" header="createdAt"></Column>
+                <Column field="status" header="Status" body={ActiveTempate} ></Column>
                 {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
             <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
             <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
