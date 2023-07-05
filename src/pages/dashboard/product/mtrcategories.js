@@ -9,7 +9,7 @@ import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
-import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
+import { AddDialog, EditDialog } from '@/GridDialogs/mtrcategoriesDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
 import { ImageDiv, ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
@@ -41,16 +41,14 @@ export default function Categories() {
     //Set the toggled columns
 
 
+    const handleFetch = async () => {
+        let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
+        setData(res.data.result)
 
+    }
 
     useEffect(() => {
-        const handleFetch = async () => {
-            let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
-            // console.log('DATA RESULT')
-            // console.log(res.data.result)
-            setData(res.data.result)
-
-        }
+      
         handleFetch()
     }, [])
 

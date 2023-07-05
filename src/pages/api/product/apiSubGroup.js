@@ -49,13 +49,7 @@ export default async function handler(req, res) {
             console.log('groupName: ' + JSON.stringify(groupName))
           
 
-            // Create the subgroup in softone 
-            // let softoneObj = {
-            //     username:"Service",
-            //     password:"Service",
-            //     name: data.subGroupName,
-            //     mtrgroup:  mtrgroup,
-            // }
+         
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/createCccGroup`;
             let addedSoftone = await axios.post(URL, {
                 username:"Service",

@@ -10,13 +10,33 @@ export default async function handler(req, res) {
 	let action = req.body.action;
 
 	if (action === 'create') {
+		console.log('create')
 		let { data } = req.body;
 		console.log(data)
 		try {
+
+			let softoneobj = {
+				username:"Service",
+				password:"Service",
+				name: data.categoryName,
+				isactive:1
+			}
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/createMtrCategory`;
+            let addedSoftone = await axios.post(URL, softoneobj)
+            if(!addedSoftone.data.success) {return res.status(500).json({ success: false, error: 'Αποτυχία εισαγωγής στο Softone' })} 
+
+			let createobj ={
+				...data,
+				softOne: {
+					MTRCATEGORY: addedSoftone.data.kollerisPim.MTRCATEGORY,
+					CODE: addedSoftone.data.kollerisPim.CODE,
+					NAME: data.categoryName,
+					ISACTIVE: 1,
+				},
+				status: true,
+			}
 			await connectMongo();
-			const category = await MtrCategory.create({
-				...data
-			})
+			const category = await MtrCategory.create({ ...createobj})
 
 			if (category) {
 				return res.status(200).json({ success: true, result: category });
@@ -39,13 +59,49 @@ export default async function handler(req, res) {
 					path: 'groups',
 					populate: { path: 'subGroups' }
 				});
-            console.log('categories 2 ' + JSON.stringify(categories))
+            // console.log('categories 2 ' + JSON.stringify(categories))
 			return res.status(200).json({ success: true, result: categories });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
+	if(action === 'update') {
+		console.log('update')
+		let { data } = req.body;
+		let {id} = req.body
+		// let {softoneID} = req.body
+		// console.log(data)
+		console.log(id)
+		// console.log(softoneID)
 
+		let softoneobj = {
+			mtrcategory : data.softOne.MTRCATEGORY,
+			username:"Service",
+			password:"Service",
+			name:data.categoryName,
+			company:1001
+		}
+
+		try {
+		
+			console.log(softoneobj)
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/updateMtrCategory`;
+			let  softone = await axios.post(URL, softoneobj)
+			console.log(softone.data)
+			// if(!softone.data.success) {
+			// 	return res.status(500).json({ success: false, error: 'Αποτυχία update στο Softone' })
+			// }
+			await connectMongo();
+			const updatecategory = await MtrCategory.findOneAndUpdate(
+                { _id: id  },
+                data,
+                { new: true }
+              );
+			return res.status(200).json({ success: true, result: updatecategory });
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 	if (action === 'syncCategories') {
 		try {
 			await connectMongo();
