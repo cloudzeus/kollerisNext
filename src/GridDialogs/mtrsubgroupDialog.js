@@ -69,12 +69,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         let originalGroup = gridRowData?.group
    
         //User hasn't selected a new group, so we keep the original one
-        if(typeof data.categoryid === 'undefined') {
-            data.groupid = gridRowData?.group
-        } 
+        // if(typeof data.categoryid === 'undefined') {
+        //     data.groupid = gridRowData?.group
+        // } 
         console.log('originalGroup: ' + JSON.stringify(originalGroup))
       
-        
+        let cccSubgroup2 = gridRowData?.softOne?.cccSubgroup2
         let newLogo = logo[0]
         if(logo.length === 0) {
             newLogo = ''
@@ -91,13 +91,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             groupImage: newImage,
            
         }
-
-        // console.log('object: ' + JSON.stringify(object))
-
-        // console.log('newIamge: ' + JSON.stringify(newImage))
-        // console.log('logo: ' + JSON.stringify(logo))
-        //cccSubgroup2 to update the softone table:
-        let cccSubgroup2 = gridRowData?.softOne?.cccSubgroup2
+ 
 
         try {
            
@@ -106,17 +100,16 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 action: "update", 
                 data: {...object, updatedFrom: user, }, 
                 id: gridRowData._id, 
-                cccSubgroup2:cccSubgroup2 ,
+                cccSubgroup2: cccSubgroup2 ,
                 originalGroup: originalGroup
             })
             // if(!resp.data.success) {
-            //     return showError(resp.data.softoneError)
+            //     return showError()
             // }
-        //    console.log(resp.data)
-        //     setSubmitted(true)
-        //     showSuccess('Η εγγραφή ενημερώθηκε')
-        //     showSuccess(resp.data.message)
-        //     hideDialog()
+            setSubmitted(true)
+            hideDialog()
+            showSuccess('Η εγγραφή ενημερώθηκε')
+            
             
                
         } catch (e) {
@@ -160,7 +153,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                    <FormTitle>Λεπτομέριες</FormTitle>
-                <PrimeSelect
+                {/* <PrimeSelect
                     control={control}
                     name="groupid"
                     required
@@ -170,7 +163,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     optionValue={'value._id'}
                     placeholder={gridRowData?.group?.subGroupName}
                     // error={errors.categoryName}
-                    />
+                    /> */}
                 <Input
                     label={'Όνομα Sub Group'}
                     name={'subGroupName'}

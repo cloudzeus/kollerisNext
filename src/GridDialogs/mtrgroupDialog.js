@@ -81,7 +81,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             groupImage: newImage,
            
         }
-
         console.log('newIamge: ' + JSON.stringify(newImage))
         console.log('logo: ' + JSON.stringify(logo))
         let mtrcategory = gridRowData?.category?.softOne?.MTRCATEGORY
