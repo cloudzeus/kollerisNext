@@ -103,7 +103,7 @@ export default async function handler(req, res) {
       
 
        
-        let {originalGroup, cccSubgroup2} = req.body
+        let {originalGroup, cccSubgroup2, originalSubGroupName} = req.body
         let body = req.body.data;
         let mtrgroupid;
         let subgroupid = req.body.id
@@ -146,8 +146,7 @@ export default async function handler(req, res) {
             mtrgroup: mtrgroupid,
         }
 
-		if(body?.subGroupName) {
-            console.log('1')
+		if(body?.subGroupName !== originalSubGroupName) {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/updateCccGroup`;
 			let softoneResponse = await axios.post(URL, {...sonftoneObj})
             console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
@@ -164,18 +163,20 @@ export default async function handler(req, res) {
                 obj,
                 { new: true }
               );
-            console.log('updatedsubGroup: ' + JSON.stringify(updatedsubGroup))
-            return res.status(200).json({ success: true, result: updatedsubGroup, error: null });
-            // const updatedGroup= await MtrGroup.updateOne({_id: body.groupid}, {$push: {groups: id}})
-            // const pull = await MtrGroup.updateOne({_id: originalCategory}, {$pull: {groups: id}})
-            // let message;
+            // return res.status(200).json({ success: true, result: updatedsubGroup, error: null });
+            const updatedGroup = await MtrGroup.findOneAndUpdate({_id: newGroupID}, {$push: {subGroups: subgroupid}})
+            const pull = await MtrGroup.findOneAndUpdate({_id: originalGroupID}, {$pull: {subGroups:subgroupid}})
+
+            console.log(pull)
+            let message;
 
 
-            // if(updatedCategory) {
-            //     message = `Η κατηγορία ${body.category.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`
-            // }
-           console.log('sefsfef')
-			// return res.status(200).json({ success: true, result: updatedGroup, message: message });
+            if(updatedGroup) {
+                message = `Μία εγγραφή προστέθηκε στην κατηγορία ${pull.groupName}.
+                Μια εγγραφή αφαιρέθηκε από την κατηγορία ${updatedGroup.groupName}`
+                
+            }
+			return res.status(200).json({ success: true, result: updatedsubGroup, message: message});
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
 		}

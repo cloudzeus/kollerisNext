@@ -101,15 +101,16 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 data: {...object, updatedFrom: user, }, 
                 id: gridRowData._id, 
                 cccSubgroup2: cccSubgroup2 ,
-                originalGroup: originalGroup
+                originalGroup: originalGroup,
+                originalSubGroupName: gridRowData?.subGroupName
             })
-            // if(!resp.data.success) {
-            //     return showError()
-            // }
+            if(!resp.data.success) {
+                return showError()
+            }
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-            
+            showSuccess(resp.data?.message)
             
                
         } catch (e) {
@@ -119,7 +120,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }
 
     const showSuccess = (message) => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 5000 });
     }
     const showError = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
