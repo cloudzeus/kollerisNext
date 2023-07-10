@@ -18,7 +18,8 @@ import { registerUser } from '@/features/userSlice';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
-
+import Input from "@/components/Forms/PrimeInput";
+import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 
 const registerSchema = yup.object().shape({
 	firstName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -35,7 +36,7 @@ const RegisterPage = () => {
 	const router = useRouter()
 
 
-	const { register, handleSubmit, formState: { errors }, reset } = useForm({
+	const { register, handleSubmit, formState: { errors }, control } = useForm({
 		resolver: yupResolver(registerSchema),
 	});
 
@@ -79,40 +80,32 @@ const RegisterPage = () => {
 				</Grid>
 
 				<form noValidate onSubmit={handleSubmit(onSubmit)}>
-					<Grid container justifyContent="center" alignItems="center" direction="row" columnSpacing={2}>
-						<Grid item xs={6}>
-							<InputStyled
-								label="Όνομα"
-								name="firstName"
-								type="text"
-								register={register}
-								error={errors.name}
-							/>
-						</Grid>
-						<Grid item xs={6}>
-							<InputStyled
-								label="Επώνυμο"
-								name="lastName"
-								type="text"
-								register={register}
-								error={errors.description}
-							/>
-						</Grid>
-					</Grid>
-
-					<InputStyled
-						label="email"
-						name="email"
-						type="email"
-						register={register}
-						error={errors.email}
-					/>
-					<InputPass
-						label="Κωδικός"
-						name="password"
-						register={register}
-						error={errors.password}
-					/>
+						<Input
+                    label={'Όνομα'}
+                    name={'firstName'}
+                    mb={'10px'}
+                    required
+                    control={control}
+					error={errors.name}
+                />
+					
+					<Input
+                    label={'email'}
+                    name={'email'}
+					type="email"
+                    mb={'10px'}
+                    required
+                    control={control}
+					error={errors.name}
+                />
+						<PrimeInputPass
+							label={'password'}
+							name={'password'}
+							mb={'10px'}
+							required
+							control={control}
+							error={errors.password}
+						/>
 
 					{/* Checkbox row */}
 					<div className="flex-between">

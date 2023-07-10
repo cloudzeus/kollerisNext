@@ -20,14 +20,12 @@ export function PrimeInputPass({ name, mb, mt, control,error, label,  }) {
                                 {label}
                             </label>
                             <Password 
+                                feedback={false}
                                 toggleMask
                                 id={field.name} 
-                                {...field}
-                                weakLabel="Αδύναμος"
-                                mediumLabel="Μέτριος"
-                                strongLabel="Ισχυρός"
                                 value={field.value}
                                 inputRef={field.ref} 
+                                style={{ width: '100%' }}
                                 onChange={(e) => field.onChange(e.target.value)}
                                 className={classNames({ 'p-invalid': fieldState.error })}
                                  />

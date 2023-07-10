@@ -84,9 +84,11 @@ export const TextAreaInput = ({ label, name, mb, mt, control, error, autoResize,
 export const InputContainer = styled.div`
     margin-bottom: ${props => props.mb ? props.mb : '10px'};
     margin-top: ${props => props.mt ? props.mt : '0px'};
+    width: 100%;
     
-    
-    
+    * input {
+    width: 100%;
+    }
     & label {
         color: ${props => props.error ? 'red' : null};
         font-size: 14px;

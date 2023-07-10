@@ -6,7 +6,7 @@ const theme = createTheme({
       light: "#e7f1f3",
       light10: "#5daff2" ,
       light50: "#e3e6ed",
-      main: "#2090ED",
+      main: "#6366F1",
       dark: "#02153d",
 
     },

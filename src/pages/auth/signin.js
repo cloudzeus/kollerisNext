@@ -16,13 +16,14 @@ import { Grid } from '@mui/material'
 import Image from 'next/image'
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { StyledHeader, Subheader } from '@/components/Forms/formStyles';
-import Button from '@/components/Buttons/Button';
+// import Button from '@/components/Buttons/Button';
 import Divider from '@mui/material/Divider';
 import {  signIn } from "next-auth/react"
 //FORMIK:
-
+import Input from "@/components/Forms/PrimeInput";
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
-
+import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
+import { Button } from "primereact/button";
 
 const schema = yup.object().shape({
     email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
@@ -34,7 +35,7 @@ const LoginForm = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset, control } = useForm({
         resolver: yupResolver(schema),
     });
 
@@ -67,7 +68,7 @@ const LoginForm = () => {
                 <Container className="box">
                     <Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
                         <Grid item xs={8}>
-                            <StyledHeader>ΚΑΛΩΣ ΗΡΘΑΤΕ!</StyledHeader>
+                            <h2>ΚΑΛΩΣ ΗΡΘΑΤΕ!</h2>
                             <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
                         </Grid>
                         <Grid
@@ -86,20 +87,29 @@ const LoginForm = () => {
                         </Grid>
                     </Grid>
                     <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                        <InputStyled
+                        {/* <InputStyled
                             label="email"
                             name="email"
                             type="email"
                             register={register}
                             error={errors.email}
-                        />
-                        <InputPass
-                            label="Κωδικός"
-                            name="password"
-                            register={register}
-                            error={errors.password}
-                        />
-
+                        /> */}
+                     <Input
+                    label={'email'}
+                    name={'email'}
+                    mb={'10px'}
+                    required
+                    control={control}
+                    error={errors.email}
+                />
+                <PrimeInputPass
+                    label={'password'}
+                    name={'password'}
+                    mb={'10px'}
+                    required
+                    control={control}
+                    error={errors.password}
+                />
                         {/* Checkbox row */}
                         <div className='flexBetween'>
                             <CheckboxInput label={'Αποθήκευση κωδικού'} />
@@ -108,7 +118,8 @@ const LoginForm = () => {
                             </Link>
                         </div>
                         {/* Login Button */}
-                        <Button size={'100%'} type="submit" loading={loading} >Σύνδεση</Button>
+                        <Button type="submit" label="Σύνδεση" loading={loading} style={{width: '100%'}} />
+                        {/* <Button size={'100%'} type="submit" loading={loading} >Σύνδεση</Button> */}
                         <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
                         <div className="centerDiv">
                             <Link className="linkBtn" href="/auth/register" >
@@ -132,6 +143,9 @@ const Container = styled.div`
     @media (max-width: 499px) {
         width: 90%;
     } 
+    h2 {
+        color: #4b4c4b;
+    }
 
     .centerDiv {
         display: flex;

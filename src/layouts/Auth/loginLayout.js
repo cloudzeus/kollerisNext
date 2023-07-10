@@ -17,7 +17,8 @@ const Box = styled.div`
   justify-content: center;
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.palette.background};
+  /* background-color: ${({ theme }) => theme.palette.background}; */
+  background-color: white;
 `
 
 export default LoginLayout
