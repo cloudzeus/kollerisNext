@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
-import Button from "@/components/Buttons/Button";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Button } from "primereact/button";
+import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 
 const registerSchema = yup.object().shape({
 	password: yup.string().required('Συμπληρώστε τον κωδικό').min(5, 'Tουλάχιστον 5 χαρακτήρες').max(15, 'Μέχρι 15 χαρακτήρες'),
@@ -21,7 +22,7 @@ const registerSchema = yup.object().shape({
 
 
 const CreateNewPassword = () => {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset, control } = useForm({
 		resolver: yupResolver(registerSchema),
 	});
     const [loading, setLoading] = useState(false)
@@ -49,24 +50,24 @@ const CreateNewPassword = () => {
             <Container className="box">
                 <h1 className="primaryHeader">ΑΛΛΑΓΗ ΚΩΔΙΚΟΥ</h1>
                 <form noValidate onSubmit={handleSubmit(onSubmit)}>
-					<InputPass
-						label="Κωδικός"
-						name="password"
-						register={register}
-						error={errors.password}
-					/>
-					<InputStyled
-						label="Eπιβεβαίωση"
-						name="passwordConfirm"
-                        type="password"
-						register={register}
-						// error={passwordNoMatch ? {message:  'Δεν ταιριάζουν οι κωδικοί'} : errors.password }
-						error={errors.passwordConfirm}
-					/>
-
-					{/* Checkbox row */}
-					
-					<Button size={'100%'} loading={loading}>Αποστολή</Button>
+				
+                     <PrimeInputPass
+                    label={'Κωδικός'}
+                    name={'password'}
+                    mb={'10px'}
+                    required
+                    control={control}
+                    error={errors.password}
+                />
+                 <PrimeInputPass
+                    label={'Eπιβεβαίωση'}
+                    name={'passwordConfirm'}
+                    mb={'20px'}
+                    required
+                    control={control}
+                    error={errors.passwordConfirm}
+                />
+                    <Button type="submit" label="Αποστολή" loading={loading} style={{width: '100%'}} />
 				</form>
             </Container>
         </LoginLayout>

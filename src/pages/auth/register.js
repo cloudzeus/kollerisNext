@@ -24,7 +24,7 @@ import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 const registerSchema = yup.object().shape({
 	firstName: yup.string().required('Συμπληρώστε το όνομα'),
 	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
-	
+
 });
 
 
@@ -80,32 +80,32 @@ const RegisterPage = () => {
 				</Grid>
 
 				<form noValidate onSubmit={handleSubmit(onSubmit)}>
-						<Input
-                    label={'Όνομα'}
-                    name={'firstName'}
-                    mb={'10px'}
-                    required
-                    control={control}
-					error={errors.name}
-                />
-					
 					<Input
-                    label={'email'}
-                    name={'email'}
-					type="email"
-                    mb={'10px'}
-                    required
-                    control={control}
-					error={errors.name}
-                />
-						<PrimeInputPass
-							label={'password'}
-							name={'password'}
-							mb={'10px'}
-							required
-							control={control}
-							error={errors.password}
-						/>
+						label={'Όνομα'}
+						name={'firstName'}
+						mb={'10px'}
+						required
+						control={control}
+						error={errors.name}
+					/>
+
+					<Input
+						label={'email'}
+						name={'email'}
+						type="email"
+						mb={'10px'}
+						required
+						control={control}
+						error={errors.name}
+					/>
+					<PrimeInputPass
+						label={'password'}
+						name={'password'}
+						mb={'10px'}
+						required
+						control={control}
+						error={errors.password}
+					/>
 
 					{/* Checkbox row */}
 					<div className="flex-between">

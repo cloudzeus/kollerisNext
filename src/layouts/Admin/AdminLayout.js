@@ -1,37 +1,13 @@
 'use client'
-import { useEffect } from 'react';
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { AiOutlineOrderedList } from 'react-icons/ai';
-import { BsFileBarGraph } from 'react-icons/bs';
-import { MdDashboard } from 'react-icons/md';
-import { SlGraph } from 'react-icons/sl';
-import AdminNavbar from '@/components/AdminNavbar';
-import BigSidebar from '@/components/Sidebar/BigSidebar';
 import { toggleSidebar } from '@/features/userSlice';
 import SidebarMenu from './PanelMenu';
 import { Button } from 'primereact/button';
 import Image from 'next/image';
 import ProfileButton from '@/components/NavProfileButton';
 import BreadCrumbs from './BreadCrumbs';
-// const AdminLayout = ({children}) => {
-//     const { isSidebarOpen } = useSelector((store) => store.user)
-
-//     return (
-//             <Container>
-//                 <AdminNavbar />
-//                 <div className="main-box">
-//                     <BigSidebar />
-//                     <SidebarContainer isSidebarOpen={isSidebarOpen}>
-//                         {children}
-//                     </SidebarContainer>
-//                 </div>
-
-//             </Container>
-//     )
-// }
-
 
 
 const AdminLayout = ({ children }) => {
@@ -105,8 +81,8 @@ function FullScreen({ children }) {
 	const [visible, setVisible] = useState(false);
 
 	return (
-		<div className="card flex justify-content-center">
-			<Sidebar visible={visible} onHide={() => setVisible(false)} fullScreen>
+		<div className="card flex justify-content-center" >
+			<Sidebar visible={visible} onHide={() => setVisible(false)} fullScreen >
 				{children}
 			</Sidebar>
 			<Button 

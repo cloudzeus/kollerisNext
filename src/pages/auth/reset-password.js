@@ -5,10 +5,10 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { InputStyled } from '@/components/Forms/FormInput'
-import Button from '@/components/Buttons/Button'
 import axios from 'axios'
 import {toast} from 'react-toastify'
+import { Button } from 'primereact/button';
+import Input from '@/components/Forms/PrimeInput';
 
 const ResetPassword = () => {
   const [submit, setSubmit] = useState(false)
@@ -19,7 +19,7 @@ const ResetPassword = () => {
   const schema = yup.object().shape({
     email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
 });
-const { register, handleSubmit, formState: { errors }, reset } = useForm({
+const {  handleSubmit, formState: { errors }, reset, control } = useForm({
   resolver: yupResolver(schema),
 });
 
@@ -49,15 +49,16 @@ const { register, handleSubmit, formState: { errors }, reset } = useForm({
               Εισάγετε την διεύθυνση email σας και θα σας στείλουμε έναν σύνδεσμο για την επαναφορά του κωδικού πρόσβασης.
             </Header>
             <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                <InputStyled
-                    label="email"
-                    name="email"
-                    type="email"
-                    register={register}
+                   <Input
+                    label={'email'}
+                    name={'email'}
+                    mb={'10px'}
+                    required
+                    control={control}
                     error={errors.email}
                     placeholder={'example@gmail.com'}
                 />
-                <Button size={'100%'} type="submit" loading={loading}>Αποστολή συνδέσμου στο Email</Button>
+                  <Button type="submit" label="Αποστολή συνδέσμου στο Email" loading={loading} style={{width: '100%'}} />
             </form>
             
           </>
@@ -80,7 +81,6 @@ const SuccessMessage = () => {
         <CheckCircleOutlineRoundedIcon sx={{ fontSize: '25px', color: `${theme.palette.success.main}` }} />
         <h3>Το email στάλθηκε</h3>
       </div>
-      
       <p>Ελέγξτε το email σας και πατήστε τον σύνδεσμο αλλαγής κωδικού</p>
     </>
   )
@@ -90,7 +90,7 @@ const Header = styled.h1`
   font-size: 0.9em;
   font-weight: 300;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   
 `
 

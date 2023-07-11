@@ -62,4 +62,4 @@ export default async function handler(req, res) {
 
 
 const emailBody = (emailTo, firstName, lastName) => `<p>Kαλησπέρα σας, πατήστε τον παρακάτω σύνδεσμο για αλλαγή Κωδικού</p> 
-<a href="${process.env.BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού</a>`
+<a href="${process.env.NEXT_PUBLIC_BASE_URL}/api/user/createNewPasswordApi?email=${emailTo}">Aλλαγή Kωδικού</a>`

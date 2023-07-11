@@ -87,13 +87,7 @@ const LoginForm = () => {
                         </Grid>
                     </Grid>
                     <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                        {/* <InputStyled
-                            label="email"
-                            name="email"
-                            type="email"
-                            register={register}
-                            error={errors.email}
-                        /> */}
+                       
                      <Input
                     label={'email'}
                     name={'email'}

@@ -8,7 +8,7 @@ const initialState = {
 	error: null,
 	response: null,
 	isLoading: false,
-	isSidebarOpen: true,
+	isSidebarOpen: false,
 	asycnedMarkes: 0,
 }
 
