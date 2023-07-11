@@ -11,9 +11,13 @@ import AdminNavbar from '@/components/AdminNavbar';
 import BigSidebar from '@/components/Sidebar/BigSidebar';
 import { toggleSidebar } from '@/features/userSlice';
 import SidebarMenu from './PanelMenu';
+import { Button } from 'primereact/button';
+import Image from 'next/image';
+import ProfileButton from '@/components/NavProfileButton';
+import BreadCrumbs from './BreadCrumbs';
 // const AdminLayout = ({children}) => {
 //     const { isSidebarOpen } = useSelector((store) => store.user)
-   
+
 //     return (
 //             <Container>
 //                 <AdminNavbar />
@@ -23,81 +27,104 @@ import SidebarMenu from './PanelMenu';
 //                         {children}
 //                     </SidebarContainer>
 //                 </div>
-              
+
 //             </Container>
 //     )
 // }
 
 
-    
-const AdminLayout = ({children}) => {
-    const { isSidebarOpen } = useSelector((store) => store.user)
-    console.log(isSidebarOpen)
-    const [isScrolled, setScrolled] = useState(false);
 
-    const dispatch = useDispatch()
+const AdminLayout = ({ children }) => {
+	const { isSidebarOpen } = useSelector((store) => store.user)
+	console.log(isSidebarOpen)
+	const [isScrolled, setScrolled] = useState(false);
 
-    const handleToggleSidebar = () => {
-        dispatch(toggleSidebar())
-    }
+	const dispatch = useDispatch()
 
-    
-    return (
-        <Container>
-        <Sidebar isSidebarOpen={isSidebarOpen} style={{  }}>
-            <div className="top-div">
-                <p>logo</p>
-            </div>
-            <div className="main-div">
-                <SidebarMenu />
-            {/* {isSidebarOpen ? <SidebarContent /> : <IconSidebar />} */}
-            </div>
-        </Sidebar>
+	const handleToggleSidebar = () => {
+		dispatch(toggleSidebar())
+	}
 
-        <Content>
-          <Navbar isScrolled={isScrolled}>
-            <BurgerButton onClick={handleToggleSidebar}>
-              button
-            </BurgerButton>
-          </Navbar>
-          <MainContent>
-            {children}
-          </MainContent>
-        </Content>
-      </Container>
-    );
-    
+
+	return (
+		<Container>
+			<SidebarContainer isSidebarOpen={isSidebarOpen} style={{}}>
+				<div className="top-div">
+					{isSidebarOpen ? (
+						<Image
+							src={'/static/imgs/logoDG.png'}
+							alt="Picture of the author"
+							width={80}
+							height={24}
+						/>
+					) : (
+						<Image
+							src={'/static/imgs/dg-small.png'}
+							alt="Picture of the author"
+							width={50}
+							height={50}
+						/>
+					)}
+				</div>
+				<div className="main-div">
+					<SidebarMenu />
+					{/* {isSidebarOpen ? <SidebarContent /> : <IconSidebar />} */}
+				</div>
+			</SidebarContainer>
+
+			<Content isSidebarOpen={isSidebarOpen} >
+				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
+					<Button 
+						severity="secondary" 
+						rounded 
+						icon="pi pi-bars" 
+						text aria-label="Filter" 
+						onClick={handleToggleSidebar} 
+						// style={{width: '35px', height: '35px', fontSize: '12px'}} 
+					/>
+					<div className='navbar-rightdiv'>
+						<FullScreen>
+							{children}
+						</FullScreen>
+						<ProfileButton />
+					</div>
+				</Navbar>
+				<MainContent>
+					<BreadCrumbs />
+					{children}
+
+				</MainContent>
+			</Content>
+		</Container>
+	);
+
 }
 
-const IconSidebar = () => {
-    return (
-        <>
-            <AiOutlineOrderedList />
-            <BsFileBarGraph />
-            <MdDashboard />
-            <SlGraph />
-        </>
-    )
+import { Sidebar } from 'primereact/sidebar';
+
+function FullScreen({ children }) {
+	const [visible, setVisible] = useState(false);
+
+	return (
+		<div className="card flex justify-content-center">
+			<Sidebar visible={visible} onHide={() => setVisible(false)} fullScreen>
+				{children}
+			</Sidebar>
+			<Button 
+				style={{width: '35px', height: '35px', fontSize: '12px'}} 
+				icon="pi pi-bookmark" 
+				severity="primary" 
+				aria-label="Bookmark" 
+				onClick={() => setVisible(true)}
+				/>
+		</div>
+	)
 }
-
-const SidebarContent = () => {
-    return (
-        <>
-            <p>content</p>
-        </>
-    )
-}
-
-const IconSidebarContainer = styled.div`
-
-`
-const SidebarContentContainer = styled.div`
-
-`
 
 const Container = styled.div`
   display: flex;
   height: 100vh;
+  transition: width 0.3s ease-in-out;
 `;
 
 const IconNavbar = styled.div`
@@ -105,21 +132,22 @@ const IconNavbar = styled.div`
     background-color: white;
 `
 
-const Sidebar = styled.div`
-  height: 100%;
+const SidebarContainer = styled.div`
+  height: 100vh;
   width: ${({ isSidebarOpen }) => isSidebarOpen ? '250px' : '60px'};
   background-color: white;
   transition: width 0.3s ease-in-out;
   overflow-y: auto;
-  border-right: 2px solid ${({ theme }) => theme.palette.background};
+  /* border-right: 2px solid ${({ theme }) => theme.palette.background}; */
   .top-div {
-    height: 60px;
+    height: 67px;
+    border-bottom: 1px solid ${({ theme }) => theme.palette.background};
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .main-div {
-    height: calc(100% - 60px);
+    height: calc(100% - 67px);
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -128,19 +156,35 @@ const Sidebar = styled.div`
 
 const Content = styled.div`
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   overflow-y: auto;
+  background-color: ${({ theme }) => theme.palette.background};
 `;
 
 const Navbar = styled.nav`
   position: fixed;
   top: 0;
-  width: 100%;
-  height: 60px;
+  right: 0;
+  height: 70px;
   background-color: #fff;
   color: #fff;
   padding: 10px;
-  z-index: 99999;
-    border-bottom: 4px solid ${({ theme }) => theme.palette.background};
+  z-index: 10;
+  border-bottom: 4px solid ${({ theme }) => theme.palette.background};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 250px)' : 'calc(100% - 60px)'};
+  transition: width 0.3s ease-in-out;
+  .navbar-rightdiv {
+	display: flex;
+	align-items: center;
+	div {
+		margin-left: 5px;
+	}
+  }
 `;
 
 const MainContent = styled.div`
@@ -149,16 +193,6 @@ const MainContent = styled.div`
   background-color: ${({ theme }) => theme.palette.background};
 `;
 
-const BurgerButton = styled.button`
- 
-  @media (max-width: 768px) {
-    display: block;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1;
-  }
-`;
 
 
 

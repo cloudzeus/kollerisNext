@@ -4,51 +4,77 @@ import { NextLink } from 'next/link';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import Image from 'next/image';
 
 const SidebarMenu = () => {
   const nodes = [
     {
+     
       key: 'home',
       label: 'Home',
       icon: 'pi pi-home',
       link: '/dashboard/product/mtrsubgroup'
     },
+    // {
+    //   key: 'sample',
+    //   label: 'sample',
+    //   icon: 'pi pi-',
+    //   children: [
+    //     {
+    //       key: 'category1',
+    //       label: 'Category 1',
+    //       children: [
+    //         {
+    //           key: 'product1',
+    //           label: 'Product 1.1',
+    //           link: '/products/1'
+    //         },
+    //         {
+    //           key: 'product2',
+    //           label: 'Product 1.2',
+    //           link: '/products/2'
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       key: 'category2',
+    //       label: 'Category 2',
+    //       children: [
+    //         {
+    //           key: 'product3',
+    //           label: 'Product 2.1',
+    //           link: '/products/3'
+    //         },
+    //         {
+    //           key: 'product4',
+    //           label: 'Product 2.2',
+    //           link: '/products/4'
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
     {
-      key: 'products',
-      label: 'Products',
+      key: 'product',
+      label: 'Προϊόντα',
       icon: 'pi pi-shopping-cart',
       children: [
         {
-          key: 'category1',
-          label: 'Category 1',
-          children: [
-            {
-              key: 'product1',
-              label: 'Product 1.1',
-              link: '/products/1'
-            },
-            {
-              key: 'product2',
-              label: 'Product 1.2',
-              link: '/products/2'
-            }
-          ]
+          key: 'Κατηγορίες',
+          label: 'Κατηγορίες',
+          link: '/dashboard/product/mtrcategories'
         },
         {
-          key: 'category2',
-          label: 'Category 2',
-          children: [
-            {
-              key: 'product3',
-              label: 'Product 2.1',
-              link: '/products/3'
-            },
-            {
-              key: 'product4',
-              label: 'Product 2.2',
-              link: '/products/4'
-            }
-          ]
+          key: 'Group',
+          label: 'Groups',
+          link: '/dashboard/product/mtrgroups'
+          
+        },
+        {
+          key: 'subgroup',
+          label: 'Sub groups',
+          link: '/dashboard/product/mtrsubgroup'
+          
         }
       ]
     },
@@ -90,7 +116,6 @@ const SidebarMenu = () => {
   const {isSidebarOpen} = useSelector(state => state.user)
   const renderedNodes = renderNodes(nodes);
   
-  console.log('sefseff' + isSidebarOpen)
   return (
     <Container>
         {isSidebarOpen ? <Tree value={renderedNodes} />: <IconContent />}

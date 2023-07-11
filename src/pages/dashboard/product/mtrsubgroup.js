@@ -216,34 +216,7 @@ export default function Categories() {
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
-            <DataTable
-                header={header}
-                value={data}
-                paginator
-                rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                showGridlines
-                dataKey="_id"
-                filters={filters}
-                paginatorRight={true}
-                removableSort
-                onFilter={(e) => setFilters(e.filters)}
-                loading={loading}
-                editMode="row"
-                selectOnEdit
-            >
-                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
-                <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
-                {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
-                  <Column body={LocaleTemplate} header="Localized" ></Column>
-              
-                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
-
-            </DataTable>
+          
             <EditDialog
                 style={dialogStyle}
                 data={editData}
