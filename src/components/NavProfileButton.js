@@ -69,7 +69,7 @@ export default function ProfileButton() {
                 aria-controls="popup_menu_left"  
                 icon="pi pi-user" 
                 onClick={(event) => menuLeft.current.toggle(event)} 
-                	style={{width: '35px', height: '35px', fontSize: '12px', backgroundColor: '#6366F1', color: '#ffffff'}} 
+                style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
                 
                 />
             <Menu 

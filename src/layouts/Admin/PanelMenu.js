@@ -3,13 +3,14 @@ import { Tree } from 'primereact/tree';
 import { NextLink } from 'next/link';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Image from 'next/image';
+import { toggleSidebar } from '@/features/userSlice';
 
 const SidebarMenu = () => {
   const nodes = [
     {
-     
+
       key: 'home',
       label: 'Home',
       icon: 'pi pi-home',
@@ -68,13 +69,13 @@ const SidebarMenu = () => {
           key: 'Group',
           label: 'Groups',
           link: '/dashboard/product/mtrgroups'
-          
+
         },
         {
           key: 'subgroup',
           label: 'Sub groups',
           link: '/dashboard/product/mtrsubgroup'
-          
+
         }
       ]
     },
@@ -86,7 +87,7 @@ const SidebarMenu = () => {
     }
   ];
 
- 
+
   const renderNode = (node) => {
     if (node.link) {
       return (
@@ -112,32 +113,38 @@ const SidebarMenu = () => {
     });
   };
 
- 
-  const {isSidebarOpen} = useSelector(state => state.user)
+
+  const { isSidebarOpen } = useSelector(state => state.user)
   const renderedNodes = renderNodes(nodes);
-  
+
   return (
     <Container>
-        {isSidebarOpen ? <Tree value={renderedNodes} />: <IconContent />}
+      {isSidebarOpen ? <Tree value={renderedNodes} /> : <IconContent />}
     </Container>
   );
 };
 
 
 const IconContent = () => {
-    return (
-       <div className='icons-container'>
-         <div className='iconcontent'>
-            <span className="p-tree-icon pi pi-home"></span>
+  const dispatch = useDispatch();
+  const handleToggleSidebar = () => {
+    dispatch(toggleSidebar())
+  }
+  return (
+    <div onClick={handleToggleSidebar}>
+      <div className='icons-container'>
+        <div className='iconcontent'>
+          <span className="p-tree-icon pi pi-home"></span>
         </div>
-         <div className='iconcontent'>
-            <span className="p-tree-icon pi pi-shopping-cart"></span>
+        <div className='iconcontent'>
+          <span className="p-tree-icon pi pi-shopping-cart"></span>
         </div>
-         <div className='iconcontent'>
-            <span className="p-tree-icon pi pi-envelope"></span>
+        <div className='iconcontent'>
+          <span className="p-tree-icon pi pi-envelope"></span>
         </div>
-       </div>
-    )
+      </div>
+    </div>
+  )
 }
 
 

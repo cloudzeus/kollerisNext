@@ -75,10 +75,9 @@ const AdminLayout = ({ children }) => {
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button 
-						severity="secondary" 
-						rounded 
 						icon="pi pi-bars" 
-						text aria-label="Filter" 
+						text aria-label="navburger" 
+						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
 						onClick={handleToggleSidebar} 
 						// style={{width: '35px', height: '35px', fontSize: '12px'}} 
 					/>
@@ -111,9 +110,8 @@ function FullScreen({ children }) {
 				{children}
 			</Sidebar>
 			<Button 
-				style={{width: '35px', height: '35px', fontSize: '12px'}} 
+				style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
 				icon="pi pi-bookmark" 
-				severity="primary" 
 				aria-label="Bookmark" 
 				onClick={() => setVisible(true)}
 				/>
@@ -127,10 +125,7 @@ const Container = styled.div`
   transition: width 0.3s ease-in-out;
 `;
 
-const IconNavbar = styled.div`
-    width: 40px;
-    background-color: white;
-`
+
 
 const SidebarContainer = styled.div`
   height: 100vh;
