@@ -11,7 +11,6 @@ import Link from 'next/link';
 import Divider from '@mui/material/Divider';
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@/components/Buttons/Button';
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import LoginLayout from '@/layouts/Auth/loginLayout';
 import { registerUser } from '@/features/userSlice';
@@ -20,6 +19,8 @@ import styled from 'styled-components';
 import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 import Input from "@/components/Forms/PrimeInput";
 import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
+import { Button } from 'primereact/button';
+
 
 const registerSchema = yup.object().shape({
 	firstName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -112,7 +113,7 @@ const RegisterPage = () => {
 						<CheckboxInput label={'Συμφωνώ με τους Όρους Χρήσης και την πολιτική απορρήτου'} />
 					</div>
 					{/* Login Button */}
-					<Button size={'100%'} loading={isLoading} onClick={onSubmit}>Εγγραφή</Button>
+					<Button type="submit" onClick={onSubmit} label="Εγγραφή" loading={isLoading} style={{width: '100%'}} />
 				</form>
 
 

@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import styled, { ThemeProvider as ThemeStyledComponentsProvider } from 'styled-components';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 import { registerLicense } from '@syncfusion/ej2-base';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,7 +17,7 @@ function App({ Component, pageProps: {session, pageProps} }) {
     return (
             <Provider store={store}>
                     <ThemeStyledComponentsProvider theme={theme}>
-                        <ThemeProvider theme={theme}>
+                    
                             
                             <SessionProvider session={session}>
                                 <ToastContainer
@@ -38,7 +38,6 @@ function App({ Component, pageProps: {session, pageProps} }) {
 
                             </SessionProvider>
                            
-                        </ThemeProvider>
                     </ThemeStyledComponentsProvider>
             </Provider>
     )

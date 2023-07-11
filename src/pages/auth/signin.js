@@ -104,16 +104,18 @@ const LoginForm = () => {
                     control={control}
                     error={errors.password}
                 />
-                        {/* Checkbox row */}
                         <div className='flexBetween'>
                             <CheckboxInput label={'Αποθήκευση κωδικού'} />
                             <Link className="linkBtn" href="/auth/reset-password" >
                                 Αλλαγή κωδικού
                             </Link>
                         </div>
-                        {/* Login Button */}
-                        <Button type="submit" label="Σύνδεση" loading={loading} style={{width: '100%'}} />
-                        {/* <Button size={'100%'} type="submit" loading={loading} >Σύνδεση</Button> */}
+                        <Button 
+                            type="submit" 
+                            label="Σύνδεση" 
+                            loading={loading} 
+                            style={{width: '100%'}} 
+                        />
                         <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
                         <div className="centerDiv">
                             <Link className="linkBtn" href="/auth/register" >
