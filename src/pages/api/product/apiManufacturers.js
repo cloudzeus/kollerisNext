@@ -172,14 +172,13 @@ export default async function handler(req, res) {
     }
 
     if (action === 'createMany') {
-
+        console.log('create many')
         const { data, createdFrom } = req.body;
+
+        let newData = data.map(obj => ({softOne: obj, createdFrom: createdFrom, status: true}))
         try {
             await connectMongo();
-            const manufacturers = await Manufacturers.insertMany({
-                ...data,
-                createdFrom: createdFrom
-            });
+            const manufacturers = await Manufacturers.insertMany(newData);
             if (!manufacturers) {
                 return res.status(200).json({ success: false, result: null });
             }

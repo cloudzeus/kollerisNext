@@ -34,19 +34,20 @@ export default function SyncManufacturers({refreshGrid,  addToDatabaseURL}) {
 
 
     const handleSyncRowClick = async () => {
+        console.log(addToDatabaseURL)
         console.log('sync row click')
-        // setLoading(true)
-        // let user = session.user.user.lastName
-        // let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct, createdFrom: user })
-        // console.log(res.data)
-        // if(!res.data.success) {
-        //     showError()
-        //     setLoading(false)
-        // }
-        // showSuccess()
-        // findExtraSoftone();
-        // refreshGrid();
-        // setLoading(false)
+        setLoading(true)
+        let user = session.user.user.lastName
+        let res = await axios.post(addToDatabaseURL, { action: 'createMany', data: selectedProduct, createdFrom: user })
+        console.log(res.data)
+        if(!res.data.success) {
+            showError()
+            setLoading(false)
+        }
+        showSuccess()
+        findExtraSoftone();
+        refreshGrid();
+        setLoading(false)
     }
     
     
