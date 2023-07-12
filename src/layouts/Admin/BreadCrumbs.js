@@ -9,7 +9,7 @@ export default function BreadCrumbs({labels}) {
     const route = useRouter();
     let {pathname} = route;
     let paths = pathname.split('/').filter((el) => el !== '' && el !== 'dashboard');
-    console.log(paths)
+ 
     const items  = []
     for(let path of paths) {
             items.push({
