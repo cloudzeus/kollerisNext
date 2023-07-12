@@ -16,7 +16,7 @@ import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
-
+import SyncManufacturers from '@/GridSync/SyncManufacturers';
 
 
 export default function Manufacturers() {
@@ -95,10 +95,10 @@ export default function Manufacturers() {
     const rightToolbarTemplate = () => {
         return (
             <>
-                {/* <SyncBrand 
+                <SyncManufacturers
                 refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            /> */}
+                addToDatabaseURL= '/api/product/apiManufacturers'
+                /> 
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
