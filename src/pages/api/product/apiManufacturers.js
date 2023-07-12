@@ -47,7 +47,47 @@ export default async function handler(req, res) {
         }
     }
 
+    if (action === 'update') {
+      
+        const {NAME, MTRMANFCTR, id, updatedFrom} = req.body;
+     
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrManufacture/updateMtrManufacture`;
+            let updateSoftone = await axios.post(URL, {
+                username:"Service",
+                password:"Service",
+                company:1001,
+                name:NAME,
+                mtrmanfctr: MTRMANFCTR.toString()
+            })
 
+            console.log('data:')
+            console.log(updateSoftone.data)
+            if (!updateSoftone.data.success) return res.status(400).json({ success: false, result: null })
+            await connectMongo();
+
+            const obj = {
+                softOne: {NAME: NAME},
+                updatedFrom: updatedFrom
+            }
+
+            console.log(obj)
+            const updatedManufacturers = await Manufacturers.findOneAndUpdate(
+                { _id: id },
+                obj,
+                { new: true }
+              );
+              console.log(updatedManufacturers)
+              return res.status(200).json({ success: true, result: updatedManufacturers, error: null });
+
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null, error: 'Αποτυχία ενημέρωσης βάσης' });
+        }
+	
+		
+	
+
+	}
 
     if (action === 'delete') {
         try {

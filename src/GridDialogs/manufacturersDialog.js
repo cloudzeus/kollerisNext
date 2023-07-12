@@ -47,54 +47,28 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
-    useEffect(() => {
-        setLogo(gridRowData?.categoryIcon ? [gridRowData?.categoryIcon] : [])
-        setImage(gridRowData?.categoryImage ? [gridRowData?.categoryImage] : [])
-    }, [gridRowData])
-
-
-    console.log('gridrowdata')
-    console.log(gridRowData)
-   
-    const handleEdit = async (data) => {
-        console.log(gridRowData)
-        let user = session.user.user.lastName
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
-        let newImage = image[0]
-        if(image.length === 0) {
-            newImage = ''
-
-        }
-        const object = {
-            ...data,
-            categoryIcon: newLogo,
-            categoryImage: newImage,
-           
-        }
  
 
+
+   
+   
+    const handleEdit = async (data) => {
+        let user = session.user.user.lastName
+        console.log(user)
+        const object = {
+            action: "update", 
+            NAME: data.softOne.NAME,
+            MTRMANFCTR: gridRowData.softOne.MTRMANFCTR,
+            id: gridRowData._id, 
+            updatedFrom: user
+        }
+
         try {
-           
-            let resp = await axios.post('/api/product/apiCategories', 
-            {
-                action: "update", 
-                data: {...object, updatedFrom: user, }, 
-                id: gridRowData._id, 
-                
-               
-            })
-            // if(!resp.data.success) {
-            //     return showError()
-            // }
+            let resp = await axios.post('/api/product/apiManufacturers', object)
+            if(!resp.data.success) return showError()
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-            
-            
                
         } catch (e) {
             console.log(e)
@@ -139,29 +113,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    <FormTitle>Λεπτομέριες</FormTitle>
               
                    <Input
-                    label={'Όνομα Κατηγορίας'}
-                    name={'categoryName'}
-                    control={control}
-                    required
-                    error={errors.categoryName}
-                />
+                   label={'Όνομα Kατασκευαστή'}
+                   name={'softOne.NAME'}
+                   control={control}
+                   required
+                   error={errors.NAME}
+               />
               
-                <FormTitle>Λογότυπο</FormTitle>
-                    <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={false}
-                    />
-
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
-                        state={image}
-                        setState={setImage}
-                        multiple={false}
-                        singleUpload={false}
-                       
-                    />
                 </Dialog>
             </form>
         </Container>
