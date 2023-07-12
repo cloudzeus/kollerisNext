@@ -136,12 +136,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     name="role"
                     required
                     label={'Δικαιώματα Χρήστη'}
-                    values={[
-                            { role: 'user' },
-                            { role: 'employee' },
-                            { role: 'manager' },
-                            { role: 'admin' },
-                        ]}
+                    options={[
+                        { role: 'user' },
+                        { role: 'employee' },
+                        { role: 'manager' },
+                        { role: 'admin' },
+                    ]}
+                    optionLabel={'role'}
+                    placeholder='label'
+                    optionValue={'role'}
                   
                     />
                 </Dialog>

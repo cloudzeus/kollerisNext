@@ -40,7 +40,7 @@ export default function TemplateDemo() {
 
     try {
         const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
-        // console.log(resp.data.result)
+        console.log(resp.data.result)
         setData(resp.data.result)
     } catch (error) {
         console.log(error)
