@@ -165,7 +165,7 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -185,7 +185,7 @@ export default function Manufacturers() {
                 <Column field="softOne.NAME" header="Kατασκευαστής" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="status" sortable header="Status"  body={ActiveTempate} style={{ width: '90px' }}></Column>
+                <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
             </DataTable>
             <EditDialog

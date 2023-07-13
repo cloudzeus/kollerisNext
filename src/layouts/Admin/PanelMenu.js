@@ -61,14 +61,25 @@ const SidebarMenu = () => {
       icon: 'pi pi-shopping-cart',
       children: [
         {
+          key: 'Μάρκες',
+          label: 'Μάρκες',
+          link: '/dashboard/product/brands'
+        },
+        {
+          key: 'Κατασκευαστές',
+          label: 'Κατασκευαστές',
+          link: '/dashboard/product/manufacturers'
+        },
+        {
           key: 'Κατηγορίες',
           label: 'Κατηγορίες',
           link: '/dashboard/product/mtrcategories'
         },
+       
         {
           key: 'Group',
           label: 'Groups',
-          link: '/dashboard/product/mtrgroups'
+          link: '/dashboard/product/mtrgroup'
 
         },
         {

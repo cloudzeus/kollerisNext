@@ -188,7 +188,7 @@ export default function Categories() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
 
                 header={header}
@@ -213,10 +213,11 @@ export default function Categories() {
                 <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }}></Column>
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
-                <Column body={LocaleTemplate} header="Localized" sortable></Column>
-                <Column field="status" sortable header="Status"  body={ActiveTempate} style={{ width: '90px' }}></Column>
+                {/* <Column body={LocaleTemplate} header="Localized" sortable></Column> */}
+               
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>

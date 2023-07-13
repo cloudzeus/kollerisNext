@@ -187,7 +187,7 @@ export default function Categories() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar  left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -204,15 +204,16 @@ export default function Categories() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate} ></Column>
+                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
                 <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
                 <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
                 {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
                   <Column body={LocaleTemplate} header="Localized" ></Column>
               
-                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+              
+                <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="status" sortable header="Status" bodyStyle={{textAlign: 'center'}} style={{ width: '90px' }} body={ActiveTempate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
