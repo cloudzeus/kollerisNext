@@ -16,45 +16,7 @@ const SidebarMenu = () => {
       icon: 'pi pi-home',
       link: '/dashboard/product/mtrsubgroup'
     },
-    // {
-    //   key: 'sample',
-    //   label: 'sample',
-    //   icon: 'pi pi-',
-    //   children: [
-    //     {
-    //       key: 'category1',
-    //       label: 'Category 1',
-    //       children: [
-    //         {
-    //           key: 'product1',
-    //           label: 'Product 1.1',
-    //           link: '/products/1'
-    //         },
-    //         {
-    //           key: 'product2',
-    //           label: 'Product 1.2',
-    //           link: '/products/2'
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       key: 'category2',
-    //       label: 'Category 2',
-    //       children: [
-    //         {
-    //           key: 'product3',
-    //           label: 'Product 2.1',
-    //           link: '/products/3'
-    //         },
-    //         {
-    //           key: 'product4',
-    //           label: 'Product 2.2',
-    //           link: '/products/4'
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // },
+   
     {
       key: 'product',
       label: 'Προϊόντα',
@@ -91,11 +53,35 @@ const SidebarMenu = () => {
       ]
     },
     {
-      key: 'contact',
-      label: 'Contact',
-      icon: 'pi pi-envelope',
-      link: '/contact'
-    }
+      key: 'info',
+      label: 'info',
+      icon: 'pi pi-info-circle',
+      children: [
+        {
+          key: 'Xώρες',
+          label: 'Χώρες',
+          link: '/dashboard/info/countries'
+        },
+        {
+          key: 'Νόμισμα',
+          label: 'Νόμισμα',
+          link: '/dashboard/info/currencies'
+        },
+        {
+          key: 'Intrastat',
+          label: 'Intrastat',
+          link: '/dashboard/info/intrastat'
+        },
+        {
+          key: 'Vat',
+          label: 'Vat',
+          link: '/dashboard/info/vat'
+        },
+       
+       
+      ]
+    },
+   
   ];
 
 
@@ -151,7 +137,7 @@ const IconContent = () => {
           <span className="p-tree-icon pi pi-shopping-cart"></span>
         </div>
         <div className='iconcontent'>
-          <span className="p-tree-icon pi pi-envelope"></span>
+          <span className="p-tree-icon pi pi-info-circle"></span>
         </div>
       </div>
     </div>
