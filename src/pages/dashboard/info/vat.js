@@ -36,7 +36,7 @@ export default function Manufacturers() {
 
 
     const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiHelperInfo', { action: 'findCountries' })
+        let res = await axios.post('/api/product/apiHelperInfo', { action: 'findVat' })
         setData(res.data.result)
     }
 
@@ -114,7 +114,7 @@ export default function Manufacturers() {
     const CountryIcon = (props) => {
         return (
             <div className="flex align-content-center justify-content-start">
-                <Flag code={ props.INTERCODE} style={{width: '40px', height: '15px'}} />
+                <Flag code={ props.INTERCODE} style={{width: '70px', height: '25px'}} />
                 <span className="ml-2">{props.NAME}</span>
             </div>
         )
@@ -124,7 +124,7 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <CountriesDetailCard stat={data?.length} />
+            <CountriesDetailCard stat={data.length} />
             <DataTable
                 header={header}
                 value={data}
@@ -141,9 +141,11 @@ export default function Manufacturers() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="NAME" header="Kατασκευαστής"  body={CountryIcon} sortable></Column>
-                <Column field="INTERCODE" header="Κωδικός" sortable></Column>
-                <Column field="COUNTRYTYPE" header="COUNTRYTYPE" sortable></Column>
+                <Column field="NAME" header="'Ονομα"  sortable></Column>
+                <Column field="PERCNT" header="Ποσοστό" sortable></Column>
+                <Column field="ACNMSKS" header="ACNMSKS" sortable></Column>
+                <Column field="VATS1" header="VATS1" sortable></Column>
+                {/* <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column> */}
             </DataTable>
            
         </AdminLayout >
@@ -162,7 +164,7 @@ const CountriesDetailCard = ({stat}) => {
         <div className="mb-3 surface-0 shadow-1 p-3 border-1 border-50 border-round">
         <div className="flex justify-content-between ">
             <div>
-                <span className="block text-500 font-medium mb-3">Χώρες</span>
+                <span className="block text-500 font-medium mb-3">ΦΠΑ</span>
                 <div className="text-900 font-medium text-xl">{stat}</div>
             </div>
             <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
