@@ -6,35 +6,57 @@ import Vat from "../../../../server/models/vatModel";
 import Countries from "../../../../server/models/countriesModel";
 import Intrastat from "../../../../server/models/intrastatMode";
 import Currency from "../../../../server/models/currencyModel";
-
+import Unit from "../../../../server/models/unitsModel";
 
 export default async function handler(req, res) {
 
     const { action } = req.body
 
  
-    if(action === "populateVat") {
-        console.log('populate vat')
+    // if(action === "populateVat") {
+    //     console.log('populate vat')
     
-        try {
-            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllVat`;
-            const response = await fetch(URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: "Service",
-                    password: "Service",
-                })
-            });
+    //     try {
+    //         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllVat`;
+    //         const response = await fetch(URL, {
+    //             method: 'POST',
+    //             body: JSON.stringify({
+    //                 username: "Service",
+    //                 password: "Service",
+    //             })
+    //         });
 
-            let buffer = await translateData(response)
-            console.log(buffer)
-            await connectMongo();
-            let insert = await Vat.insertMany(buffer.result)
-            return res.status(200).json({ result: buffer.result, success: true, insert: insert })
-        } catch (e) {
-            return res.status(200).json({ result: e, success: false })
-        }   
-    }
+    //         let buffer = await translateData(response)
+    //         console.log(buffer)
+    //         await connectMongo();
+    //         let insert = await Vat.insertMany(buffer.result)
+    //         return res.status(200).json({ result: buffer.result, success: true, insert: insert })
+    //     } catch (e) {
+    //         return res.status(200).json({ result: e, success: false })
+    //     }   
+    // }
+    // if(action === "populateUnits") {
+    //     console.log('populate')
+    
+    //     try {
+    //         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllUnits`;
+    //         const response = await fetch(URL, {
+    //             method: 'POST',
+    //             body: JSON.stringify({
+    //                 username: "Service",
+    //                 password: "Service",
+    //             })
+    //         });
+
+    //         let buffer = await translateData(response)
+    //         console.log(buffer)
+    //         await connectMongo();
+    //         let insert = await Unit.insertMany(buffer.result)
+    //         return res.status(200).json({ result: buffer.result, success: true, insert: insert })
+    //     } catch (e) {
+    //         return res.status(200).json({ result: e, success: false })
+    //     }   
+    // }
     // if(action === "populateIntrastat") {
     //     console.log('populateIntrastat')
     
@@ -80,6 +102,8 @@ export default async function handler(req, res) {
     //     }   
     // }
 
+
+
     if(action === "findCountries") {
         try {
             await connectMongo();
@@ -114,6 +138,16 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let result = await Currency.find({})
+            console.log(result)
+            return res.status(200).json({ result: result, success: true })
+        } catch (e) {
+            return res.status(200).json({ result: e, success: false })
+        }   
+    }
+    if(action === "findUnits") {
+        try {
+            await connectMongo();
+            let result = await Unit.find({})
             console.log(result)
             return res.status(200).json({ result: result, success: true })
         } catch (e) {

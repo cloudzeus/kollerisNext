@@ -36,22 +36,14 @@ export default function Manufacturers() {
 
 
     const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiHelperInfo', { action: 'findVat' })
+        let res = await axios.post('/api/product/apiHelperInfo', { action: 'findUnits' })
+        console.log(res.data.result)
         setData(res.data.result)
     }
-
 
     useEffect(() => {
         handleFetch()
     }, [])
-
-
-
-    //Refetch on add edit:
-    useEffect(() => {
-        console.log('submitted: ' + submitted)
-        if (submitted) handleFetch()
-    }, [submitted])
 
 
 
@@ -80,27 +72,8 @@ export default function Manufacturers() {
     };
 
 
- 
-
-
-
-    // const leftToolbarTemplate = () => {
-    //     return (
-    //         <div className="flex flex-wrap gap-2">
-    //             <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
-    //         </div>
-    //     );
-    // };
 
     
-
-
-    const showSuccess = () => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
-    }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
-    }
 
     const dialogStyle = {
         marginTop: '10vh', // Adjust the top margin as needed
@@ -114,7 +87,7 @@ export default function Manufacturers() {
     const CountryIcon = (props) => {
         return (
             <div className="flex align-content-center justify-content-start">
-                <Flag code={ props.INTERCODE} style={{width: '70px', height: '25px'}} />
+                <Flag code={ props.INTERCODE} style={{width: '40px', height: '15px'}} />
                 <span className="ml-2">{props.NAME}</span>
             </div>
         )
@@ -124,7 +97,7 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <CountriesDetailCard stat={data.length} />
+            <CountriesDetailCard stat={data?.length} />
             <DataTable
                 header={header}
                 value={data}
@@ -140,12 +113,10 @@ export default function Manufacturers() {
                 loading={loading}
                 editMode="row"
                 selectOnEdit
-            >
+            >   
                 <Column field="NAME" header="'Ονομα"  sortable></Column>
-                <Column field="PERCNT" header="Ποσοστό" sortable></Column>
-                <Column field="ACNMSKS" header="ACNMSKS" sortable></Column>
-                <Column field="VATS1" header="VATS1" sortable></Column>
-                {/* <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column> */}
+                <Column field="SHORTCUT" header="SHORTCUT"  sortable></Column>
+         
             </DataTable>
            
         </AdminLayout >
@@ -164,11 +135,11 @@ const CountriesDetailCard = ({stat}) => {
         <div className="mb-3 surface-0 shadow-1 p-3 border-1 border-50 border-round">
         <div className="flex justify-content-between ">
             <div>
-                <span className="block text-500 font-medium mb-3">ΦΠΑ</span>
+                <span className="block text-500 font-medium mb-3">Intrastat</span>
                 <div className="text-900 font-medium text-xl">{stat}</div>
             </div>
             <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                <i className="pi pi-percentage text-orange-500 text-xl"></i>
+                <i className="pi pi-tag text-orange-500 text-xl"></i>
             </div>
         </div>
         {/* <span className="text-green-500 font-medium">%52+ </span>
