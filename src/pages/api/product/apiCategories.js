@@ -137,6 +137,26 @@ export default async function handler(req, res) {
 		}
 	}
 
+	if(action === "translate") {
+		let data = req.body.data;
+		console.log('data: ' + JSON.stringify(data))
+		let {id} = req.body
+		console.log('id: ' + JSON.stringify(id))
+		try {
+			await connectMongo();
+			const category = await MtrCategory.findOneAndUpdate(
+				{ _id: id  },
+				{ $set: { 
+					localized: data
+                }},
+				{ new: true }
+			
+			  );
+			return res.status(200).json({ success: true, result: category });
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 }
 
 

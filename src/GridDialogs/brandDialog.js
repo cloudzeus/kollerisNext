@@ -18,7 +18,10 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
-import { set } from 'mongoose';
+import  TransaltionGrid from '@/components/Forms/TranslationGrid';
+import FormSteps from '@/components/Steps';
+
+
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
@@ -136,6 +139,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                         required
                     />
+                    
                     <TextAreaInput
                         autoResize={true}
                         label={'Περιγραφή'}
@@ -256,6 +260,7 @@ const AddDialog = ({
             instagramUrl: '',
         }
     });
+    const [activeIndex, setActiveIndex] = useState(1);
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
@@ -320,6 +325,7 @@ const AddDialog = ({
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
+            
             <Dialog
                 visible={dialog}
                 style={{ width: '32rem' }}
@@ -338,7 +344,7 @@ const AddDialog = ({
                     control={control}
                     error={errors.name}
                 />
-
+              
                 <Input
                     label={'Περιγραφή'}
                     name={'description'}
@@ -400,7 +406,7 @@ const AddDialog = ({
                     name={'instagramUrl'}
                     control={control}
                 />
-
+               
             </Dialog>
         </form>
     )

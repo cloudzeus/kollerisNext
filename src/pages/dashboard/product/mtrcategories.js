@@ -17,10 +17,40 @@ import { ImageDiv, ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import GridIconTemplate from '@/components/grid/gridIconTemplate';
+
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+import TranslateField from '@/components/grid/GridTranslate';
+
+
+
+
+
+const initialTranslateState = 
+[
+    {
+        fieldName: 'categoryName',
+        translations: [
+            {
+                locale: 'Aγγλικά',
+                code: 'GB',
+                translation: ''
+            },
+            {
+                locale: 'Γαλλικά',
+                code: 'FR',
+                translation: ''
+            },
+            {
+                locale: 'Γερμανικά',
+                code: 'GE',
+                translation: ''
+            },
+        ]
+    }
+]
+
+
 
 export default function Categories() {
     const [editData, setEditData] = useState(null)
@@ -32,7 +62,8 @@ export default function Categories() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    
+    const [translateState, setTranslateState] = useState(initialTranslateState)
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -121,8 +152,6 @@ export default function Categories() {
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -185,6 +214,27 @@ export default function Categories() {
         return <RowExpansionGrid groups={data.groups} />
     }
 
+
+   
+    const translateName = ({_id, categoryName}) => {
+        
+        
+        const handeTranslateApi = () => {
+            console.log('hit translate button')
+            let res = axios.post('/api/product/apiCategories', { action: 'translate', data: translateState, id: _id})
+            console.log(res)
+        }
+        return (
+            <TranslateField 
+                fieldName={'Ονομα'} 
+                value={categoryName}
+                id={_id}
+                handleApi={handeTranslateApi}
+                data={translateState}
+                setData={setTranslateState}
+                />
+        )
+    }
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -212,9 +262,7 @@ export default function Categories() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }}></Column>
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
-                <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
-                {/* <Column body={LocaleTemplate} header="Localized" sortable></Column> */}
-               
+                <Column field="categoryName" body={translateName} header="Ονομα Κατηγορίας" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>

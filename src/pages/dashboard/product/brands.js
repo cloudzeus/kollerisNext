@@ -22,6 +22,9 @@ import { Toast } from 'primereact/toast';
 import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
+import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+import GridTranslate from '@/components/grid/GridTranslate';
+
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -252,9 +255,8 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-          
                 header={header}
                 value={data}
                 paginator
@@ -277,9 +279,8 @@ export default function TemplateDemo() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
-                <Column field="status"  sortable header="Status"  style={{ width: '200px' }} body={ActiveTempate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom"  style={{ width: '200px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom"  style={{ width: '200px' }} body={CreatedFromTemplate}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom"  style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="status" bodyStyle={{textAlign: 'center'}}  sortable header="Status"  style={{ width: '90px' }} body={ActiveTempate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
@@ -291,7 +292,6 @@ export default function TemplateDemo() {
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-              
             />
             <AddDialog
                 dialog={addDialog}
@@ -299,10 +299,35 @@ export default function TemplateDemo() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
+           
         </AdminLayout >
     );
 }
 
+const translateName = ({name}) => {
+    return (
+        <TranslateComp name={name} />
+    )
+}
+
+const TranslateComp = ({name}) => {
+    const [visible, setVisible] = useState(false)
+    return (
+       <div onClick={() => setVisible(true)} className='flex align-content-center align-items-center'>
+          <span>{name}</span>
+          <i className="pi pi-language" ></i>
+        <GridTranslate visible={visible} setVisible={setVisible} translateField={name}/>
+       </div>
+    )
+}
+
+
+const LocaleTemplate = ({ localized }) => {
+    return (
+        <GridLanguageTemplate localized={localized} />
+    )
+
+}
 
 const ActiveTempate = ({ status }) => {
 

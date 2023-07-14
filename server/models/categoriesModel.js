@@ -26,20 +26,16 @@ import { model, models, Schema } from 'mongoose';
             type: Boolean
         }
     },
-    localized: [
-        {
-            locale: {
-                type: String,
-                required: true
-            },
-            name: {
-                type: String
-            },
-            description: {
-                type: String
-            }
-        }
-    ],
+    localized: [{
+            fieldName: String,
+            translations: [
+                {
+                    locale: String,
+                    code: String,
+                    translation: String,
+                }
+            ]
+    }],
     status: Boolean,
     updatedFrom: String,
     createdFrom: String,

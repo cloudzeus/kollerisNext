@@ -47,6 +47,14 @@ const markesSchema = new mongoose.Schema({
         NAME: String,
         ISACTIVE:Number
     },
+    localized: [{
+        field: [{
+            fieldName: String,
+            translation: String
+        }],
+        locale: String,
+        code: String,
+    }],
     status: Boolean,
     updatedFrom: String,
     createdFrom: String,
