@@ -7,9 +7,10 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
-
+import deepLtranslator from "@/utils/deepL";
 import styled from "styled-components";
 import Flag from 'react-world-flags'
+import axios from "axios";
 
 
 export default function TranslateField({ fieldName, value, handleApi, data, setData }) {
@@ -38,8 +39,8 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
 
     const CountryIcon = (props) => {
         return (
-            <div className="flex align-content-center justify-content-start">
-                <Flag code={props.code} style={{ width: '40px', height: '15px' }} />
+            <div className="flex align-items-center justify-content-start">
+                <Flag code={props.code} style={{ width: '20px', height: '15px' }} />
                 <span className="ml-2">{props.locale}</span>
             </div>
         )
@@ -51,7 +52,6 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
     }
 
     const DeleteLang = (rowData) => {
-
         const onClick = () => {
             let _data = [...data];
             let _translations = _data[0].translations.filter(translation => translation.code !== rowData.rowData.code);
@@ -62,13 +62,38 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
             <i onClick={onClick} className="pi pi-trash icon"></i>
         )
     }
+
+    const header = (
+        <div className="flex flex-column  align-items-start justify-content-between gap-1 border-bottom-1 border-300 ">
+            <span className="text-900 text-sm font-medium">Πεδίο προς μετάφραση:</span>
+            <p className="text-500 text-md font-medium mb-4">{value}</p>
+        </div>
+    );
+
+
+    const autoTranslate = (rowData) => {
+        console.log('auto translate')
+        console.log(rowData)
+        const handleTranslation = async () => {
+            console.log('works')
+            let resp = await axios.post('/api/deepL', { text: value, targetLang: rowData.code })
+            const _data = [...data];
+            const index = _data[0].translations.findIndex(translation => translation.code === rowData.code);
+            _data[0].translations[index].translation = resp.data.translatedText;
+            setData(_data);
+
+        }
+        return (
+            <Button label="auto-tr"  onClick={handleTranslation}/>
+        )
+    }
     return (
         <div >
             <GridField onClick={() => setVisible(true)} >
                 <i className="pi pi-language icon"></i>
                 <span className="value">{value}</span>
             </GridField>
-            <Dialog header={value} visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
+            <Dialog header={header}  visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
                 <DataTable
                     showGridlines
                     value={data[0].translations}
@@ -76,10 +101,11 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
                     dataKey="code"
                     onRowEditComplete={onRowEditComplete}
                 >
-                    <Column field="locale" header="Γλώσσα" body={CountryIcon}></Column>
+                    <Column field="locale" style={{ width: '200px' }} header="Γλώσσα" body={CountryIcon}></Column>
                     <Column field="translation" header="Μετάφραση" editor={(options) => textEditor(options)} ></Column>
                     <Column rowEditor style={{ width: '100px' }} bodyStyle={{ textAlign: 'center' }}></Column>
                     <Column style={{ width: '30px' }} body={deleteRow} bodyStyle={{ textAlign: 'center' }}></Column>
+                    <Column style={{ width: '200px' }} body={autoTranslate} bodyStyle={{ textAlign: 'center' }}></Column>
 
                 </DataTable>
                 <p className="mt-4 mb-2">Προσθήκη Γλώσσας</p>
