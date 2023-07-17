@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
+import GridIconTemplate from "@/components/grid/gridIconTemplate";
 export default async function handler(req, res) {
 
 
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
 			}
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/createMtrCategory`;
             let addedSoftone = await axios.post(URL, softoneobj)
-            if(!addedSoftone.data.success) {return res.status(500).json({ success: false, error: 'Αποτυχία εισαγωγής στο Softone' })} 
+            if(!addedSoftone.data.success) {return res.status(500).json({ success: false, error: 'Αποτυχία εισαγωγής στο Softone' })}
 
 			let createobj ={
 				...data,
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
 		}
 
 		try {
-		
+
 			console.log(softoneobj)
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/updateMtrCategory`;
 			let  softone = await axios.post(URL, softoneobj)
@@ -127,7 +128,7 @@ export default async function handler(req, res) {
 					}],
 				}
 				array.push(object)
-			
+
 			}
 			let res = await MtrCategory.insertMany(array)
 			console.log('res ' + res)
@@ -139,25 +140,69 @@ export default async function handler(req, res) {
 
 	if(action === "translate") {
 		let data = req.body.data;
-		console.log('data: ' + JSON.stringify(data))
-		let {id} = req.body
+		console.log('------------------------------------------------')
+
+		let {id, fieldName, index} = req.body
 		console.log('id: ' + JSON.stringify(id))
+		console.log('index' + JSON.stringify(index))
+		console.log('fieldName,' + JSON.stringify(fieldName))
+		console.log('------------------------------------------------')
+		console.log(data)
+		console.log('------------------------------------------------')
+
+
 		try {
 			await connectMongo();
-			const category = await MtrCategory.findOneAndUpdate(
-				{ _id: id  },
-				{ $set: { 
-					localized: data
-                }},
-				{ new: true }
+
+
+			const category = await MtrCategory.findOne({ _id: id  });
+			if(category.localized.length == 0) {
+				category.localized.push({
+					fieldName: fieldName,
+					translations: data
+				})
+
+				
+
+			} 
+
+			if(category.localized.length > 0) {
+				category.localized.map((item) => {
+					if(item.fieldName == fieldName) {
+						item.translations = data;
+					}
+					return item;
+				})
 			
+				
+			}
+			const categoryUpdate = await MtrCategory.updateOne(
+				{_id: id},
+				{$set: {localized: category.localized}}
+			  	);
+
+			return res.status(200).json({ success: true, result: categoryUpdate  });
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+
+	if(action === "getTranslations") {
+		let {id} = req.body
+		try {
+			await connectMongo();
+			const category = await MtrCategory.findOne(
+				{ _id: id  },
+				{localized: 1}
 			  );
+			console.log(category)
 			return res.status(200).json({ success: true, result: category });
 		} catch(e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
 }
+
 
 
 

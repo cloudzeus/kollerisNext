@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
@@ -11,18 +11,25 @@ import deepLtranslator from "@/utils/deepL";
 import styled from "styled-components";
 import Flag from 'react-world-flags'
 import axios from "axios";
+import { LoadingIndicator } from "@syncfusion/ej2-react-treegrid";
 
 
-export default function TranslateField({ fieldName, value, handleApi, data, setData }) {
+export default function TranslateField({ value, translations, url, id, fieldName, index}) {
     const [visible, setVisible] = useState(false);
- 
+    const [data, setData] = useState(translations)
+    const [loading, setLoading] = useState(false)
 
-    console.log('data: ' + JSON.stringify(data))
-
-    const onsubmit = () => {
-        console.log('data to be submitted')
+    const onsubmit = async () => {
         console.log(data)
-        handleApi && handleApi(data)
+        let _newData = [
+            {
+                fiendName: fieldName,
+                translations: data
+            }
+        ]
+        let res = await axios.post(url, { action: 'translate', data:data, id: id, index: index, fieldName: fieldName})
+        console.log('res data')
+        console.log(res.data)
     }
 
     const onRowEditComplete = (e) => {
@@ -54,8 +61,10 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
     const DeleteLang = (rowData) => {
         const onClick = () => {
             let _data = [...data];
-            let _translations = _data[0].translations.filter(translation => translation.code !== rowData.rowData.code);
-            _data[0].translations = _translations;
+            console.log(_data)
+            let _translations = _data.filter(item=> item.code !== rowData.rowData.code);
+            _data = _translations;
+            console.log(_data)
             setData(_data);
         }
         return (
@@ -71,16 +80,18 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
     );
 
 
+  
+
     const autoTranslate = (rowData) => {
-        console.log('auto translate')
-        console.log(rowData)
+     
         const handleTranslation = async () => {
-            console.log('works')
+            setLoading(true)
             let resp = await axios.post('/api/deepL', { text: value, targetLang: rowData.code })
             const _data = [...data];
-            const index = _data[0].translations.findIndex(translation => translation.code === rowData.code);
-            _data[0].translations[index].translation = resp.data.translatedText;
+            const index = _data.findIndex(translation => translation.code === rowData.code);
+            _data[index].translation = resp.data.translatedText;
             setData(_data);
+            setLoading(false)
 
         }
         return (
@@ -96,7 +107,7 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
             <Dialog header={header}  visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
                 <DataTable
                     showGridlines
-                    value={data[0].translations}
+                    value={data}
                     editMode="row"
                     dataKey="code"
                     onRowEditComplete={onRowEditComplete}
@@ -113,7 +124,7 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
                     <SelectLanguage state={data} setState={setData} />
                 </div>
                 <div className="border-top-1 border-300  mt-4">
-                    <Button label="Αποθήκευση" onClick={onsubmit} className="mt-4" />
+                    <Button loading={loading} label="Αποθήκευση" onClick={onsubmit} className="mt-4" />
                 </div>
             </Dialog>
         </div>
@@ -129,12 +140,15 @@ export default function TranslateField({ fieldName, value, handleApi, data, setD
 function SelectLanguage({ state, setState }) {
     const [selectedCountry, setSelectedCountry] = useState(null);
     const countries = [
-        { locale: 'Ισπανίκά', code: 'ES' },
-        { locale: 'Βραζιλιάνικα', code: 'BR' },
+        { locale: 'Aγγλικά', code: 'GB' },
+        { locale: 'Γαλλικά', code: 'FR' },
+        { locale: 'Γερμανικά', code: 'DE' },
+        { locale: 'Ισπανικά', code: 'ES' },
         { locale: 'Κινέζικα', code: 'CN' },
         { locale: 'Ιαπωνικά', code: 'JP' },
 
     ];
+
 
     const selectedCountryTemplate = (option, props) => {
         if (option) {
@@ -175,13 +189,25 @@ function SelectLanguage({ state, setState }) {
 
 
     const onSelect = (e) => {
-        let _state = [...state];
         let value = e.value;
-        console.log('e.value: ' + JSON.stringify(e.value))
-        if (_state[0].translations.find(translation => translation.code === value.code)) {
+        if(typeof state === 'undefined') {
+            setState([
+                {
+                    locale: value.locale,
+                    code: value.code,
+                    translation: ''
+                }
+            ])
             return;
         }
-        _state[0].translations.push({
+        let _state = [...state];
+        
+       
+        console.log('e.value: ' + JSON.stringify(e.value))
+        if (_state.find(translation => translation.code === value.code)) {
+            return;
+        }
+        _state.push({
             locale: value.locale,
             code: value.code,
             translation: ''

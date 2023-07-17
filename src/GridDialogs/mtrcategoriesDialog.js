@@ -53,8 +53,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }, [gridRowData])
 
 
-    console.log('gridrowdata')
-    console.log(gridRowData)
    
     const handleEdit = async (data) => {
         console.log(gridRowData)

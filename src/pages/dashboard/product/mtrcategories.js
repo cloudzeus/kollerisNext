@@ -63,7 +63,7 @@ export default function Categories() {
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
     
-    const [translateState, setTranslateState] = useState(initialTranslateState)
+    const [translateCategoryName, setTranslateCategoryName] = useState(initialTranslateState)
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -72,14 +72,18 @@ export default function Categories() {
     //Set the toggled columns
 
 
+
+
     const handleFetch = async () => {
         let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
         setData(res.data.result)
-
+        setTranslateCategoryName(res.data.result[0].localized[0])   
+        
     }
 
-    useEffect(() => {
 
+
+    useEffect(() => {
         handleFetch()
     }, [])
 
@@ -216,22 +220,18 @@ export default function Categories() {
 
 
    
-    const translateName = ({_id, categoryName}) => {
-        
-        
-        const handeTranslateApi = () => {
-            console.log('hit translate button')
-            let res = axios.post('/api/product/apiCategories', { action: 'translate', data: translateState, id: _id})
-            console.log(res)
-        }
+    const TranslateName = ({_id, categoryName, localized}) => {
+
+   
+    
         return (
             <TranslateField 
-                fieldName={'Ονομα'} 
-                value={categoryName}
+                url="/api/product/apiCategories"
                 id={_id}
-                handleApi={handeTranslateApi}
-                data={translateState}
-                setData={setTranslateState}
+                value={categoryName}
+                fieldName="categoryName"
+                translations={localized[0]?.translations}
+                index={0}
                 />
         )
     }
@@ -262,7 +262,7 @@ export default function Categories() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }}></Column>
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
-                <Column field="categoryName" body={translateName} header="Ονομα Κατηγορίας" sortable></Column>
+                <Column field="categoryName" body={TranslateName} header="Ονομα Κατηγορίας" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
                 <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>
