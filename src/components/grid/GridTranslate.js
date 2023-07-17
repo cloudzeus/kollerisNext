@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, {  useState, useRef } from "react";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
@@ -7,36 +7,35 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
-import deepLtranslator from "@/utils/deepL";
+
 import styled from "styled-components";
 import Flag from 'react-world-flags'
 import axios from "axios";
-import { LoadingIndicator } from "@syncfusion/ej2-react-treegrid";
+import { Toast } from "primereact/toast";
 
 
 export default function TranslateField({ value, translations, url, id, fieldName, index}) {
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState(translations)
     const [loading, setLoading] = useState(false)
+    const toast = useRef(null);
 
     const onsubmit = async () => {
         console.log(data)
-        let _newData = [
-            {
-                fiendName: fieldName,
-                translations: data
-            }
-        ]
         let res = await axios.post(url, { action: 'translate', data:data, id: id, index: index, fieldName: fieldName})
-        console.log('res data')
-        console.log(res.data)
+        if(!res.data.success) return showError(res.data.message)
+        showSuccess(res.data.message)
+        
     }
+
+
+
+
 
     const onRowEditComplete = (e) => {
         let _data = [...data];
         let { newData, index } = e;
-        console.log('newData: ' + JSON.stringify(newData))
-        _data[0].translations[index] = newData;
+        _data[index].translation = newData.translation;
         setData(_data);
     };
 
@@ -64,7 +63,6 @@ export default function TranslateField({ value, translations, url, id, fieldName
             console.log(_data)
             let _translations = _data.filter(item=> item.code !== rowData.rowData.code);
             _data = _translations;
-            console.log(_data)
             setData(_data);
         }
         return (
@@ -98,8 +96,16 @@ export default function TranslateField({ value, translations, url, id, fieldName
             <Button label="auto-tr" loading={loading} onClick={handleTranslation}/>
         )
     }
+
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+    }
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
+    }
     return (
         <div >
+            <Toast ref={toast} />
             <GridField onClick={() => setVisible(true)} >
                 <i className="pi pi-language icon"></i>
                 <span className="value">{value}</span>

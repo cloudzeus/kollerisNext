@@ -201,6 +201,53 @@ export default async function handler(req, res) {
         }
 
     }
+
+    if(action === "translate") {
+		let data = req.body.data;
+		console.log('------------------------------------------------')
+
+		let {id, fieldName, index} = req.body
+		
+
+		try {
+			await connectMongo();
+			const category = await SubMtrGroup.findOne({ _id: id  });
+			if(category.localized.length == 0) {
+				category.localized.push({
+					fieldName: fieldName,
+					translations: data
+				})
+
+				
+
+			} 
+
+			if(category.localized.length > 0) {
+				category.localized.map((item) => {
+					if(item.fieldName == fieldName) {
+						item.translations = data;
+					}
+					return item;
+				})
+			
+				
+			}
+			const categoryUpdate = await SubMtrGroup.updateOne(
+				{_id: id},
+				{$set: {localized: category.localized}}
+			  	);
+
+                if(categoryUpdate.modifiedCount == 1 &&  categoryUpdate.modifiedCount == 1) {
+                    return res.status(200).json({ success: true, result: categoryUpdate, message: 'Η Γλώσσες προστέθηκαν'  });
+                } else {
+                    return res.status(200).json({ success: false, result: null, message: 'Η Γλώσσες δεν προστέθηκαν'  });
+                }
+
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+
 }
 
 

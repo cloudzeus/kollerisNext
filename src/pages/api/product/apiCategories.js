@@ -143,13 +143,7 @@ export default async function handler(req, res) {
 		console.log('------------------------------------------------')
 
 		let {id, fieldName, index} = req.body
-		console.log('id: ' + JSON.stringify(id))
-		console.log('index' + JSON.stringify(index))
-		console.log('fieldName,' + JSON.stringify(fieldName))
-		console.log('------------------------------------------------')
-		console.log(data)
-		console.log('------------------------------------------------')
-
+		
 
 		try {
 			await connectMongo();
@@ -187,20 +181,7 @@ export default async function handler(req, res) {
 		}
 	}
 
-	if(action === "getTranslations") {
-		let {id} = req.body
-		try {
-			await connectMongo();
-			const category = await MtrCategory.findOne(
-				{ _id: id  },
-				{localized: 1}
-			  );
-			console.log(category)
-			return res.status(200).json({ success: true, result: category });
-		} catch(e) {
-			return res.status(400).json({ success: false, result: null });
-		}
-	}
+	
 }
 
 

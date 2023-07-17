@@ -19,6 +19,7 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+import TranslateField from '@/components/grid/GridTranslate';
 
 
 
@@ -181,7 +182,22 @@ export default function Categories() {
 
     };
 
+    const TranslateName = ({_id, subGroupName, localized}) => {
 
+   
+    
+        return (
+            <TranslateField
+                url="/api/product/apiSubGroup"
+                id={_id}
+                value={subGroupName}
+                fieldName="
+                subGroupName"
+                translations={localized[0]?.translations}
+                index={0}
+                />
+        )
+    }
   
 
     return (
@@ -206,7 +222,7 @@ export default function Categories() {
             >
                 <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
                 <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
-                <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
+                <Column field="subGroupName"  body={TranslateName} header="Όνομα Sub Group" sortable ></Column>
                 {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
                   <Column body={LocaleTemplate} header="Localized" ></Column>
               
