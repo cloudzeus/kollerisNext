@@ -86,7 +86,7 @@ const MtrGroupSchema = new mongoose.Schema({
                 translation: String,
             }
         ]
-}],
+    }],
     status: Boolean,
     updatedFrom: String,
     createdFrom: String,
@@ -125,16 +125,16 @@ const MtrSubGroupSchema = new mongoose.Schema({
             type: String
         }
     },
-    localized: [{
-        fieldName: String,
-        translations: [
-            {
-                locale: String,
-                code: String,
-                translation: String,
-            }
-        ]
-}],
+     localized: [{
+            fieldName: String,
+            translations: [
+                {
+                    locale: String,
+                    code: String,
+                    translation: String,
+                }
+            ]
+    }],
     status: Boolean,
     updatedFrom: String,
     createdFrom: String,

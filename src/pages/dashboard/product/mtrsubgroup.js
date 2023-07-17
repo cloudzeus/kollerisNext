@@ -183,9 +183,6 @@ export default function Categories() {
     };
 
     const TranslateName = ({_id, subGroupName, localized}) => {
-
-   
-    
         return (
             <TranslateField
                 url="/api/product/apiSubGroup"
