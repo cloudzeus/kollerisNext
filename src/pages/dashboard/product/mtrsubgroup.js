@@ -223,10 +223,6 @@ export default function Categories() {
                 <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
                 <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
                 <Column field="subGroupName"  body={TranslateName} header="Όνομα Sub Group" sortable ></Column>
-                {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
-                  <Column body={LocaleTemplate} header="Localized" ></Column>
-              
-              
                 <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 <Column field="status" sortable header="Status" bodyStyle={{textAlign: 'center'}} style={{ width: '90px' }} body={ActiveTempate}></Column>

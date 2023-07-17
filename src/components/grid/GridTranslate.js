@@ -29,9 +29,6 @@ export default function TranslateField({ value, translations, url, id, fieldName
     }
 
 
-
-
-
     const onRowEditComplete = (e) => {
         let _data = [...data];
         let { newData, index } = e;
@@ -151,7 +148,6 @@ function SelectLanguage({ state, setState }) {
         { locale: 'Γερμανικά', code: 'DE' },
         { locale: 'Ισπανικά', code: 'ES' },
         { locale: 'Ιταλικά', code: 'IT' },
-
     ];
 
 

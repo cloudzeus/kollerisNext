@@ -10,9 +10,6 @@ export default async function handler(req, res) {
 	///handler for softone catergories
 	let action = req.body.action;
 	
-	
-
-	
 
     if (action === 'findAll') {
         console.log('find all MtrGroup')
@@ -176,7 +173,49 @@ export default async function handler(req, res) {
 
 	}
    
+    if(action === "translate") {
+		let data = req.body.data;
+		let {id, fieldName, index} = req.body
+		
 
+		try {
+			await connectMongo();
+			const updateMongo = await MtrGroup.findOne({ _id: id  });
+			if(updateMongo.localized.length == 0) {
+				updateMongo.localized.push({
+					fieldName: fieldName,
+					translations: data
+				})
+
+				
+
+			} 
+
+			if(updateMongo.localized.length > 0) {
+				updateMongo.localized.map((item) => {
+					if(item.fieldName == fieldName) {
+						item.translations = data;
+					}
+					return item;
+				})
+			
+				
+			}
+			const updateMongoUpdate = await MtrGroup.updateOne(
+				{_id: id},
+				{$set: {localized: updateMongo.localized}}
+			  	);
+
+                if(updateMongoUpdate.modifiedCount == 1 &&  updateMongoUpdate.modifiedCount == 1) {
+                    return res.status(200).json({ success: true, result: updateMongoUpdate, message: 'Η Γλώσσες προστέθηκαν'  });
+                } else {
+                    return res.status(200).json({ success: false, result: null, message: 'Η Γλώσσες δεν προστέθηκαν'  });
+                }
+
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 }
 
 

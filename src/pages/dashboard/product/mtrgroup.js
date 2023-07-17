@@ -19,6 +19,7 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+import TranslateField from '@/components/grid/GridTranslate';
 
 
 
@@ -185,6 +186,20 @@ export default function Categories() {
     const RowExpansionTemplate = (data) => {
         return <RowExpansionGrid subGroups={data.subGroups} />
     }
+    
+
+    const TranslateName = ({_id, groupName, localized}) => {
+        return (
+            <TranslateField
+                url="/api/product/apiGroup"
+                id={_id}
+                value={groupName}
+                fieldName="groupName"
+                translations={localized[0]?.translations}
+                index={0}
+                />
+        )
+    }
 
     return (
         <AdminLayout >
@@ -214,9 +229,8 @@ export default function Categories() {
                 <Column field="groupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }} ></Column>
                 <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate}  style={{ width: '50px' }} ></Column>
                 <Column field="category.categoryName" header="Κατηγορία" sortable ></Column>
-                <Column field="groupName" header="Όνομα Group" sortable ></Column>
+                <Column field="groupName" body={TranslateName} header="Όνομα Group" sortable ></Column>
                
-                  {/* <Column body={LocaleTemplate} header="Localized" ></Column> */}
                 <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 <Column field="status" sortable header="Status" style={{ width: '90px' }}  bodyStyle={{ textAlign: 'center' }}  body={ActiveTempate}></Column>

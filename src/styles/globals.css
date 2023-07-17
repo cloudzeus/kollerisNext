@@ -86,6 +86,7 @@ form {
 
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -94,7 +95,7 @@ form {
 
 ::-webkit-scrollbar-thumb {
   background: #cdcdcda7;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 
