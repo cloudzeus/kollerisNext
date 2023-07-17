@@ -116,7 +116,7 @@ const SidebarMenu = () => {
 
   return (
     <Container>
-      {isSidebarOpen ? <Tree value={renderedNodes} /> : <IconContent />}
+      {isSidebarOpen ? <Tree  value={renderedNodes} /> : <IconContent />}
     </Container>
   );
 };
@@ -146,6 +146,7 @@ const IconContent = () => {
 
 
 const Container = styled.div`
+    
     .p-tree {
         border: none;
         padding: 0;

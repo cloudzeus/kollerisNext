@@ -24,7 +24,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			<SidebarContainer isSidebarOpen={isSidebarOpen} style={{}}>
+			<SidebarContainer isSidebarOpen={isSidebarOpen}>
 				<div className="top-div">
 					{isSidebarOpen ? (
 						<Image
@@ -42,12 +42,11 @@ const AdminLayout = ({ children }) => {
 						/>
 					)}
 				</div>
-				<div className="main-div">
-					<SidebarMenu />
-					{/* {isSidebarOpen ? <SidebarContent /> : <IconSidebar />} */}
+				<div className='main-div'>
+				<SidebarMenu />
 				</div>
 			</SidebarContainer>
-
+					
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button 
@@ -105,11 +104,12 @@ const Container = styled.div`
 
 const SidebarContainer = styled.div`
   height: 100vh;
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? '250px' : '60px'};
+  min-width: ${({ isSidebarOpen }) => isSidebarOpen ? '250px' : '60px'};
   background-color: white;
-  transition: width 0.3s ease-in-out;
   overflow-y: auto;
-  /* border-right: 2px solid ${({ theme }) => theme.palette.background}; */
+  /* transition: all 0.3s ease-in; */
+
+
   .top-div {
     height: 67px;
     border-bottom: 1px solid ${({ theme }) => theme.palette.background};
@@ -148,7 +148,7 @@ const Navbar = styled.nav`
   align-items: center;
   justify-content: space-between;
   width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 250px)' : 'calc(100% - 60px)'};
-  transition: width 0.3s ease-in-out;
+  /* transition: width 0.3s ease-in-out; */
   .navbar-rightdiv {
 	display: flex;
 	align-items: center;

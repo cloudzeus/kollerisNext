@@ -83,7 +83,7 @@ export default function TranslateField({ value, translations, url, id, fieldName
   
 
     const autoTranslate = (rowData) => {
-     
+        
         const handleTranslation = async () => {
             setLoading(true)
             let resp = await axios.post('/api/deepL', { text: value, targetLang: rowData.code })
@@ -95,7 +95,7 @@ export default function TranslateField({ value, translations, url, id, fieldName
 
         }
         return (
-            <Button label="auto-tr"  onClick={handleTranslation}/>
+            <Button label="auto-tr" loading={loading} onClick={handleTranslation}/>
         )
     }
     return (
@@ -124,7 +124,7 @@ export default function TranslateField({ value, translations, url, id, fieldName
                     <SelectLanguage state={data} setState={setData} />
                 </div>
                 <div className="border-top-1 border-300  mt-4">
-                    <Button loading={loading} label="Αποθήκευση" onClick={onsubmit} className="mt-4" />
+                    <Button label="Αποθήκευση" onClick={onsubmit} className="mt-4" />
                 </div>
             </Dialog>
         </div>
@@ -144,8 +144,7 @@ function SelectLanguage({ state, setState }) {
         { locale: 'Γαλλικά', code: 'FR' },
         { locale: 'Γερμανικά', code: 'DE' },
         { locale: 'Ισπανικά', code: 'ES' },
-        { locale: 'Κινέζικα', code: 'CN' },
-        { locale: 'Ιαπωνικά', code: 'JP' },
+        { locale: 'Ιταλικά', code: 'IT' },
 
     ];
 
