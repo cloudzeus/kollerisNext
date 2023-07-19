@@ -26,7 +26,7 @@ export default function ProfileButton() {
           
             template: (item, options) => {
                 return (
-                    // <Link href="#">
+                    <Link href="/dashboard/profile">
                     <PopupTopBar className={classNames(options.className, 'w-full p-link flex align-items-center')}>
                         <Avatar 
                             aria-controls="popup_menu_left"  
@@ -41,7 +41,7 @@ export default function ProfileButton() {
                             <span className="text-sm">{user?.role}</span>
                         </div>
                     </PopupTopBar>
-                    // </Link>
+                 </Link>
                    
                 )
         }},

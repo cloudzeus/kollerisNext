@@ -9,7 +9,7 @@ import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 
 
-const Input = ({ label, name, mb, mt, control, required, error, type }) => {
+const Input = ({ label, name, mb, mt, control, required, error, type, disabled }) => {
     return (
 
         < InputContainer mb={mb} mt={mt} error={error}>
@@ -28,6 +28,7 @@ const Input = ({ label, name, mb, mt, control, required, error, type }) => {
                                 type={type}
                                 id={field.name}
                                 value={field.value}
+                                disabled={disabled}
                                 className={classNames({ 'p-invalid': fieldState.error })}
                                 onChange={(e) => field.onChange(e.target.value)} />
                         </span>

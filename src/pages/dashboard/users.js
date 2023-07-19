@@ -26,25 +26,23 @@ export default function TemplateDemo() {
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+   
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
     const { data: session, status } = useSession()
-    const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
 
-    console.log('session')
     const role = session?.user?.user?.role
-    console.log(role)
-    const handleFetch = async () => {
+ 
 
+    const handleFetch = async () => {
     try {
         const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
-        console.log(resp.data.result)
         setData(resp.data.result)
     } catch (error) {
         console.log(error)
@@ -58,7 +56,6 @@ export default function TemplateDemo() {
 
     //Refetch on add edit:
     useEffect(() => {
-        console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
     }, [submitted])
 
@@ -166,7 +163,6 @@ export default function TemplateDemo() {
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
-                onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="_id"
                 filters={filters}
                 paginatorRight={true}
@@ -255,10 +251,6 @@ const userCreate = ({createdAt}) => {
 
 
 const gridDetails = (data) => {
-    console.log('data')
-    console.log(data.address)
-    console.log(data.phones)
-
  
     return (
         <GridOverlay title="info">

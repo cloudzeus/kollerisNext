@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 
