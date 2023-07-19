@@ -18,6 +18,8 @@ import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import GridIconTemplate from '@/components/grid/gridIconTemplate';
 import { useSession } from 'next-auth/react';
+import GridOverlay from '@/components/grid/GridOverlay';
+
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -176,6 +178,7 @@ export default function TemplateDemo() {
             >
                 <Column field="firstName" header="'Ονομα" body={nameTemplate} ></Column>
                 <Column field="lastName" header="Επώνυμο" sortable></Column>
+                <Column field="details" body={gridDetails} header="Λεπτομέριες" sortable></Column>
                 <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
                 <Column field="createdAt"  body={userCreate} sortable header="Ημερομηνία Δημιουργίας" tableStyle={{ width: '5rem' }}></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
@@ -219,13 +222,7 @@ const ActiveTempate = ({ status }) => {
 
 }
 
-const RoleTemplate = ({ role }) => {
-    switch (role) {
-        case 'admin':
-            return 
-    }
 
-}
 
 const emailTemplate = (data) => {
     return (
@@ -254,6 +251,37 @@ const nameTemplate = (data) => {
 
 const userCreate = ({createdAt}) => {
     return createdAt.split('T')[0]
+}
+
+
+const gridDetails = (data) => {
+ 
+
+
+ 
+    return (
+        <GridOverlay title="info">
+              <DataTable
+                value={[data]}
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                showGridlines
+                dataKey="_id"
+                removableSort
+                onFilter={(e) => setFilters(e.filters)}
+                editMode="row"
+            >
+                <Column field="address.country" header="'Χώρα" ></Column>
+                <Column field="address.city" header="Πόλη" ></Column>
+                <Column field="address.address" header="Διεύθυνση" ></Column>
+                <Column field="address.postalcode" header="Τ.Κ." ></Column>
+                <Column field="phones.mobile" header="Κινητό" ></Column>
+                <Column field="phones.landline" header="Σταθερό" ></Column>
+                
+
+            </DataTable>
+        </GridOverlay>
+    )
 }
 
 

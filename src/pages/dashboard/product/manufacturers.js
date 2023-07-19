@@ -225,12 +225,7 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <GridLanguageTemplate localized={localized} />
-    )
 
-}
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (

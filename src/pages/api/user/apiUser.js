@@ -46,17 +46,27 @@ export default async function handler(req, res) {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 role: data?.role,
+				address: {
+					country: data?.country,
+					address: data?.address,
+					city: data?.city,
+					postalcode: data?.postalcode,
+				},
+				phones: {
+					mobile: data?.mobile,
+					landline: data?.landline
+				},
+				status: true,
 			
             }
 
 			await connectMongo();
-			// const alreadyEmailCheck = await User.findOne({ email: data.email })
-			// if(alreadyEmailCheck) {
-			// 	return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
-			// }
+			const alreadyEmailCheck = await User.findOne({ email: data.email })
+			if(alreadyEmailCheck) {
+				return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
+			}
 
-			// const user = await User.create({...object, status: true});
-			const user = await User.create({status: true , password: hashPassword, email:data.email, firstName: data.firstName, lastName: data.lastName, role: 'employee', })
+			const user = await User.create(object)
 
 			if (!user) return res.status(200).json({ success: false, result: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
 			return res.status(200).json({ success: true, result: user, error: null });
