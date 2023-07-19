@@ -4,7 +4,6 @@ import LoginLayout from "@/layouts/Auth/loginLayout";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";

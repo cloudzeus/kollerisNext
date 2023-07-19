@@ -1,7 +1,4 @@
 import styled from "styled-components";
-import AddIcon from '@mui/icons-material/Add';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-
 import { Button } from "primereact/button";
 import { InputText } from 'primereact/inputtext';
 import { useEffect } from "react";

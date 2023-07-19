@@ -9,13 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.1.0",
-    "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.12.1",
-    "@mui/styled-engine-sc": "^5.12.0",
-    "@radix-ui/react-checkbox": "^1.0.4",
     "@reduxjs/toolkit": "^1.9.5",
     "@syncfusion/ej2-react-schedule": "^21.1.41",
     "@syncfusion/ej2-react-spreadsheet": "^21.2.8",

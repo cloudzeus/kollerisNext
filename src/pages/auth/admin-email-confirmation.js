@@ -2,7 +2,6 @@ import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import { BasicContainer } from '@/components/styles'
 import { useRouter } from 'next/router'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Button from '@/components/Buttons/Button'
 
 const AdminEmailConfirmation = () => {
@@ -13,7 +12,7 @@ const AdminEmailConfirmation = () => {
         <Container>
             <MessageBoard >
                 <div>
-                    <CheckCircleIcon color="success" />
+                <i className="pi pi-times" ></i>
                     <h1>Oλοκληρώθηκε η Εγγραφή</h1>
                 </div>
                 <Button 

@@ -1,7 +1,6 @@
 import React,  {useState} from 'react'
 import LoginLayout from '@/layouts/Auth/loginLayout'
 import styled, { useTheme } from 'styled-components'
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -78,7 +77,7 @@ const SuccessMessage = () => {
   return (
     <>
       <div className="success">
-        <CheckCircleOutlineRoundedIcon sx={{ fontSize: '25px', color: `${theme.palette.success.main}` }} />
+      <i className="pi pi-check" style={{ color: 'slateblue' }}></i>
         <h3>Το email στάλθηκε</h3>
       </div>
       <p>Ελέγξτε το email σας και πατήστε τον σύνδεσμο αλλαγής κωδικού</p>

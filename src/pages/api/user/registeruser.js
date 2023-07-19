@@ -26,12 +26,13 @@ export default async function handler(req, res) {
    
 
 
-    const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: 'user', status: true })
+    const user = await User.create({password: hashPassword, email: req.body.email, firstName: req.body.firstName, lastName: req.body.lastName, role: 'employee', status: true })
     console.log('CREATE USER IN DATABASE:' + JSON.stringify(user))
-    if(user) {
-        handleApi(user)
-        return res.status(200).json({success: true, error: null, user: user, registered: true})
-    }
+    // if(user) {
+    //     handleApi(user)
+    //     return res.status(200).json({success: true, error: null, user: user, registered: true})
+    // }
+    return res.status(200).json({success: true, error: null, user: user, registered: true})
 
     
   } catch (err) {

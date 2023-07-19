@@ -12,16 +12,15 @@ import { fetchUser } from '@/features/userSlice';
 //TOAST:
 import { toast } from 'react-toastify';
 //COMPONENTS- LAYOYTS: 
-import { Grid } from '@mui/material'
 import Image from 'next/image'
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { StyledHeader, Subheader } from '@/components/Forms/formStyles';
 // import Button from '@/components/Buttons/Button';
-import Divider from '@mui/material/Divider';
 import {  signIn } from "next-auth/react"
 //FORMIK:
+import { Divider } from 'primereact/divider';
+
 import Input from "@/components/Forms/PrimeInput";
-import { InputStyled, InputPass } from "@/components/Forms/FormInput";
 import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 import { Button } from "primereact/button";
 
@@ -35,7 +34,7 @@ const LoginForm = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    const { register, handleSubmit, formState: { errors }, reset, control } = useForm({
+    const {handleSubmit, formState: { errors }, reset, control } = useForm({
         resolver: yupResolver(schema),
     });
 
@@ -66,28 +65,21 @@ const LoginForm = () => {
         < LoginLayout >
             <Container>
                 <Container className="box">
-                    <Grid container justifyContent="center" alignItems="center" direction="row" mb='40px'>
-                        <Grid item xs={8}>
+                    <div className="grid mb-4">
+                        <div className="col-8">
                             <h2>ΚΑΛΩΣ ΗΡΘΑΤΕ!</h2>
                             <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
-                        </Grid>
-                        <Grid
-                            item
-                            container
-                            xs={4}
-                            justifyContent="flex-end"
-                            alignItems="center"
-                        >
+                        </div>
+                        <div className="col-4">
                             <Image
                                 src="/static/imgs/logoDG.png"
                                 alt="Picture of the author"
                                 width={100}
                                 height={28}
                             />
-                        </Grid>
-                    </Grid>
+                        </div>
+                    </div>
                     <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                       
                      <Input
                     label={'email'}
                     name={'email'}
@@ -116,7 +108,7 @@ const LoginForm = () => {
                             loading={loading} 
                             style={{width: '100%'}} 
                         />
-                        <Divider variant="middle" color={"#fff"} sx={{ margin: '20px 0' }} />
+                        <Divider className="my-4" />
                         <div className="centerDiv">
                             <Link className="linkBtn" href="/auth/register" >
                                 Δημιουργία Λογαριασμού

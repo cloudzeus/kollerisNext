@@ -100,7 +100,9 @@ const userSlice = createSlice({
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
 				state.isLoading = false;
-				state.user = payload.user;
+				console.log('payload')
+				console.log(payload)
+				state.user = payload?.user;
 				state.response = payload;
 			})
 			.addCase(registerUser.rejected, (state, { payload }) => {
