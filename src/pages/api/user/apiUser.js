@@ -30,44 +30,23 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body
-
-		console.log(req.body)
-
+		let _data = data
 
 		const password = data.password;
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hash(password, salt);
-		console.log(hashPassword)
-		try {
-            
-			let object = {
-				password: hashPassword,
-				email: data.email,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                role: data?.role,
-				address: {
-					country: data?.country,
-					address: data?.address,
-					city: data?.city,
-					postalcode: data?.postalcode,
-				},
-				phones: {
-					mobile: data?.mobile,
-					landline: data?.landline
-				},
-				status: true,
-			
-            }
 
+		_data.password = hashPassword;
+		_data.status = true;
+
+		try {
 			await connectMongo();
 			const alreadyEmailCheck = await User.findOne({ email: data.email })
 			if(alreadyEmailCheck) {
 				return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
 			}
 
-			const user = await User.create(object)
-
+			const user = await User.create(_data)
 			if (!user) return res.status(200).json({ success: false, result: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
 			return res.status(200).json({ success: true, result: user, error: null });
 
@@ -81,33 +60,17 @@ export default async function handler(req, res) {
 
 	if (action === 'update') {
 
-		let body = req.body.data;
-		console.log('update brand body')
-		console.log(body)
+		let data= req.body.data;
 		let id = req.body.id
-		
-	
-		function hashPassword(password) {
-			const saltRounds = 10;
-			const salt = bcrypt.genSaltSync(saltRounds);
-			let hassed = bcrypt.hashSync(password, salt);
-			return hassed;
-		  } 
-
-		  function updateUserPassword(data, newPassword) {
-			if (newPassword) {
-			  const hashedPassword = hashPassword(newPassword);
-			  data.password = hashedPassword;
-			}
-		  }
-
-		  updateUserPassword(body, body.newpassword);
 			
 		const filter = { _id: id };
-		const update = { $set: {...body} };
+		const update = { $set: {...data} };
+		console.log('update data:')
+		console.log(update)
 		try {
 			await connectMongo();
 			const result = await User.updateOne(filter, update);
+			console.log('result')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
@@ -124,15 +87,10 @@ export default async function handler(req, res) {
 		await connectMongo();
 
 		let id = req.body.id;
-		console.log('backend id')
-		console.log(id)
-		const filter = { _id: id };
-		const update = { $set: {
-			status: false
-		} };
 		try {
 			await connectMongo();
-			const result = await User.updateOne(filter, update);
+			const result = await User.deleteOne({_id: id});
+			console.log('resutl')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {

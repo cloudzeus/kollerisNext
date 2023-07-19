@@ -121,7 +121,7 @@ export default function TemplateDemo() {
     };
 
     const onDelete = async (id) => {
-        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        let res = await axios.post('/api/user/apiUser', { action: 'delete', id: id })
         if(!res.data.success) return showError()
         handleFetch()
         showSuccess()
@@ -255,8 +255,9 @@ const userCreate = ({createdAt}) => {
 
 
 const gridDetails = (data) => {
- 
-
+    console.log('data')
+    console.log(data.address)
+    console.log(data.phones)
 
  
     return (

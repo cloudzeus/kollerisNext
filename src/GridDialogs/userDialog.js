@@ -16,25 +16,41 @@ import { PrimeInputPass } from '@/components/Forms/PrimeInputPassword';
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import { useSession } from "next-auth/react"
 
+
+
+
+const addSchema = yup.object().shape({
+    lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
+    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
+    password: yup.string().required('Συμπληρώστε τον κωδικό'),
+    role: yup.string().required('Συμπληρώστε τα δικαιώματα χρήστη'),
+});
+
+
+
+
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
-    const dispatch = useDispatch();
-    const [images, setImages] = useState([])
-    const [logo, setLogo] = useState([])
+    const [showDetails, setShowDetails] = useState(false)
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     const { data: session, status } = useSession()
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
-            firstName: gridRowData?.firstName,
-            lastName: gridRowData?.lastName,
-            email: gridRowData?.email,
-            role: gridRowData?.role,
+            firstName: '',
+            lastName: '',
+            email: '',
+            role: '',
+            mobile: '',
+            landline: '',
+            country: '',
+            address: '',
+            city: '',
+            postalcode: '',
         }
     });
 
-    console.log(gridRowData)
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
@@ -45,17 +61,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleEdit = async (data) => {
+        console.log('edit data');
+        console.log(data)
 
-        const object = {
-            ...data,
-        }
         try {
             const updatedFrom = session.user.user.lastName
-
             let resp = await axios.post('/api/user/apiUser',
                 {
                     action: "update",
-                    data: { ...object, updatedFrom: updatedFrom },
+                    data: { ...data, updatedFrom: updatedFrom },
                     id: gridRowData._id
                 })
 
@@ -126,11 +140,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                     />
 
-                    <PrimeInputPass
-                        control={control}
-                        name="newpassword"
-                        label={'Νέος Κωδικός'}
-                    />
+                 
                     <PrimeSelect
                         control={control}
                         name="role"
@@ -147,6 +157,70 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         optionValue={'role'}
 
                     />
+                        <Button 
+                            onClick={() => setShowDetails(prev => !prev)} 
+                            outlined  
+                            className='min-w-min w-4 mt-4' 
+                            size='small' 
+                            label="Λεπτομέριες" 
+                            icon="pi pi-angle-down" 
+                            severity="secondary"
+                            iconPos="right" />
+                {showDetails ? (
+                    <div>
+                        <FormTitle>Διεύθυνση</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Χώρα'}
+                                    name={'address.country'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Διεύθυνση'}	
+                                    name={'address.address'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Πόλη'}	
+                                    name={'address.city'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Τ.Κ.'}	
+                                    name={'address.postalcode'}
+                                    control={control}
+                                />
+                            </div>
+                       
+                         
+                        </div>
+                        <FormTitle>Τηλέφωνα</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.mobile'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.landline'}
+                                    control={control}
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                ) : null}
                 </Dialog>
             </form>
         </Container>
@@ -155,16 +229,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 }
 
 
-
-const addSchema = yup.object().shape({
-
-    lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
-    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
-    password: yup.string().required('Συμπληρώστε τον κωδικό'),
-    role: yup.string().required('Συμπληρώστε τα δικαιώματα χρήστη'),
-    
-
-});
 
 
 const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
@@ -182,12 +246,16 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             email: '',
             password: '',
             role: '',
-            mobile: '',
-            landline: '',
-            country: '',
-            address: '',
-            city: '',
-            postalcode: '',
+            address: {
+                country: '',
+                address: '',
+                city: '',
+                postalcode: '',
+            },
+            phones: {
+                mobile: '',
+                landline: ''
+            }
         }
     });
 
@@ -291,7 +359,15 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 />
 
                 {/* <FormTitle>Λεπτομέριες</FormTitle> */}
-                <Button onClick={() => setShowDetails(prev => !prev)} outlined className='min-w-min w-4 mt-4' size='small' label="Λεπτομέριες" icon="pi pi-angle-down" iconPos="right" />
+                <Button 
+                    onClick={() => setShowDetails(prev => !prev)}   
+                    severity="secondary" 
+                    outlined 
+                    className='min-w-min w-4 mt-4' 
+                    size='small' 
+                    label="Λεπτομέριες" 
+                    icon="pi pi-angle-down" 
+                    iconPos="right" />
                 {showDetails ? (
                     <div>
                         <FormTitle>Διεύθυνση</FormTitle>
@@ -299,28 +375,28 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                             <div className='col-6'>
                                 <Input
                                     label={'Χώρα'}
-                                    name={'country'}
+                                    name={'address.country'}
                                     control={control}
                                 />
                             </div>
                             <div className='col-6'>
                                 <Input
                                     label={'Διεύθυνση'}	
-                                    name={'address'}
+                                    name={'address.address'}
                                     control={control}
                                 />
                             </div>
                             <div className='col-6'>
                                 <Input
                                     label={'Πόλη'}	
-                                    name={'city'}
+                                    name={'address.city'}
                                     control={control}
                                 />
                             </div>
                             <div className='col-6'>
                                 <Input
                                     label={'Τ.Κ.'}	
-                                    name={'postalcode'}
+                                    name={'address.postalcode'}
                                     control={control}
                                 />
                             </div>
@@ -332,14 +408,14 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                             <div className='col-6'>
                                 <Input
                                     label={'Κινητό'}
-                                    name={'mobile'}
+                                    name={'phones.mobile'}
                                     control={control}
                                 />
                             </div>
                             <div className='col-6'>
                                 <Input
                                     label={'Κινητό'}
-                                    name={'landline'}
+                                    name={'phones.landline'}
                                     control={control}
                                 />
                             </div>

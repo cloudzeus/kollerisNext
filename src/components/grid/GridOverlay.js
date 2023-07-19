@@ -6,20 +6,20 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useState } from 'react';
 import styled from 'styled-components';
-const GridOverlay = ({ children, title, hasData}) => {
+const GridOverlay = ({ children, title, }) => {
     const op = useRef(null);
     const [value, setValue] = useState(null);
-    
+
     return (
-        <Container  onClick={(e) => op.current.toggle(e)} >
-                       <i className="pi pi-info-circle"></i>
-                   <div className='right-div'>
-                       <span className="value">{title}</span>
-                       <i className="pi pi-angle-down"></i>
-                   </div>
-                   <OverlayPanel className='shadow-5 opacity-90' ref={op}>
-                       {children}
-                   </OverlayPanel>
+        <Container onClick={(e) => op.current.toggle(e)} >
+            <i className="pi pi-info-circle "></i>
+            <div className='right-div'>
+                <span className="value">{title}</span>
+                <i className="pi pi-angle-down"></i>
+            </div>
+            <OverlayPanel className='shadow-5 ' ref={op}>
+                {children}
+            </OverlayPanel>
         </Container >
     )
 
