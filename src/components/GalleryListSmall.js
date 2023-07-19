@@ -16,8 +16,6 @@ import {
     TabButton
 } from '@/componentsStyles/gallerySmall';
 
-
-
 import { TabView, TabPanel } from 'primereact/tabview';
 
 export default function AddDeleteImages({state, setState,  multiple, handleUploadImages, singleUpload }) {
@@ -28,8 +26,6 @@ export default function AddDeleteImages({state, setState,  multiple, handleUploa
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
-
-       
 
 
     const handleDeleteImage = async (image) => {

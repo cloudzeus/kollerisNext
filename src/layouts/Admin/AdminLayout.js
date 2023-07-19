@@ -86,8 +86,8 @@ function FullScreen({ children }) {
 			</Sidebar>
 			<Button 
 				style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
-				icon="pi pi-bookmark" 
-				aria-label="Bookmark" 
+				icon="pi pi-window-maximize				" 
+				aria-label="Maximize" 
 				onClick={() => setVisible(true)}
 				/>
 		</div>

@@ -17,7 +17,7 @@ import { ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import GridIconTemplate from '@/components/grid/gridIconTemplate';
-
+import { useSession } from 'next-auth/react';
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -27,6 +27,7 @@ export default function TemplateDemo() {
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
+    const { data: session, status } = useSession()
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
@@ -34,8 +35,9 @@ export default function TemplateDemo() {
 
     });
 
-
-
+    console.log('session')
+    const role = session?.user?.user?.role
+    console.log(role)
     const handleFetch = async () => {
 
     try {
@@ -46,7 +48,7 @@ export default function TemplateDemo() {
         console.log(error)
 
     }
-}
+    }
 
     useEffect(() => {
         handleFetch();
@@ -117,7 +119,6 @@ export default function TemplateDemo() {
     };
 
     const onDelete = async (id) => {
-        
         let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
         if(!res.data.success) return showError()
         handleFetch()
@@ -155,7 +156,7 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar  left={leftToolbarTemplate} ></Toolbar>
+            {role === 'admin' ?  <Toolbar  left={leftToolbarTemplate} ></Toolbar> : null }
             <DataTable
                 header={header}
                 value={data}
@@ -179,7 +180,7 @@ export default function TemplateDemo() {
                 <Column field="createdAt"  body={userCreate} sortable header="Ημερομηνία Δημιουργίας" tableStyle={{ width: '5rem' }}></Column>
                 <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
                 <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {role === 'admin' ? <Column body={actionBodyTemplate} header="Ενέργειες" tableStyle={{ width: '5rem' }}></Column> : null}
 
             </DataTable>
             <EditDialog

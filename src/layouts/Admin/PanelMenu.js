@@ -16,7 +16,13 @@ const SidebarMenu = () => {
       icon: 'pi pi-home',
       link: '/dashboard/product/mtrsubgroup'
     },
-   
+    {
+
+      key: 'users',
+      label: 'Χρήστες',
+      icon: 'pi pi-users',
+      link: '/dashboard/users'
+    },
     {
       key: 'product',
       label: 'Προϊόντα',
@@ -78,9 +84,9 @@ const SidebarMenu = () => {
           link: '/dashboard/info/vat'
         },
        
-       
       ]
     },
+    
    
   ];
 
@@ -134,11 +140,15 @@ const IconContent = () => {
           <span className="p-tree-icon pi pi-home"></span>
         </div>
         <div className='iconcontent'>
+          <span className="p-tree-icon pi pi-users"></span>
+        </div>
+        <div className='iconcontent'>
           <span className="p-tree-icon pi pi-shopping-cart"></span>
         </div>
         <div className='iconcontent'>
           <span className="p-tree-icon pi pi-info-circle"></span>
         </div>
+       
       </div>
     </div>
   )
