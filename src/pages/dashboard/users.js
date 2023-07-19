@@ -99,8 +99,6 @@ export default function TemplateDemo() {
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -130,7 +128,7 @@ export default function TemplateDemo() {
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
-                <Button size="small" style={{width: '40px', height: '40px'}}  /*disabled={!rowData.status}*/ icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <Button size="small" style={{width: '40px', height: '40px'}}  disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
                 <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status}  />
             </ActionDiv>
         );
@@ -157,7 +155,7 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} ></Toolbar>
+            <Toolbar  left={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}

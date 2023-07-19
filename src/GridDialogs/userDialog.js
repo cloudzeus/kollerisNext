@@ -157,12 +157,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 const addSchema = yup.object().shape({
-    name: yup.string().required('Συμπληρώστε το όνομα'),
+    firstName: yup.string().required('Συμπληρώστε το όνομα'),
+    lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
+    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
+    password: yup.string().required('Συμπληρώστε τον κωδικό'),
+    role: yup.string().required('Συμπληρώστε τα δικαιώματα χρήστη'),
 });
 
 
 const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
-
 
     const {
         control,
@@ -170,7 +173,7 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
         handleSubmit,
         reset
     } = useForm({
-        // resolver: yupResolver(addSchema),
+        resolver: yupResolver(addSchema),
         defaultValues: {
             firstName: '',
             lastName: '',
@@ -184,7 +187,6 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
     const [disabled, setDisabled] = useState(false)
     
 
-
     const cancel = () => {
         hideDialog()
         reset()
@@ -192,10 +194,7 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
 
 
     const handleAdd = async (data) => {
-        console.log('data')
-        console.log(data)
         setDisabled(false)
-      
         let resp = await axios.post('/api/user/apiUser', { action: 'create', data: data })
         if(!resp.data.success) return showError(resp.data.error)
         setDisabled(true)
@@ -258,17 +257,22 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
                     name="password"
                     label={'Κωδικός'}
                 />
+               
                 <PrimeSelect 
-                    control={control}
-                    name="role"
-                    required
-                    label={'Δικαιώματα Χρήστη'}
-                    values={[
-                        { role: 'user' },
-                        { role: 'employee' },
-                        { role: 'manager' },
-                        { role: 'admin' },
-                    ]}
+                   control={control}
+                   name="role"
+                   required
+                   label={'Δικαιώματα Χρήστη'}
+                   options={[
+                    { role: 'user' },
+                    { role: 'employee' },
+                    { role: 'manager' },
+                    { role: 'admin' },
+                   ]}
+                   optionLabel={'role'}
+                   placeholder=''
+                   optionValue={'role'}
+                   error={errors.role}
                     />
             </Dialog>
         </form>

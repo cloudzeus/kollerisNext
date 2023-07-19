@@ -6,7 +6,10 @@ import { toast } from 'react-toastify';
 const initialState = {
 	user: getUserFromLocalStorage(),
 	error: null,
-	response: null,
+	response: {
+		success: null,
+		error: null,
+	},
 	isLoading: false,
 	isSidebarOpen: false,
 	asycnedMarkes: 0,

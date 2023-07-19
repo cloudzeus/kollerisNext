@@ -1,5 +1,6 @@
 import axios from "axios";
-import User from "../../../../server/models/contactInfoModel";
+
+import User from "../../../../server/models/userModel"
 import connectMongo from "../../../../server/config";
 import bcrypt from 'bcrypt';
 
@@ -29,33 +30,34 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body
-		const password = data.password;
 
-		console.log('data: ' + JSON.stringify(data))
+		console.log(req.body)
+
+
+		const password = data.password;
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hash(password, salt);
-		console.log('hassPassword' + JSON.stringify(hashPassword ))
-
+		console.log(hashPassword)
 		try {
-            let object = {
+            
+			let object = {
+				password: hashPassword,
+				email: data.email,
                 firstName: data.firstName,
                 lastName: data.lastName,
-				status: true,
-                email: data.email,
-                password: hashPassword,
                 role: data?.role,
+			
             }
 
 			await connectMongo();
-			const alreadyEmailCheck = await User.findOne({ email: data.email })
-			if(alreadyEmailCheck) {
-				console.log(alreadyEmailCheck)
-			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
-			}
-            console.log(object)
+			// const alreadyEmailCheck = await User.findOne({ email: data.email })
+			// if(alreadyEmailCheck) {
+			// 	return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
+			// }
 
-			const user = await User.create({...object});
-            console.log(user)
+			// const user = await User.create({...object, status: true});
+			const user = await User.create({status: true , password: hashPassword, email:data.email, firstName: data.firstName, lastName: data.lastName, role: 'employee', })
+
 			if (!user) return res.status(200).json({ success: false, result: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
 			return res.status(200).json({ success: true, result: user, error: null });
 

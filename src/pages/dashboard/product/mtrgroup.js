@@ -274,12 +274,7 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <GridLanguageTemplate localized={localized} />
-    )
 
-}
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
@@ -311,7 +306,6 @@ const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
 //The component for the nested grid:
 const RowExpansionGrid = ({ subGroups }) => {
     // console.log('GROUPS: ' + JSON.stringify(groups))
-    console.log(subGroups)
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data?.groupIcon} />
     }
@@ -331,12 +325,9 @@ const RowExpansionGrid = ({ subGroups }) => {
                          dataKey="_id"
      
                          >
-                         <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο"></Column>
+                         <Column field="subGroupIcon" body={logoTemplate}  style={{ width: '50px' }} header="Λογότυπο"></Column>
                          <Column field="subGroupName" header="'Ονομα"></Column>
      
-                         {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                 <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                 <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
                      </DataTable>
                  </div>
              </SubGridStyles>

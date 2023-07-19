@@ -24,10 +24,12 @@ const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
 const Container = styled.div`
     display: flex;
     align-items: center;
+ 
     .right-div {
         margin-left: 5px;
         display: flex;
         flex-direction: column;
+
     }
 
 

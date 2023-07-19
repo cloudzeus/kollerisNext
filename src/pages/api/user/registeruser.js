@@ -1,7 +1,8 @@
 
 import connectMongo from '../../../../server/config';
-import User from "../../../../server/models/userModel";
+import User from '../../../../server/models/userModel';
 import bcrypt from 'bcrypt';
+
 
 
 
@@ -19,7 +20,6 @@ export default async function handler(req, res) {
     } 
 
     // HASH THE PASSWORD:
-   
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
     console.log('hassPassword' + JSON.stringify(hashPassword ))
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
     
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch data'})
+    return res.status(200).json({success: false, error: 'Αδυναμία σύνδεσης με τη βάση', user: null, registered: null})
   }
 }
 

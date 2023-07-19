@@ -1,5 +1,5 @@
 'use client';
-import React, {useRef} from 'react'
+import React, { useRef, useEffect } from 'react'
 //Yup and useForm
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -19,7 +19,7 @@ import Input from "@/components/Forms/PrimeInput";
 import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
-import {  signIn } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import { Toast } from 'primereact/toast';
 
 
@@ -52,27 +52,37 @@ const RegisterPage = () => {
 	});
 
 
-	const onSubmit = async (data) => {
-		setLoading(true)
-		console.log(data)
-
-		if (data?.firstName && data?.lastName && data?.email && data?.password) {
-			
-			dispatch(registerUser({ firstName: data.firstName, password: data.password, lastName: data.lastName, email: data.email }))
-			console.log('response:' + JSON.stringify(response))
-			if(!response.success)  showError(response.error)
-			showSuccess(response.user.firstName)
-			router.push('/auth/signin')
-			setLoading(false)
+	useEffect(() => {
+		if(response.success == null) return;
+		if (!response.success) {
+			showError(response.error)
+			return;
 		}
+		showSuccess(response.user.firstName)
+		router.push('/auth/signin')
+		
+	}, [response, router])
 
+
+	const onSubmit = async (data) => {
+
+
+
+
+		setLoading(true)
+		if (data?.firstName && data?.lastName && data?.email && data?.password) {
+			dispatch(registerUser({ firstName: data.firstName, password: data.password, lastName: data.lastName, email: data.email }))
+		}
 	}
+
+
+
 	const showSuccess = (name) => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: `Επιτυχής εγγραφή χρήστη ${name}`, life: 4000 });
-    }
-    const showError = (error) => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: error + message, life: 5000 });
-    }
+		toast.current.show({ severity: 'success', summary: 'Success', detail: `Επιτυχής εγγραφή χρήστη ${name}`, life: 4000 });
+	}
+	const showError = (error) => {
+		toast.current.show({ severity: 'error', summary: 'Error', detail: error,  life: 5000 });
+	}
 
 
 	return (

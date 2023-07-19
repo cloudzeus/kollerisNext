@@ -36,6 +36,10 @@ const LoginForm = () => {
 
     const {handleSubmit, formState: { errors }, reset, control } = useForm({
         resolver: yupResolver(schema),
+        defaultValues: {
+			password: '',
+			email: '',
+		}
     });
 
     const onSubmit = async (data, event) => {

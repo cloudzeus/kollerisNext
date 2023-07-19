@@ -3,40 +3,6 @@ import mongoose from 'mongoose';
 
 
 
-const phoneSchema = new mongoose.Schema({
-  mobile: {
-    type: String,
-  },
-  landline: {
-    type: String,
-  }
-});
-
-
-
-const addressSchema = new mongoose.Schema({
-  country: {
-    type: String,
-  },
-  address: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
-  postalcode: {
-    type: String,
-  },
-  shippingAddress: {
-    type: String,
-  },
-
-}
-);
-
-
-
-
 
 
 const userSchema = new mongoose.Schema({
@@ -58,9 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  username: {
-    type: String,
-  },
+ 
   role: {
     type: String,
     default: 'user',

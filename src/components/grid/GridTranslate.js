@@ -25,7 +25,6 @@ export default function TranslateField({ value, translations, url, id, fieldName
         let res = await axios.post(url, { action: 'translate', data:data, id: id, index: index, fieldName: fieldName})
         if(!res.data.success) return showError(res.data.message)
         showSuccess(res.data.message)
-        
     }
 
 
@@ -34,6 +33,7 @@ export default function TranslateField({ value, translations, url, id, fieldName
         let { newData, index } = e;
         _data[index].translation = newData.translation;
         setData(_data);
+       
     };
 
     const textEditor = (options) => {
@@ -240,13 +240,11 @@ const GridField = styled.div`
     flex-direction: row;
     align-items: center;
     cursor: pointer;
-
-
     .icon {
         margin-right: 0.5rem;
         border-radius: 50%;
-        width: 1.8rem;
-        height: 1.8rem;
+        width: 25px;
+        height: 25px;
         background-color: #e0e0e0;
         display: flex;
         align-items: center;
