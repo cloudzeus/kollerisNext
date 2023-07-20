@@ -120,12 +120,6 @@ const Profile = () => {
                         disabled={disabled}
                         control={control}
                     />
-                    <Input
-                        label={'Χώρα'}
-                        name={'address.country'}
-                        disabled={disabled}
-                        control={control}
-                    />
 
                     <Button
                         onClick={() => setDetails(prev => !prev)}
@@ -202,13 +196,15 @@ const Profile = () => {
                 <div className='mt-4 border-top-1 pt-4 border-300'>
                     <Button style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => setDisabled(prev => !prev)} />
 
-                    <Button
-                        onClick={handleSubmit(onSubmit)}
-                        className='ml-2'
-                        type='submit'
-                        label="Αποθήκευση"
-                        severity="info"
-                        style={{ height: '40px' }} />
+                   {!disabled ? (
+                     <Button
+                     onClick={handleSubmit(onSubmit)}
+                     className='ml-2'
+                     type='submit'
+                     label="Αποθήκευση"
+                     severity="info"
+                     style={{ height: '40px' }} />
+                   ) : null}
                 </div>
 
             </div>
