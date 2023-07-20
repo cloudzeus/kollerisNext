@@ -34,7 +34,12 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-	async jwt({ token, user}) {
+	async jwt({ token, user, trigger, session }) {
+
+    if(trigger === 'update') {
+      return {...token, ...session.user};
+    }
+
 	  return {...token, ...user};
     },
     async session({ session, token }) {

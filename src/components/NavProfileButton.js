@@ -11,7 +11,7 @@ import { signOut } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-
+import { useSession } from 'next-auth/react';
 
 
 export default function ProfileButton() {
@@ -20,7 +20,8 @@ export default function ProfileButton() {
     const menuRight = useRef(null);
     const route = useRouter();
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.user)
+    const { data: session, status } =  useSession()
+    let user = session?.user?.user;
     let items = [
         { 
           
