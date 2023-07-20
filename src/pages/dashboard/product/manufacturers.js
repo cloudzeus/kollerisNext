@@ -15,7 +15,6 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
 import SyncManufacturers from '@/GridSync/SyncManufacturers';
 
 

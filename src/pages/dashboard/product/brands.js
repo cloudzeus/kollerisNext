@@ -22,7 +22,6 @@ import { Toast } from 'primereact/toast';
 import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
 import GridTranslate from '@/components/grid/GridTranslate';
 
 
@@ -322,12 +321,7 @@ const TranslateComp = ({name}) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <GridLanguageTemplate localized={localized} />
-    )
 
-}
 
 const ActiveTempate = ({ status }) => {
 

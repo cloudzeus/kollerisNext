@@ -18,7 +18,6 @@ import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
 
 
@@ -264,14 +263,6 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <>
-            {localized.length > 0 ? ( <GridLanguageTemplate localized={localized} />) : null}
-        </>
-    )
-
-}
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
