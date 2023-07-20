@@ -6,9 +6,7 @@ import { Toast } from 'primereact/toast';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Badge } from 'primereact/badge';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
+
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
 import { useSession } from 'next-auth/react';
