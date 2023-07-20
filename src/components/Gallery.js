@@ -39,7 +39,6 @@ const Gallery = ({images, label}) => {
     const handlePrevImage = () => {
         const currentIndex = images.indexOf(selectedImage);
         const prevIndex = (currentIndex - 1 + images.length) % images.length;
-        console.log(prevIndex)
         setSelectedImage(images[prevIndex]);
     };
 
@@ -47,11 +46,8 @@ const Gallery = ({images, label}) => {
         const currentIndex = images.indexOf(selectedImage);
     
         const nextIndex = (currentIndex + 1) % images.length;
-        console.log(nextIndex)
         setSelectedImage(images[nextIndex]);
     };
-
-  
 
     return (
         <>  

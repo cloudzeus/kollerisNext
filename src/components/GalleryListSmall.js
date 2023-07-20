@@ -23,6 +23,8 @@ export default function AddDeleteImages({state, setState,  multiple, handleUploa
     const [selectedImage, setSelectedImage] = useState( state[0]);
     const toast = useRef(null);
 
+
+    console.log(state)
     const handleImageSelect = (image) => {
         setSelectedImage(image);
     };
@@ -30,8 +32,8 @@ export default function AddDeleteImages({state, setState,  multiple, handleUploa
 
     const handleDeleteImage = async (image) => {
         let newArray = state.filter(prev => prev !== image)
-        console.log(newArray)
-        console.log(newArray)
+        console.log(image)
+       
         setState(newArray)
         if(singleUpload) {
             setSelectedImage('')
@@ -39,7 +41,13 @@ export default function AddDeleteImages({state, setState,  multiple, handleUploa
         const currentIndex = state.indexOf(selectedImage);
         const nextIndex = (currentIndex + 1 + state.length) % state.length;
         setSelectedImage(state[nextIndex]);
-      
+        try {
+            let resp = await axios.post('/api/uploads/deleteImage', { filename: image })
+            console.log('resp data')
+            console.log(resp.data)
+        } catch (e) {
+            console.log(e)
+        }
     };
 
     const handlePrevImage = () => {
