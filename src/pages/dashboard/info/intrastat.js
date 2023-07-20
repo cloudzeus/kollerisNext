@@ -15,7 +15,6 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
 import Image from 'next/image';
 import Flag from 'react-world-flags'
 import styled from 'styled-components';

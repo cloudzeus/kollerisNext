@@ -276,6 +276,7 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
     )
 }
+
 const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
     return (
         <RegisterUserActions
