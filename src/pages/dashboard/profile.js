@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 import { useSession } from 'next-auth/react';
+import { Avatar } from 'primereact/avatar';
 
 const registerSchema = yup.object().shape({
     firstName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -54,6 +55,13 @@ const Profile = () => {
             <div className='shadow-1 bg-white p-4 border-round'>
                 <form noValidate onSubmit={handleSubmit(onSubmit)} >
                     <Toast ref={toast} />
+                    <div className='mb-5 flex align-items-center'>
+                        <Avatar icon={"pi pi-user" } shape="circle" />
+                        <div className='ml-2 '>
+                            <span className="font-semibold block">{user?.firstName}</span>
+                            <span className="text-sm block">{user?.email}</span>
+                        </div>
+                    </div>
                     <Input
                         label={'Όνομα'}
                         name={'firstName'}
@@ -88,7 +96,7 @@ const Profile = () => {
                     <Button
                         onClick={() => setDetails(prev => !prev)}
                         outlined
-                        className='w-8rem mt-4 bg-white'
+                        className='w-9rem mt-4 bg-white'
                         size='small'
                         label="Λεπτομέριες"
                         icon="pi pi-angle-down"
