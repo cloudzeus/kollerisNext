@@ -4,13 +4,14 @@ import { Toast } from 'primereact/toast';
 import { FileUpload } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import Image from 'next/image';
-import { useDispatch } from 'react-redux';
-import { setUploadImages } from '@/features/upload/uploadSlice';
 import styled from 'styled-components';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
 import axios from 'axios';
+
+
+
 export default function PrimeUploads({label, multiple, mt, mb, setState, singleUpload, state}) {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
@@ -48,8 +49,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
            
             if (response.ok) {
                 const { urls } = await response.json();
-              
-               
                 if(urls) {
                     if(singleUpload) {
                         setState(urls)

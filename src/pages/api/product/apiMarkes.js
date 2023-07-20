@@ -8,6 +8,8 @@ export default async function handler(req, res) {
 	
 	let action = req.body.action;
 	if(!action) return res.status(400).json({ success: false, error: 'no action specified' });
+
+
 	if (action === 'findOne') {
 		console.log('findOne')
 		console.log(req.body.id)
@@ -186,7 +188,6 @@ export default async function handler(req, res) {
 	}
 	if (action === 'update') {
 		
-
 		let mtrmark = req.body.mtrmark;
 		let body = req.body.data;
 		console.log('update brand body')
@@ -216,9 +217,6 @@ export default async function handler(req, res) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
 		}
     
-	
-		
-	
 
 	}
 
@@ -243,38 +241,7 @@ export default async function handler(req, res) {
 	}
 
 	
-	if (action === 'findExtraSoftone') {
-		await connectMongo();
-		const mongoArray = await Markes.find();
-
-		let resp = await fetchSoftoneMarkes();
-		let notFoundAriadne = resp.result.filter(o1 => {
-			return !mongoArray.some((o2) => {
-				// console.log(o2.softOne.MTRMARK)
-				return o1.MTRMARK == o2.softOne.MTRMARK; // return the ones with equal id
-			});
-		});
-
-
-		let notFoundSoftone = mongoArray.filter(o1 => {
-			return !resp.result.some((o2) => {
-				// console.log(o2.softOne.MTRMARK)
-				return o1.softOne.MTRMARK == o2.MTRMARK; // return the ones with equal id
-			});
-		});
-		console.log('return items not found in softone: ' + JSON.stringify(notFoundSoftone.length))
-
-		let itemsInSoftone = resp.result.length;
-		console.log('return items not found in ariadne: ' + JSON.stringify(notFoundAriadne.length))
-		console.log('total softone: ' + itemsInSoftone)
-		let itemInAriadne = mongoArray.length;
-
-
-		let percentageAriadne = (itemInAriadne / itemsInSoftone) * 100;
-
-		return res.status(200).json({ success: true, notFoundAriadne: notFoundAriadne, notFoundSoftone: notFoundSoftone, percentageAriadne: percentageAriadne });
-
-	}
+	
 	if(action == 'addImages') {
 		console.log('add new Images to the database')
 		let id = req.body.id;
@@ -338,8 +305,3 @@ export default async function handler(req, res) {
 
 
 
-const fetchSoftoneMarkes = async () => {
-	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`;
-	let { data } = await axios.post(URL)
-	return data;
-}

@@ -6,9 +6,6 @@ import { Toast } from 'primereact/toast';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Badge } from 'primereact/badge';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import {  notFoundAriadneApi } from '@/features/syncProduct/markesNotFoundAriadne';
 import axios from 'axios';
 import { SyncButtonContainer } from '@/componentsStyles/grid';
 import { useSession } from 'next-auth/react';
@@ -16,14 +13,21 @@ import { useSession } from 'next-auth/react';
 export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
         const { data: session, status } = useSession()
         const [loading, setLoading] = useState(false);
-        const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
+        // const { dataNotFoundInAriadne} = useSelector((store) => store.notFoundAriadne)
+
+        const [data, setData] = useState([]);
         const [selectedProduct, setSelectedProduct] = useState(null);
         const op = useRef(null);
         const toast = useRef(null);
-        const dispatch = useDispatch();
 
         const findExtraSoftone = async () => {
-            dispatch(notFoundAriadneApi())
+            try {
+                const resp = await axios.post('/api/product/sync-product', { action: 'notFoundBrands' })
+                console.log(resp.data)
+                setData(resp.data.result)
+            } catch (error) {
+                console.log(error)
+            }
         }
 
         useEffect(() => {
@@ -78,13 +82,13 @@ export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
                 Πατήστε για να δείτε τις εγγραφές'
                 tooltipOptions={{ position: 'left' }}
                 onClick={(e) => op.current.toggle(e)}>
-                <Badge value={dataNotFoundInAriadne.length} severity="danger" />
+                <Badge value={data.length} severity="danger" />
             </Button>
             </ SyncButtonContainer>
            
             <OverlayPanel ref={op} showCloseIcon>
                 <DataTable 
-                    value={dataNotFoundInAriadne} 
+                    value={data} 
                     selectionMode="single" 
                     paginator 
                     rows={5} 

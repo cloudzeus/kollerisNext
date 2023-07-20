@@ -1,10 +1,4 @@
 import React, { useState } from 'react';
-import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
-
-import { InputText } from 'primereact/inputtext';
-import { Controller, useForm } from 'react-hook-form';
-import { classNames } from 'primereact/utils';
-import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { useRef } from 'react';
 import { Dropdown } from 'primereact/dropdown';
@@ -34,7 +28,6 @@ export default function InPlaceInput({
     error,
     type,
     state,
-    inPlaceName
 }) {
     const [show, setShow] = useState(false)
     const inputRef = useRef(null);

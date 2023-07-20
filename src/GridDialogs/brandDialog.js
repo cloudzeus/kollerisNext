@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
 import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -18,8 +17,6 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
-import  TransaltionGrid from '@/components/Forms/TranslationGrid';
-import FormSteps from '@/components/Steps';
 
 
 
@@ -60,7 +57,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleEdit = async (data) => {
-        console.log('data logo: ' + JSON.stringify(logo))
         let newLogo = logo[0]
         if(logo.length === 0) {
             newLogo = ''
