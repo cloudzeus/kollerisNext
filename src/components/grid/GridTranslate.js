@@ -27,10 +27,17 @@ export default function TranslateField({ value, translations, url, id, fieldName
         showSuccess(res.data.message)
     }
 
+    const onManualDataChange = (e) => {
+        let _data = [...data];
+        _data[0].translation = e.target.value;
+        setData(_data);
+    }
 
     const onRowEditComplete = (e) => {
+    
         let _data = [...data];
         let { newData, index } = e;
+        console.log(newData)
         _data[index].translation = newData.translation;
         setData(_data);
        
