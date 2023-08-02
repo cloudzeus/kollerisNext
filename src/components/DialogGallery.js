@@ -20,31 +20,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const DialogGallery = ({ images, url, id, user }) => {
     const [visible, setVisible] = useState(false);
+    const toast = useRef(null);
     const [addPhotosVisible, setAddPhotosVisible] = useState(false)
     const [selectedImages, setSelectedImages] = useState([])
     const [localImages, setLocalImages] = useState(images)
-    const handleUpdate = async () => {
-        
-        let newImages = []
-        localImages.filter
-        for (let i of localImages) {
-            newImages.push({
-                photosPromoUrl: i,
-                photosPromoName: i
-            })
-        }
-        console.log('-Images for upload')
-        console.log(newImages)
-        // try {
-        //     let res = await axios.post(url, { action: "updateImages", images: newImages, updatedFrom: user, id: id })
-        //     console.log(res.data)
-        //     if (res.data.result.modifiedCount === 1) {
-        //         setLocalImages(imagestoupdate)
-    
-        //     }
-        // } catch (e) {
-        //     console.log(e)
-        // }
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Επιτυχής διαγραφή', life: 3000});
+    }
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Αποτυχία Διαγραφής', life: 3000});
     }
 
 
@@ -78,14 +62,17 @@ const DialogGallery = ({ images, url, id, user }) => {
             console.log(res.data)
             if (res.data.result.modifiedCount === 1) {
                 setLocalImages(imagestoupdate)
+                showSuccess();
     
             }
         } catch (e) {
             console.log(e)
+            showError();
         }
     }
     return (
-        <>
+        <>  
+            <Toast ref={toast}></Toast>
             <div className='flex align-content-center '>
                 <Button className='' icon="pi pi-pencil" severity="secondary" onClick={() => setVisible(true)} style={{ width: '40px', height: '40px' }} />
                 <Button className=' ml-1' icon="pi pi-plus" onClick={() => setAddPhotosVisible(true)} style={{ width: '40px', height: '40px' }} />
@@ -95,7 +82,7 @@ const DialogGallery = ({ images, url, id, user }) => {
                     {localImages.map((image, index) => {
                         if (index < 4 ) {
                             return (
-                                <AvatarImages>
+                                <AvatarImages key={index}>
                                     <Image
                                         src={`/uploads/${image}`}
                                         alt="Large"
@@ -107,7 +94,7 @@ const DialogGallery = ({ images, url, id, user }) => {
                         }
                       
                     })}
-                    {localImages.length > 4 && <LastImage>{`${images.length - 5}+`}</LastImage>}
+                    {localImages.length > 4 && <LastImage>{`${localImages.length - 4}+`}</LastImage>}
                 </AvatarGroup>
                 
             </div>
@@ -132,7 +119,14 @@ const DialogGallery = ({ images, url, id, user }) => {
                     </Container>
                 </Dialog>
                 <Dialog className='flex flex-column' header="Προσθήκη Φωτογραφιών" visible={addPhotosVisible} style={{ width: '95%'}} onHide={() => setAddPhotosVisible(false)}>
-                    <AddImages state={localImages} setState={setLocalImages}/>
+                    <AddImages 
+                        state={localImages} 
+                        setState={setLocalImages} 
+                        url={url}
+                        id={id}
+                        user={user}
+                        setAddPhotosVisible={setAddPhotosVisible}
+                    />
                 </Dialog>
             </div>
         </>
@@ -145,43 +139,66 @@ export default DialogGallery
 
 
 
-
-
- function AddImages({state, setState}) {
+ function AddImages({state, setState, url, user, id, setAddPhotosVisible}) {
     const toast = useRef(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const [urls , setUrls] = useState([])
-    const uploadHandler = async (e) => {
 
+    
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Message Content', life: 3000});
+    }
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});
+    }
+
+    const uploadHandler = async (e) => {
+        console.log(e)
         let formData = new FormData();
         let acceptedFiles = e.files
         formData.append('files', e.files);
         acceptedFiles.forEach((file) => {
+            console.log(file)
             formData.append('files', file);
         });
-        console.log('form Data ' + JSON.stringify(formData))
-        // try {
-        //     console.log('form Data ' + JSON.stringify(formData))
-        //     const response = await fetch('/api/uploads/saveImageMulter', {
-        //         method: 'POST',
-        //         body: formData,
-        //     });
+
+        try {
+            console.log('form Data ' + JSON.stringify(formData))
+            const response = await fetch('/api/uploads/saveImageMulter', {
+                method: 'POST',
+                body: formData,
+            });
            
            
-        //     if (response.ok) {
-        //         const { urls } = await response.json();
-        //         if(urls) {
-        //             console.log('urls')
-        //             console.log(urls)
-        //             setState([...state, ...urls])
-                 
-        //         }
-        //     } else {
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        // }
+            if (response.ok) {
+                const { urls } = await response.json();
+                if(!urls) return showError()
+                let images = [...state, ...urls]
+                let newImages = [];
+                for (let i of images) {
+                    newImages.push({
+                        photosPromoUrl: i,
+                        photosPromoName: i
+                    })
+                }
+                try {
+                    let res = await axios.post(url, { action: "updateImages", images: newImages, updatedFrom: user, id: id })
+                    console.log(res.data)
+                    if (res.data.result.modifiedCount === 1) {
+                        showSuccess();
+                        setTotalSize(0);
+                        setState([...state, ...urls])
+                        setAddPhotosVisible(false)
+                    }
+                } catch (e) {
+                    console.log(e)
+                }
+            } else {
+            }
+        } catch (error) {
+            console.error(error);
+        }
 
     }
 
@@ -205,7 +222,6 @@ export default DialogGallery
         });
 
         setTotalSize(_totalSize);
-
         toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
     };
 
@@ -286,7 +302,6 @@ export default DialogGallery
     return (
         <div>
             <Toast ref={toast}></Toast>
-
             <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
             <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
             <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
