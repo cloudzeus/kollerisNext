@@ -186,6 +186,25 @@ export default async function handler(req, res) {
 
 
 	}
+	if (action === 'updateImages') {
+		
+		const {images, updatedFrom, id } = req.body
+
+		console.log(images, updatedFrom, id)
+		const filter = { _id: id };
+		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
+		try {
+			await connectMongo();
+			const result = await Markes.updateOne(filter, update);
+			console.log(result)
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
+		}
+    
+
+	}
 	if (action === 'update') {
 		
 		let mtrmark = req.body.mtrmark;
@@ -211,7 +230,7 @@ export default async function handler(req, res) {
 		try {
 			await connectMongo();
 			const result = await Markes.updateOne(filter, update);
-		
+			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });

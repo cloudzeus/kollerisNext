@@ -71,7 +71,7 @@ export default function TemplateDemo() {
 
     const logoTemplate = (data) => {
         return (
-           <GridLogoTemplate logo={data?.logo} />
+            <GridLogoTemplate logo={data?.logo} />
 
         )
     }
@@ -107,6 +107,7 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
+        console.log(data)
         let newArray = []
         for (let image of data.photosPromoList) {
             newArray.push(image.photosPromoUrl)
@@ -123,11 +124,11 @@ export default function TemplateDemo() {
                             < DisabledDisplay  >
                                 {data?.videoPromoList?.map((video, index) => {
                                     return (
-                                         <UrlInput 
-                                         key={index}
-                                         label={video.name}
-                                         value={video.videoUrl}
-                                     />
+                                        <UrlInput
+                                            key={index}
+                                            label={video.name}
+                                            value={video.videoUrl}
+                                        />
                                     )
                                 })}
                             </ DisabledDisplay  >
@@ -135,6 +136,7 @@ export default function TemplateDemo() {
 
                         </TabPanel>
                         <TabPanel header="Λεπτομέριες">
+
                             < DisabledDisplay  >
                                 <div className="disabled-card">
                                     <label>
@@ -144,31 +146,32 @@ export default function TemplateDemo() {
                                 </div>
                                 <div className="disabled-card">
                                     <label>
-                                       Pim Username
+                                        Pim Username
                                     </label>
                                     <InputText disabled value={data?.pimAccess?.pimUserName} />
                                 </div>
-                                <UrlInput 
+                                <UrlInput
                                     label={'URL Iστοσελίδας'}
                                     value={data.webSiteUrl}
                                 />
-                                <UrlInput 
+                                <UrlInput
                                     label={'URL Ιnstagram'}
                                     value={data.instagramUrl}
                                 />
-                                <UrlInput 
+                                <UrlInput
                                     label={'URL Facebook'}
                                     value={data.facebookUrl}
                                 />
-                                <UrlInput 
+                                <UrlInput
                                     label={'URL Pim'}
                                     value={data?.pimAccess?.pimUrl}
                                 />
-                              
-                             
+
+
                             </DisabledDisplay>
 
                         </TabPanel>
+                     
                     </TabView>
                 </div>
             </ >
@@ -186,10 +189,10 @@ export default function TemplateDemo() {
     const rightToolbarTemplate = () => {
         return (
             <>
-            <SyncBrand 
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            />
+                <SyncBrand
+                    refreshGrid={handleFetch}
+                    addToDatabaseURL='/api/product/apiMarkes'
+                />
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
             </>
         );
@@ -219,9 +222,9 @@ export default function TemplateDemo() {
     };
 
     const onDelete = async (id) => {
-        
+
         let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
-        if(!res.data.success) return showError()
+        if (!res.data.success) return showError()
         handleFetch()
         showSuccess()
     }
@@ -230,7 +233,7 @@ export default function TemplateDemo() {
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
-                <Button disabled={!rowData.status} style={{width: '40px', height: '40px'}} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
+                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
                 <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
             </ActionDiv>
         );
@@ -248,8 +251,8 @@ export default function TemplateDemo() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-       
-      };
+
+    };
 
     return (
         <AdminLayout >
@@ -278,8 +281,8 @@ export default function TemplateDemo() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom"  style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="status" bodyStyle={{textAlign: 'center'}}  sortable header="Status"  style={{ width: '90px' }} body={ActiveTempate}></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="status" bodyStyle={{ textAlign: 'center' }} sortable header="Status" style={{ width: '90px' }} body={ActiveTempate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column>
 
             </DataTable>
@@ -298,25 +301,25 @@ export default function TemplateDemo() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
-           
+
         </AdminLayout >
     );
 }
 
-const translateName = ({name}) => {
+const translateName = ({ name }) => {
     return (
         <TranslateComp name={name} />
     )
 }
 
-const TranslateComp = ({name}) => {
+const TranslateComp = ({ name }) => {
     const [visible, setVisible] = useState(false)
     return (
-       <div onClick={() => setVisible(true)} className='flex align-content-center align-items-center'>
-          <span>{name}</span>
-          <i className="pi pi-language" ></i>
-        <GridTranslate visible={visible} setVisible={setVisible} translateField={name}/>
-       </div>
+        <div onClick={() => setVisible(true)} className='flex align-content-center align-items-center'>
+            <span>{name}</span>
+            <i className="pi pi-language" ></i>
+            <GridTranslate visible={visible} setVisible={setVisible} translateField={name} />
+        </div>
     )
 }
 
@@ -341,28 +344,28 @@ const ActiveTempate = ({ status }) => {
 
 
 
-const UpdatedFromTemplate = ({updatedFrom, updatedAt}) => {
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
-       <RegisterUserActions
-       actionFrom={updatedFrom}
-        at={updatedAt}
-        icon="pi pi-user"
-        color="#fff"
-        backgroundColor= 'var(--yellow-500)'
-       />
-        
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
+
     )
 }
-const CreatedFromTemplate = ({createdFrom, createdAt}) => {
+const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
     return (
-       <RegisterUserActions
-        actionFrom={createdFrom}
-        at={createdAt}
-        icon="pi pi-user"
-        color="#fff"
-        backgroundColor= 'var(--green-400)'
-       />
-        
+        <RegisterUserActions
+            actionFrom={createdFrom}
+            at={createdAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--green-400)'
+        />
+
     )
 }
 

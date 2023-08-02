@@ -17,8 +17,7 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
-
-
+import DialogGallery from '@/components/DialogGallery';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
@@ -214,7 +213,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required={true}
                         control={control}
                     />
-
+                    <FormTitle>Φωτογραφίες</FormTitle>
+                    <DialogGallery 
+                        images={images} 
+                        url="/api/product/apiMarkes"
+                        id={gridRowData._id}
+                        user={session?.user?.user?.lastName}
+                    />
                 </Dialog>
             </form>
         </Container>
