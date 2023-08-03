@@ -1,25 +1,17 @@
 import React, { useState, useRef } from 'react'
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
+
 import styled from 'styled-components';
 import Image from 'next/image';
-import axios from 'axios';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
-import { Avatar } from 'primereact/avatar';
-import { AvatarGroup } from 'primereact/avatargroup';
-import { Badge } from 'primereact/badge';
 import { Toast } from 'primereact/toast';
-import { FileUpload } from 'primereact/fileupload';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tooltip } from 'primereact/tooltip';
-import { Tag } from 'primereact/tag';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 
 
 
 
 const SinglePhotoUpload = ({  state, setState }) => {
     const toast = useRef(null);
+    const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
     console.log('state' + JSON.stringify(state))
 
@@ -27,7 +19,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
         const file = event.target.files[0];
         let formData = new FormData();
         formData.append('files', file);
-      
+        setLoading(true);
         try {
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
@@ -39,7 +31,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
                 const { urls } = await response.json();
                 if(urls) {
                     setState(urls[0])
-                   
+                    setLoading(false);
                 }
             }
         } catch (error) {
@@ -47,7 +39,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
         }
     }
 
-
+  
     return (
         <>
             <Toast ref={toast}></Toast>
@@ -55,15 +47,25 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                 <div className='relative' >
                     <ImageContainer onClick={() => setVisible(true)}>
+                        
                         {state.length === 0 ? (
                              <i className="pi pi-image " style={{ fontSize: '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
                         ) : (
-                            <Image
-                            src={`/uploads/${state}`}
-                            alt="logo"
-                            fill={true}
-                            sizes="50px"
-                        />
+                            <>
+                            {loading ? (
+                               <ProgressSpinner style={{width: '50px', height: '50px'}} strokeWidth="2"  animationDuration=".5s" />
+
+                            ) : (
+                                <Image
+                                src={`/uploads/${state}`}
+                                alt="logo"
+                                fill={true}
+                                sizes="50px"
+                            />
+                            )}
+                              
+                            </>
+                           
                         )}
                      
                     </ImageContainer>
@@ -129,6 +131,7 @@ const ImageButton = styled.div`
     color: black;
     cursor: pointer;
     outline: none;
+    border: 3px solid white;
 
     input {
         display: none;
