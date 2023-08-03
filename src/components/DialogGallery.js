@@ -4,31 +4,28 @@ import { Dialog } from 'primereact/dialog';
 import styled from 'styled-components';
 import Image from 'next/image';
 import axios from 'axios';
-
-import { Avatar } from 'primereact/avatar';
 import { AvatarGroup } from 'primereact/avatargroup';
-import { Badge } from 'primereact/badge';
 import { Toast } from 'primereact/toast';
 import { FileUpload } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 
 
 
 
-const DialogGallery = ({ images, url, id, user }) => {
+const DialogGallery = ({ images, url, id, user, state, setState}) => {
+
+    console.log('state ' + JSON.stringify(state))
     const [visible, setVisible] = useState(false);
     const toast = useRef(null);
     const [addPhotosVisible, setAddPhotosVisible] = useState(false)
     const [selectedImages, setSelectedImages] = useState([])
-    const [localImages, setLocalImages] = useState(images)
     const showError = () => {
-        toast.current.show({severity:'error', summary: 'Error', detail:'Επιτυχής διαγραφή', life: 3000});
+        toast.current.show({severity:'error', summary: 'Error', detail:'Αποτυχία διαγραφής', life: 3000});
     }
     const showSuccess = () => {
-        toast.current.show({severity:'success', summary: 'Success', detail:'Αποτυχία Διαγραφής', life: 3000});
+        toast.current.show({severity:'success', summary: 'Success', detail:'Eπιτυχής Διαγραφής', life: 3000});
     }
 
 
@@ -49,7 +46,7 @@ const DialogGallery = ({ images, url, id, user }) => {
     const handleDelete = async () => {
         console.log('handle delete')
         const imagestoupdate = images.filter(image => !selectedImages.includes(image))
-        setLocalImages(imagestoupdate)
+        // setLocalImages(imagestoupdate)
         let newImages = []
         for (let i of imagestoupdate) {
             newImages.push({
@@ -61,7 +58,8 @@ const DialogGallery = ({ images, url, id, user }) => {
             let res = await axios.post(url, { action: "updateImages", images: newImages, updatedFrom: user, id: id })
             console.log(res.data)
             if (res.data.result.modifiedCount === 1) {
-                setLocalImages(imagestoupdate)
+                // setLocalImages(imagestoupdate)
+                setState(imagestoupdate)
                 showSuccess();
     
             }
@@ -70,32 +68,38 @@ const DialogGallery = ({ images, url, id, user }) => {
             showError();
         }
     }
+
+   
+
     return (
         <>  
-            <Toast ref={toast}></Toast>
+            <Toast className='z-5' ref={toast}></Toast>
             <div className='flex align-content-center '>
                 <Button className='' icon="pi pi-pencil" severity="secondary" onClick={() => setVisible(true)} style={{ width: '40px', height: '40px' }} />
                 <Button className=' ml-1' icon="pi pi-plus" onClick={() => setAddPhotosVisible(true)} style={{ width: '40px', height: '40px' }} />
             </div>
             <div className='flex flex-start justify-content-between align-content-center'>
-                <AvatarGroup className='mt-4 mb-3'>
-                    {localImages.map((image, index) => {
-                        if (index < 4 ) {
-                            return (
-                                <AvatarImages key={index}>
-                                    <Image
-                                        src={`/uploads/${image}`}
-                                        alt="Large"
-                                        fill={true}
-                                        sizes="50px"
-                                    />
-                                </AvatarImages>
-                            )
-                        }
-                      
-                    })}
-                    {localImages.length > 4 && <LastImage>{`${localImages.length - 4}+`}</LastImage>}
-                </AvatarGroup>
+                {state.length === 0 ? <p className='mt-2'>Δεν υπάρχουν Φωτογραφίες</p> : (
+                      <AvatarGroup className='mt-4 mb-3'>
+                      {state.map((image, index) => {
+                          if (index < 4 ) {
+                              return (
+                                  <AvatarImages key={index}>
+                                      <Image
+                                          src={`/uploads/${image}`}
+                                          alt="Large"
+                                          fill={true}
+                                          sizes="50px"
+                                      />
+                                  </AvatarImages>
+                              )
+                          }
+                        
+                      })}
+                      {state.length > 4 && <LastImage>{`${state.length - 4}+`}</LastImage>}
+                  </AvatarGroup>
+                )}
+              
                 
             </div>
             <div className="card flex justify-content-center">
@@ -103,7 +107,7 @@ const DialogGallery = ({ images, url, id, user }) => {
                 <Dialog header="Διαγραφή Φωτογραφιών" visible={visible} style={{ width: '95%', height: "100%" }} onHide={() => setVisible(false)}>
                     <Button onClick={handleDelete} label="Διαγραφή" severity="danger" icon="pi pi-trash" className='ml-2' />
                     <Container>
-                        {localImages.map((image, index) => {
+                        {state.map((image, index) => {
                             return (
                                 <ImageContainer onClick={() => handleSelected(image)} className={selectedImages.includes(image) ? "selected" : null} >
                                     <Image
@@ -120,8 +124,8 @@ const DialogGallery = ({ images, url, id, user }) => {
                 </Dialog>
                 <Dialog className='flex flex-column' header="Προσθήκη Φωτογραφιών" visible={addPhotosVisible} style={{ width: '95%'}} onHide={() => setAddPhotosVisible(false)}>
                     <AddImages 
-                        state={localImages} 
-                        setState={setLocalImages} 
+                        state={state} 
+                        setState={setState} 
                         url={url}
                         id={id}
                         user={user}
@@ -143,7 +147,6 @@ export default DialogGallery
     const toast = useRef(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
-    const [urls , setUrls] = useState([])
 
     
     const showError = () => {
@@ -154,12 +157,10 @@ export default DialogGallery
     }
 
     const uploadHandler = async (e) => {
-        console.log(e)
         let formData = new FormData();
         let acceptedFiles = e.files
         formData.append('files', e.files);
         acceptedFiles.forEach((file) => {
-            console.log(file)
             formData.append('files', file);
         });
 

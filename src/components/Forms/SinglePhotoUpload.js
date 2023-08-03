@@ -18,12 +18,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 
 
-const SinglePhotoUpload = ({ image, state, setState }) => {
-    const [visible, setVisible] = useState(false);
+const SinglePhotoUpload = ({  state, setState }) => {
     const toast = useRef(null);
     const fileInputRef = useRef(null);
-    const [imagePreview, setImagePreview] = useState(image);
-
+    console.log('state' + JSON.stringify(state))
 
     const onUpload = async (event) => {
         const file = event.target.files[0];
@@ -48,6 +46,8 @@ const SinglePhotoUpload = ({ image, state, setState }) => {
             console.log(error)
         }
     }
+
+
     return (
         <>
             <Toast ref={toast}></Toast>
@@ -55,12 +55,17 @@ const SinglePhotoUpload = ({ image, state, setState }) => {
 
                 <div className='relative' >
                     <ImageContainer onClick={() => setVisible(true)}>
-                        <Image
+                        {state.length === 0 ? (
+                             <i className="pi pi-image " style={{ fontSize: '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
+                        ) : (
+                            <Image
                             src={`/uploads/${state}`}
                             alt="logo"
                             fill={true}
                             sizes="50px"
                         />
+                        )}
+                     
                     </ImageContainer>
                     <ImageButton>
                         <input  ref={fileInputRef} type="file" name="file" onChange={onUpload}  />
@@ -88,6 +93,9 @@ export default SinglePhotoUpload;
 
 const ImageContainer = styled.div`
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100px;
     height: 100px;
     border-radius: 50%;
@@ -95,7 +103,7 @@ const ImageContainer = styled.div`
     object-fit: contain;
     overflow: hidden;
     img {
-        object-fit: cover;
+        object-fit: contain;
         object-position: center;
     }
     &.selected {
@@ -119,7 +127,6 @@ const ImageButton = styled.div`
     justify-content: center;
     align-items: center;
     color: black;
-    
     cursor: pointer;
     outline: none;
 

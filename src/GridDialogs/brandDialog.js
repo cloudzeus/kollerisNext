@@ -13,7 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-import SinglePhotoUpload from '@/components/grid/SinglePhotoUpload';
+import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
@@ -42,7 +42,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         setVideoList(gridRowData?.videoPromoList)
         //handle images:
         let newArray = []
-        if (gridRowData?.photosPromoList && gridRowData?.photosPromoList.length > 0) {
+        if (gridRowData?.photosPromoList) {
 
             for (let image of gridRowData?.photosPromoList) {
                 newArray.push(image.photosPromoUrl)
@@ -164,6 +164,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     /> */}
                       <DialogGallery 
                         images={images} 
+                        state={images}
+                        setState={setImages}
                         url="/api/product/apiMarkes"
                         id={gridRowData._id}
                         user={session?.user?.user?.lastName}
