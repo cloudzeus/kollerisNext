@@ -13,7 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-
+import SinglePhotoUpload from '@/components/grid/SinglePhotoUpload';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
@@ -126,7 +126,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >
+                >   
+                   
+                    <SinglePhotoUpload state={logo} setState={setLogo}/>
                     <FormTitle>Λεπτομέριες</FormTitle>
                     <Input
                         label={'Όνομα'}
@@ -142,22 +144,29 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                     />
                     < Divider />
-                    <FormTitle>Λογότυπο	</FormTitle>
-                   
-                    <AddDeleteImages 
+                    {/* <FormTitle>Λογότυπο	</FormTitle> */}
+                
+                    {/* <AddDeleteImages 
                         state={logo}
                         setState={setLogo}
                         multiple={false}
                         singleUpload={true}
                         id={gridRowData._id}
-                    />
-                    < Divider />
+                    /> */}
+        
+                    {/* < Divider /> */}
                     <FormTitle>Φωτογραφίες</FormTitle>
-                    <AddDeleteImages 
+                    {/* <AddDeleteImages 
                         state={images}
                         setState={setImages}
                         multiple={true}
                         id={gridRowData._id}
+                    /> */}
+                      <DialogGallery 
+                        images={images} 
+                        url="/api/product/apiMarkes"
+                        id={gridRowData._id}
+                        user={session?.user?.user?.lastName}
                     />
                    
                     < Divider />
@@ -212,13 +221,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         name={'instagramUrl'}
                         required={true}
                         control={control}
-                    />
-                    <FormTitle>Φωτογραφίες</FormTitle>
-                    <DialogGallery 
-                        images={images} 
-                        url="/api/product/apiMarkes"
-                        id={gridRowData._id}
-                        user={session?.user?.user?.lastName}
                     />
                 </Dialog>
             </form>

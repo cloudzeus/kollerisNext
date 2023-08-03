@@ -337,6 +337,7 @@ const ImageContainer = styled.div`
     box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.06);
     img {
         object-fit: contain;
+        object-position: center;
     }
     &.selected {
         border: 4px solid #007bff;
@@ -351,9 +352,10 @@ const AvatarImages = styled.div`
     border-radius: 50%;
     border: 2px solid #cacbcb;
     overflow: hidden;
+    background-color: white;
     img {
         object-fit: contain;
-
+        object-position: center;
     }
 `
 

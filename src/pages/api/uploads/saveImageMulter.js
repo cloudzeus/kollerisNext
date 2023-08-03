@@ -30,7 +30,7 @@ export const config = {
   },
 };
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   return new Promise((resolve, reject) => {
     upload.array('files')(req, res, async function (err) {
       if (err) {
