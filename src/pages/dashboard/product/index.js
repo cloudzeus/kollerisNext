@@ -17,11 +17,9 @@ import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import SyncManufacturers from '@/GridSync/SyncManufacturers';
 import { Paginator } from 'primereact/paginator';
+import { set } from 'mongoose';
 
 
-
-
-{/* <Paginator first={first} rows={rows} totalRecords={120} rowsPerPageOptions={[10, 20, 30]} onPageChange={onPageChange} /> */}
 
 export default function Product() {
     const [editData, setEditData] = useState(null)
@@ -32,24 +30,40 @@ export default function Product() {
     const dispatch = useDispatch();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [first, setFirst] = useState(0);
+    const [limit, setLimit] = useState(10);
+    const [page, setPage] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
 
-
+    const [search, setSearch] = useState('')
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
 
-
-    const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-        console.log('res data')
+    const onPageChange = (event) => {
+        setPage(event.page + 1);
+        console.log(event.page)
+        console.log('page change')
+        console.log(event.first)
+        console.log('event rows')
+        console.log(event.rows)
+        setFirst(event.first);
+        setLimit(event.rows);
+    };
+    const handleFetch = async (page, limit) => {
+        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit})
         console.log(res.data)
         setData(res.data.result)
+        setTotalRecords(res.data.count)
     }
 
 
+    // useEffect(() => {
+    //     handleFetch()
+    // }, [page])
     useEffect(() => {
-        handleFetch()
-    }, [])
+        handleFetch(page, limit)
+    }, [page])
 
 
 
@@ -77,15 +91,30 @@ export default function Product() {
     const header = renderHeader();
 
     const onGlobalFilterChange = (event) => {
+        setPage(1)
         const value = event.target.value;
+        console.log('value')
+        console.log(value)
+        setSearch(value)
         let _filters = { ...filters };
-
         _filters['global'].value = value;
 
         setFilters(_filters);
     };
 
+    useEffect(() => {
+        
+        const searchFetch = async (value, page, limit) => {
+            console.log('search fetch')
+            console.log(search)
+            let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
+            setData(res.data.result)
+            setTotalRecords(res.data.count)
+        }
 
+        searchFetch(search, page, limit)
+        
+    }, [search])
  
 
 
@@ -167,22 +196,28 @@ export default function Product() {
     };
 
 
-   
+   const paginatorTemplate = () => {
+    return (
+        <Paginator first={first} rows={limit} totalRecords={totalRecords} rowsPerPageOptions={[10, 20, 30]} onPageChange={onPageChange} /> 
+
+    )
+   }
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          
+                footer={paginatorTemplate}
                 header={header}
                 value={data}
-                paginator
+                // paginator
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
                 dataKey="_id"
                 filters={filters}
-                paginatorRight={true}
+                // paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
                 loading={loading}
@@ -190,6 +225,7 @@ export default function Product() {
                 selectOnEdit
             >
                 <Column field="MTRL" header="Kατασκευαστής" sortable></Column>
+                <Column field="NAME" header="Όνομα Προϊόντος" sortable></Column>
               
             </DataTable>
             <EditDialog
