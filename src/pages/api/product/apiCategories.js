@@ -180,7 +180,25 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
+	if (action === 'updateImages') {
+		
+		const {images, updatedFrom, id } = req.body
 
+		console.log(images, updatedFrom, id)
+		const filter = { _id: id };
+		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
+		try {
+			await connectMongo();
+			const result = await MtrCategory.updateOne(filter, update);
+			console.log(result)
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
+		}
+    
+
+	}
 	
 }
 

@@ -38,30 +38,15 @@ const soft1Schema = new mongoose.Schema({
 
     },
     //label Κωδικός Εμπορικής Κατηγορίας
-    mtrcategory: {
-        type: String,
-        required: true
-    },
+    mtrcategory: { type: Schema.Types.ObjectId, ref: "MtrCategory" },
     //label Κωδικός Κατηγορίας
-    mtrgroup: {
-        type: String,
-        required: true
-    },
+    mtrgroup:{ type: Schema.Types.ObjectId, ref: "MtrGroup" },
     //label Κωδικός Υποκατηγορίας
-    cccsubgroup2: {
-        type: String,
-        required: true
-    },
+    cccsubgroup2: { type: Schema.Types.ObjectId, ref: "SubMtrGroup" },
     //label Κωδικός Κατασευαστή
-    mtrmanfctr: {
-        type: String,
-        required: true
-    },
+    mtrmanfctr: { type: Schema.Types.ObjectId, ref: "Manufacturers" },
     //label Κωδικός Μάρκας
-    mtrmark: {
-        type: String,
-        required: true
-    },
+    mtrmark:{ type: Schema.Types.ObjectId, ref: "Markes" },
     //label Κωδικός ΦΠΑ 
     vatCode: {
         type: Number,
@@ -97,36 +82,33 @@ const soft1Schema = new mongoose.Schema({
     dimensions: {
         width: {
             type: Number,
-            required: true
+            // required: true
         },
         length: {
             type: Number,
-            required: true
+            // required: true
         },
         height: {
             type: Number,
-            required: true
+            // required: true
         },
     },
     //label Βάρος σε Κιλά
     gweight: {
         type: String,
-        required: true
+        // required: true
     },
     //label Όγκος σε Κιλά
     volume: {
         type: String,
-        required: true
+        // required: true
     },
     //label Κωδικός χρήστη τελευταίας ενημέρωσης
     upduser: {
-        type: String,
-        required: true
-    },
+        type: String  },
     //label Ημερομημία τελυταίας ενημέρωσης
     upddate: {
         type: Date,
-        required: true
     },
 });
 

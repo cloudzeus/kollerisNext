@@ -21,7 +21,6 @@ import DialogGallery from '@/components/DialogGallery';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
-    console.log('gridrowData: ' + JSON.stringify(gridRowData))
     const { data: session } = useSession()
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
@@ -56,11 +55,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleEdit = async (data) => {
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
+      
+      
         let newImages = []
         for(let image of images) {
             let obj = {
@@ -72,7 +68,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         const object = {
             ...data,
             videoPromoList: videoList,
-            logo: newLogo ,
+            logo: logo,
             photosPromoList: newImages 
         }
       

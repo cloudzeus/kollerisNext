@@ -116,7 +116,7 @@ export default async function handler(req, res) {
         let obj = {
             category: body.categoryid,
             groupName: body.groupName,
-            groupIcon: body.groupIcon,
+            groupIcon: body.groupIcon || "",
             groupImage: body.groupImage,
             softOne: body.softOne,
             status: true,
@@ -126,22 +126,22 @@ export default async function handler(req, res) {
         }
 
         console.log('obj: ' + JSON.stringify(obj))
-        // let sonftoneObj = {
-        //     mtrgroup: parseInt(mtrgroup),
-        //     username: "Service",
-        //     password: "Service",
-        //     name: body.groupName,
-        //     company: '1001',
-        //     mtrcategory:  parseInt(mtrcategory),
-        // }
-        // console.log('sonftoneObj: ' + JSON.stringify(sonftoneObj))
+        let sonftoneObj = {
+            mtrgroup: parseInt(mtrgroup),
+            username: "Service",
+            password: "Service",
+            name: body.groupName,
+            company: '1001',
+            mtrcategory:  parseInt(mtrcategory),
+        }
+        console.log('sonftoneObj: ' + JSON.stringify(sonftoneObj))
    
-		// if(body?.groupName) {
-		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
-		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
-        //     console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+		if(body?.groupName) {
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+			let softoneResponse = await axios.post(URL, {...sonftoneObj})
+            console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
             
-		// }
+		}
 		
        
 		try {
@@ -215,6 +215,26 @@ export default async function handler(req, res) {
 		} catch(e) {
 			return res.status(400).json({ success: false, result: null });
 		}
+	}
+
+    if (action === 'updateImages') {
+		
+		const {images, updatedFrom, id } = req.body
+
+		console.log(images, updatedFrom, id)
+		const filter = { _id: id };
+		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
+		try {
+			await connectMongo();
+			const result = await MtrGroup.updateOne(filter, update);
+			console.log(result)
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
+		}
+    
+
 	}
 }
 

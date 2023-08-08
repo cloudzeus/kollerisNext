@@ -15,6 +15,8 @@ import { FormTitle,  Container } from '@/componentsStyles/dialogforms';
 
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
+import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
+import DialogGallery from '@/components/DialogGallery';
 
 const addSchema = yup.object().shape({
     // subGroupName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -129,6 +131,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     onHide={hideDialog}
                     maximizable
                 >
+                        <SinglePhotoUpload state={logo} setState={setLogo}/>
                    <FormTitle>Λεπτομέριες</FormTitle>
               
                    <Input
@@ -139,21 +142,28 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     error={errors.categoryName}
                 />
               
-                <FormTitle>Λογότυπο</FormTitle>
+                {/* <FormTitle>Λογότυπο</FormTitle>
                     <AddDeleteImages 
                         state={logo}
                         setState={setLogo}
                         multiple={false}
                         singleUpload={false}
-                    />
+                    /> */}
 
                 <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
+                {/* <AddDeleteImages 
                         state={image}
                         setState={setImage}
                         multiple={false}
                         singleUpload={false}
                        
+                    /> */}
+                         <DialogGallery 
+                        state={image}
+                        setState={setImage}
+                        url="/api/product/apiCategories"
+                        id={gridRowData._id}
+                        user={session?.user?.user?.lastName}
                     />
                 </Dialog>
             </form>

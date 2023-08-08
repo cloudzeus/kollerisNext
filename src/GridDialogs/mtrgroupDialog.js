@@ -3,24 +3,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
-import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
+
 import axios from 'axios';
-import styled from 'styled-components';
 import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
+import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import AddDeleteImages from '@/components/GalleryListSmall';
-import { original } from '@reduxjs/toolkit';
-
+import DialogGallery from '@/components/DialogGallery';
+import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
@@ -59,17 +56,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
    
     const handleEdit = async (data) => {
+     
         let originalCategory = gridRowData?.category?._id
         if(typeof data.categoryid === 'undefined') {
             data.categoryid = gridRowData?.category?._id
         } 
-
-        
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
+     
         let newImage = image[0]
         if(image.length === 0) {
             newImage = ''
@@ -77,12 +69,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         }
         const object = {
             ...data,
-            groupIcon: newLogo,
+            groupIcon: logo[0],
             groupImage: newImage,
            
         }
-        console.log('newIamge: ' + JSON.stringify(newImage))
-        console.log('logo: ' + JSON.stringify(logo))
+ 
         let mtrcategory = gridRowData?.category?.softOne?.MTRCATEGORY
         try {
             let user = session.user.user.lastName
@@ -95,13 +86,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 mtrcategory: mtrcategory,
                 originalCategory: originalCategory
             })
-            // if(!resp.data.success) {
-            //     return showError(resp.data.softoneError)
-            // }
+        
            console.log(resp.data)
             setSubmitted(true)
             showSuccess('Η εγγραφή ενημερώθηκε')
-            showSuccess(resp.data.message)
+            // showSuccess(resp.data.message)
             hideDialog()
             
                
@@ -145,6 +134,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     onHide={hideDialog}
                     maximizable
                 >
+                      <SinglePhotoUpload state={logo} setState={setLogo}/>
                    <FormTitle>Λεπτομέριες</FormTitle>
                 <PrimeSelect
                     control={control}
@@ -165,22 +155,29 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     // error={errors.groupName}
                 />
               
-                <FormTitle>Λογότυπο</FormTitle>
+                {/* <FormTitle>Λογότυπο</FormTitle>
                     <AddDeleteImages 
                         state={logo}
                         setState={setLogo}
                         multiple={false}
                         singleUpload={false}
                        
-                    />
+                    /> */}
 
                 <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
+                {/* <AddDeleteImages 
                         state={image}
                         setState={setImage}
                         multiple={false}
                         singleUpload={false}
                        
+                    /> */}
+                         <DialogGallery 
+                        state={image}
+                        setState={setImage}
+                        url="/api/product/apiGroup"
+                        id={gridRowData._id}
+                        user={session?.user?.user?.lastName}
                     />
                 </Dialog>
             </form>

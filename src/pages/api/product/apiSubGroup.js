@@ -110,7 +110,7 @@ export default async function handler(req, res) {
         let originalGroupID = originalGroup._id
         let newGroupID = body.groupid || originalGroupID
        
-        
+    
         try {
             //find mtrgroup id to update softone
             await connectMongo();
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
         let obj = {
             group: newGroupID,
             subGroupName: body.subGroupName,
-            subGroupIcon: body.subGroupIcon,
+            subGroupIcon: body.subGroupIcon || '',
             subGroupImage: body.subGroupImage,
             softOne: body.softOne,
             status: true,
@@ -158,12 +158,11 @@ export default async function handler(req, res) {
        
 		try {
 			await connectMongo();
-            const updatedsubGroup = await SubMtrGroup.findOneAndUpdate(
+            const updatedsubGroup = await SubMtrGroup.updateOne(
                 { _id: subgroupid  },
                 obj,
-                { new: true }
               );
-            // return res.status(200).json({ success: true, result: updatedsubGroup, error: null });
+              console.log(updatedsubGroup)
             const updatedGroup = await MtrGroup.findOneAndUpdate({_id: newGroupID}, {$push: {subGroups: subgroupid}})
             const pull = await MtrGroup.findOneAndUpdate({_id: originalGroupID}, {$pull: {subGroups:subgroupid}})
 
@@ -248,6 +247,25 @@ export default async function handler(req, res) {
 		}
 	}
 
+    if (action === 'updateImages') {
+		
+		const {images, updatedFrom, id } = req.body
+
+		console.log(images, updatedFrom, id)
+		const filter = { _id: id };
+		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
+		try {
+			await connectMongo();
+			const result = await SubMtrGroup.updateOne(filter, update);
+			console.log(result)
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής',result: null });
+		}
+    
+
+	}
 }
 
 

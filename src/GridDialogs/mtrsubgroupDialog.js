@@ -15,11 +15,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import AddDeleteImages from '@/components/GalleryListSmall';
-import { original } from '@reduxjs/toolkit';
+import DialogGallery from '@/components/DialogGallery';
+import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
 
 
 
@@ -57,14 +57,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }, [gridRowData])
 
 
-    useEffect(() => {
-       
-    }, [])
+
 
 
    
     const handleEdit = async (data) => {
-        console.log(gridRowData )
+        console.log(logo)
         let user = session.user.user.lastName
         let originalGroup = gridRowData?.group
    
@@ -72,14 +70,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         // if(typeof data.categoryid === 'undefined') {
         //     data.groupid = gridRowData?.group
         // } 
-        console.log('originalGroup: ' + JSON.stringify(originalGroup))
       
         let cccSubgroup2 = gridRowData?.softOne?.cccSubgroup2
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
+      
         let newImage = image[0]
         if(image.length === 0) {
             newImage = ''
@@ -87,8 +80,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         }
         const object = {
             ...data,
-            groupIcon: newLogo,
-            groupImage: newImage,
+
+            subGroupIcon: logo[0],
+            subGroupImage: newImage,
            
         }
  
@@ -110,7 +104,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-            showSuccess(resp.data?.message)
+            // showSuccess(resp.data?.message)
             
                
         } catch (e) {
@@ -153,6 +147,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     onHide={hideDialog}
                     maximizable
                 >
+                       <SinglePhotoUpload state={logo} setState={setLogo}/>
                    <FormTitle>Λεπτομέριες</FormTitle>
                 <PrimeSelect
                     control={control}
@@ -173,22 +168,21 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     // error={errors.groupName}
                 />
               
-                <FormTitle>Λογότυπο</FormTitle>
-                    <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={false}
-                       
-                    />
-
+              
                 <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
+                {/* <AddDeleteImages 
                         state={image}
                         setState={setImage}
                         multiple={false}
                         singleUpload={false}
                        
+                    /> */}
+                        <DialogGallery 
+                        state={image}
+                        setState={setImage}
+                        url="/api/product/apiSubGroup"
+                        id={gridRowData._id}
+                        user={session?.user?.user?.lastName}
                     />
                 </Dialog>
             </form>

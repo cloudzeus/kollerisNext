@@ -3,11 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
-import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
+
 import axios from 'axios';
-import styled from 'styled-components';
-import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,11 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
-import PrimeSelect from '@/components/Forms/PrimeSelect';
-import AddDeleteImages from '@/components/GalleryListSmall';
-import { original } from '@reduxjs/toolkit';
+
 
 const addSchema = yup.object().shape({
     // subGroupName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -103,7 +97,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Group"
+                    header= "Διόρθωση Κατασκευαστή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}

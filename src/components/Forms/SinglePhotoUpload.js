@@ -13,7 +13,6 @@ const SinglePhotoUpload = ({  state, setState }) => {
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
-    console.log('state' + JSON.stringify(state))
 
     const onUpload = async (event) => {
         const file = event.target.files[0];

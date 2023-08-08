@@ -16,7 +16,6 @@ import { Tag } from 'primereact/tag';
 
 const DialogGallery = ({ images, url, id, user, state, setState}) => {
 
-    console.log('state ' + JSON.stringify(state))
     const [visible, setVisible] = useState(false);
     const toast = useRef(null);
     const [addPhotosVisible, setAddPhotosVisible] = useState(false)
