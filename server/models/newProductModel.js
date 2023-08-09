@@ -6,18 +6,31 @@ import { model, models, Schema } from 'mongoose';
 
 
 const softoneProduct = new mongoose.Schema({
+    product: { type: Schema.Types.ObjectId, ref: "Product" },
     MTRL: { type: String, required: true },
     ISACTIVE: String,
     NAME: String,
     CODE: String,
     CODE1: String,
     CODE2: String,
-    MTRCATEGORY: String,
-    MTRGROUP: String,
-    MTRTYPE: String,
-    CCCSUBGOUP2: String,
+    MTRCATEGORY: {
+        type: Number,
+        default: 0
+    },
+    MTRGROUP: {
+        type: Number,
+        default: 0
+    },
+
+    CCCSUBGOUP2: {
+        type: Number,
+        default: 0
+    },
     MTRMANFCTR: String,
-    MTRMARK: String,
+    MTRMARK: {
+        type: Number,
+        default: 0
+    },
     VAT: String,
     COUNTRY: String,
     INTRASTAT: String,
@@ -52,11 +65,90 @@ const softoneProduct = new mongoose.Schema({
 });
 
 
+const productSchema = new mongoose.Schema({
+    softoneProduct: {
+        type: Schema.Types.ObjectId,
+        ref: 'SoftoneProduct',
+    },
+    attributes: [{ type: Schema.Types.ObjectId, ref: "ProductAttributes" }],
+    name: { type: String, required: true },
+    localized: [{
+        field: [{
+            fieldName: String,
+            translation: String
+        }],
+        locale: String,
+        code: String,
+    }],
+    prices: [
+        {
+            name: {
+                type: String,
+                required: false
+            },
+            value: {
+                type: Number
+            }
+
+        }
+    ],
+    expected: { type: Number, required: false, },
+    reserved: { type: Number, required: false },
+   
+    images: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Media'
+    }],
+    impas: [{
+        type: Schema.Types.ObjectId,
+        ref: 'ImpaCodes'
+    }],
+    videos: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Media'
+    }],
+
+    //Σελίδα κατασκευαστή
+    ventorUrl: { type: String, required: false },
+});
+
+
+const mediaSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    type: { type: String, required: true },
+    url: { type: String, required: true }
+});
+
+
+const impaCodesSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    code: { type: String, required: true },
+    localized: [
+        {
+            locale: String,
+            name: String,
+            fields: [
+                {
+                    fieldName: String,
+                    translation: String
+                }
+
+            ]
+        }
+    ],
+});
 
 
 
 
-const SoftoneProduct =  models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
+const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
+const Product = models.Product || model('Product', productSchema);
+const Media = models.Media || model('Media', mediaSchema);
+const ImpaCodes = models.ImpaCodes || model('ImpaCodes', impaCodesSchema);
 
-
+export {
+    Product,
+    Media,
+    ImpaCodes
+}
 export default SoftoneProduct;

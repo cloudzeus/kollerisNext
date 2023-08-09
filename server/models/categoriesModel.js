@@ -138,7 +138,6 @@ const MtrSubGroupSchema = new mongoose.Schema({
     status: Boolean,
     updatedFrom: String,
     createdFrom: String,
-    deletedFrom: String,
 }, {
 
     timestamps: true,

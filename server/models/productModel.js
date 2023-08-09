@@ -169,14 +169,19 @@ const productAttributesSchema = new mongoose.Schema({
 const impaCodesSchema = new mongoose.Schema({
     name: { type: String, required: true },
     code: { type: String, required: true },
-    localized: [{
-        field: [{
-            fieldName: String,
-            translation: String
-        }],
-        locale: String,
-        code: String,
-    }],
+    localized: [
+        {
+            locale: String,
+            name: String,
+            fields: [
+                {
+                    fieldName: String,
+                    translation: String
+                }
+
+            ]
+        }
+    ],
 });
 
 
@@ -191,9 +196,8 @@ const attributesGroupSchema = new mongoose.Schema({
     },
     MtrGroup: {
         type: Schema.Types.ObjectId,
-        ref: 'MtrGroupSchema'
-    }
-    ,
+        ref: 'MtrGroup'
+    },
     attributes: [
         {
             type: Schema.Types.ObjectId,
@@ -217,6 +221,7 @@ const productSchema = new mongoose.Schema({
         {
             name: {
                 type: String,
+
                 required: true
             },
             value: {

@@ -42,26 +42,20 @@ export default function Product() {
 
     const onPageChange = (event) => {
         setPage(event.page + 1);
-        console.log(event.page)
-        console.log('page change')
-        console.log(event.first)
-        console.log('event rows')
-        console.log(event.rows)
         setFirst(event.first);
         setLimit(event.rows);
     };
     const handleFetch = async (page, limit) => {
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit})
         console.log(res.data)
-        setData(res.data.result)
-        setTotalRecords(res.data.count)
+        // setData(res.data.result)
+        // setTotalRecords(res.data.count)
     }
 
 
-    // useEffect(() => {
-    //     handleFetch()
-    // }, [page])
+  
     useEffect(() => {
+        console.log(page, limit)
         handleFetch(page, limit)
     }, [page])
 
@@ -105,6 +99,8 @@ export default function Product() {
     useEffect(() => {
         
         const searchFetch = async (value, page, limit) => {
+            console.log(page)
+            console.log(limit)
             console.log('search fetch')
             console.log(search)
             let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
@@ -224,8 +220,9 @@ export default function Product() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="MTRL" header="Kατασκευαστής" sortable></Column>
+                {/* <Column field="MTRL" header="Kατασκευαστής" sortable></Column> */}
                 <Column field="NAME" header="Όνομα Προϊόντος" sortable></Column>
+                <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
               
             </DataTable>
             <EditDialog
