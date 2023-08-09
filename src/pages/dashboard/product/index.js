@@ -15,9 +15,7 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import SyncManufacturers from '@/GridSync/SyncManufacturers';
 import { Paginator } from 'primereact/paginator';
-import { set } from 'mongoose';
 
 
 
@@ -47,11 +45,15 @@ export default function Product() {
     };
     const handleFetch = async (page, limit) => {
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit})
-        console.log(res.data)
-        // setData(res.data.result)
-        // setTotalRecords(res.data.count)
+        console.log(res.data.result)
+        console.log(res.data.count)
+        setData(res.data.result)
+        setTotalRecords(res.data.count)
     }
 
+    // useEffect(() => {
+    //     handleFetch(page, limit)
+    // }, [])
 
   
     useEffect(() => {
@@ -85,15 +87,15 @@ export default function Product() {
     const header = renderHeader();
 
     const onGlobalFilterChange = (event) => {
-        setPage(1)
-        const value = event.target.value;
-        console.log('value')
-        console.log(value)
-        setSearch(value)
-        let _filters = { ...filters };
-        _filters['global'].value = value;
+        // setPage(1)
+        // const value = event.target.value;
+        // console.log('value')
+        // console.log(value)
+        // setSearch(value)
+        // let _filters = { ...filters };
+        // _filters['global'].value = value;
 
-        setFilters(_filters);
+        // setFilters(_filters);
     };
 
     useEffect(() => {
@@ -176,12 +178,7 @@ export default function Product() {
         );
     };
 
-    const showSuccess = () => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
-    }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
-    }
+ 
 
     const dialogStyle = {
         marginTop: '10vh', // Adjust the top margin as needed
@@ -221,11 +218,11 @@ export default function Product() {
                 selectOnEdit
             >
                 {/* <Column field="MTRL" header="Kατασκευαστής" sortable></Column> */}
-                <Column field="NAME" header="Όνομα Προϊόντος" sortable></Column>
-                <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
+                {/* <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column> */}
+                <Column field="name" header="Όνομα"></Column>
               
             </DataTable>
-            <EditDialog
+            {/* <EditDialog
                 style={dialogStyle}
                 data={editData}
                 setData={setEditData}
@@ -240,7 +237,7 @@ export default function Product() {
                 setDialog={setAddDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-            />
+            /> */}
         </AdminLayout >
     );
 }

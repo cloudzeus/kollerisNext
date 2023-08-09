@@ -28,8 +28,15 @@ export default async function handler(req, res) {
      
         const page = req.body.page || 1;
         const limit = req.body.limit || 20;
+        let skip = (page - 1) * limit
         console.log(page, limit)
+
+
+
         await connectMongo();
+
+        let count = await Product.countDocuments()
+        console.log(count)
         let fetchProducts = await Product.aggregate([
             {
                 $lookup: {
@@ -43,18 +50,17 @@ export default async function handler(req, res) {
             {
                 $lookup: {
                     from: 'mtrcategories',
-                    localField: 'MTRCATEGORY',
-                    foreignField: 'softoneProduct.MTRCATEGORY',
+                    localField: 'softoneProduct.MTRCATEGORY',
+                    foreignField: 'softOne.MTRCATEGORY',
                     as: 'mtrcategory'
                 }
             },
-            { $unwind: "$mtrcategory" }, // Convert mtrcategory from array to object
-        
+            { $unwind: "$mtrcategory" }, 
             {
                 $lookup: {
                     from: "mtrgroups",
-                    localField: "MTRGROUP",
-                    foreignField: "softoneProduct.MTRGROUP",
+                    localField: "softoneProduct.MTRGROUP",
+                    foreignField: "softOne.MTRGROUP",
                     as: "mtrgroups"
                 }
             },
@@ -63,9 +69,17 @@ export default async function handler(req, res) {
             {
                 $lookup: {
                     from: "markes",
-                    localField: "MTRMARK",
-                    foreignField: "softoneProduct.MTRMARK",
+                    localField: "softoneProduct.MTRMARK",
+                    foreignField: "softOne.MTRMARK",
                     as: "mrtmark"
+                }
+            },
+            {
+                $lookup: {
+                    from: "submtrgroups",
+                    localField: "softoneProduct.CCCSUBGOUP2",
+                    foreignField: "softOne.cccSubgroup2",
+                    as: "mtrsubgroup"
                 }
             },
         
@@ -73,21 +87,19 @@ export default async function handler(req, res) {
                 $project: {
                     MTRL: 1,
                     ISACTIVE: 1,
-                    MTRCATEGORY: "$softoneProduct.MTRCATEGORY",
-                    NAME: "$softoneProduct.NAME",
+                    name: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
+                    mtrsubgroup: "$mtrsubgroup.subGroupName",
                 }
             }
             ,
-            // { $skip: (page - 1) * limit },
-            // { $limit: limit},
-            { $skip: 20 },
-            { $limit: 10},
-            
+            { $skip: skip  },
+            { $limit: limit},
+         
         ])
         console.log(fetchProducts)
-        return res.status(200).json({ success: true, result : fetchProducts });
+        return res.status(200).json({ success: true, result : fetchProducts, count: count });
 
     }
 
