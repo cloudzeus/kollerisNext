@@ -23,6 +23,7 @@ module.exports = {
     MODULE: process.env.MODULE,
     REFID: process.env.REFID,
     VERSION: process.env.VERSION,
+    NODE_EVN: process.env.NODE_EVN,
   },
 };
 
