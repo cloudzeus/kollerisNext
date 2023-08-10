@@ -83,7 +83,7 @@ const DialogGallery = ({ images, url, id, user, state, setState}) => {
                       {state.map((image, index) => {
                           if (index < 4 ) {
                               return (
-                                  <AvatarImages key={index}>
+                                  <AvatarImages key={image}>
                                       <Image
                                           src={`/uploads/${image}`}
                                           alt="Large"
