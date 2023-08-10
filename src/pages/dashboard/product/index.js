@@ -66,7 +66,7 @@ export default function Product() {
         console.log('use effect')
         console.log(page, limit)
         handleFetch(page, limit)
-    }, [page])
+    }, [page, limit])
 
 
 
@@ -119,7 +119,7 @@ export default function Product() {
 
         searchFetch(search, page, limit)
         
-    }, [search])
+    }, [search, page, limit])
  
 
 

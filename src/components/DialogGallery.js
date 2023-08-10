@@ -80,7 +80,7 @@ const DialogGallery = ({ images, url, id, user, state, setState}) => {
             <div className='flex flex-start justify-content-between align-content-center'>
                 {state.length === 0 ? <p className='mt-2'>Δεν υπάρχουν Φωτογραφίες</p> : (
                       <AvatarGroup className='mt-4 mb-3'>
-                      {state.map((image, index) => {
+                      {state.slic(0, 4).map((image, index) => {
                           if (index < 4 ) {
                               return (
                                   <AvatarImages key={image}>
@@ -108,7 +108,7 @@ const DialogGallery = ({ images, url, id, user, state, setState}) => {
                     <Container>
                         {state.map((image, index) => {
                             return (
-                                <ImageContainer onClick={() => handleSelected(image)} className={selectedImages.includes(image) ? "selected" : null} >
+                                <ImageContainer key={index} onClick={() => handleSelected(image)} className={selectedImages.includes(image) ? "selected" : null} >
                                     <Image
                                         src={`/uploads/${image}`}
                                         alt="Large"
