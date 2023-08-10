@@ -32,7 +32,8 @@ export default function Product() {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
-
+    console.log('total records')
+    console.log(totalRecords)
     const [search, setSearch] = useState('')
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -41,14 +42,19 @@ export default function Product() {
     const onPageChange = (event) => {
         setPage(event.page + 1);
         setFirst(event.first);
-        setLimit(event.rows);
+        console.log('event.first')
+        console.log(event.first)
+        console.log('event.page')
+        console.log(event.page)
+        console.log(event)
+        // setLimit(event.rows);
     };
     const handleFetch = async (page, limit) => {
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit})
         console.log(res.data.result)
         console.log(res.data.count)
         setData(res.data.result)
-        setTotalRecords(res.data.count)
+        setTotalRecords(Math.floor(res.data.count / limit))
     }
 
     // useEffect(() => {
@@ -57,6 +63,7 @@ export default function Product() {
 
   
     useEffect(() => {
+        console.log('use effect')
         console.log(page, limit)
         handleFetch(page, limit)
     }, [page])
@@ -191,7 +198,7 @@ export default function Product() {
 
    const paginatorTemplate = () => {
     return (
-        <Paginator first={first} rows={limit} totalRecords={totalRecords} rowsPerPageOptions={[10, 20, 30]} onPageChange={onPageChange} /> 
+        <Paginator first={first}  rows={limit} totalPages={3885} totalRecords={38856} rowsPerPageOptions={[10, 20, 30]} onPageChange={onPageChange} /> 
 
     )
    }
@@ -201,10 +208,9 @@ export default function Product() {
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
           
-                footer={paginatorTemplate}
                 header={header}
                 value={data}
-                // paginator
+                paginator
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
@@ -218,8 +224,10 @@ export default function Product() {
                 selectOnEdit
             >
                 {/* <Column field="MTRL" header="Kατασκευαστής" sortable></Column> */}
-                {/* <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column> */}
+               
                 <Column field="name" header="Όνομα"></Column>
+                <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
+                <Column field="mtrgroups" header="Groups" sortable></Column>
               
             </DataTable>
             {/* <EditDialog

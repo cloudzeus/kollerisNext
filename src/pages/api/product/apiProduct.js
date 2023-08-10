@@ -94,8 +94,8 @@ export default async function handler(req, res) {
                 }
             }
             ,
-            { $skip: skip  },
-            { $limit: limit},
+            // { $skip: 30000  },
+            { $limit: 5000},
          
         ])
         console.log(fetchProducts)
