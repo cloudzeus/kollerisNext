@@ -1,5 +1,5 @@
 import { transporter, email } from "@/utils/nodemailerConfig"
-import User from "../../../../server/models/contactInfoModel"
+import User from "../../../../server/models/userModel";
 import connectMongo from "../../../../server/config"
 import bcrypt from 'bcrypt';
 
