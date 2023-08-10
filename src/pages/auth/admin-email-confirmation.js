@@ -2,7 +2,6 @@ import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import { BasicContainer } from '@/components/styles'
 import { useRouter } from 'next/router'
-import Button from '@/components/Buttons/Button'
 
 const AdminEmailConfirmation = () => {
 
@@ -15,9 +14,9 @@ const AdminEmailConfirmation = () => {
                 <i className="pi pi-times" ></i>
                     <h1>Oλοκληρώθηκε η Εγγραφή</h1>
                 </div>
-                <Button 
+                {/* <Button 
                  onClick= {() => router.push('/auth/signin')}
-                 size='140px' >Σύνδεση </Button>
+                 size='140px' >Σύνδεση </Button> */}
             </MessageBoard >
         </Container>
     )
