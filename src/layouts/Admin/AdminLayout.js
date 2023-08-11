@@ -12,7 +12,6 @@ import BreadCrumbs from './BreadCrumbs';
 
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
-	console.log(isSidebarOpen)
 	const [isScrolled, setScrolled] = useState(false);
 
 	const dispatch = useDispatch()

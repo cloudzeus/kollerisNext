@@ -29,19 +29,14 @@ export default async function handler(req, res) {
 
     if (action === 'findSoftoneProducts') {
         
-        const id = req.body.id;
-        const lastIdFromFirstBatch = new ObjectId(id);
-
-        let lastIdFilter = lastIdFromFirstBatch ? { "_id": { $gt: lastIdFromFirstBatch } } : {};
-        console.log(lastIdFilter)
+        const {offset, limit} = req.body;
+        
+        
 
         
         await connectMongo();
         let count = await Product.countDocuments()
         let fetchProducts = await Product.aggregate([
-            {
-                $match: lastIdFilter
-            },
             {
                 $lookup: {
                     from: "softoneproducts",
@@ -59,7 +54,6 @@ export default async function handler(req, res) {
                     as: 'mtrcategory'
                 }
             },
-            { $unwind: "$mtrcategory" }, 
             {
                 $lookup: {
                     from: "mtrgroups",
@@ -68,7 +62,7 @@ export default async function handler(req, res) {
                     as: "mtrgroups"
                 }
             },
-            { $unwind: "$mtrgroups" }, // Convert mtrgroups from array to object
+            // { $unwind: "$mtrgroups" }, // Convert mtrgroups from array to object
         
             {
                 $lookup: {
@@ -99,13 +93,12 @@ export default async function handler(req, res) {
                 }
             }
             ,
-            { $sort: { "_id": -1 }}, // Sort in descending order
-            { $limit: 50},
-         
+            { $skip: offset },  // Skip the documents
+            { $limit: limit },  // Limit the results
         ])
-        console.log(fetchProducts)
-      
-        return res.status(200).json({ success: true, result : fetchProducts, count: count });
+        console.log(fetchProducts.length)
+        console.log(fetchProducts[fetchProducts.length - 1])
+        return res.status(200).json({ success: true, result : fetchProducts, count: count});
 
     }
 
@@ -124,7 +117,7 @@ export default async function handler(req, res) {
             .skip(limit * (page - 1))
             .limit(limit);
         let softoneCount = await SoftoneProduct.countDocuments({ NAME: regexPattern })
-        return res.status(200).json({ success: true, result: search, count: softoneCount });
+        return res.status(200).json({ success: true, result: search, count: Math.floor(softoneCount / limit) });
     }
 
     if(action === 'insert') {

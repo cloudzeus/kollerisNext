@@ -15,7 +15,7 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import { Paginator } from 'primereact/paginator';
+import { Skeleton } from 'primereact/skeleton';
 
 
 
@@ -27,44 +27,57 @@ export default function Product() {
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
-    const [lastId, setLastId] = useState(null)
-    const [limit, setLimit] = useState(10);
-    const [page, setPage] = useState(1);
+    let loadLazyTimeout = null;
+    const [lazyLoading, setLazyLoading] = useState(false);
 
     const [search, setSearch] = useState('')
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
 
-    const onPageChange = (event) => {
-        setPage(event.page + 1);
-        setFirst(event.first);
-        console.log('event.first')
-        console.log(event.first)
-        console.log('event.page')
-        console.log(event.page)
-        console.log(event)
-        // setLimit(event.rows);
-    };
-    const handleFetch = async (page, limit) => {
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit, id: lastId})
-        console.log('res')
-        console.log(res.data.result)
-        console.log(lastId)
-        setLastId(lastId )
-        setData(res.data.result)
+    const [offset, setOffset] = useState(0);
+    const limit = 100;
+    console.log('offset is ' + offset)
+    const onVirtualScroll = (event) => {
+ 
+        console.log('event')
+        console.log(event.first, event.last)
+        if(event.last > offset - 2) {
+           console.log('yes')
+           if(offset > 0) {
+                handleFetch()
+
+            // setOffset(prevOffset => prevOffset + limit);
+           }
+          
+        }
+        // if(event.last === offset) {
+        //     handleFetch()
+        // }
     }
 
-    // useEffect(() => {
-    //     handleFetch(page, limit)
-    // }, [])
+    const handleFetch = async () => {
+        console.log('now')
+        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', offset: offset, limit: limit})
+        console.log(res.data.result)
+        setData(prev => [...prev, ...res.data.result]);
+        setOffset(prevOffset => prevOffset + limit);
+        console.log('offset is ' + offset)
+    
+    }
 
+    const loadingTemplate = (options) => {
+        return (
+            <div className="flex align-items-center" style={{ height: '17px', flexGrow: '1', overflow: 'hidden' }}>
+                <Skeleton width={options.cellEven ? (options.field === 'year' ? '30%' : '40%') : '60%'} height="1rem" />
+            </div>
+        );
+    };
   
     useEffect(() => {
-        console.log('use effect')
-        console.log(page, limit)
-        handleFetch(page, limit)
-    }, [page, limit])
+        console.log('use effect --')
+        handleFetch()
+    }, [])
 
 
 
@@ -103,16 +116,16 @@ export default function Product() {
         // setFilters(_filters);
     };
 
-    useEffect(() => {
+    // useEffect(() => {
         
-        const searchFetch = async (value, page, limit) => {
-            let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
-            setData(res.data.result)
-        }
+    //     const searchFetch = async (value, page, limit) => {
+    //         let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
+    //         setData(res.data.result)
+    //     }
 
-        searchFetch(search, page, limit)
+    //     searchFetch(search,limit)
         
-    }, [search, page, limit])
+    // }, [search, limit])
  
 
 
@@ -180,41 +193,30 @@ export default function Product() {
 
  
 
-    const dialogStyle = {
-        marginTop: '10vh', // Adjust the top margin as needed
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+  
 
-    };
+  
 
-
- 
+  
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-                //  scrollable 
-                //  scrollHeight="400px" 
-                //  onScroll={onScroll}
-                //  loading={loading}
+             value={data}
+            //  size='small'
+                scrollHeight='550px'
+                 scrollable 
+                 virtualScrollerOptions={{lazy: true, onLazyLoad: onVirtualScroll, itemSize:  50, showLoader: true, loading: lazyLoading, loadingTemplate }}
                 header={header}
-                value={data}
-                paginator
-                rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
                 dataKey="_id"
                 filters={filters}
-                // paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 selectOnEdit
             >
-                {/* <Column field="MTRL" header="Kατασκευαστής" sortable></Column> */}
-               
                 <Column field="name" header="Όνομα"></Column>
                 <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
                 <Column field="mtrgroups" header="Groups" sortable></Column>
