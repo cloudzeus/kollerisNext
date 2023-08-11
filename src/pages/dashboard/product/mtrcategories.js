@@ -17,7 +17,7 @@ import { ImageDiv, ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-
+import GridActions from '@/components/grid/GridActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
 
@@ -190,10 +190,7 @@ export default function Categories() {
 
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
         );
     };
 

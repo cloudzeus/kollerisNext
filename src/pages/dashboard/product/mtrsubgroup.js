@@ -11,8 +11,8 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/mtrsubgroupDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import {  ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
-
+import {  ActionDiv} from '@/componentsStyles/grid';
+import GridActions from '@/components/grid/GridActions';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
@@ -150,20 +150,17 @@ export default function Categories() {
     // CUSTOM TEMPLATES FOR COLUMNS
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupIcon} />
-     }
+    }
 
 
     const imageTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupImage} />
-     }
+    }
     
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
-        );
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
+        )
     };
 
     const showSuccess = () => {

@@ -16,7 +16,7 @@ import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import SyncManufacturers from '@/GridSync/SyncManufacturers';
-
+import GridActions from '@/components/grid/GridActions';
 
 export default function Manufacturers() {
     const [editData, setEditData] = useState(null)
@@ -133,14 +133,10 @@ export default function Manufacturers() {
         showSuccess()
     }
 
-    // CUSTOM TEMPLATES FOR COLUMNS
   
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
         );
     };
 

@@ -7,7 +7,7 @@ const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
             {actionFrom ? (
                 <div>
                     <Container>
-                        <Avatar icon={"pi pi-user"} style={{ backgroundColor: backgroundColor, color: color }} shape="circle" />
+                        <Avatar icon={"pi pi-user"}  style={{ backgroundColor: backgroundColor, color: color, width: '25px', height: '25px' }} shape="circle" />
                         <div className="right-div">
                             <span className="value">{actionFrom}</span>
                             <span className="dateAt">{at.split('T')[0]}</span>
@@ -31,11 +31,17 @@ const Container = styled.div`
         flex-direction: column;
 
     }
-
+    .value {
+        font-size: 14px;
+    }
 
     .dateAt {
         font-size: 10px;
         font-style: italic;
+    }
+
+    .p-avatar-icon {
+        font-size: 12px;
     }
 `
 

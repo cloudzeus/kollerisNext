@@ -29,11 +29,12 @@ export default function DeletePopup({onDelete, status}) {
             <div className="card flex flex-wrap gap-2 justify-content-center">
                 <Button 
                     size="small"
-                    style={{width: '40px', height: '40px'}}
+                    style={{width: '35px', height: '35px'}}
                     disabled={!status}
                     ref={buttonEl} 
                     onClick={() => setVisible(prev => !prev)} 
                     icon="pi pi-trash"  
+                    
                     className="p-button-danger"></Button>
             </div>
         </>

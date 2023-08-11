@@ -27,13 +27,10 @@ export default function Product() {
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
-    const [loading, setLoading] = useState(false);
-    const [first, setFirst] = useState(0);
+    const [lastId, setLastId] = useState(null)
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
-    const [totalRecords, setTotalRecords] = useState(0);
-    console.log('total records')
-    console.log(totalRecords)
+
     const [search, setSearch] = useState('')
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -50,11 +47,12 @@ export default function Product() {
         // setLimit(event.rows);
     };
     const handleFetch = async (page, limit) => {
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit})
+        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', page: page, limit: limit, id: lastId})
+        console.log('res')
         console.log(res.data.result)
-        console.log(res.data.count)
+        console.log(lastId)
+        setLastId(lastId )
         setData(res.data.result)
-        setTotalRecords(Math.floor(res.data.count / limit))
     }
 
     // useEffect(() => {
@@ -108,13 +106,8 @@ export default function Product() {
     useEffect(() => {
         
         const searchFetch = async (value, page, limit) => {
-            console.log(page)
-            console.log(limit)
-            console.log('search fetch')
-            console.log(search)
             let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
             setData(res.data.result)
-            setTotalRecords(res.data.count)
         }
 
         searchFetch(search, page, limit)
@@ -196,18 +189,16 @@ export default function Product() {
     };
 
 
-   const paginatorTemplate = () => {
-    return (
-        <Paginator first={first}  rows={limit} totalPages={3885} totalRecords={38856} rowsPerPageOptions={[10, 20, 30]} onPageChange={onPageChange} /> 
-
-    )
-   }
+ 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-          
+                //  scrollable 
+                //  scrollHeight="400px" 
+                //  onScroll={onScroll}
+                //  loading={loading}
                 header={header}
                 value={data}
                 paginator
@@ -219,7 +210,6 @@ export default function Product() {
                 // paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
-                loading={loading}
                 editMode="row"
                 selectOnEdit
             >

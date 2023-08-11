@@ -23,7 +23,7 @@ import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridTranslate from '@/components/grid/GridTranslate';
-
+import GridActions from '@/components/grid/GridActions';
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -61,7 +61,6 @@ export default function TemplateDemo() {
 
     }, []);
 
-    //Refetch on add edit:
     useEffect(() => {
         console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
@@ -171,7 +170,7 @@ export default function TemplateDemo() {
                             </DisabledDisplay>
 
                         </TabPanel>
-                     
+
                     </TabView>
                 </div>
             </ >
@@ -188,22 +187,16 @@ export default function TemplateDemo() {
 
     const rightToolbarTemplate = () => {
         return (
-            <>
-                <SyncBrand
-                    refreshGrid={handleFetch}
-                    addToDatabaseURL='/api/product/apiMarkes'
-                />
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
+            <SyncBrand
+                refreshGrid={handleFetch}
+                addToDatabaseURL='/api/product/apiMarkes'
+            />
+        )
+    }
 
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -232,12 +225,9 @@ export default function TemplateDemo() {
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
-        );
-    };
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+        )
+    }
 
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
@@ -259,6 +249,7 @@ export default function TemplateDemo() {
             <Toast ref={toast} />
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
+                size="small"
                 header={header}
                 value={data}
                 paginator
@@ -273,7 +264,6 @@ export default function TemplateDemo() {
                 paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
-                //edit:
                 loading={loading}
                 editMode="row"
                 selectOnEdit
@@ -281,6 +271,7 @@ export default function TemplateDemo() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
+                <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 <Column field="status" bodyStyle={{ textAlign: 'center' }} sortable header="Status" style={{ width: '90px' }} body={ActiveTempate}></Column>
                 <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column>
@@ -306,28 +297,13 @@ export default function TemplateDemo() {
     );
 }
 
-const translateName = ({ name }) => {
-    return (
-        <TranslateComp name={name} />
-    )
-}
 
-const TranslateComp = ({ name }) => {
-    const [visible, setVisible] = useState(false)
-    return (
-        <div onClick={() => setVisible(true)} className='flex align-content-center align-items-center'>
-            <span>{name}</span>
-            <i className="pi pi-language" ></i>
-            <GridTranslate visible={visible} setVisible={setVisible} translateField={name} />
-        </div>
-    )
-}
+
 
 
 
 
 const ActiveTempate = ({ status }) => {
-
     return (
         <div>
             {status ? (
@@ -340,7 +316,6 @@ const ActiveTempate = ({ status }) => {
     )
 
 }
-
 
 
 

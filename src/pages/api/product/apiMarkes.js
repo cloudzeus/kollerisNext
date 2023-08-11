@@ -62,6 +62,7 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'create') {
+		console.log('test')
 		let { data } = req.body
 		let {createdFrom} = req.body
 		console.log('data: ' + JSON.stringify(data))

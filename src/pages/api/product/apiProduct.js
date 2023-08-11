@@ -7,6 +7,9 @@ import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory } from "../../../../server/models/categoriesModel";
 import { Product } from "../../../../server/models/newProductModel";
+import { ObjectId } from "mongodb";
+
+
 export default async function handler(req, res) {
     const action = req.body.action;
     // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
@@ -25,19 +28,20 @@ export default async function handler(req, res) {
     // return res.status(200).json({ success: true, result :   buffer });
 
     if (action === 'findSoftoneProducts') {
-     
-        const page = req.body.page || 1;
-        const limit = req.body.limit || 20;
-        let skip = (page - 1) * limit
-        console.log(page, limit)
+        
+        const id = req.body.id;
+        const lastIdFromFirstBatch = new ObjectId(id);
 
+        let lastIdFilter = lastIdFromFirstBatch ? { "_id": { $gt: lastIdFromFirstBatch } } : {};
+        console.log(lastIdFilter)
 
-
+        
         await connectMongo();
-
         let count = await Product.countDocuments()
-        console.log(count)
         let fetchProducts = await Product.aggregate([
+            {
+                $match: lastIdFilter
+            },
             {
                 $lookup: {
                     from: "softoneproducts",
@@ -85,20 +89,22 @@ export default async function handler(req, res) {
         
             {
                 $project: {
-                    MTRL: 1,
+                    MTRL: '$softoneproducts.MTRL',
                     ISACTIVE: 1,
                     name: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
                     mtrsubgroup: "$mtrsubgroup.subGroupName",
+                    
                 }
             }
             ,
-            // { $skip: 30000  },
-            { $limit: 5000},
+            { $sort: { "_id": -1 }}, // Sort in descending order
+            { $limit: 50},
          
         ])
         console.log(fetchProducts)
+      
         return res.status(200).json({ success: true, result : fetchProducts, count: count });
 
     }
@@ -130,7 +136,6 @@ export default async function handler(req, res) {
             name: item.NAME,
         }))
         let insert = await Product.insertMany(productsInsert)
-        console.log(insert)
         return res.status(200).json({ success: true, result: insert});
       
     }
