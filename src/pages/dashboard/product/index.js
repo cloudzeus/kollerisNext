@@ -11,11 +11,13 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/manufacturersDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import {ActionDiv } from '@/componentsStyles/grid';
+import { ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import { Skeleton } from 'primereact/skeleton';
+import { Dropdown } from 'primereact/dropdown';
+import { Paginator } from 'primereact/paginator';
+import { set } from 'mongoose';
 
 
 
@@ -25,55 +27,39 @@ export default function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
-    const dispatch = useDispatch();
     const toast = useRef(null);
-    let loadLazyTimeout = null;
-    const [lazyLoading, setLazyLoading] = useState(false);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    const [loading, setLoading] = useState(false)
+    const [first, setFirst] = useState(1);
+    const [page, setPage] = useState(1);
+    const [rows, setRows] = useState(10);
+    const [lastMTRLId, setLastMTRLId] = useState(null)
+    const [firstMTRLId, setFirstMTRLId] = useState(null)
 
     const [search, setSearch] = useState('')
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
 
-    const [offset, setOffset] = useState(0);
-    const limit = 100;
-    console.log('offset is ' + offset)
-    const onVirtualScroll = (event) => {
- 
-        console.log('event')
-        console.log(event.first, event.last)
-        if(event.last > offset - 2) {
-           console.log('yes')
-           if(offset > 0) {
-                handleFetch()
 
-            // setOffset(prevOffset => prevOffset + limit);
-           }
-          
-        }
-        // if(event.last === offset) {
-        //     handleFetch()
-        // }
+
+
+
+    const handleFetch = async (sign) => {
+        setLoading(true)
+        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', rows: rows, lastMTRLId: lastMTRLId, firstMTRLId:firstMTRLId, sign: sign })
+        setData(res.data.result);
+        setLastMTRLId(res.data.lastMTRLId)
+        setFirstMTRLId(res.data.firstMTRLId)
+        setTotalRecords(Math.floor(res.data.count / rows))
+        setLoading(false)
     }
 
-    const handleFetch = async () => {
-        console.log('now')
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', offset: offset, limit: limit})
-        console.log(res.data.result)
-        setData(prev => [...prev, ...res.data.result]);
-        setOffset(prevOffset => prevOffset + limit);
-        console.log('offset is ' + offset)
-    
-    }
 
-    const loadingTemplate = (options) => {
-        return (
-            <div className="flex align-items-center" style={{ height: '17px', flexGrow: '1', overflow: 'hidden' }}>
-                <Skeleton width={options.cellEven ? (options.field === 'year' ? '30%' : '40%') : '60%'} height="1rem" />
-            </div>
-        );
-    };
-  
+
+
+
     useEffect(() => {
         console.log('use effect --')
         handleFetch()
@@ -82,10 +68,10 @@ export default function Product() {
 
 
     //Refetch on add edit:
-    useEffect(() => {
-        console.log('submitted: ' + submitted)
-        if (submitted) handleFetch()
-    }, [submitted])
+    // useEffect(() => {
+    //     console.log('submitted: ' + submitted)
+    //     if (submitted) handleFetch()
+    // }, [submitted])
 
 
 
@@ -117,23 +103,23 @@ export default function Product() {
     };
 
     // useEffect(() => {
-        
+
     //     const searchFetch = async (value, page, limit) => {
     //         let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
     //         setData(res.data.result)
     //     }
 
     //     searchFetch(search,limit)
-        
+
     // }, [search, limit])
- 
+
 
 
 
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+                {/* <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} /> */}
             </div>
         );
     };
@@ -142,7 +128,7 @@ export default function Product() {
         return (
             <>
                 {/* <SyncManufacturers
-                refreshGrid={handleFetch}  
+                refreshGrid={handleFetch}
                 addToDatabaseURL= '/api/product/apiManufacturers'
                 />  */}
                 {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
@@ -152,36 +138,7 @@ export default function Product() {
     };
 
 
-    //Edit:
-    const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-        setSubmitted(false);
-        setEditDialog(true)
-        dispatch(setGridRowData(product))
-    };
 
-    //Add product
-    const openNew = () => {
-        setSubmitted(false);
-        setAddDialog(true);
-    };
-
-
-    const hideDialog = () => {
-        setEditDialog(false);
-        setAddDialog(false);
-    };
-
-    // const onDelete = async (id) => {
-
-    //     let res = await axios.post('/api/product/apiManufacturers', { action: 'delete', id: id })
-    //     if (!res.data.success) return showError()
-    //     handleFetch()
-    //     showSuccess()
-    // }
-
-    // CUSTOM TEMPLATES FOR COLUMNS
-  
     const actionBodyTemplate = (rowData) => {
         return (
             <ActionDiv>
@@ -191,36 +148,80 @@ export default function Product() {
         );
     };
 
- 
+    const handleFooter = (event) => {
+        console.log(event)
+        if(event.page + 1 > page)  {
+            setPage(event.page);
+            console.log('page greater' + page)
+        }
+        if(event.page + 1 < page)  {
+            setPage(event.page);
+            console.log('first less ' + page)
 
-  
+        }
+       
+       
+       
+    }
 
-  
 
+    const handleNext = () => {
+      
+        if(page != totalRecords) {
+            setPage(prev => prev + 1)
+              handleFetch('next')
+        } 
+   
+    }
+    const handlePrev = () => {
   
+        if(page !== 1) {
+            setPage(prev => prev - 1)
+            handleFetch('prev')
+    }
+}
+
+    const footer = () => {
+        return (
+            // <Paginator
+            //     first={first}
+            //     rows={rows}
+            //     totalRecords={totalRecords}
+            //     rowsPerPageOptions={[10, 20, 30]}
+            //     onPageChange={handleFooter}
+            //     template="PrevPageLink CurrentPageReport NextPageLink "
+            // />
+            <div className='flex align-content-center justify-content-center'>
+                  <Button style={{ width: '40px', height: '40px', marginRight: '5px' }} icon="pi pi-angle-left" onClick={handlePrev}   />
+                  <span> {page + " of " + totalRecords }</span>
+            <Button style={{ width: '40px', height: '40px', marginLeft: '5px' }} icon="pi pi-angle-right" onClick={handleNext}  />
+            </div>
+
+        )
+    }
+
     return (
         <AdminLayout >
-            <Toast ref={toast} />
+            {/* <Toast ref={toast} /> */}
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-             value={data}
-            //  size='small'
-                scrollHeight='550px'
-                 scrollable 
-                 virtualScrollerOptions={{lazy: true, onLazyLoad: onVirtualScroll, itemSize:  50, showLoader: true, loading: lazyLoading, loadingTemplate }}
+                footer={footer}
+                value={data}
                 header={header}
                 showGridlines
                 dataKey="_id"
-                filters={filters}
+                // filters={filters}
+                loading={loading}
                 removableSort
-                onFilter={(e) => setFilters(e.filters)}
+                // onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 selectOnEdit
             >
                 <Column field="name" header="Όνομα"></Column>
+                <Column field="MTRL" header="Όνομα"></Column>
                 <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
                 <Column field="mtrgroups" header="Groups" sortable></Column>
-              
+
             </DataTable>
             {/* <EditDialog
                 style={dialogStyle}
