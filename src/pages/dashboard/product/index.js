@@ -28,16 +28,11 @@ export default function Product() {
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const toast = useRef(null);
-    const [totalRecords, setTotalRecords] = useState(0);
 
     const [loading, setLoading] = useState(false)
-    const [first, setFirst] = useState(1);
     const [page, setPage] = useState(1);
-    const [rows, setRows] = useState(10);
-    const [lastMTRLId, setLastMTRLId] = useState(null)
-    const [firstMTRLId, setFirstMTRLId] = useState(null)
 
-    const [search, setSearch] = useState('')
+
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
@@ -45,14 +40,13 @@ export default function Product() {
 
 
 
-
     const handleFetch = async (sign) => {
         setLoading(true)
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts', rows: rows, lastMTRLId: lastMTRLId, firstMTRLId:firstMTRLId, sign: sign })
+        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
-        setLastMTRLId(res.data.lastMTRLId)
-        setFirstMTRLId(res.data.firstMTRLId)
-        setTotalRecords(Math.floor(res.data.count / rows))
+        // setLastMTRLId(res.data.lastMTRLId)
+        // setFirstMTRLId(res.data.firstMTRLId)
+        // setTotalRecords(Math.floor(res.data.count / rows))
         setLoading(false)
     }
 
@@ -91,15 +85,12 @@ export default function Product() {
     const header = renderHeader();
 
     const onGlobalFilterChange = (event) => {
-        // setPage(1)
-        // const value = event.target.value;
-        // console.log('value')
-        // console.log(value)
-        // setSearch(value)
-        // let _filters = { ...filters };
-        // _filters['global'].value = value;
+        const value = event.target.value;
+        let _filters = { ...filters };
 
-        // setFilters(_filters);
+        _filters['global'].value = value;
+
+        setFilters(_filters);
     };
 
     // useEffect(() => {
@@ -165,55 +156,28 @@ export default function Product() {
     }
 
 
-    const handleNext = () => {
-      
-        if(page != totalRecords) {
-            setPage(prev => prev + 1)
-              handleFetch('next')
-        } 
+ 
+
    
-    }
-    const handlePrev = () => {
-  
-        if(page !== 1) {
-            setPage(prev => prev - 1)
-            handleFetch('prev')
-    }
-}
-
-    const footer = () => {
-        return (
-            // <Paginator
-            //     first={first}
-            //     rows={rows}
-            //     totalRecords={totalRecords}
-            //     rowsPerPageOptions={[10, 20, 30]}
-            //     onPageChange={handleFooter}
-            //     template="PrevPageLink CurrentPageReport NextPageLink "
-            // />
-            <div className='flex align-content-center justify-content-center'>
-                  <Button style={{ width: '40px', height: '40px', marginRight: '5px' }} icon="pi pi-angle-left" onClick={handlePrev}   />
-                  <span> {page + " of " + totalRecords }</span>
-            <Button style={{ width: '40px', height: '40px', marginLeft: '5px' }} icon="pi pi-angle-right" onClick={handleNext}  />
-            </div>
-
-        )
-    }
-
     return (
         <AdminLayout >
             {/* <Toast ref={toast} /> */}
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-                footer={footer}
+                // scrollable
+                // scrollHeight='500px'
+                paginator 
+                rows={50} 
+                rowsPerPageOptions={[50, 100, 200, 500]}
+                // footer={footer}
                 value={data}
                 header={header}
                 showGridlines
                 dataKey="_id"
-                // filters={filters}
+                filters={filters}
                 loading={loading}
                 removableSort
-                // onFilter={(e) => setFilters(e.filters)}
+                onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 selectOnEdit
             >

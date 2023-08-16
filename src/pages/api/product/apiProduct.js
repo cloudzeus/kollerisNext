@@ -10,6 +10,12 @@ import { Product } from "../../../../server/models/newProductModel";
 import { ObjectId } from "mongodb";
 
 
+export const config = {
+    api: {
+      responseLimit: false,
+    },
+  }
+
 export default async function handler(req, res) {
     const action = req.body.action;
     // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
@@ -29,17 +35,16 @@ export default async function handler(req, res) {
 
     if (action === 'findSoftoneProducts') {
         
-        const {rows, lastMTRLId,  firstMTRLId, sign} = req.body;
-        console.log('last id : ' + lastMTRLId)
-        console.log('last id : ' +  firstMTRLId)
-        
-        console.log('sign ' + sign)
-        
-
+        const {rows, lastMTRLId,  firstMTRLId, sign, limit, skip} = req.body;
+      
         
         await connectMongo();
         let count = await Product.countDocuments()
 
+
+        // let find = await Product.find({}).limit(limit).skip(skip)
+        console.log('skip: ' + skip)
+        console.log('limit: ' + limit)
         let pipeline = [
             {
                 $lookup: {
@@ -49,7 +54,6 @@ export default async function handler(req, res) {
                     as: "softoneProduct"
                 }
             },
-            { $unwind: "$softoneProduct" }, 
             {
                 $lookup: {
                     from: 'mtrcategories',
@@ -97,35 +101,17 @@ export default async function handler(req, res) {
                 }
             }
             ,
-            { $sort: { MTRL: 1 } },  // Sort by MTRL
-            { $limit: rows }  // Limit the results
+            // { $sort: { MTRL: 1 } },  // Sort by MTRL
+            // {$skip: skip},
+            // { $limit: limit }  // Limit the results
         ]
 
-        if (lastMTRLId !== null && sign === 'next') {
-                pipeline.splice(pipeline.length - 2, 0, { $match: { MTRL: { $gt: lastMTRLId } } });  // Add the $match stage before $sort
-
-           
-        }
-
-         if( firstMTRLId !== null && sign === 'prev') {
-                pipeline.splice(pipeline.length - 2, 0,
-                    { $match: { MTRL: { $lt: firstMTRLId } } },  // Filter items before the lastMTRLId
-                    { $sort: { MTRL: -1 } },  // Sort in descending order
-                    { $limit: 10 },  // Limit the results
-                    { $sort: { MTRL: 1 } }   // Reorder the results in ascending order
-                );
-
-            }
-        
+  
 
 
         let fetchProducts = await Product.aggregate(pipeline)
-        console.log('fetch')
-       console.log(fetchProducts)
-        let lastId = fetchProducts[fetchProducts.length - 1]?.MTRL
-        let firstid = fetchProducts[fetchProducts.length - 1 - rows]?.MTRL
-        console.log('lastid 00000 ' + JSON.stringify(lastId))
-        return res.status(200).json({ success: true, result : fetchProducts, count:count, lastMTRLId :lastId, firstMtrlId: firstid });
+        console.log(fetchProducts)
+        return res.status(200).json({ success: true, result : fetchProducts, count:count});
 
     }
 
