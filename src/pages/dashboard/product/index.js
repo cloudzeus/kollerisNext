@@ -182,9 +182,9 @@ export default function Product() {
                 selectOnEdit
             >
                 <Column field="name" header="Όνομα"></Column>
-                <Column field="MTRL" header="Όνομα"></Column>
-                <Column field="categoryName" header="Όνομα Προϊόντος" sortable></Column>
-                <Column field="mtrgroups" header="Groups" sortable></Column>
+                {/* <Column field="MTRL" header="Όνομα"></Column> */}
+                <Column field="categoryName" header="Κατηγορία" sortable></Column>
+                <Column field="mtrgroups" header="Group" sortable></Column>
 
             </DataTable>
             {/* <EditDialog
