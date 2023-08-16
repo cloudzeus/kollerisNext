@@ -15,11 +15,7 @@ import { ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import { Dropdown } from 'primereact/dropdown';
-import { Paginator } from 'primereact/paginator';
-import { set } from 'mongoose';
-
-
+import fuzzy from 'fuzzy';
 
 export default function Product() {
     const [editData, setEditData] = useState(null)
@@ -27,31 +23,38 @@ export default function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
+    const [filteredData, setFilteredData] = useState([])
     const toast = useRef(null);
 
     const [loading, setLoading] = useState(false)
-    const [page, setPage] = useState(1);
-
-
     const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS},
     });
 
 
-
+    const [filterValue, setFilterValue] = useState('')
 
     const handleFetch = async (sign) => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
-        // setLastMTRLId(res.data.lastMTRLId)
-        // setFirstMTRLId(res.data.firstMTRLId)
-        // setTotalRecords(Math.floor(res.data.count / rows))
+        setFilteredData(res.data.result);
         setLoading(false)
     }
 
 
-
+    useEffect(() => {
+     
+        // let list = data.map(function(el) { return el.name; });
+        function searchByName(query) {
+            const results = fuzzy.filter(query, data, {
+              extract: el => el.name
+            });
+            return results.map(el => el.original);
+          }
+          const filteredData = searchByName(filterValue);
+            setFilteredData(filteredData);
+      }, [filterValue]);
 
 
     useEffect(() => {
@@ -77,20 +80,35 @@ export default function Product() {
             <>
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
-                    <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+                    <InputText type="search" value={filterValue} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
                 </span>
             </>
         );
     };
+
+
+    
     const header = renderHeader();
 
-    const onGlobalFilterChange = (event) => {
+
+
+    const onGlobalFilterChange =  (event) => {
         const value = event.target.value;
-        let _filters = { ...filters };
+        setFilterValue(value)
+        // let _filters = { ...filters };
+        // _filters['global'].value = value;
+        // setFilters(_filters);
 
-        _filters['global'].value = value;
+        // let _newValue = value.split(' ').join('')
+        // const _data = data 
+        // const _filteredData = _data.filter((item) => {
+        //     let name = item.name.split(' ').join('');
+        //     return name.toLowerCase().includes(_newValue.toLowerCase());
+        // })
+        // console.log(_filteredData)
+        
+       
 
-        setFilters(_filters);
     };
 
     // useEffect(() => {
@@ -139,44 +157,22 @@ export default function Product() {
         );
     };
 
-    const handleFooter = (event) => {
-        console.log(event)
-        if(event.page + 1 > page)  {
-            setPage(event.page);
-            console.log('page greater' + page)
-        }
-        if(event.page + 1 < page)  {
-            setPage(event.page);
-            console.log('first less ' + page)
-
-        }
-       
-       
-       
-    }
-
-
  
-
-   
     return (
         <AdminLayout >
             {/* <Toast ref={toast} /> */}
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
-                // scrollable
-                // scrollHeight='500px'
                 paginator 
                 rows={50} 
                 rowsPerPageOptions={[50, 100, 200, 500]}
-                // footer={footer}
-                value={data}
+                value={filteredData}
                 header={header}
                 showGridlines
                 dataKey="_id"
-                filters={filters}
                 loading={loading}
                 removableSort
+                filters={filters}
                 onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 selectOnEdit

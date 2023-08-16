@@ -42,9 +42,7 @@ export default async function handler(req, res) {
         let count = await Product.countDocuments()
 
 
-        // let find = await Product.find({}).limit(limit).skip(skip)
-        console.log('skip: ' + skip)
-        console.log('limit: ' + limit)
+      
         let pipeline = [
             {
                 $lookup: {
@@ -117,20 +115,16 @@ export default async function handler(req, res) {
 
 
     if (action === 'search') {
-        const page = req.body.page || 1;
-        const limit = req.body.limit || 20;
+      
 
         let query = req.body.query;
-        console.log(query)
         await connectMongo();
         // Construct a case-insensitive regex pattern for the search query
 
         const regexPattern = new RegExp(query, 'i');
         let search = await SoftoneProduct.find({ NAME: regexPattern })
-            .skip(limit * (page - 1))
-            .limit(limit);
-        let softoneCount = await SoftoneProduct.countDocuments({ NAME: regexPattern })
-        return res.status(200).json({ success: true, result: search, count: Math.floor(softoneCount / limit) });
+        console.log(search)
+        return res.status(200).json({ success: true, result: search});
     }
 
     if(action === 'insert') {
