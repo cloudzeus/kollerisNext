@@ -50,6 +50,13 @@ export default async function handler(req, res) {
                     localField: "softoneProduct",
                     foreignField: "_id",
                     as: "softoneProduct"
+                },
+              
+            },
+            {
+                $unwind: {
+                    path: "$softoneProduct",
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -61,6 +68,12 @@ export default async function handler(req, res) {
                 }
             },
             {
+                $unwind: {
+                    path: "$mtrcategory",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
                 $lookup: {
                     from: "mtrgroups",
                     localField: "softoneProduct.MTRGROUP",
@@ -68,7 +81,12 @@ export default async function handler(req, res) {
                     as: "mtrgroups"
                 }
             },
-            // { $unwind: "$mtrgroups" }, // Convert mtrgroups from array to object
+            {
+                $unwind: {
+                    path: "$mtrgroups",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
         
             {
                 $lookup: {
@@ -79,6 +97,12 @@ export default async function handler(req, res) {
                 }
             },
             {
+                $unwind: {
+                    path: "$mrtmark",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
                 $lookup: {
                     from: "submtrgroups",
                     localField: "softoneProduct.CCCSUBGOUP2",
@@ -86,16 +110,25 @@ export default async function handler(req, res) {
                     as: "mtrsubgroup"
                 }
             },
-        
+            
+            {
+                $unwind: {
+                    path: "$mtrsubgroup",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
             {
                 $project: {
+                    _id: 0,
                     MTRL: '$softoneProduct.MTRL',
+                    CODE: '$softoneProduct.CODE',
+                    CODE1: '$softoneProduct.CODE1',
+                    mrtmark: '$mrtmark.name',
                     ISACTIVE: 1,
                     name: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
                     mtrsubgroup: "$mtrsubgroup.subGroupName",
-                    
                 }
             }
             ,

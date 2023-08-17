@@ -16,6 +16,9 @@ import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import fuzzy from 'fuzzy';
+import { MultiSelect } from 'primereact/multiselect';
+import Fuse from 'fuse.js';
+
 
 export default function Product() {
     const [editData, setEditData] = useState(null)
@@ -30,11 +33,28 @@ export default function Product() {
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
     });
+    const columns = [
+        { field: 'CODE', header: 'code' },
+        { field: 'CODE1', header: 'code1' },
+        { field: 'mrtmark', header: 'Μάρκα' },
+    ];
+    const [visibleColumns, setVisibleColumns] = useState(columns);
+    const [searchTerm, setSearchTerm] = useState('')
 
 
-    const [filterValue, setFilterValue] = useState('')
 
-    const handleFetch = async (sign) => {
+   
+
+    const onColumnToggle = (event) => {
+        let selectedColumns = event.value;
+        let orderedSelectedColumns = columns.filter((col) => selectedColumns.some((sCol) => sCol.field === col.field));
+
+        setVisibleColumns(orderedSelectedColumns);
+    };
+
+ 
+
+    const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
@@ -44,21 +64,47 @@ export default function Product() {
 
 
     useEffect(() => {
-     
-        // let list = data.map(function(el) { return el.name; });
-        function searchByName(query) {
-            const results = fuzzy.filter(query, data, {
-              extract: el => el.name
-            });
-            return results.map(el => el.original);
-          }
-          const filteredData = searchByName(filterValue);
-            setFilteredData(filteredData);
-      }, [filterValue]);
+        // data.map(item => {
+        //     let list = Object.values(item)
+        //     console.log(value)
+        //     var results = fuzzy.filter(searchTerm, list)
+
+        // })
+       
+
+        // function searchByName(query, field ) {
+          
+            
+        //     const results = fuzzy.filter(query, data, {
+        //       extract: el => el[field]
+        //     });
+        //     return results.map(el => el.original);
+        //   }
+
+        //   const filteredData = searchByName(searchTerm, "name");
+        //   const filteredData2 = searchByName(searchTerm, "CODE");
+        //   console.log('filteredData')
+        //   console.log(filteredData2)
+        // setFilteredData(filteredData);
+
+        const options = {
+            includeScore: true, // To see how well each result matched
+            threshold: 0.1,
+            keys: ['name', 'MTRL', 'CODE', 'CODE1', 'mrtmark', 'categoryName', 'mtrgroups']
+          };
+          const fuse = new Fuse(data, options);
+
+            function fuzzySearch(query) {
+            return fuse.search(query).map(result => result.item);
+            }
+            const results = fuzzySearch(searchTerm);
+            console.log(results);
+            setFilteredData(results);
+
+      }, [searchTerm]);
 
 
     useEffect(() => {
-        console.log('use effect --')
         handleFetch()
     }, [])
 
@@ -74,15 +120,16 @@ export default function Product() {
 
 
     const renderHeader = () => {
-        const value = filters['global'] ? filters['global'].value : '';
 
         return (
-            <>
+            <div>
+            
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
-                    <InputText type="search" value={filterValue} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+                    <InputText type="search" value={searchTerm} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
                 </span>
-            </>
+                <MultiSelect value={visibleColumns} options={columns} optionLabel="header" onChange={onColumnToggle} className="w-full sm:w-20rem" display="chip" />
+            </div>
         );
     };
 
@@ -94,33 +141,9 @@ export default function Product() {
 
     const onGlobalFilterChange =  (event) => {
         const value = event.target.value;
-        setFilterValue(value)
-        // let _filters = { ...filters };
-        // _filters['global'].value = value;
-        // setFilters(_filters);
-
-        // let _newValue = value.split(' ').join('')
-        // const _data = data 
-        // const _filteredData = _data.filter((item) => {
-        //     let name = item.name.split(' ').join('');
-        //     return name.toLowerCase().includes(_newValue.toLowerCase());
-        // })
-        // console.log(_filteredData)
-        
-       
-
+        setSearchTerm(value)
     };
 
-    // useEffect(() => {
-
-    //     const searchFetch = async (value, page, limit) => {
-    //         let res = await axios.post('/api/product/apiProduct', { action: 'search', query: value, page: page, limit: limit})
-    //         setData(res.data.result)
-    //     }
-
-    //     searchFetch(search,limit)
-
-    // }, [search, limit])
 
 
 
@@ -176,11 +199,14 @@ export default function Product() {
                 onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 selectOnEdit
+              
             >
-                <Column field="name" header="Όνομα"></Column>
-                {/* <Column field="MTRL" header="Όνομα"></Column> */}
-                <Column field="categoryName" header="Κατηγορία" sortable></Column>
-                <Column field="mtrgroups" header="Group" sortable></Column>
+                 <Column field="name" header="Όνομα"></Column>
+                <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
+                <Column field="mtrgroups" header="Ομάδα" sortable></Column>
+                {visibleColumns.map((col, index) => (
+                    <Column key={index} field={col.field} header={col.header}/>
+                ))}
 
             </DataTable>
             {/* <EditDialog
