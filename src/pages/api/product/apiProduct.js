@@ -53,12 +53,12 @@ export default async function handler(req, res) {
                 },
               
             },
-            {
-                $unwind: {
-                    path: "$softoneProduct",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            // {
+            //     $unwind: {
+            //         path: "$softoneProduct",
+            //         preserveNullAndEmptyArrays: true
+            //     }
+            // },
             {
                 $lookup: {
                     from: 'mtrcategories',
@@ -67,12 +67,12 @@ export default async function handler(req, res) {
                     as: 'mtrcategory'
                 }
             },
-            {
-                $unwind: {
-                    path: "$mtrcategory",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            // {
+            //     $unwind: {
+            //         path: "$mtrcategory",
+            //         preserveNullAndEmptyArrays: true
+            //     }
+            // },
             {
                 $lookup: {
                     from: "mtrgroups",
@@ -81,12 +81,12 @@ export default async function handler(req, res) {
                     as: "mtrgroups"
                 }
             },
-            {
-                $unwind: {
-                    path: "$mtrgroups",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            // {
+            //     $unwind: {
+            //         path: "$mtrgroups",
+            //         preserveNullAndEmptyArrays: true
+            //     }
+            // },
         
             {
                 $lookup: {
@@ -96,12 +96,12 @@ export default async function handler(req, res) {
                     as: "mrtmark"
                 }
             },
-            {
-                $unwind: {
-                    path: "$mrtmark",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            // {
+            //     $unwind: {
+            //         path: "$mrtmark",
+            //         preserveNullAndEmptyArrays: true
+            //     }
+            // },
             {
                 $lookup: {
                     from: "submtrgroups",
@@ -111,12 +111,12 @@ export default async function handler(req, res) {
                 }
             },
             
-            {
-                $unwind: {
-                    path: "$mtrsubgroup",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            // {
+            //     $unwind: {
+            //         path: "$mtrsubgroup",
+            //         preserveNullAndEmptyArrays: true
+            //     }
+            // },
             {
                 $project: {
                     _id: 0,
