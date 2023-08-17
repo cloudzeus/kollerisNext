@@ -99,7 +99,12 @@ export default function Product() {
             }
             const results = fuzzySearch(searchTerm);
             console.log(results);
-            setFilteredData(results);
+            if(results.length > 0) {
+                setFilteredData(results);
+            } else {
+                setFilteredData(data);
+            }
+           
 
       }, [searchTerm]);
 
