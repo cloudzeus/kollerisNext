@@ -27,6 +27,8 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import TranslateField from '@/components/grid/GridTranslate';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import ProductActions from '@/components/grid/ProductActions';
+import ProductCompletion from '@/components/grid/ProductCompletion';
+
 
 export default function Product() {
     const op = useRef(null);
@@ -173,7 +175,11 @@ export default function Product() {
 
 
 
-
+    const productCompletion = () => {
+        return (
+           <ProductCompletion />
+        )
+    }
 
 
     const AddToCartTemplate = (rowData) => {
@@ -244,6 +250,7 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
+                <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} style={{ width: '100px' }}></Column>
                 {visibleColumns.map((col, index) => {
                     return (
                         <Column key={index} field={col.field} header={col.header} style={col.style} />

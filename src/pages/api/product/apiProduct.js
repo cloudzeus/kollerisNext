@@ -155,7 +155,7 @@ export default async function handler(req, res) {
 
 
         let fetchProducts = await Product.aggregate(pipeline)
-        console.log(fetchProducts)
+        
         return res.status(200).json({ success: true, result : fetchProducts, count:count});
 
     }
@@ -163,10 +163,7 @@ export default async function handler(req, res) {
     if(action === "translate") {
 		let data = req.body.data;
 		let {id, fieldName, index} = req.body
-		console.log('------------------------------------------------')
-        console.log(data)
-        console.log(fieldName)
-        console.log(id)
+		
 		try {
 			await connectMongo();
 			const updated = await Product.updateOne(
