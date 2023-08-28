@@ -18,25 +18,36 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import fuzzy from 'fuzzy';
 import { MultiSelect } from 'primereact/multiselect';
 import Fuse from 'fuse.js';
+import { ToggleButton } from 'primereact/togglebutton';
+import { ColumnDirective } from '@syncfusion/ej2-react-spreadsheet';
+import { CartDiv } from '@/componentsStyles/grid';
+import { TabView, TabPanel } from 'primereact/tabview';
+import { DisabledDisplay } from '@/componentsStyles/grid';
+import { InputTextarea } from 'primereact/inputtextarea';
+import TranslateField from '@/components/grid/GridTranslate';
+
 
 
 export default function Product() {
-    const [editData, setEditData] = useState(null)
-    const [editDialog, setEditDialog] = useState(false);
-    const [addDialog, setAddDialog] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+   
     const [data, setData] = useState([])
     const [filteredData, setFilteredData] = useState([])
     const toast = useRef(null);
+    const [frozen, setFrozen] = useState(false);
+    const [expandedRows, setExpandedRows] = useState(null);
+
+    const [rowClick, setRowClick] = useState(true);
+    const [selectedProducts, setSelectedProducts] = useState(null);
 
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
     });
     const columns = [
-        { field: 'CODE', header: 'code' },
-        { field: 'CODE1', header: 'code1' },
-        { field: 'mrtmark', header: 'Μάρκα' },
+        { field: 'CODE', header: 'code', style: null },
+        { field: 'CODE1', header: 'code1', style: null },
+        { field: 'mrtmark', header: 'Μάρκα', style: null },
+        { field: 'PRICER', header: 'Τιμή Λιανικής',  style: {width: '100px', fontWeight: 700} },
     ];
     const [visibleColumns, setVisibleColumns] = useState(columns);
     const [searchTerm, setSearchTerm] = useState('')
@@ -58,6 +69,7 @@ export default function Product() {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
+        console.log(res.data.result)
         setFilteredData(res.data.result);
         setLoading(false)
     }
@@ -115,12 +127,12 @@ export default function Product() {
 
 
 
-    //Refetch on add edit:
-    // useEffect(() => {
-    //     console.log('submitted: ' + submitted)
-    //     if (submitted) handleFetch()
-    // }, [submitted])
 
+
+    const allowExpansion = (rowData) => {
+        return rowData
+
+    };
 
 
 
@@ -134,6 +146,10 @@ export default function Product() {
                     <InputText type="search" value={searchTerm} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
                 </span>
                 <MultiSelect value={visibleColumns} options={columns} optionLabel="header" onChange={onColumnToggle} className="w-full sm:w-20rem" display="chip" />
+                <ToggleButton checked={frozen} onChange={(e) => {
+                    setFrozen(e.value)
+                }} onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="Balance" offLabel="Balance" />
+
             </div>
         );
     };
@@ -153,134 +169,122 @@ export default function Product() {
 
 
 
-    const leftToolbarTemplate = () => {
+
+  
+
+
+
+ 
+
+    const AddToCartTemplate = (rowData) => {
         return (
-            <div className="flex flex-wrap gap-2">
-                {/* <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} /> */}
-            </div>
+            <CartDiv >
+                <Button disabled={!rowData.status} style={{ width: '30px', height: '30px', fontSize: '3px' }} icon="pi pi-shopping-cart"  />
+            </CartDiv >
+        )
+    }
+
+    const rowExpansionTemplate = (data) => {
+        console.log(data)
+        return (
+                <div className="card p-20">
+                    <TabView>
+                        <TabPanel header="Φωτογραφίες">
+                        </TabPanel>
+                        <TabPanel header="Λεπτομέριες">
+                            <ExpansionDetails data={data} />
+                        </TabPanel>
+
+                    </TabView>
+                </div>
         );
     };
 
-    const rightToolbarTemplate = () => {
+    const TranslateName = ({_id, name, localized}) => {
         return (
-            <>
-                {/* <SyncManufacturers
-                refreshGrid={handleFetch}
-                addToDatabaseURL= '/api/product/apiManufacturers'
-                />  */}
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
-
-
-
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
-        );
-    };
+            <TranslateField
+                url="/api/product/apiProduct"
+                id={_id}
+                value={name}
+                fieldName="Όνομα"
+                translations={localized[0]?.translations}
+                index={0}
+                />
+        )
+    }
 
  
     return (
         <AdminLayout >
             {/* <Toast ref={toast} /> */}
-            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+
+            {/* <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
             <DataTable
+                className='product-datatable'
+                selectionMode={rowClick ? null : 'checkbox'} 
+                selection={selectedProducts}
+                onSelectionChange={(e) => setSelectedProducts(e.value)}
                 paginator 
                 rows={50} 
-                rowsPerPageOptions={[50, 100, 200, 500]}
+                // rowsPerPageOptions={[50, 100, 200, 500]}
+                rowsPerPageOptions={[10, 20, 50, 100, 200]}
                 value={filteredData}
                 header={header}
                 showGridlines
-                dataKey="_id"
+                dataKey="MTRL"
                 loading={loading}
                 removableSort
                 filters={filters}
                 onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
-                selectOnEdit
-              
-            >
-                 <Column field="name" header="Όνομα"></Column>
-                <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
+                rowExpansionTemplate={rowExpansionTemplate}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+            >   
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                <Column selectionMode="multiple" headerStyle={{ width: '2rem' }}></Column>
+                 <Column field="name" body={TranslateName} style={{width: '400px'}} header="Όνομα" ></Column>
+                <Column field="categoryName"   header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                {visibleColumns.map((col, index) => (
-                    <Column key={index} field={col.field} header={col.header}/>
-                ))}
+                {visibleColumns.map((col, index) => {
+                    return (
+                        <Column key={index} field={col.field} header={col.header} style={col.style}/>
+                    )
+                }
+                )}
+                <Column style={{width: '60px'}} frozen={true} alignFrozen="right"  body={AddToCartTemplate}></Column>
 
             </DataTable>
-            {/* <EditDialog
-                style={dialogStyle}
-                data={editData}
-                setData={setEditData}
-                dialog={editDialog}
-                setDialog={setEditDialog}
-                hideDialog={hideDialog}
-                setSubmitted={setSubmitted}
-
-            />
-            <AddDialog
-                dialog={addDialog}
-                setDialog={setAddDialog}
-                hideDialog={hideDialog}
-                setSubmitted={setSubmitted}
-            /> */}
+          
         </AdminLayout >
     );
 }
 
 
-const ActiveTempate = ({ status }) => {
 
+
+const ExpansionDetails = ({data}) => {
+    console.log(data)
     return (
-        <div>
-            {status ? (
-                <Tag severity="success" value=" active "></Tag>
-            ) : (
-                <Tag severity="danger" value="deleted" ></Tag>
-            )}
-
+        < DisabledDisplay  >
+        <div className="disabled-card">
+            <label>
+                Περιγραφή
+            </label>
+            <InputTextarea autoResize disabled value={data.description} />
         </div>
-    )
+        <div className="disabled-card">
+            <label>
+                Όνομα
+            </label>
+            <InputText disabled value={data?.name} />
+        </div>
+     
 
-}
 
-
-
-
-const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={updatedFrom}
-            at={updatedAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--yellow-500)'
-        />
-
+    </DisabledDisplay>
     )
 }
-const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={createdFrom}
-            at={createdAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--green-400)'
-        />
-
-    )
-}
-
-
-
-//The component for the nested grid:
 
 
 

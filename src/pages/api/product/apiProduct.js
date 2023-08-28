@@ -119,13 +119,15 @@ export default async function handler(req, res) {
             // },
             {
                 $project: {
-                    _id: 0,
+                    _id: 1,
                     MTRL: '$softoneProduct.MTRL',
                     CODE: '$softoneProduct.CODE',
                     CODE1: '$softoneProduct.CODE1',
+                    PRICER: '$softoneProduct.PRICER',
                     mrtmark: '$mrtmark.name',
                     ISACTIVE: 1,
                     name: 1,
+                    localized: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
                     mtrsubgroup: "$mtrsubgroup.subGroupName",
@@ -146,7 +148,27 @@ export default async function handler(req, res) {
 
     }
 
-
+    if(action === "translate") {
+		let data = req.body.data;
+		let {id, fieldName, index} = req.body
+		console.log('------------------------------------------------')
+        console.log(data)
+        console.log(fieldName)
+        console.log(id)
+		try {
+			await connectMongo();
+			const updated = await Product.updateOne(
+				{_id: id},
+                {$set: {localized: {
+                    fieldName: fieldName,
+                    translations: data
+                }}}
+			  	);
+			return res.status(200).json({ success: true, result: updated  });
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
     if (action === 'search') {
       
 

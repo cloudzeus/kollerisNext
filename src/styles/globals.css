@@ -17,7 +17,14 @@
 }
 
 
+.product-datatable.p-datatable .p-datatable-tbody > tr > td {
+  padding: 8px 10px;
+}
 
+
+.p-component {
+  font-size: 0.85rem;
+}
 .p-fileupload .p-fileupload-content {
   padding: 10px;
 }
@@ -75,7 +82,7 @@ form {
 
 ::-webkit-scrollbar {
   width: 5px;
-  height: 5px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {

@@ -111,7 +111,9 @@ export default function TranslateField({ value, translations, url, id, fieldName
         <div >
             <Toast ref={toast} />
             <GridField onClick={() => setVisible(true)} >
-                <i className="pi pi-language icon text-sm"></i>
+                <div className="icon-div">
+                <i className="pi pi-language text-sm"></i>
+                </div>
                 <span className="value">{value}</span>
             </GridField>
             <Dialog header={header}  visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
@@ -247,7 +249,7 @@ const GridField = styled.div`
     flex-direction: row;
     align-items: center;
     cursor: pointer;
-    .icon {
+    .icon-div {
         margin-right: 0.5rem;
         border-radius: 50%;
         width: 25px;
@@ -257,4 +259,5 @@ const GridField = styled.div`
         align-items: center;
         justify-content: center;
     }
+    
 `

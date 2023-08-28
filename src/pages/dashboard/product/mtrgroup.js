@@ -216,6 +216,7 @@ export default function Categories() {
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
                 //edit:
+                size="small"
                 loading={loading}
                 editMode="row"
                 selectOnEdit

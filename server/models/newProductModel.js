@@ -72,14 +72,17 @@ const productSchema = new mongoose.Schema({
     },
     attributes: [{ type: Schema.Types.ObjectId, ref: "ProductAttributes" }],
     name: { type: String, required: true },
+    description: { type: String, required: false },
     localized: [{
-        field: [{
-            fieldName: String,
-            translation: String
-        }],
-        locale: String,
-        code: String,
-    }],
+        fieldName: String,
+        translations: [
+            {
+                locale: String,
+                code: String,
+                translation: String,
+            }
+        ]
+}],
     prices: [
         {
             name: {
