@@ -67,6 +67,14 @@ export default async function handler(req, res) {
                     as: 'mtrcategory'
                 }
             },
+            {
+                $lookup: {
+                    from: 'manufacturers',
+                    localField: 'softoneProduct.MTRMANFCTR',
+                    foreignField: 'softOne.MTRMANFCTR',
+                    as: 'manufacturers'
+                }
+            },
             // {
             //     $unwind: {
             //         path: "$mtrcategory",
@@ -123,8 +131,12 @@ export default async function handler(req, res) {
                     MTRL: '$softoneProduct.MTRL',
                     CODE: '$softoneProduct.CODE',
                     CODE1: '$softoneProduct.CODE1',
+                    CODE2: '$softoneProduct.CODE2',
+                    VAT: '$softoneProduct.VAT',
                     PRICER: '$softoneProduct.PRICER',
+                    UPDDATE: '$softoneProduct.UPDDATE',
                     mrtmark: '$mrtmark.name',
+                    mrtmanufact: '$manufacturers.softOne.NAME',
                     ISACTIVE: 1,
                     name: 1,
                     localized: 1,
@@ -183,7 +195,20 @@ export default async function handler(req, res) {
     }
 
     if(action === 'insert') {
-        await connectMongo();
+    //     await connectMongo();
+    //      let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
+    // const response = await fetch(URL, {
+    //                 method: 'POST',
+    //                 body: JSON.stringify({
+    //                     username: "Service",
+    //                     password: "Service",
+    //                 })
+    //             });
+    // let buffer = await translateData(response)
+    await connectMongo();
+    // let insert1 = await SoftoneProduct.insertMany(buffer.result)
+
+        
         let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
  
         let productsInsert = softone.map((item) => ({
@@ -191,6 +216,7 @@ export default async function handler(req, res) {
             name: item.NAME,
         }))
         let insert = await Product.insertMany(productsInsert)
+        console.log(insert)
         return res.status(200).json({ success: true, result: insert});
       
     }

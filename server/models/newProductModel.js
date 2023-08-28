@@ -59,6 +59,7 @@ const softoneProduct = new mongoose.Schema({
     PRICEW04: String,
     PRICEW05: String,
     UPDDATE: String,
+  
 }, {
 
     timestamps: true,
@@ -83,18 +84,6 @@ const productSchema = new mongoose.Schema({
             }
         ]
 }],
-    prices: [
-        {
-            name: {
-                type: String,
-                required: false
-            },
-            value: {
-                type: Number
-            }
-
-        }
-    ],
     expected: { type: Number, required: false, },
     reserved: { type: Number, required: false },
    

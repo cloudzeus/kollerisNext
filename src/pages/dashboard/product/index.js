@@ -275,16 +275,46 @@ const ExpansionDetails = ({data}) => {
         </div>
         <div className="disabled-card">
             <label>
-                Όνομα
+                Μάρκα
             </label>
-            <InputText disabled value={data?.name} />
+            <InputText disabled value={data?.mrtmark} />
         </div>
-     
-
+        <div className="disabled-card">
+            <label>
+                Kατασκευαστής
+            </label>
+            <InputText disabled value={data?.mrtmanufact} />
+        </div>
+        <div className="disabled-card">
+            <label>
+                ΕΑΝ
+            </label>
+            <InputText disabled value={data?.CODE1} />
+        </div>
+        <div className="disabled-card">
+            <label>
+                VAT
+            </label>
+            <InputText disabled value={data?.VAT} />
+        </div>
+        <div className="disabled-card">
+            <label>
+                Κωδικός Εργοστασίου
+            </label>
+            <InputText disabled value={data?.CODE2} />
+        </div>
+        <div className="disabled-card">
+            <label>
+                Ημερομηνία τελευταίας τροποποίησης
+            </label>
+            <InputText disabled value={data?.UPDDATE} />
+        </div>
 
     </DisabledDisplay>
     )
 }
+
+
 
 
 
