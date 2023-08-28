@@ -25,11 +25,11 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import TranslateField from '@/components/grid/GridTranslate';
-
-
+import { OverlayPanel } from 'primereact/overlaypanel';
+import ProductActions from '@/components/grid/ProductActions';
 
 export default function Product() {
-   
+    const op = useRef(null);
     const [data, setData] = useState([])
     const [filteredData, setFilteredData] = useState([])
     const toast = useRef(null);
@@ -41,20 +41,20 @@ export default function Product() {
 
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS},
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
     const columns = [
         { field: 'CODE', header: 'code', style: null },
         { field: 'CODE1', header: 'code1', style: null },
         { field: 'mrtmark', header: 'Μάρκα', style: null },
-        { field: 'PRICER', header: 'Τιμή Λιανικής',  style: {width: '100px', fontWeight: 700} },
+        { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
     ];
     const [visibleColumns, setVisibleColumns] = useState(columns);
     const [searchTerm, setSearchTerm] = useState('')
 
 
 
-   
+
 
     const onColumnToggle = (event) => {
         let selectedColumns = event.value;
@@ -63,14 +63,14 @@ export default function Product() {
         setVisibleColumns(orderedSelectedColumns);
     };
 
- 
+
 
     const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-        setData(res.data.result);
+        setData(res.data.result.slice(0, 10));
         console.log(res.data.result)
-        setFilteredData(res.data.result);
+        setFilteredData(res.data.result.slice(0, 10));
         setLoading(false)
     }
 
@@ -82,11 +82,11 @@ export default function Product() {
         //     var results = fuzzy.filter(searchTerm, list)
 
         // })
-       
+
 
         // function searchByName(query, field ) {
-          
-            
+
+
         //     const results = fuzzy.filter(query, data, {
         //       extract: el => el[field]
         //     });
@@ -103,22 +103,22 @@ export default function Product() {
             includeScore: true, // To see how well each result matched
             threshold: 0.1,
             keys: ['name', 'MTRL', 'CODE', 'CODE1', 'mrtmark', 'categoryName', 'mtrgroups']
-          };
-          const fuse = new Fuse(data, options);
+        };
+        const fuse = new Fuse(data, options);
 
-            function fuzzySearch(query) {
+        function fuzzySearch(query) {
             return fuse.search(query).map(result => result.item);
-            }
-            const results = fuzzySearch(searchTerm);
-            console.log(results);
-            if(results.length > 0) {
-                setFilteredData(results);
-            } else {
-                setFilteredData(data);
-            }
-           
+        }
+        const results = fuzzySearch(searchTerm);
+        console.log(results);
+        if (results.length > 0) {
+            setFilteredData(results);
+        } else {
+            setFilteredData(data);
+        }
 
-      }, [searchTerm]);
+
+    }, [searchTerm]);
 
 
     useEffect(() => {
@@ -140,7 +140,7 @@ export default function Product() {
 
         return (
             <div>
-            
+
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
                     <InputText type="search" value={searchTerm} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
@@ -155,12 +155,12 @@ export default function Product() {
     };
 
 
-    
+
     const header = renderHeader();
 
 
 
-    const onGlobalFilterChange =  (event) => {
+    const onGlobalFilterChange = (event) => {
         const value = event.target.value;
         setSearchTerm(value)
     };
@@ -170,37 +170,35 @@ export default function Product() {
 
 
 
-  
 
 
 
- 
+
+
 
     const AddToCartTemplate = (rowData) => {
         return (
-            <CartDiv >
-                <Button disabled={!rowData.status} style={{ width: '30px', height: '30px', fontSize: '3px' }} icon="pi pi-shopping-cart"  />
-            </CartDiv >
+            <ProductActions rowData={rowData} />
         )
     }
 
     const rowExpansionTemplate = (data) => {
         console.log(data)
         return (
-                <div className="card p-20">
-                    <TabView>
-                        <TabPanel header="Φωτογραφίες">
-                        </TabPanel>
-                        <TabPanel header="Λεπτομέριες">
-                            <ExpansionDetails data={data} />
-                        </TabPanel>
+            <div className="card p-20">
+                <TabView>
+                    <TabPanel header="Φωτογραφίες">
+                    </TabPanel>
+                    <TabPanel header="Λεπτομέριες">
+                        <ExpansionDetails data={data} />
+                    </TabPanel>
 
-                    </TabView>
-                </div>
+                </TabView>
+            </div>
         );
     };
 
-    const TranslateName = ({_id, name, localized}) => {
+    const TranslateName = ({ _id, name, localized }) => {
         return (
             <TranslateField
                 url="/api/product/apiProduct"
@@ -209,11 +207,11 @@ export default function Product() {
                 fieldName="Όνομα"
                 translations={localized[0]?.translations}
                 index={0}
-                />
+            />
         )
     }
 
- 
+
     return (
         <AdminLayout >
             {/* <Toast ref={toast} /> */}
@@ -221,11 +219,11 @@ export default function Product() {
             {/* <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
             <DataTable
                 className='product-datatable'
-                selectionMode={rowClick ? null : 'checkbox'} 
+                selectionMode={rowClick ? null : 'checkbox'}
                 selection={selectedProducts}
                 onSelectionChange={(e) => setSelectedProducts(e.value)}
-                paginator 
-                rows={50} 
+                paginator
+                rows={50}
                 // rowsPerPageOptions={[50, 100, 200, 500]}
                 rowsPerPageOptions={[10, 20, 50, 100, 200]}
                 value={filteredData}
@@ -240,22 +238,22 @@ export default function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-            >   
+            >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '2rem' }}></Column>
-                 <Column field="name" body={TranslateName} style={{width: '400px'}} header="Όνομα" ></Column>
-                <Column field="categoryName"   header="Εμπορική Κατηγορία" sortable></Column>
+                <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
                 {visibleColumns.map((col, index) => {
                     return (
-                        <Column key={index} field={col.field} header={col.header} style={col.style}/>
+                        <Column key={index} field={col.field} header={col.header} style={col.style} />
                     )
                 }
                 )}
-                <Column style={{width: '60px'}} frozen={true} alignFrozen="right"  body={AddToCartTemplate}></Column>
+                <Column style={{ width: '60px' }} frozen={true} alignFrozen="right" body={AddToCartTemplate}></Column>
 
             </DataTable>
-          
+
         </AdminLayout >
     );
 }
@@ -263,54 +261,54 @@ export default function Product() {
 
 
 
-const ExpansionDetails = ({data}) => {
+const ExpansionDetails = ({ data }) => {
     console.log(data)
     return (
         < DisabledDisplay  >
-        <div className="disabled-card">
-            <label>
-                Περιγραφή
-            </label>
-            <InputTextarea autoResize disabled value={data.description} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                Μάρκα
-            </label>
-            <InputText disabled value={data?.mrtmark} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                Kατασκευαστής
-            </label>
-            <InputText disabled value={data?.mrtmanufact} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                ΕΑΝ
-            </label>
-            <InputText disabled value={data?.CODE1} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                VAT
-            </label>
-            <InputText disabled value={data?.VAT} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                Κωδικός Εργοστασίου
-            </label>
-            <InputText disabled value={data?.CODE2} />
-        </div>
-        <div className="disabled-card">
-            <label>
-                Ημερομηνία τελευταίας τροποποίησης
-            </label>
-            <InputText disabled value={data?.UPDDATE} />
-        </div>
+            <div className="disabled-card">
+                <label>
+                    Περιγραφή
+                </label>
+                <InputTextarea autoResize disabled value={data.description} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Μάρκα
+                </label>
+                <InputText disabled value={data?.mrtmark} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Kατασκευαστής
+                </label>
+                <InputText disabled value={data?.mrtmanufact} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    ΕΑΝ
+                </label>
+                <InputText disabled value={data?.CODE1} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    VAT
+                </label>
+                <InputText disabled value={data?.VAT} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Κωδικός Εργοστασίου
+                </label>
+                <InputText disabled value={data?.CODE2} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Ημερομηνία τελευταίας τροποποίησης
+                </label>
+                <InputText disabled value={data?.UPDDATE} />
+            </div>
 
-    </DisabledDisplay>
+        </DisabledDisplay>
     )
 }
 
