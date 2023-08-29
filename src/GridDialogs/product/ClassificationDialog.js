@@ -65,6 +65,9 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
         if(category === null || group === null || subgroup === null ) return;
 
         let object = {
+            originalCategory: gridRowData._id,
+            originalGroup: gridRowData.mtrgroups[0],
+            originalSubgroup: gridRowData.mtrsubgroup[0],
             category: category?.code,
             categoryId: category?.softoneid,
             group: group?.code,

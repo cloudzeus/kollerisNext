@@ -5,7 +5,8 @@ import mongoose from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
-import { MtrCategory } from "../../../../server/models/categoriesModel";
+import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
+
 import { Product } from "../../../../server/models/newProductModel";
 import { ObjectId } from "mongodb";
 
@@ -231,7 +232,20 @@ export default async function handler(req, res) {
         console.log(category)
         console.log(group)
         console.log(subgroup)
-    
+        
+        try {
+            await connectMongo();
+            const updateGroup = await SubMtrGroup.findOneAndUpdate(
+                {_id: group},
+                { $pull: { 
+                    subGroups: [group]
+                }}
+            )
+            console.log(updateGroup)
+          
+        } catch (e) {
+
+        }
     }   
 }
 
