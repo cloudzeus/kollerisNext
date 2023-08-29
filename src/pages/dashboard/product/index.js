@@ -7,8 +7,6 @@ import axios from 'axios';
 import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
-import { Toolbar } from 'primereact/toolbar';
-import { AddDialog, EditDialog } from '@/GridDialogs/manufacturersDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
 import { ActionDiv } from '@/componentsStyles/grid';
@@ -28,32 +26,48 @@ import TranslateField from '@/components/grid/GridTranslate';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import ProductActions from '@/components/grid/ProductActions';
 import ProductCompletion from '@/components/grid/ProductCompletion';
+import { EditDialog } from '@/GridDialogs/ProductDialog';
+import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
+
+
+const columns = [
+    { field: 'mrtmark', header: 'Μάρκα', style: null },
+    { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
+];
+
+const dialogStyle = {
+    marginTop: '10vh', // Adjust the top margin as needed
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+
+};
 
 
 export default function Product() {
+    const dispatch = useDispatch();
     const op = useRef(null);
     const [data, setData] = useState([])
+    const [editDialog, setEditDialog] = useState(false);
+    const [classDialog, setClassDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+
+
     const [filteredData, setFilteredData] = useState([])
-    const toast = useRef(null);
-    const [frozen, setFrozen] = useState(false);
     const [expandedRows, setExpandedRows] = useState(null);
-
-    const [rowClick, setRowClick] = useState(true);
     const [selectedProducts, setSelectedProducts] = useState(null);
-
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-    const columns = [
-        { field: 'CODE', header: 'code', style: null },
-        { field: 'CODE1', header: 'code1', style: null },
-        { field: 'mrtmark', header: 'Μάρκα', style: null },
-        { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
-    ];
+   
     const [visibleColumns, setVisibleColumns] = useState(columns);
     const [searchTerm, setSearchTerm] = useState('')
 
+    useEffect(() => {
+        console.log('submitted: ' + submitted)
+        if (submitted) handleFetch()
+    }, [submitted])
 
 
 
@@ -127,8 +141,17 @@ export default function Product() {
         handleFetch()
     }, [])
 
+    const editProduct = async (product) => {
+    
+        setSubmitted(false);
+        setEditDialog(true)
+        dispatch(setGridRowData(product))
+    };
 
-
+    const editClass = async (product) => {
+        setClassDialog(true)
+        dispatch(setGridRowData(product))
+    }
 
 
     const allowExpansion = (rowData) => {
@@ -147,10 +170,13 @@ export default function Product() {
                     <i className="pi pi-search" />
                     <InputText type="search" value={searchTerm} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
                 </span>
-                <MultiSelect value={visibleColumns} options={columns} optionLabel="header" onChange={onColumnToggle} className="w-full sm:w-20rem" display="chip" />
-                <ToggleButton checked={frozen} onChange={(e) => {
-                    setFrozen(e.value)
-                }} onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="Balance" offLabel="Balance" />
+                <MultiSelect 
+                    value={visibleColumns} 
+                    options={columns} 
+                    optionLabel="header" 
+                    onChange={onColumnToggle} 
+                    className="w-full sm:w-20rem ml-2" display="chip" />
+               
 
             </div>
         );
@@ -184,7 +210,11 @@ export default function Product() {
 
     const AddToCartTemplate = (rowData) => {
         return (
-            <ProductActions rowData={rowData} />
+            <ProductActions 
+                rowData={rowData} 
+                onEdit={editProduct} 
+                onEditClass={editClass}
+                />
         )
     }
 
@@ -218,6 +248,12 @@ export default function Product() {
     }
 
 
+    const hideDialog = () => {
+        setEditDialog(false);
+        setClassDialog(false)
+    };
+    
+
     return (
         <AdminLayout >
             {/* <Toast ref={toast} /> */}
@@ -225,7 +261,7 @@ export default function Product() {
             {/* <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
             <DataTable
                 className='product-datatable'
-                selectionMode={rowClick ? null : 'checkbox'}
+                selectionMode={'checkbox'}
                 selection={selectedProducts}
                 onSelectionChange={(e) => setSelectedProducts(e.value)}
                 paginator
@@ -250,17 +286,29 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} style={{ width: '100px' }}></Column>
+                <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
                 {visibleColumns.map((col, index) => {
                     return (
                         <Column key={index} field={col.field} header={col.header} style={col.style} />
                     )
                 }
                 )}
-                <Column style={{ width: '60px' }} frozen={true} alignFrozen="right" body={AddToCartTemplate}></Column>
+                <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
             </DataTable>
+            <EditDialog
+                style={dialogStyle}
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
 
+            />
+            <ClassificationDialog 
+                dialog={classDialog}
+                setDialog={setClassDialog}
+                hideDialog={hideDialog}
+            />
         </AdminLayout >
     );
 }

@@ -217,5 +217,21 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, result: insert});
       
     }
+
+    if(action === 'updateClass') {
+     
+    let {category, group, subgroup, } = req.body.object
+       let softoneMTRCATEGORY = req.body.object.categoryId;
+       let softoneMTRGROUP = req.body.object.groupId;
+       let softoneMTRSUBGROUP = req.body.object.subgroupId;
+
+       console.log(softoneMTRCATEGORY)
+        console.log(softoneMTRGROUP)
+        console.log(softoneMTRSUBGROUP)
+        console.log(category)
+        console.log(group)
+        console.log(subgroup)
+    
+    }   
 }
 

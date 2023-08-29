@@ -147,8 +147,6 @@ export default async function handler(req, res) {
 
 		try {
 			await connectMongo();
-
-
 			const category = await MtrCategory.findOne({ _id: id  });
 			if(category.localized.length == 0) {
 				category.localized.push({
