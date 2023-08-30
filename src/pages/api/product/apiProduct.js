@@ -20,20 +20,7 @@ export const config = {
 
 export default async function handler(req, res) {
     const action = req.body.action;
-    // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
-
-    // const response = await fetch(URL, {
-    //                 method: 'POST',
-    //                 body: JSON.stringify({
-    //                     username: "Service",
-    //                     password: "Service",
-    //                 })
-    //             });
-    // let buffer = await translateData(response)
-    // await connectMongo();
-    // let insert = await SoftoneProduct.insertMany(buffer.result)
-
-    // return res.status(200).json({ success: true, result :   buffer });
+ 
 
     if (action === 'findSoftoneProducts') {
         
@@ -55,12 +42,7 @@ export default async function handler(req, res) {
                 },
               
             },
-            // {
-            //     $unwind: {
-            //         path: "$softoneProduct",
-            //         preserveNullAndEmptyArrays: true
-            //     }
-            // },
+          
             {
                 $lookup: {
                     from: 'mtrcategories',
@@ -91,13 +73,7 @@ export default async function handler(req, res) {
                     as: "mtrgroups"
                 }
             },
-            // {
-            //     $unwind: {
-            //         path: "$mtrgroups",
-            //         preserveNullAndEmptyArrays: true
-            //     }
-            // },
-        
+         
             {
                 $lookup: {
                     from: "markes",
@@ -106,12 +82,7 @@ export default async function handler(req, res) {
                     as: "mrtmark"
                 }
             },
-            // {
-            //     $unwind: {
-            //         path: "$mrtmark",
-            //         preserveNullAndEmptyArrays: true
-            //     }
-            // },
+           
             {
                 $lookup: {
                     from: "submtrgroups",
@@ -120,13 +91,7 @@ export default async function handler(req, res) {
                     as: "mtrsubgroup"
                 }
             },
-            
-            // {
-            //     $unwind: {
-            //         path: "$mtrsubgroup",
-            //         preserveNullAndEmptyArrays: true
-            //     }
-            // },
+      
             {
                 $project: {
                     _id: 1,
@@ -134,12 +99,27 @@ export default async function handler(req, res) {
                     CODE: '$softoneProduct.CODE',
                     CODE1: '$softoneProduct.CODE1',
                     CODE2: '$softoneProduct.CODE2',
+                    INTRASTAT: '$softoneProduct.INTRASTAT',
+
                     VAT: '$softoneProduct.VAT',
                     PRICER: '$softoneProduct.PRICER',
+                    PRICEW: '$softoneProduct.PRICEW',
+                    PRICER01: '$softoneProduct.PRICER01',
+                    PRICER02: '$softoneProduct.PRICER02',
+                    PRICER03: '$softoneProduct.PRICER03',
+                    PRICER04: '$softoneProduct.PRICER04',
+                    PRICER05: '$softoneProduct.PRICER05',
+                    PRICEW01: '$softoneProduct.PRICEW01',
+                    PRICEW02: '$softoneProduct.PRICEW02',
+                    PRICEW03: '$softoneProduct.PRICEW03',
+                    PRICEW04: '$softoneProduct.PRICEW04',
+                    PRICEW05: '$softoneProduct.PRICEW05',
+                    ISACTIVE: '$softoneProduct.ISACTIVE',
+                    
                     UPDDATE: '$softoneProduct.UPDDATE',
                     mrtmark: '$mrtmark.name',
                     mrtmanufact: '$manufacturers.softOne.NAME',
-                    ISACTIVE: 1,
+                    MTRMANFCTR: '$manufacturers.softOne.MTRMANFCTR',
                     name: 1,
                     localized: 1,
                     categoryName: '$mtrcategory.categoryName',
@@ -161,7 +141,44 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, result : fetchProducts, count:count});
 
     }
+    
+    if(action === 'update') {
+        let {data} = req.body;
+        console.log
+        let obj = {
+            username: "Service",
+            password: "Service",
+            MTRL: data.MTRL[0],
+            ISACTIVE: data.ISACTIVE[0],
+            NAME: data.name,
+            CODE: data.CODE[0],
+            CODE1: data.CODE1[0],
+            CODE2: data.CODE2[0],
+            MTRMANFCTR: data.MTRMANFCTR[0],
+            VAT: data.VAT[0],
+            PRICER: data.PRICER[0],
+            PRICEW: data.PRICEW[0],
+            PRICER01: data.PRICER01,
+            PRICER02: data.PRICER02,
+            PRICER03: data.PRICER03,
+            PRICER04: data.PRICER04,
+            PRICER05: data.PRICER05,
+            PRICEW01: data.PRICEW01,
+            PRICEW02: data.PRICEW02,
+            PRICEW03: data.PRICEW03,
+            PRICEW04: data.PRICEW04,
+            PRICEW05: data.PRICEW05,
+        }
+        console.log(obj)
 
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify(obj)
+        });
+        let responseJSON = await response.json();
+        console.log(responseJSON)
+    }
     if(action === "translate") {
 		let data = req.body.data;
 		let {id, fieldName, index} = req.body

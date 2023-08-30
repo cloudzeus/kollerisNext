@@ -99,9 +99,10 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Media'
     }],
-
     //Σελίδα κατασκευαστή
     ventorUrl: { type: String, required: false },
+    updatedFrom: String,
+
 });
 
 

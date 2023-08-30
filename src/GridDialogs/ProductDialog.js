@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-
+import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import axios from 'axios';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -39,28 +39,40 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
- 
+    console.log(gridRowData)
 
 
    
    
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-        console.log(user)
-        const object = {
-            action: "update", 
-            NAME: data.softOne.NAME,
-            MTRMANFCTR: gridRowData.softOne.MTRMANFCTR,
-            id: gridRowData._id, 
+      
+        let obj = {
+            ...data,
+            PRICER01: gridRowData.PRICER01[0],
+            PRICER02: gridRowData.PRICER02[0],
+            PRICER03: gridRowData.PRICER03[0],
+            PRICER04: gridRowData.PRICER04[0],
+            PRICER05: gridRowData.PRICER05[0],
+
+            PRICEW01: gridRowData.PRICEW01[0],
+            PRICEW02: gridRowData.PRICEW02[0],
+            PRICEW03: gridRowData.PRICEW03[0],
+            PRICEW04: gridRowData.PRICEW04[0],
+            PRICEW05: gridRowData.PRICEW05[0],
             updatedFrom: user
         }
+      
 
         try {
-            let resp = await axios.post('/api/product/apiManufacturers', object)
-            if(!resp.data.success) return showError()
-            setSubmitted(true)
-            hideDialog()
-            showSuccess('Η εγγραφή ενημερώθηκε')
+            let resp = await axios.post('/api/product/apiProduct', {
+                action: "update",
+                data: obj
+            })
+            // if(!resp.data.success) return showError()
+            // setSubmitted(true)
+            // hideDialog()
+            // showSuccess('Η εγγραφή ενημερώθηκε')
                
         } catch (e) {
             console.log(e)
@@ -95,7 +107,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Κατασκευαστή"
+                    header= "Τροποποίηση Κατασκευαστή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
@@ -110,6 +122,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    required
                 //    error={errors.NAME}
                />
+                                   <TextAreaInput
+                        autoResize={true}
+                        label={'Περιγραφή'}
+                        name={'description'}
+                        control={control}
+                    />
                    <Input
                    label={'Κωδικός ΕΑΝ'}
                    name={'CODE'}
@@ -117,7 +135,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    required
                 //    error={errors.NAME}
                />
-              
                  
                    <Input
                    label={'Κωδικός εργοστασίου'}
@@ -138,8 +155,44 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    required
                />
                    <Input
-                   label={'Τιμή'}
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ'}
                    name={'PRICER'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
+                   name={'PRICER01'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
+                   name={'PRICER02'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
+                   name={'PRICER03'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
+                   name={'PRICER04'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΛΙΑΝΙΚΗΣ 05'}
+                   name={'PRICER05'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Τιμή ΑΠΟΘΗΚΗΣ'}
+                   name={'PRICEW'}
                    control={control}
                    required
                />
