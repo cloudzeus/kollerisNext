@@ -213,7 +213,7 @@ const TreeSelectComp = ({
         })
 
 
-    }, [data, category, group])
+    }, [data, category, group, setCategories, setGroups, setSubgroups])
 
 
     const handleSubmit = () => {
