@@ -84,9 +84,9 @@ export default function Product() {
     const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-        setData(res.data.result.slice(0, 10));
+        setData(res.data.result);
         console.log(res.data.result)
-        setFilteredData(res.data.result.slice(0, 10));
+        setFilteredData(res.data.result);
         setLoading(false)
     }
 

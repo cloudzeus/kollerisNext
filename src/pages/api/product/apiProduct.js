@@ -9,6 +9,7 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/ca
 
 import { Product } from "../../../../server/models/newProductModel";
 import { ObjectId } from "mongodb";
+import { original } from "@reduxjs/toolkit";
 
 
 export const config = {
@@ -221,30 +222,33 @@ export default async function handler(req, res) {
 
     if(action === 'updateClass') {
      
-    let {category, group, subgroup, } = req.body.object
+    let {category, group, subgroup,  originalSubgroup, originalGroup } = req.body.object
        let softoneMTRCATEGORY = req.body.object.categoryId;
        let softoneMTRGROUP = req.body.object.groupId;
        let softoneMTRSUBGROUP = req.body.object.subgroupId;
 
-       console.log(softoneMTRCATEGORY)
-        console.log(softoneMTRGROUP)
-        console.log(softoneMTRSUBGROUP)
-        console.log(category)
-        console.log(group)
-        console.log(subgroup)
+   
+        console.log(originalGroup)
         
+        console.log(group)
         try {
             await connectMongo();
-            const updateGroup = await SubMtrGroup.findOneAndUpdate(
-                {_id: group},
-                { $pull: { 
-                    subGroups: [group]
-                }}
-            )
-            console.log(updateGroup)
+         
+            //Remove subgroup from originalGroup
+            // const removeSubgroup = await MtrGroup.updateOne(
+            //     {
+            //     _id: findOriginalGroup._id
+            //     }, 
+            //     {
+            //         $pull: {
+            //             subGroups: {
+            //                 _id: originalSubgroup
+            //             }
+            //         }
+            //     })
           
         } catch (e) {
-
+            console.log(e)
         }
     }   
 }

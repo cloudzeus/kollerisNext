@@ -75,6 +75,9 @@ const MtrGroupSchema = new mongoose.Schema({
         },
         ISACTIVE: {
             type: Boolean
+        },
+        MTRCATEGORY: {
+            type: String
         }
     },
     localized: [{
@@ -123,6 +126,9 @@ const MtrSubGroupSchema = new mongoose.Schema({
         },
         name: {
             type: String
+        },
+        MTRGROUP: {
+            type: String,
         }
     },
      localized: [{

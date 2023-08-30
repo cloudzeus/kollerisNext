@@ -41,7 +41,8 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
     }, [gridRowData, reset]);
 
 
-
+    console.log('gridRowData')
+    console.log(gridRowData)
 
 
     const showSuccess = (message) => {
@@ -67,7 +68,7 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
         let object = {
             originalCategory: gridRowData._id,
             originalGroup: gridRowData.mtrgroups[0],
-            originalSubgroup: gridRowData.mtrsubgroup[0],
+            originalSubgroup: gridRowData.mtrsubgroup,
             category: category?.code,
             categoryId: category?.softoneid,
             group: group?.code,
@@ -78,8 +79,7 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
         
 
         let response = axios.post('/api/product/apiProduct', { action: 'updateClass', id: gridRowData._id, object: object })
-        console.log('object')
-        console.log(object)
+       
        
     }
 
@@ -110,9 +110,9 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
                     <p className='text-md  mt-2 font-bold'>Κατηγορία:</p>
                     <p>{gridRowData.categoryName}</p>
                     <p className='text-md  mt-2 font-bold'>Ομάδα:</p>
-                    <p>{gridRowData.mtrgroups[0] ? gridRowData.mtrgroups[0] : '-----------' }</p>
+                    <p>{gridRowData.mtrgroups ? gridRowData.mtrgroups : '-----------' }</p>
                     <p className='text-md  mt-2 font-bold'>Υποομάδα</p>
-                    <p>{gridRowData.mtrsubgroup[0] ? gridRowData.mtrsubgroup : '-----------'}</p>
+                    <p>{gridRowData.mtrsubgroup ? gridRowData.mtrsubgroup : '-----------'}</p>
                     <TreeSelectComp  
                         gridRowData={gridRowData}
                         categories={categories}
