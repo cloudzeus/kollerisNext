@@ -69,10 +69,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 action: "update",
                 data: obj
             })
-            // if(!resp.data.success) return showError()
-            // setSubmitted(true)
-            // hideDialog()
-            // showSuccess('Η εγγραφή ενημερώθηκε')
+            if(!resp.data.success) return showError()
+            setSubmitted(true)
+            hideDialog()
+            showSuccess('Η εγγραφή ενημερώθηκε')
                
         } catch (e) {
             console.log(e)

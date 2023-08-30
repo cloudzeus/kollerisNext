@@ -121,6 +121,7 @@ export default async function handler(req, res) {
                     mrtmanufact: '$manufacturers.softOne.NAME',
                     MTRMANFCTR: '$manufacturers.softOne.MTRMANFCTR',
                     name: 1,
+                    description: 1,
                     localized: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
@@ -146,8 +147,7 @@ export default async function handler(req, res) {
         let {data} = req.body;
         console.log
         let obj = {
-            username: "Service",
-            password: "Service",
+           
             MTRL: data.MTRL[0],
             ISACTIVE: data.ISACTIVE[0],
             NAME: data.name,
@@ -174,10 +174,37 @@ export default async function handler(req, res) {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         const response = await fetch(URL, {
             method: 'POST',
-            body: JSON.stringify(obj)
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+                ...obj
+            })
         });
         let responseJSON = await response.json();
-        console.log(responseJSON)
+        // if(responseJSON.error) return res.status(400).json({ success: false, result: null });
+
+        try {
+            await connectMongo();
+
+          
+
+            let result = await Product.updateOne({
+                description: data.description
+            })
+
+
+            let result2 = await SoftoneProduct.updateOne({
+                ...obj
+            })
+
+            console.log('result')
+            console.log(result)
+            return res.status(200).json({ success: true, result: result, result2: result2 });
+
+
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
     }
     if(action === "translate") {
 		let data = req.body.data;
