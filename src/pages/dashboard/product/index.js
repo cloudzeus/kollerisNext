@@ -28,11 +28,12 @@ import ProductActions from '@/components/grid/ProductActions';
 import ProductCompletion from '@/components/grid/ProductCompletion';
 import { EditDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
+import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
 
 
 const columns = [
     { field: 'mrtmark', header: 'Μάρκα', style: null },
-    { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
+    // { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
 ];
 
 const dialogStyle = {
@@ -289,6 +290,7 @@ export default function Product() {
                 }
                 )}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }}  body={PriceTemplate}></Column>
 
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
@@ -324,8 +326,20 @@ const Upddate = ({UPDDATE}) => {
     )
 }
 
+
+const PriceTemplate =  ({PRICER}) => {
+    return (
+        <div>
+            {/* <div className='bg-green w'>
+                <i className="text-primary-700 pi pi-euro text-xs mr-1"></i>
+            </div>
+            <p className='text-black font-semibold	'>{`${PRICER[0]},00 $`}</p> */}
+            <GridPriceTemplate PRICER={PRICER[0]} />
+        </div>
+    )
+}
+
 const ExpansionDetails = ({ data }) => {
-    console.log(data)
     return (
         < DisabledDisplay  >
             <div className="disabled-card">
