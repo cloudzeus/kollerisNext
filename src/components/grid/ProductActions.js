@@ -1,6 +1,7 @@
 import React, {useRef} from 'react'
 import { OverlayPanel } from 'primereact/overlaypanel'
 import { Button } from 'primereact/button'
+import styled from 'styled-components'
 const ProductActions = ({rowData, onEdit, onEditClass}) => {
 
     const op = useRef(null)
@@ -20,7 +21,7 @@ const ProductActions = ({rowData, onEdit, onEditClass}) => {
           </div>
                 <OverlayPanel className='w-20rem product-overlay	 ' ref={op} showCloseIcon>
                     <Button size="small" text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1 ">
-                        <div className='mr-2 w-1rem	h-1rem bg-yellow-500 border-circle flex  align-items-center justify-content-center'>
+                        <div className='mr-2 w-2rem	h-2rem bg-yellow-500 border-circle flex  align-items-center justify-content-center'>
                         <i className="text-white pi pi-shopping-cart text-sm"></i>
                         </div>
                          Προσθήκη στο καλάθι
@@ -51,5 +52,7 @@ const ProductActions = ({rowData, onEdit, onEditClass}) => {
     </div>
   )
 }
+
+
 
 export default ProductActions

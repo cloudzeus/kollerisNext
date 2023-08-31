@@ -102,6 +102,7 @@ export default async function handler(req, res) {
                     CODE: '$softoneProduct.CODE',
                     CODE1: '$softoneProduct.CODE1',
                     CODE2: '$softoneProduct.CODE2',
+                    UPDDATE: '$softoneProduct.UPDDATE',
                     INTRASTAT: '$softoneProduct.INTRASTAT',  
                     VAT: '$softoneProduct.VAT',
                     PRICER: '$softoneProduct.PRICER',

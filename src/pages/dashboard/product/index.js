@@ -84,6 +84,7 @@ export default function Product() {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
+        console.log(data)
         setFilteredData(res.data.result);
         setLoading(false)
     }
@@ -217,7 +218,6 @@ export default function Product() {
     }
 
     const rowExpansionTemplate = (data) => {
-        console.log(data)
         return (
             <div className="card p-20">
                 <TabView>
@@ -281,7 +281,7 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                {/* <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column> */}
+                <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate}  style={{ width: '80px', textAlign: 'center' }} bodyStyle={{textAlign: 'center'}}   sortable></Column>
                 {visibleColumns.map((col, index) => {
                     return (
                         <Column key={index} field={col.field} header={col.header} style={col.style} />
@@ -312,7 +312,17 @@ export default function Product() {
 }
 
 
+const Upddate = ({UPDDATE}) => {
+    console.log(UPDDATE)
+    return (
+        <div className='flex align-items-center'>
+           
+            <i className="text-primary-700 pi pi-calendar text-sm mr-1"></i>
 
+            <p className='text-600'>{UPDDATE[0].split(' ')[0]}</p>
+        </div>
+    )
+}
 
 const ExpansionDetails = ({ data }) => {
     console.log(data)
