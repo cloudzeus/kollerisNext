@@ -7,7 +7,7 @@ import { Sidebar } from 'primereact/sidebar'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button'
-import { set } from 'mongoose'
+import { Toolbar } from 'primereact/toolbar';
 
 const ProductHeader = ({ searchTerm, onSearch, selectedProducts }) => {
 
@@ -46,7 +46,6 @@ const ProductHeader = ({ searchTerm, onSearch, selectedProducts }) => {
                     <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
                 </span>
                 <Button onClick={addAlltoBasket} icon="pi pi-shopping-cart" label="Προσθήκη Όλων" severity="warning" />
-
             </div>
             <div className="middle-header">
 
@@ -88,9 +87,7 @@ const Side = ({ visible, setVisible, basket, deleteFromBasket}) => {
     }
 
     const removeProduct = (props) => {
-        console.log('props')
-        console.log(props)
-        console.log(props._id)
+        
         return (
             <RemoveProductTemplate 
                 deleteFromBasket={deleteFromBasket} 
@@ -122,9 +119,9 @@ const Side = ({ visible, setVisible, basket, deleteFromBasket}) => {
 }
 
 
+
 const RemoveProductTemplate = ({id, deleteFromBasket}) => {
-    console.log('this is the id')
-    console.log(id)
+   
     return (
         <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={() => deleteFromBasket(id)} ></Button>
     )

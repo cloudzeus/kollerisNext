@@ -19,8 +19,8 @@ import { EditDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
 import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
 import { Badge } from 'primereact/badge';
-import ProductHeader from '@/components/grid/ProductHeader';
-
+import ProductHeader from '@/components/grid/Product/ProductHeader';
+import ProductToolbar from '@/components/grid/Product/ProductToolbar';
 
 
 const columns = [
@@ -43,6 +43,7 @@ export default function Product() {
     const [data, setData] = useState([])
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
+    const [classMultiDialog, setClassMultiDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
 
@@ -206,18 +207,12 @@ export default function Product() {
         setClassDialog(false)
     };
     const onSelection = (e) => {
-        console.log('onSelection')
-        console.log(e.value)
-        // const existingProduct = selectedProducts.filter(item => item.MTRL === e.value.MTRL);
-        // // If the product doesn't exist, add it
-        // if (existingProduct.length === 0) {
-        //   setSelectedProducts([...selectedProducts, e.value]);
-        // }
         setSelectedProducts(e.value)
     }
 
     return (
         <AdminLayout >
+            <ProductToolbar  selectedProducts={selectedProducts}  />
             <DataTable
                 className='product-datatable'
                 selectionMode={'checkbox'}
@@ -271,6 +266,7 @@ export default function Product() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
+          
         </AdminLayout >
     );
 }
