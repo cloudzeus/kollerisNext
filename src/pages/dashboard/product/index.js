@@ -1,34 +1,26 @@
 import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
-import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ActionDiv } from '@/componentsStyles/grid';
-import DeletePopup from '@/components/deletePopup';
-import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import fuzzy from 'fuzzy';
 import { MultiSelect } from 'primereact/multiselect';
 import Fuse from 'fuse.js';
-import { ToggleButton } from 'primereact/togglebutton';
-import { ColumnDirective } from '@syncfusion/ej2-react-spreadsheet';
-import { CartDiv } from '@/componentsStyles/grid';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import TranslateField from '@/components/grid/GridTranslate';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import ProductActions from '@/components/grid/ProductActions';
-import ProductCompletion from '@/components/grid/ProductCompletion';
+import ProductActions from '@/components/grid/Product/ProductActions';
 import { EditDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
 import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
+import { Badge } from 'primereact/badge';
+import ProductHeader from '@/components/grid/ProductHeader';
+
 
 
 const columns = [
@@ -61,7 +53,7 @@ export default function Product() {
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-   
+
     const [visibleColumns, setVisibleColumns] = useState(columns);
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -69,8 +61,8 @@ export default function Product() {
         if (submitted) handleFetch()
     }, [submitted])
 
-
-
+    console.log('selectedProducts')
+    console.log(selectedProducts)
 
     const onColumnToggle = (event) => {
         let selectedColumns = event.value;
@@ -85,48 +77,24 @@ export default function Product() {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
-        console.log(data)
         setFilteredData(res.data.result);
         setLoading(false)
     }
 
 
     useEffect(() => {
-        // data.map(item => {
-        //     let list = Object.values(item)
-        //     console.log(value)
-        //     var results = fuzzy.filter(searchTerm, list)
-
-        // })
-
-
-        // function searchByName(query, field ) {
-
-
-        //     const results = fuzzy.filter(query, data, {
-        //       extract: el => el[field]
-        //     });
-        //     return results.map(el => el.original);
-        //   }
-
-        //   const filteredData = searchByName(searchTerm, "name");
-        //   const filteredData2 = searchByName(searchTerm, "CODE");
-        //   console.log('filteredData')
-        //   console.log(filteredData2)
-        // setFilteredData(filteredData);
+       
 
         const options = {
             includeScore: true, // To see how well each result matched
-            threshold: 0.1,
+            threshold: 0.5,
             keys: ['name', 'MTRL', 'CODE', 'CODE1', 'mrtmark', 'categoryName', 'mtrgroups']
         };
         const fuse = new Fuse(data, options);
-
         function fuzzySearch(query) {
             return fuse.search(query).map(result => result.item);
         }
         const results = fuzzySearch(searchTerm);
-        console.log(results);
         if (results.length > 0) {
             setFilteredData(results);
         } else {
@@ -142,7 +110,7 @@ export default function Product() {
     }, [])
 
     const editProduct = async (product) => {
-    
+
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -153,40 +121,32 @@ export default function Product() {
         dispatch(setGridRowData(product))
     }
 
-
+   
     const allowExpansion = (rowData) => {
         return rowData
 
     };
+
+    const onSearch = (e) => onGlobalFilterChange(e);
 
 
 
     const renderHeader = () => {
 
         return (
-            <div>
-
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText type="search" value={searchTerm} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
-                </span>
-                <MultiSelect 
-                    value={visibleColumns} 
-                    options={columns} 
-                    optionLabel="header" 
-                    onChange={onColumnToggle} 
-                    className="w-full sm:w-20rem ml-2" display="chip" />
-               
-
-            </div>
+            <ProductHeader 
+                searchTerm={searchTerm} 
+                onColumnToggle={onColumnToggle}
+                onSearch={onSearch}
+                selectedProducts={selectedProducts}
+                />
+          
         );
     };
 
 
 
     const header = renderHeader();
-
-
 
     const onGlobalFilterChange = (event) => {
         const value = event.target.value;
@@ -201,20 +161,14 @@ export default function Product() {
 
 
 
-    const productCompletion = () => {
-        return (
-           <ProductCompletion />
-        )
-    }
-
 
     const AddToCartTemplate = (rowData) => {
         return (
-            <ProductActions 
-                rowData={rowData} 
-                onEdit={editProduct} 
+            <ProductActions
+                rowData={rowData}
+                onEdit={editProduct}
                 onEditClass={editClass}
-                />
+            />
         )
     }
 
@@ -251,7 +205,16 @@ export default function Product() {
         setEditDialog(false);
         setClassDialog(false)
     };
-    
+    const onSelection = (e) => {
+        console.log('onSelection')
+        console.log(e.value)
+        // const existingProduct = selectedProducts.filter(item => item.MTRL === e.value.MTRL);
+        // // If the product doesn't exist, add it
+        // if (existingProduct.length === 0) {
+        //   setSelectedProducts([...selectedProducts, e.value]);
+        // }
+        setSelectedProducts(e.value)
+    }
 
     return (
         <AdminLayout >
@@ -259,10 +222,9 @@ export default function Product() {
                 className='product-datatable'
                 selectionMode={'checkbox'}
                 selection={selectedProducts}
-                onSelectionChange={(e) => setSelectedProducts(e.value)}
+                onSelectionChange={onSelection}
                 paginator
                 rows={50}
-                // rowsPerPageOptions={[50, 100, 200, 500]}
                 rowsPerPageOptions={[10, 20, 50, 100, 200]}
                 value={filteredData}
                 header={header}
@@ -282,7 +244,7 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate}  style={{ width: '80px', textAlign: 'center' }} bodyStyle={{textAlign: 'center'}}   sortable></Column>
+                <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column>
                 {visibleColumns.map((col, index) => {
                     return (
                         <Column key={index} field={col.field} header={col.header} style={col.style} />
@@ -290,7 +252,7 @@ export default function Product() {
                 }
                 )}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }}  body={PriceTemplate}></Column>
+                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
 
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
@@ -303,7 +265,7 @@ export default function Product() {
                 setSubmitted={setSubmitted}
 
             />
-            <ClassificationDialog 
+            <ClassificationDialog
                 dialog={classDialog}
                 setDialog={setClassDialog}
                 hideDialog={hideDialog}
@@ -314,11 +276,10 @@ export default function Product() {
 }
 
 
-const Upddate = ({UPDDATE}) => {
-    console.log(UPDDATE)
+const Upddate = ({ UPDDATE }) => {
     return (
         <div className='flex align-items-center'>
-           
+
             <i className="text-primary-700 pi pi-calendar text-sm mr-1"></i>
 
             <p className='text-600'>{UPDDATE[0].split(' ')[0]}</p>
@@ -327,13 +288,9 @@ const Upddate = ({UPDDATE}) => {
 }
 
 
-const PriceTemplate =  ({PRICER}) => {
+const PriceTemplate = ({ PRICER }) => {
     return (
         <div>
-            {/* <div className='bg-green w'>
-                <i className="text-primary-700 pi pi-euro text-xs mr-1"></i>
-            </div>
-            <p className='text-black font-semibold	'>{`${PRICER[0]},00 $`}</p> */}
             <GridPriceTemplate PRICER={PRICER[0]} />
         </div>
     )
