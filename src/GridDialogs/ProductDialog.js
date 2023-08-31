@@ -46,7 +46,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
    
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-      
+        
         let obj = {
             ...data,
             PRICER01: gridRowData.PRICER01[0],

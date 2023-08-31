@@ -103,6 +103,10 @@ const productSchema = new mongoose.Schema({
     ventorUrl: { type: String, required: false },
     updatedFrom: String,
 
+},
+{
+
+    timestamps: true,
 });
 
 

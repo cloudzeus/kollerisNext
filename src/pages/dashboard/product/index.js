@@ -65,7 +65,6 @@ export default function Product() {
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
     }, [submitted])
 
@@ -85,7 +84,6 @@ export default function Product() {
         setLoading(true)
         let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
         setData(res.data.result);
-        console.log(res.data.result)
         setFilteredData(res.data.result);
         setLoading(false)
     }
@@ -256,9 +254,6 @@ export default function Product() {
 
     return (
         <AdminLayout >
-            {/* <Toast ref={toast} /> */}
-
-            {/* <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
             <DataTable
                 className='product-datatable'
                 selectionMode={'checkbox'}
@@ -286,13 +281,15 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
+                {/* <Column field="Ποσοστό Ολοκλήρωσης" body={productCompletion} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column> */}
                 {visibleColumns.map((col, index) => {
                     return (
                         <Column key={index} field={col.field} header={col.header} style={col.style} />
                     )
                 }
                 )}
+                <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
             </DataTable>
@@ -308,6 +305,7 @@ export default function Product() {
                 dialog={classDialog}
                 setDialog={setClassDialog}
                 hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
             />
         </AdminLayout >
     );
@@ -373,7 +371,19 @@ const ExpansionDetails = ({ data }) => {
 
 
 
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
+    console.log(updatedFrom)
+    return (
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
 
+    )
+}
 
 
 

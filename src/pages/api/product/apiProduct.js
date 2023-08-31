@@ -96,11 +96,13 @@ export default async function handler(req, res) {
                 $project: {
                     _id: 1,
                     MTRL: '$softoneProduct.MTRL',
+                    MTRGROUP: '$softoneProduct.MTRGROUP',
+                    MTRCATEGORY: '$softoneProduct.MTRCATEGORY',
+                    CCCSUBGOUP2: '$softoneProduct.CCCSUBGOUP2',
                     CODE: '$softoneProduct.CODE',
                     CODE1: '$softoneProduct.CODE1',
                     CODE2: '$softoneProduct.CODE2',
-                    INTRASTAT: '$softoneProduct.INTRASTAT',
-
+                    INTRASTAT: '$softoneProduct.INTRASTAT',  
                     VAT: '$softoneProduct.VAT',
                     PRICER: '$softoneProduct.PRICER',
                     PRICEW: '$softoneProduct.PRICEW',
@@ -123,6 +125,8 @@ export default async function handler(req, res) {
                     name: 1,
                     description: 1,
                     localized: 1,
+                    updatedFrom: 1,
+                    updatedAt: 1,
                     categoryName: '$mtrcategory.categoryName',
                     mtrgroups: "$mtrgroups.groupName",
                     mtrsubgroup: "$mtrsubgroup.subGroupName",
@@ -145,7 +149,7 @@ export default async function handler(req, res) {
     
     if(action === 'update') {
         let {data} = req.body;
-        console.log
+        console.log(data.updatedFrom)
         let obj = {
            
             MTRL: data.MTRL[0],
@@ -189,7 +193,8 @@ export default async function handler(req, res) {
           
 
             let result = await Product.updateOne({
-                description: data.description
+                description: data.description,
+                updatedFrom: data.updatedFrom
             })
 
 
@@ -265,31 +270,30 @@ export default async function handler(req, res) {
     }
 
     if(action === 'updateClass') {
-     
-    let {category, group, subgroup,  originalSubgroup, originalGroup } = req.body.object
-       let softoneMTRCATEGORY = req.body.object.categoryId;
-       let softoneMTRGROUP = req.body.object.groupId;
-       let softoneMTRSUBGROUP = req.body.object.subgroupId;
+        let {data} = req.body;
+        // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
+        //   const response = await fetch(URL, {
+        //             method: 'POST',
+        //             body: JSON.stringify({
+        //                 username: "Service",
+        //                 password: "Service",
+        //                 // ...data,
+        //                 CCCSUBGROUP3: ""
+        //             })
+        //         });
+        // let responseJSON = await response.json();
+        // if(responseJSON.success == 'false') return res.status(400).json({ success: false, result: null, error: 'Softone Update Error' });
 
-   
-        console.log(originalGroup)
-        
-        console.log(group)
+
+        console.log(data)
         try {
-            await connectMongo();
          
-            //Remove subgroup from originalGroup
-            // const removeSubgroup = await MtrGroup.updateOne(
-            //     {
-            //     _id: findOriginalGroup._id
-            //     }, 
-            //     {
-            //         $pull: {
-            //             subGroups: {
-            //                 _id: originalSubgroup
-            //             }
-            //         }
-            //     })
+            await connectMongo();
+            let result = await SoftoneProduct.updateOne({
+                ...data
+            })
+            console.log(result)
+          
           
         } catch (e) {
             console.log(e)

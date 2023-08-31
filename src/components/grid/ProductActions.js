@@ -5,7 +5,7 @@ const ProductActions = ({rowData, onEdit, onEditClass}) => {
 
     const op = useRef(null)
   return (
-    <div>
+    <div className="shadow-5">
          {/* <Button 
           icon="pi pi-ellipsis-h text-sm"
           rounded 
@@ -16,11 +16,11 @@ const ProductActions = ({rowData, onEdit, onEditClass}) => {
           onClick={(e) => op.current.toggle(e)} 
           style={{width: '20px', height:'20px'}}/> */}
           <div  onClick={(e) => op.current.toggle(e)} className='flex align-items-center justify-content-center w-full h-full cursor-pointer'>
-          <i className=" pi pi-ellipsis-h text-sm text-surface-900"></i>
+            <i className=" pi pi-ellipsis-h text-sm text-surface-900"></i>
           </div>
-                <OverlayPanel className='w-20rem' ref={op} showCloseIcon>
-                    <Button text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
-                        <div className='mr-2 w-2rem	h-2rem bg-yellow-500 border-circle flex  align-items-center justify-content-center'>
+                <OverlayPanel className='w-20rem product-overlay	 ' ref={op} showCloseIcon>
+                    <Button size="small" text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1 ">
+                        <div className='mr-2 w-1rem	h-1rem bg-yellow-500 border-circle flex  align-items-center justify-content-center'>
                         <i className="text-white pi pi-shopping-cart text-sm"></i>
                         </div>
                          Προσθήκη στο καλάθι

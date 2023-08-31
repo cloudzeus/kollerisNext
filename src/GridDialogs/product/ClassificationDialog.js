@@ -37,12 +37,15 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
 
 
     useEffect(() => {
+        setCategories(null)
+        setGroups(null)
+        setSubgroups(null)
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
 
 
-    console.log('gridRowData')
-    console.log(gridRowData)
+    // console.log('gridRowData')
+    // console.log(gridRowData)
 
 
     const showSuccess = (message) => {
@@ -54,32 +57,25 @@ const ClassificationDialog = ({ dialog, hideDialog, onEditClass }) => {
 
 
     const handleClose = () => {
-        setCategory(null)
-        setGroup(null)
-        setSubgroup(null)
+        console.log('handleClose')
         hideDialog()
     }
 
     const onSubmit = async (data) => {
-   
-        console.log('submit')
-        if(category === null || group === null || subgroup === null ) return;
-
-        let object = {
-            originalCategory: gridRowData._id,
-            originalGroup: gridRowData.mtrgroups[0],
-            originalSubgroup: gridRowData.mtrsubgroup,
-            category: category?.code,
-            categoryId: category?.softoneid,
-            group: group?.code,
-            groupId: group?.groupId,
-            subgroup: subgroup?.code,
-            subgroupId: subgroup?.subgroupId
-        }
-        
-
-        let response = axios.post('/api/product/apiProduct', { action: 'updateClass', id: gridRowData._id, object: object })
        
+        if(category === null || group === null || subgroup === null ) return;
+            let object = {
+                MTRL: gridRowData.MTRL[0],
+                MTRCATEGORY: category.softoneid,
+                MTRGROUP: group.groupId,
+                CCCSUBGROUP2: subgroup.subgroupId
+
+            }
+        let response = axios.post('/api/product/apiProduct', { action: 'updateClass', id: gridRowData._id, data: object })
+        if(!response.success) return showError()
+        setSubmitted(true)
+        hideDialog()
+        showSuccess('Επιτυχής Ενημέρωση')
        
     }
 
@@ -239,20 +235,7 @@ const TreeSelectComp = ({
     return (
         <div className="mt-4 mb-4">
 
-            {/* <TreeSelect 
-            // onNodeExpand={onNodeExpand}
-            // onNodeSelect={onNodeSelect}
-                value={selectedNodeKey}
-                // valueTemplate={ template }
-                onChange={onChange } 
-                options={nodes2}
-                selectionMode="multiple" 
-                className="w-full" 
-                metaKeySelection={true}
-                placeholder="Select Item">
-              
-                
-            </TreeSelect> */}
+            
             <h2 className='text-sm mb-2 text-700'>Eπιλογή Νέου:</h2>
           
             <div className="card flex justify-content-center  mb-3">
