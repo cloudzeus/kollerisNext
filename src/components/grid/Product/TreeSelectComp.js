@@ -3,10 +3,9 @@ import { useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import { Button } from 'primereact/button';
-import { ProgressSpinner } from 'primereact/progressspinner';
+import { Toast } from 'primereact/toast';
 
-const TreeSelectComp = ({ gridData }) => {
-    const [show, setShow] = useState(false)
+const TreeSelectComp = ({ gridData,  setSubmitted }) => {
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState(null);
 
@@ -22,6 +21,7 @@ const TreeSelectComp = ({ gridData }) => {
 
     return (
         <div>
+             <Toast ref={toast} />
             <TreeSelectDropDown
                 gridRowData={gridRowData}
                 categories={categories}
@@ -37,6 +37,7 @@ const TreeSelectComp = ({ gridData }) => {
                 subgroup={subgroup}
                 setSubgroup={setSubgroup}
                 gridData={gridData}
+                setSubmitted={ setSubmitted}
             />
         </div>
     )
@@ -44,6 +45,7 @@ const TreeSelectComp = ({ gridData }) => {
 
 const TreeSelectDropDown = ({
     gridData,
+    setSubmitted,
     categories,
     groups,
     subgroups,
@@ -58,10 +60,19 @@ const TreeSelectDropDown = ({
     subgroup }) => {
 
     const [data, setData] = useState(null);
+    const toast = useRef(null);
 
+    const showSuccess = (MTRL) => {
+        toast.current.show({severity:'success', detail:`Επιτυχής Ενημέρωση MTRL : ${MTRL}`, life: 3000});
+    }
 
+    const showError = (MTRL) => {
+        toast.current.show({severity:'error', detail:`Aποτυχία Ενημέρωσης MTRL : ${MTRL}`, life: 3000});
+    }
     const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiCategories', { action: 'findAll', gridData: gridData })
+
+        //FETCH CATEGORIES AND BUILD SUBGROUPS AND MTRGROUPS
+        let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
         console.log('result find categories')
         console.log(res.data.result)
         setData(res.data.result)
@@ -80,7 +91,7 @@ const TreeSelectDropDown = ({
         data.map((item) => {
             categories.push({
                 name: item.categoryName,
-                softoneid: item.softOne.MTRCATEGORY,
+                categoryId: item.softOne.MTRCATEGORY,
                 code: item._id
 
             })
@@ -123,7 +134,6 @@ const TreeSelectDropDown = ({
 
 
 
-
     const chooseCategory = (e) => {
         console.log(e)
         setCategory(e.value)
@@ -138,21 +148,34 @@ const TreeSelectDropDown = ({
     }
 
     const onSubmit = async () => {
+        console.log('onSubmit')
+        let res = await axios.post('/api/product/apiProduct', { 
+            action: 'updateClass', 
+            gridData: gridData, 
+            categoryid: category?.categoryId, 
+            groupid: group?.groupId, 
+            subgroupid:subgroup?.subgroupId })
 
-        let res = await axios.post('/api/product/apiProduct', { action: 'updateClass', gridData: gridData })
+            if(!res.data.success) {
+                res.data.result.map((item) => {
+                    showError(item.MTRLID)
+                })
+            }
+            res.data.result.map((item) => {
+                showSuccess(item.MTRLID)
+                setSubmitted(true)
 
+            })
     }
 
+   
     const disabledCondition = !category && !group
 
     return (
         <div className="mb-4">
-
-
+           <Toast ref={toast} />
             <h2 className='text-sm mb-2 text-700'>Αλλαγή Κατηγοριοποίησης:</h2>
-            {!categories ? (
-                <ProgressSpinner />
-            ) : (
+          
                 <div >
                     <div className="card flex justify-content-center  mb-3">
                         <Dropdown value={category} onChange={chooseCategory} options={categories} optionLabel="name"
@@ -175,7 +198,6 @@ const TreeSelectDropDown = ({
                     ) : null}
                     <Button disabled={disabledCondition} label="Αποστολή" icon="pi pi-chevron-right" className="  w-full p-mr-2" onClick={onSubmit} />
                 </div>
-            )}
 
 
         </div>

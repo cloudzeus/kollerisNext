@@ -62,8 +62,7 @@ export default function Product() {
         if (submitted) handleFetch()
     }, [submitted])
 
-    console.log('selectedProducts')
-    console.log(selectedProducts)
+    
 
     const onColumnToggle = (event) => {
         let selectedColumns = event.value;
@@ -212,7 +211,10 @@ export default function Product() {
 
     return (
         <AdminLayout >
-            <ProductToolbar  selectedProducts={selectedProducts}  />
+            <ProductToolbar 
+                setSubmitted={setSubmitted}  
+                selectedProducts={selectedProducts} 
+                setSelectedProducts={setSelectedProducts} />
             <DataTable
                 className='product-datatable'
                 selectionMode={'checkbox'}
@@ -239,6 +241,7 @@ export default function Product() {
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
                 <Column field="mtrgroups" header="Ομάδα" sortable></Column>
+                <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>
                 <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column>
                 {visibleColumns.map((col, index) => {
                     return (

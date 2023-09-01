@@ -14,14 +14,12 @@ import MultiImpa from './MultiImpa';
 import { Dropdown } from 'primereact/dropdown';
 import ToolbarActions from './ToolbarActions';
 
-const ProductToolbar = ({ selectedProducts }) => {
+const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
 
     const startContent = () => {
-        return <MenuComp selectedProducts={selectedProducts} />
+        return <MenuComp selectedProducts={selectedProducts}  setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted}/>
     }
-
-
 
     return (
         <div>
@@ -34,27 +32,32 @@ const ProductToolbar = ({ selectedProducts }) => {
 
 
 
-const MenuComp = ({ selectedProducts }) => {
+const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
     const [visible, setVisible] = useState(false)
     const [products, setProducts] = useState(null)
+
+
     const onMultipleActions = () => {
         //When you pres the button: "επεξεργασία πολλών":
-        setProducts(selectedProducts)
         setVisible(true)
     }
 
-    const removeProducts = (id) => {
-
-        let newArray = basket.filter((item) => item._id !== id)
-        console.log(newArray)
-        setBasket(newArray)
+    const removeProducts = (props) => {
+        console.log(props)
+        return (
+            <RemoveProductTemplate id={props._id}/>
+        )
     }
 
-    const RemoveProductTemplate = ({ id, deleteFromBasket }) => {
+    const RemoveProductTemplate = ({id}) => {
 
+        const remove = () => {
+            let newArray = selectedProducts.filter((product) => product._id !== id)
+            setSelectedProducts(newArray)
+        }
         return (
-            <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={() => deleteFromBasket(id)} ></Button>
+            <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
         )
     }
 
@@ -70,18 +73,17 @@ const MenuComp = ({ selectedProducts }) => {
         <>
 
             <Button icon="pi pi-align-right" label="Επεξεργασία όλων " className="mr-2" onClick={onMultipleActions} aria-controls="popup_menu_right" aria-haspopup />
-            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className=" md:w-3	 lg:w-3	">
+            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-3	 lg:w-3	">
                 <div className='flex align-items-center mb-2 mt-2'>
                     <h2>Επεξεργασία:</h2>
                 </div>
-
                 <div className='box'>
-                    <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={products} footer={footer}  >
+                    <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
                         <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
-                        <Column style={{ width: '30px' }} body={RemoveProductTemplate} ></Column>
+                        <Column style={{ width: '30px' }} body={removeProducts} ></Column>
                     </DataTable>
                 </div>
-                <ToolbarActions gridData={selectedProducts} />
+                <ToolbarActions gridData={selectedProducts} setSubmitted={setSubmitted} />
               
 
             </Sidebar>

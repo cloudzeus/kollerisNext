@@ -1,7 +1,7 @@
 
 
 import axios from "axios";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
@@ -271,53 +271,80 @@ export default async function handler(req, res) {
     }
 
     if(action === 'updateClass') {
-        let {data, gridData} = req.body;
+        let {categoryid, groupid, subgroupid, gridData} = req.body;
 
         //All products that will change classes
         //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
-     
-
-        console.log(data)
-
-        // async function updateSoftone(item) {
-        //     console.log(item.MTRL)
-        //     console.log(item.name)
-        //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
-        //     const response = await fetch(URL, {
-        //               method: 'POST',
-        //               body: JSON.stringify({
-        //                   username: "Service",
-        //                   password: "Service",
-        //                   MTRGROUP: item.MTRGROUP,
-        //                   MTRCATEGORY: item.MTRCATEGORY,
-        //                   CCCSUBGOUP2: item.CCCSUBGOUP2,
-        //                   CCCSUBGROUP3: ""
-        //               })
-        //           });
-        //   let responseJSON = await response.json();
-        //   console.log(responseJSON)
-        //   if(responseJSON.success == 'false') return res.status(400).json({ success: false, result: null, error: 'Softone Update Error' });
-        // }
-
-
-        // gridData && gridData.map((item) => {
-        //     updateSoftone(item);
-        // })
-       
         
-      
-        // try {
-         
-        //     await connectMongo();
-        //     let result = await SoftoneProduct.updateOne({
-        //         ...data
-        //     })
-        //     console.log(result)
-          
-          
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        //MTRL = ID -> TO FIND THE PRODUCT IN THE DATABASE AND UPDATE THEM
+        let OBJ = {
+            MTRGROUP:  groupid,
+            MTRCATEGORY: categoryid,
+            CCCSUBGOUP2: subgroupid,
+            CCCSUBGROUP3: ""
+        }
+
+        await connectMongo()
+
+        async function updateSoftone(item) {
+            console.log(item.MTRL)
+            console.log(item.name)
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
+            const response = await fetch(URL, {
+                      method: 'POST',
+                      body: JSON.stringify({
+                            username: "Service",
+                            password: "Service",
+                            MTRL: item.MTRL[0],
+                          ...softoneOBJ
+                      })
+                  });
+          let responseJSON = await response.json();
+       
+            if(responseJSON.success) {
+                return ({MTRLID: item.MTRL[0], updated: true})
+            } else {
+                return ({MTRLID: item.MTRL[0], updated: false})
+            }
+        }
+
+        async function updateMongo(item) {
+                let MTRLID = item.MTRL[0];
+                let result = await SoftoneProduct.updateOne({
+                   MTRL: MTRLID
+                }, {
+                   ...OBJ
+                })
+              
+                if(result.modifiedCount > 0) {
+                    return {MTRLID: MTRLID, updated: true}
+                }
+                if(result.modifiedCount < 1) {
+                    return {MTRLID: MTRLID, updated: false}
+                }
+
+        }
+     
+        try {
+            let results = [];
+            if(gridData) {
+                for(let item of gridData) {
+                    // let sonftoneresult = await updateSoftone(item)
+                    // results.push(sonftoneresult)
+    
+                    let mongoresult = await updateMongo(item)
+                    results.push(mongoresult)
+    
+                
+                  
+                }
+                return res.status(200).json({ success: true, result: results});
+            }
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+
+
     }   
 }
 

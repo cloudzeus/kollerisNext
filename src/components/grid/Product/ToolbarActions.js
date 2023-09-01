@@ -23,7 +23,7 @@ const MenuOptions = ({ setId, setClickMenu }) => {
 }
 
 
-const ToolbarActions = ({gridData}) => {
+const ToolbarActions = ({gridData, setSubmitted}) => {
     const [clickMenu, setClickMenu] = useState(false)
     const [id, setId] = useState(null);
     return (
@@ -37,7 +37,7 @@ const ToolbarActions = ({gridData}) => {
                     : null}
             </div>
             <div>
-                {id === 1 && !clickMenu ? (<TreeSelectComp gridData={gridData} />) : null}
+                {id === 1 && !clickMenu ? (<TreeSelectComp gridData={gridData}  setSubmitted={setSubmitted} />) : null}
                 {id ===2 && !clickMenu  ? (<p>test 2</p>) : null}
                 {id ===3 && !clickMenu  ? (<p>test 3</p>) : null}
             </div>
