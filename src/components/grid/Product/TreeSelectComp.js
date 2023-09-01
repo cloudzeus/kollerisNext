@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import { Button } from 'primereact/button';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
-const TreeSelectComp = () => {
-    const [show, setShow]   = useState(false)
+const TreeSelectComp = ({ gridData }) => {
+    const [show, setShow] = useState(false)
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState(null);
 
@@ -21,29 +22,28 @@ const TreeSelectComp = () => {
 
     return (
         <div>
-            <Button label="Αλλαγή Κατηγοριοποίησης" icon="pi pi-arrow-down-right" className="surface-ground text-primary w-full p-mr-2 mt-3" onClick={() => setShow(prev => !prev)} />
-            {show ? (
-                 <TreeSelectDropDown
-                 gridRowData={gridRowData}
-                 categories={categories}
-                 setCategories={setCategories}
-                 category={category}
-                 setCategory={setCategory}
-                 groups={groups}
-                 setGroups={setGroups}
-                 group={group}
-                 setGroup={setGroup}
-                 setSubgroups={setSubgroups}
-                 subgroups={subgroups}
-                 subgroup={subgroup}
-                 setSubgroup={setSubgroup}
-             />
-            ) : null}
+            <TreeSelectDropDown
+                gridRowData={gridRowData}
+                categories={categories}
+                setCategories={setCategories}
+                category={category}
+                setCategory={setCategory}
+                groups={groups}
+                setGroups={setGroups}
+                group={group}
+                setGroup={setGroup}
+                setSubgroups={setSubgroups}
+                subgroups={subgroups}
+                subgroup={subgroup}
+                setSubgroup={setSubgroup}
+                gridData={gridData}
+            />
         </div>
     )
 }
 
 const TreeSelectDropDown = ({
+    gridData,
     categories,
     groups,
     subgroups,
@@ -61,7 +61,8 @@ const TreeSelectDropDown = ({
 
 
     const handleFetch = async () => {
-        let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
+        let res = await axios.post('/api/product/apiCategories', { action: 'findAll', gridData: gridData })
+        console.log('result find categories')
         console.log(res.data.result)
         setData(res.data.result)
 
@@ -136,32 +137,46 @@ const TreeSelectDropDown = ({
         setSubgroup(e.value)
     }
 
+    const onSubmit = async () => {
+
+        let res = await axios.post('/api/product/apiProduct', { action: 'updateClass', gridData: gridData })
+
+    }
+
+    const disabledCondition = !category && !group
 
     return (
-        <div className="mt-4 mb-4">
+        <div className="mb-4">
 
 
-            <h2 className='text-sm mb-2 text-700'>Eπιλογή Νέου:</h2>
+            <h2 className='text-sm mb-2 text-700'>Αλλαγή Κατηγοριοποίησης:</h2>
+            {!categories ? (
+                <ProgressSpinner />
+            ) : (
+                <div >
+                    <div className="card flex justify-content-center  mb-3">
+                        <Dropdown value={category} onChange={chooseCategory} options={categories} optionLabel="name"
+                            placeholder="Επιλογή Εμπορικής Κατηγορίας" className="w-full" />
 
-            <div className="card flex justify-content-center  mb-3">
-                <Dropdown value={category} onChange={chooseCategory} options={categories} optionLabel="name"
-                    placeholder="Επιλογή Εμπορικής Κατηγορίας" className="w-full" />
+                    </div>
+                    {category ? (
+                        <div className="card flex justify-content-center  mb-3">
+                            <Dropdown value={group} onChange={chooseGroup} options={groups} optionLabel="name"
+                                placeholder="Επιλογή Ομάδας" className="w-full" />
 
-            </div>
-            {category ? (
-                <div className="card flex justify-content-center  mb-3">
-                    <Dropdown value={group} onChange={chooseGroup} options={groups} optionLabel="name"
-                        placeholder="Επιλογή Ομάδας" className="w-full" />
+                        </div>
+                    ) : null}
+                    {group ? (
+                        <div className="card flex justify-content-center  mb-3">
+                            <Dropdown value={subgroup} onChange={chooseSub} options={subgroups} optionLabel="name"
+                                placeholder="Επιλογή Ομάδας" className="w-full" />
 
+                        </div>
+                    ) : null}
+                    <Button disabled={disabledCondition} label="Αποστολή" icon="pi pi-chevron-right" className="  w-full p-mr-2" onClick={onSubmit} />
                 </div>
-            ) : null}
-            {group ? (
-                <div className="card flex justify-content-center  mb-3">
-                    <Dropdown value={subgroup} onChange={chooseSub} options={subgroups} optionLabel="name"
-                        placeholder="Επιλογή Ομάδας" className="w-full" />
+            )}
 
-                </div>
-            ) : null}
 
         </div>
     );

@@ -271,34 +271,53 @@ export default async function handler(req, res) {
     }
 
     if(action === 'updateClass') {
-        let {data} = req.body;
-        // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
-        //   const response = await fetch(URL, {
-        //             method: 'POST',
-        //             body: JSON.stringify({
-        //                 username: "Service",
-        //                 password: "Service",
-        //                 // ...data,
-        //                 CCCSUBGROUP3: ""
-        //             })
-        //         });
-        // let responseJSON = await response.json();
-        // if(responseJSON.success == 'false') return res.status(400).json({ success: false, result: null, error: 'Softone Update Error' });
+        let {data, gridData} = req.body;
 
+        //All products that will change classes
+        //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
+     
 
         console.log(data)
-        try {
+
+        // async function updateSoftone(item) {
+        //     console.log(item.MTRL)
+        //     console.log(item.name)
+        //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
+        //     const response = await fetch(URL, {
+        //               method: 'POST',
+        //               body: JSON.stringify({
+        //                   username: "Service",
+        //                   password: "Service",
+        //                   MTRGROUP: item.MTRGROUP,
+        //                   MTRCATEGORY: item.MTRCATEGORY,
+        //                   CCCSUBGOUP2: item.CCCSUBGOUP2,
+        //                   CCCSUBGROUP3: ""
+        //               })
+        //           });
+        //   let responseJSON = await response.json();
+        //   console.log(responseJSON)
+        //   if(responseJSON.success == 'false') return res.status(400).json({ success: false, result: null, error: 'Softone Update Error' });
+        // }
+
+
+        // gridData && gridData.map((item) => {
+        //     updateSoftone(item);
+        // })
+       
+        
+      
+        // try {
          
-            await connectMongo();
-            let result = await SoftoneProduct.updateOne({
-                ...data
-            })
-            console.log(result)
+        //     await connectMongo();
+        //     let result = await SoftoneProduct.updateOne({
+        //         ...data
+        //     })
+        //     console.log(result)
           
           
-        } catch (e) {
-            console.log(e)
-        }
+        // } catch (e) {
+        //     console.log(e)
+        // }
     }   
 }
 

@@ -11,8 +11,8 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import TreeSelectComp from './TreeSelectComp';
 import MultiDelete from './MultiDelete';
 import MultiImpa from './MultiImpa';
-
-
+import { Dropdown } from 'primereact/dropdown';
+import ToolbarActions from './ToolbarActions';
 
 const ProductToolbar = ({ selectedProducts }) => {
 
@@ -29,6 +29,9 @@ const ProductToolbar = ({ selectedProducts }) => {
         </div>
     )
 }
+
+
+
 
 
 const MenuComp = ({ selectedProducts }) => {
@@ -68,34 +71,27 @@ const MenuComp = ({ selectedProducts }) => {
 
             <Button icon="pi pi-align-right" label="Επεξεργασία όλων " className="mr-2" onClick={onMultipleActions} aria-controls="popup_menu_right" aria-haspopup />
             <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className=" md:w-3	 lg:w-3	">
-                <div className='flex align-items-center mb-4 mt-2'>
-                    {/* <i className="pi pi-shopping-cart p-overlay-badge" style={{ fontSize: '25px', marginRight: '10px' }} /> */}
+                <div className='flex align-items-center mb-2 mt-2'>
                     <h2>Επεξεργασία:</h2>
                 </div>
-                
+
                 <div className='box'>
-                    <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={products}  footer={footer}  >
+                    <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={products} footer={footer}  >
                         <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
                         <Column style={{ width: '30px' }} body={RemoveProductTemplate} ></Column>
                     </DataTable>
                 </div>
-                <p>Επιλογή action:</p>
-                <div className="card">
-                    <TreeSelectComp />
-                </div>
-                <div className="card">
-                    <MultiImpa />
-                </div>
-                <div className="card">
-                    <MultiDelete />
-                </div>
-               
+                <ToolbarActions gridData={selectedProducts} />
+              
+
             </Sidebar>
 
         </>
 
     )
 }
+
+
 
 
 
@@ -112,10 +108,13 @@ const ProductBaksetTemplate = ({ name, PRICER, categoryName, }) => {
                 </div>
 
             </div>
-          
+
         </ProductGrid>
     )
 }
+
+
+
 
 
 
@@ -126,48 +125,13 @@ const ProductGrid = styled.div`
         div {
             display: flex;
             margin-top: 2px;
-            margin-bottom: 10px;
             margin-right: 10px;
         }
     }
 `
 
-const Container = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    .left-header {
-    }
-
-    .middle-header {
-    }
-    .right-header {
-        display: flex;
-        align-items: center;
-        justify-content: end;
-       
-    }
-
-    .basket-icon {
-        display: flex;
-        align-items: center;
-
-    }
-
-`
 
 
-const StyledMenu = styled.div`
-    display: flex;
-    align-items: center;
-    height: 40px;
-    cursor: pointer;
-    .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #6366F1;
-        margin-right: 5px;
-    }
-  
-`
+
+
 export default ProductToolbar
