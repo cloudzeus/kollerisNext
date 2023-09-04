@@ -47,7 +47,7 @@ const Impas = () => {
 
     useEffect(() => {
         handleFetch()
-    })
+    }, [])
     return (
         <AdminLayout>
             <DataTable 

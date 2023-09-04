@@ -35,4 +35,14 @@ export default async function handler(req, res) {
             console.log(e)
         }
     }
+    if(action === 'find') {
+        try {
+            await connectMongo();
+            const impas = await ImpaCodes.find({}, {code: 1,  englishDescription: 1})
+            console.log(impas)
+            res.status(200).json({success: true, data: impas})
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }

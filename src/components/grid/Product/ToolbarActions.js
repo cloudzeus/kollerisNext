@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Button } from 'primereact/button';
 import styled from 'styled-components';
 import TreeSelectComp from './TreeSelectComp';
-
+import SelectImpas from './SelectImpas';
 const MenuOptions = ({ setId, setClickMenu }) => {
     const onClick = (id) => {
         setClickMenu(false)
@@ -38,8 +38,7 @@ const ToolbarActions = ({gridData, setSubmitted}) => {
             </div>
             <div>
                 {id === 1 && !clickMenu ? (<TreeSelectComp gridData={gridData}  setSubmitted={setSubmitted} />) : null}
-                {id ===2 && !clickMenu  ? (<p>test 2</p>) : null}
-                {id ===3 && !clickMenu  ? (<p>test 3</p>) : null}
+                {id ===2 && !clickMenu  ? (<SelectImpas />) : null}
             </div>
         </div>
 
