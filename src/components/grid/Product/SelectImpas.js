@@ -63,8 +63,9 @@ const SelectImpas = ({onLoad, data, loading}) => {
                     loading={loading} 
                     value={data}  
                     selectionMode="single" 
-                    scrollable
-                    scrollHeight='400px' 
+                    paginator
+                    rows={15}
+                    rowsPerPageOptions={[20, 40, 60]}
                     selection={selectedImpa} 
                     onSelectionChange={(e) =>  setSelectedImpa(e.value)}
                     className='w-full'
