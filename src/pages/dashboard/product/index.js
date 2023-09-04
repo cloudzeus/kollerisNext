@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -37,20 +37,41 @@ const dialogStyle = {
 };
 
 
-export default function Product() {
-    const dispatch = useDispatch();
-    const op = useRef(null);
+ export default function MyComponent() {
     const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [filteredData, setFilteredData] = useState([])
+
+    const memoizedCallback = useCallback(
+      async () => {
+        // Do something
+        const fetch = async () => {
+            setLoading(true)
+            let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
+            setData(res.data.result);
+            setFilteredData(res.data.result);
+            setLoading(false)
+        }
+        fetch()
+      },
+      [data]
+    );
+  
+    return (
+      <div>
+        <Product onLoad={memoizedCallback}  data={data} loading={loading} filteredData={filteredData} setFilteredData={setFilteredData}/>
+      </div>
+    );
+  };
+ function Product({data, loading, onLoad, filteredData, setFilteredData}) {
+    const dispatch = useDispatch();
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
-    const [classMultiDialog, setClassMultiDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
 
-    const [filteredData, setFilteredData] = useState([])
     const [expandedRows, setExpandedRows] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState(null);
-    const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
@@ -67,24 +88,13 @@ export default function Product() {
     const onColumnToggle = (event) => {
         let selectedColumns = event.value;
         let orderedSelectedColumns = columns.filter((col) => selectedColumns.some((sCol) => sCol.field === col.field));
-
         setVisibleColumns(orderedSelectedColumns);
     };
 
 
 
-    const handleFetch = async () => {
-        setLoading(true)
-        let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-        setData(res.data.result);
-        setFilteredData(res.data.result);
-        setLoading(false)
-    }
-
-
+  
     useEffect(() => {
-       
-
         const options = {
             includeScore: true, // To see how well each result matched
             threshold: 0.5,
@@ -106,11 +116,10 @@ export default function Product() {
 
 
     useEffect(() => {
-        handleFetch()
+        onLoad()
     }, [])
 
     const editProduct = async (product) => {
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))

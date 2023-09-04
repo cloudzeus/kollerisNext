@@ -38,7 +38,7 @@ const ToolbarActions = ({gridData, setSubmitted}) => {
             </div>
             <div>
                 {id === 1 && !clickMenu ? (<TreeSelectComp gridData={gridData}  setSubmitted={setSubmitted} />) : null}
-                {id ===2 && !clickMenu  ? (<SelectImpas />) : null}
+                {id ===2 && !clickMenu  ? (<SelectImpas gridData={gridData}  setSubmitted={setSubmitted} />) : null}
             </div>
         </div>
 

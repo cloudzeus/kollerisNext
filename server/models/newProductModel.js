@@ -141,11 +141,9 @@ const impaCodesSchema = new mongoose.Schema({
 const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
 const Product = models.Product || model('Product', productSchema);
 const Media = models.Media || model('Media', mediaSchema);
-const ImpaCodes = models.ImpaCodes || model('ImpaCodes', impaCodesSchema);
 
 export {
     Product,
     Media,
-    ImpaCodes
 }
 export default SoftoneProduct;

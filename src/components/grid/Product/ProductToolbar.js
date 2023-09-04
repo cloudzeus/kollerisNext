@@ -14,6 +14,27 @@ import MultiImpa from './MultiImpa';
 import { Dropdown } from 'primereact/dropdown';
 import ToolbarActions from './ToolbarActions';
 
+
+
+const MenuOptions = ({ setId, setClickMenu }) => {
+    const onClick = (id) => {
+        setClickMenu(false)
+        setId(id)
+        console.log(id)
+    }
+
+    return (
+        <MenuDiv>
+            <ul>
+                <li onClick={() => onClick(1)}>Αλλαγή κατηγοριοποίησης</li>
+                <div className='line'></div>
+                <li onClick={() => onClick(2)}>Αλλαγή Impa</li>
+            </ul>
+        </MenuDiv>
+    )
+}
+
+
 const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
 
@@ -30,16 +51,14 @@ const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted })
 
 
 
-
-
 const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
-
+    const [clickMenu, setClickMenu] = useState(false)
+    const [id, setId] = useState(null);
     const [visible, setVisible] = useState(false)
     const [products, setProducts] = useState(null)
 
 
     const onMultipleActions = () => {
-        //When you pres the button: "επεξεργασία πολλών":
         setVisible(true)
     }
 
@@ -73,7 +92,7 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
         <>
 
             <Button icon="pi pi-align-right" label="Επεξεργασία όλων " className="mr-2" onClick={onMultipleActions} aria-controls="popup_menu_right" aria-haspopup />
-            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-3	 lg:w-3	">
+            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-5	">
                 <div className='flex align-items-center mb-2 mt-2'>
                     <h2>Επεξεργασία:</h2>
                 </div>
@@ -83,6 +102,14 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                         <Column style={{ width: '30px' }} body={removeProducts} ></Column>
                     </DataTable>
                 </div>
+                <div className='mb-2 mt-2'>
+                {/* <Button label="Μenu" icon="pi pi-bars" className="surface-ground text-primary w-full p-mr-2 mt-3" onClick={() => setClickMenu((prev) => !prev)} />
+                {clickMenu ?
+                    (
+                        <MenuOptions setId={setId} setClickMenu={setClickMenu} />
+                    )
+                    : null} */}
+            </div>
                 <ToolbarActions gridData={selectedProducts} setSubmitted={setSubmitted} />
               
 
@@ -130,6 +157,27 @@ const ProductGrid = styled.div`
             margin-right: 10px;
         }
     }
+`
+
+const MenuDiv = styled.div`
+    margin-top: 5px;
+    /* display: inline-flex; */
+    border: 1px solid #cacaca;
+    border-radius: 5px;
+    
+    li {
+        list-style: none;
+        cursor: pointer;
+        display: block;
+        padding: 10px;
+    }
+
+    .line {
+        width: 100%;
+        height: 1px;
+        background-color: #cacaca;
+    }
+    
 `
 
 

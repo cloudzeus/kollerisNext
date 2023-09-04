@@ -1,5 +1,7 @@
 import { ImpaCodes } from "../../../../server/models/impaSchema"
+import { Product } from "../../../../server/models/newProductModel"
 import connectMongo from "../../../../server/config"
+import { array } from "yup"
 export default async function handler(req, res) {
     const action = req.body.action 
     if(action === 'insert') {
@@ -43,6 +45,34 @@ export default async function handler(req, res) {
             res.status(200).json({success: true, data: impas})
         } catch (e) {
             console.log(e)
+        }
+    }
+
+    if(action === 'correlateImpa') {
+        let {dataToUpdate, id} = req.body
+        //id = impa id 
+        console.log(dataToUpdate)
+        console.log(id)
+    
+        try {
+        await connectMongo();
+            let arrayProductID = [];
+            for(let item of dataToUpdate) {
+                console.log('item: ' + JSON.stringify(item))
+                let response = await Product.updateOne({_id: item._id}, {$set: {impas: id}}, {upsert: true})
+                console.log(response)
+                arrayProductID.push(item._id)
+                console.log(response)
+              
+            }  
+            console.log(arrayProductID)
+            
+            // let updateImpa = await ImpaCodes.updateOne({_id: id}, {$push: {products: arrayProductID }})
+            console.log('updateImpa')
+            console.log(updateImpa)
+               return res.status(200).json({success: true})
+        }catch (e) {
+          return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
         }
     }
 }
