@@ -1,34 +1,54 @@
 import React from 'react'
 import { Dropdown } from 'primereact/dropdown';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
+import { set } from 'mongoose';
 
 
-const SelectImpas = () => {
+const MyComponent = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [options, setOptions] = useState([])
-    const [selectedImpa, setSelectedImpa] = useState(null)
-    const [visible, setVisible] = useState(false);
 
-    console.log(options)
-    useEffect(() => {
-        setLoading(true)
+    const memoizedCallback = useCallback(
+      async () => {
+        // Do something
         const fetch = async () => {
+            setLoading(true)
             const res = await axios.post('/api/product/apiImpa', { action: 'find' })
+            console.log('dataaa')
+            console.log(data)
             setData(res.data.data)
             setLoading(false)
         }
         fetch()
-       
-    }, [])
+      },
+      [data]
+    );
+  
+    return (
+      <div>
+        <SelectImpas onLoad={memoizedCallback}  data={data} loading={loading}/>
+      </div>
+    );
+  };
 
 
+const SelectImpas = ({onLoad, data, loading}) => {
+    const [options, setOptions] = useState([])
+    const [selectedImpa, setSelectedImpa] = useState(null)
+    const [visible, setVisible] = useState(false);
+
+
+
+    const handleButton = async () => {
+        onLoad();
+        setVisible(prev => !prev);
+    }
 
     const footer = () => {
         return (
@@ -37,7 +57,7 @@ const SelectImpas = () => {
     }
     return (
         <div className="card flex justify-content-center">
-            <Button  label={ "Επιλογή Impa" }   onClick={(e) => setVisible(prev => !prev)} />
+            <Button  label={ "Επιλογή Impa" }   onClick={handleButton} />
             <Dialog header="Header" visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
             <DataTable 
                     loading={loading} 
@@ -54,23 +74,9 @@ const SelectImpas = () => {
                     <Column field="englishDescription" header="Περιγραφή" sortable style={{minWidth: '12rem'}} />
                 </DataTable>
             </Dialog>
-            {/* <OverlayPanel ref={op} showCloseIcon >
-                <DataTable 
-                    loading={loading} 
-                    dataKey="code" 
-                    value={data}  
-                    selectionMode="single" 
-                    scrollable 
-                    scrollHeight='200px' 
-                    selection={selectedProduct} 
-                    onSelectionChange={(e) => setSelectedProduct(e.value)}
-                    className='w-full'
-                    >
-                    <Column field="code" header="Code" sortable style={{minWidth: '12rem'}} />
-                </DataTable>
-            </OverlayPanel> */}
+           
         </div>
     )
 }
 
-export default SelectImpas
+export default MyComponent
