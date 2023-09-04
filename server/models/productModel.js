@@ -242,10 +242,10 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Media'
     }],
-    impas: [{
+    impas: {
         type: Schema.Types.ObjectId,
-        ref: 'ImpaCodes'
-    }],
+        ref: 'Impa'
+    },
     videos: [{
         type: Schema.Types.ObjectId,
         ref: 'Media'
@@ -271,7 +271,6 @@ const Product = models.Product || model('Product', productSchema );
 export {
     AttributesGroup,
     Attribute,
-    ImpaCodes,
     Media,
     Soft1,
     ProductAttributes,
