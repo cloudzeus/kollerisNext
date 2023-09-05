@@ -8,7 +8,7 @@ import { Button } from 'primereact/button';
 import Image from 'next/image';
 import ProfileButton from '@/components/NavProfileButton';
 import BreadCrumbs from './BreadCrumbs';
-
+import MultiColumnLayout from './Sidebar';
 
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
@@ -45,15 +45,15 @@ const AdminLayout = ({ children }) => {
 				<SidebarMenu />
 				</div>
 			</SidebarContainer>
-					
+			{/* <MultiColumnLayout /> */}
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
-					<Button 
-						icon="pi pi-bars" 
-						text aria-label="navburger" 
+					<Button
+						icon="pi pi-bars"
+						text aria-label="navburger"
 						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
-						onClick={handleToggleSidebar} 
-						// style={{width: '35px', height: '35px', fontSize: '12px'}} 
+						onClick={handleToggleSidebar}
+						// style={{width: '35px', height: '35px', fontSize: '12px'}}
 					/>
 					<div className='navbar-rightdiv'>
 						<FullScreen>
@@ -83,10 +83,10 @@ function FullScreen({ children }) {
 			<Sidebar visible={visible} onHide={() => setVisible(false)} fullScreen >
 				{children}
 			</Sidebar>
-			<Button 
-				style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
-				icon="pi pi-window-maximize				" 
-				aria-label="Maximize" 
+			<Button
+				style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}}
+				icon="pi pi-window-maximize				"
+				aria-label="Maximize"
 				onClick={() => setVisible(true)}
 				/>
 		</div>
