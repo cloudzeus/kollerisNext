@@ -72,7 +72,7 @@ export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
     return (
         <div className="card flex flex-column align-items-center gap-3">
             <Toast ref={toast} />
-            < SyncButtonContainer >
+            {/* < SyncButtonContainer > */}
             <Button 
                 type="button" 
                 icon="pi pi-sync"  
@@ -84,7 +84,7 @@ export default function SyncBrand({refreshGrid,  addToDatabaseURL}) {
                 onClick={(e) => op.current.toggle(e)}>
                 <Badge value={data.length} severity="danger" />
             </Button>
-            </ SyncButtonContainer>
+            {/* </ SyncButtonContainer> */}
            
             <OverlayPanel ref={op} showCloseIcon>
                 <DataTable 

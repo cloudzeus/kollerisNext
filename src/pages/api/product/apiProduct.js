@@ -24,12 +24,10 @@ export default async function handler(req, res) {
 
     if (action === 'findSoftoneProducts') {
         
-        const {rows, lastMTRLId,  firstMTRLId, sign, limit, skip} = req.body;
       
         
         await connectMongo();
         let count = await Product.countDocuments()
-
 
       
         let pipeline = [
@@ -134,16 +132,26 @@ export default async function handler(req, res) {
                 }
             }
             ,
-            // { $sort: { MTRL: 1 } },  // Sort by MTRL
-            // {$skip: skip},
-            // { $limit: limit }  // Limit the results
+            
+           
         ]
 
   
 
 
         let fetchProducts = await Product.aggregate(pipeline)
-        
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAvailability`;
+         const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                    })
+                });
+
+        const responseJSON = await response.json();
+        console.log(fetchProducts)
+        // // console.log(responseJSON)
         return res.status(200).json({ success: true, result : fetchProducts, count:count});
 
     }
