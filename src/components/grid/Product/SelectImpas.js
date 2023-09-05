@@ -10,7 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 
-const MyComponent = ({gridData}) => {
+const MyComponent = ({ gridData }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
 
@@ -98,18 +98,18 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
         <div className="">
             <Button label={"Επιλογή Impa"} onClick={handleButton} className='w-full' />
             {selectedImpa ? (
-                   <div>
-                   <p className='font-bold mt-3 mb-1'>Στοιχεία Αλλαγής:</p>
-                   <div>
-                       <p className='font-semibold mt-2 '>Περιγραφή:</p>
-                       <p>{selectedImpa?.englishDescription}</p>
-                   </div>
-                   <div className='mb-3'>
-                       <p className='font-semibold mt-2 '>Κωδικός:</p>
-                       <p>{selectedImpa?.code}</p>
-                   </div>
-                  <Button severity='warning' label="Αλλαγή Impa" onClick={handleImpaSubmit}/>
-               </div>
+                <div className='surface-100	 p-3 mt-4'>
+                    <p className='font-bold  mb-1'>Στοιχεία Αλλαγής:</p>
+                    <div>
+                        <p className='font-semibold mt-2 '>Περιγραφή:</p>
+                        <p>{selectedImpa?.englishDescription}</p>
+                    </div>
+                    <div className='mb-3'>
+                        <p className='font-semibold mt-2 '>Κωδικός:</p>
+                        <p>{selectedImpa?.code}</p>
+                    </div>
+                    <Button severity='warning' label="Αλλαγή Impa" onClick={handleImpaSubmit} />
+                </div>
             ) : null}
             <Dialog header="Επιλογή Impa" visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
                 <DataTable
@@ -125,7 +125,7 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
                     onSelectionChange={(e) => setSelectedImpa(e.value)}
                     className='w-full'
                     footer={footer}
-                    filters={filters} 
+                    filters={filters}
                 >
                     <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }} />
                     <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} />

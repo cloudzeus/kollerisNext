@@ -67,10 +67,10 @@ export default async function handler(req, res) {
             }  
             console.log(arrayProductID)
             
-            // let updateImpa = await ImpaCodes.updateOne({_id: id}, {$push: {products: arrayProductID }})
+            let updateImpa = await ImpaCodes.updateOne({_id: id}, {$push: {products: {$each: arrayProductID}}})
             console.log('updateImpa')
             console.log(updateImpa)
-               return res.status(200).json({success: true})
+            return res.status(200).json({success: true})
         }catch (e) {
           return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
         }
