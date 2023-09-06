@@ -67,6 +67,7 @@ const softoneProduct = new mongoose.Schema({
 
 
 const productSchema = new mongoose.Schema({
+    MTRL: String,
     softoneProduct: {
         type: Schema.Types.ObjectId,
         ref: 'SoftoneProduct',
@@ -102,6 +103,11 @@ const productSchema = new mongoose.Schema({
     //Σελίδα κατασκευαστή
     ventorUrl: { type: String, required: false },
     updatedFrom: String,
+    availability: {
+        DIATHESIMA: String,
+        SEPARAGELIA: String,
+        DESVMEVMENA: String,
+    },
 
 },
 {

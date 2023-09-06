@@ -116,13 +116,13 @@ export default async function handler(req, res) {
                     PRICEW04: '$softoneProduct.PRICEW04',
                     PRICEW05: '$softoneProduct.PRICEW05',
                     ISACTIVE: '$softoneProduct.ISACTIVE',
-                    
                     UPDDATE: '$softoneProduct.UPDDATE',
                     mrtmark: '$mrtmark.name',
                     mrtmanufact: '$manufacturers.softOne.NAME',
                     MTRMANFCTR: '$manufacturers.softOne.MTRMANFCTR',
                     name: 1,
                     description: 1,
+                    availability: 1,
                     localized: 1,
                     updatedFrom: 1,
                     updatedAt: 1,
@@ -150,8 +150,10 @@ export default async function handler(req, res) {
                 });
 
         const responseJSON = await response.json();
-        console.log(fetchProducts)
         // // console.log(responseJSON)
+
+        // setInterval(availabilityInterval, 1500);
+
         return res.status(200).json({ success: true, result : fetchProducts, count:count});
 
     }
@@ -356,3 +358,15 @@ export default async function handler(req, res) {
     }   
 }
 
+
+async function availabilityInterval() {
+    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
+    const response = await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            username: "Service",
+            password: "Service",
+            ...obj
+        })
+    });
+}

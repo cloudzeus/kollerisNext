@@ -8,8 +8,8 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button'
 import { Toolbar } from 'primereact/toolbar';
-
-const ProductHeader = ({ searchTerm, onSearch, selectedProducts }) => {
+import { MultiSelect } from 'primereact/multiselect'
+const ProductHeader = ({ searchTerm, onSearch, selectedProducts, visibleColumns, onColumnToggle }) => {
 
     const [visible, setVisible] = useState(false);
     const [basket, setBasket] = useState([])
@@ -38,6 +38,10 @@ const ProductHeader = ({ searchTerm, onSearch, selectedProducts }) => {
         setBasket(newArray)
     }
 
+   
+
+   
+
     return (
         <Container >
             <div className="left-header">
@@ -46,8 +50,10 @@ const ProductHeader = ({ searchTerm, onSearch, selectedProducts }) => {
                     <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
                 </span>
                 <Button onClick={addAlltoBasket} icon="pi pi-shopping-cart" label="Προσθήκη Όλων" severity="warning" />
+
             </div>
             <div className="middle-header">
+            <MultiSelect value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" className="w-full sm:w-16rem" display="chip" />
 
             </div>
             <div className="right-header">
@@ -114,6 +120,7 @@ const Side = ({ visible, setVisible, basket, deleteFromBasket}) => {
                 <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
                 <Column style={{width: '30px'}} body={removeProduct} ></Column>
             </DataTable>
+
         </Sidebar>
     )
 }

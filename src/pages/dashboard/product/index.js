@@ -21,12 +21,11 @@ import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
 import { Badge } from 'primereact/badge';
 import ProductHeader from '@/components/grid/Product/ProductHeader';
 import ProductToolbar from '@/components/grid/Product/ProductToolbar';
+import { Button } from 'primereact/button';
+import {ProductAvailability, ProductOrdered, ProductReserved}  from '@/components/grid/Product/ProductAvailability';
 
 
-const columns = [
-    { field: 'mrtmark', header: 'Μάρκα', style: null },
-    // { field: 'PRICER', header: 'Τιμή Λιανικής', style: { width: '100px', fontWeight: 700 } },
-];
+
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -37,38 +36,77 @@ const dialogStyle = {
 };
 
 
- export default function MyComponent() {
+export default function MyComponent() {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [filteredData, setFilteredData] = useState([])
 
     const memoizedCallback = useCallback(
-      async () => {
-        // Do something
-        const fetch = async () => {
-            setLoading(true)
-            let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-            setData(res.data.result);
-            setFilteredData(res.data.result);
-            setLoading(false)
-        }
-        fetch()
-      },
-      [data]
+        async () => {
+            // Do something
+            const fetch = async () => {
+                setLoading(true)
+                let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
+                setData(res.data.result);
+                setFilteredData(res.data.result);
+                setLoading(false)
+            }
+            fetch()
+        },
+        [data]
     );
-  
+
     return (
-      <div>
-        <Product onLoad={memoizedCallback}  data={data} loading={loading} filteredData={filteredData} setFilteredData={setFilteredData}/>
-      </div>
+        <div>
+            <Product onLoad={memoizedCallback} data={data} loading={loading} filteredData={filteredData} setFilteredData={setFilteredData} />
+        </div>
     );
-  };
- function Product({data, loading, onLoad, filteredData, setFilteredData}) {
+};
+
+
+const initialColumns = [
+    {
+        header: 'Availability',
+        id: 2,
+    },
+    {
+        header: 'Ordered',
+        id: 3,
+    },
+    {
+        header: 'Reserved',
+        id: 4,
+    },
+  
+    {
+        header: 'Υποομάδα',
+        id: 7
+    },
+
+]
+
+const columns = [
+    ...initialColumns,
+    
+    {
+        header: 'CategoryName',
+        id: 5
+    },
+    {
+        header: 'CategoryName',
+        id: 6
+    },
+  
+
+]
+
+
+function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
     const dispatch = useDispatch();
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-
+    const [visibleColumns, setVisibleColumns] = useState(initialColumns)
 
     const [expandedRows, setExpandedRows] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState(null);
@@ -76,24 +114,15 @@ const dialogStyle = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
 
-    const [visibleColumns, setVisibleColumns] = useState(columns);
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
         if (submitted) handleFetch()
     }, [submitted])
 
-    
-
-    const onColumnToggle = (event) => {
-        let selectedColumns = event.value;
-        let orderedSelectedColumns = columns.filter((col) => selectedColumns.some((sCol) => sCol.field === col.field));
-        setVisibleColumns(orderedSelectedColumns);
-    };
 
 
 
-  
     useEffect(() => {
         const options = {
             includeScore: true, // To see how well each result matched
@@ -130,7 +159,7 @@ const dialogStyle = {
         dispatch(setGridRowData(product))
     }
 
-   
+
     const allowExpansion = (rowData) => {
         return rowData
 
@@ -138,18 +167,28 @@ const dialogStyle = {
 
     const onSearch = (e) => onGlobalFilterChange(e);
 
-
-
+    const onColumnToggle = (event) => {
+        console.log(event.value)
+        let selectedColumns = event.value;
+        let orderedSelectedColumns = columns.filter((col) => selectedColumns.some((sCol) => sCol.id === col.id));
+        setVisibleColumns(orderedSelectedColumns);
+    }
     const renderHeader = () => {
-
         return (
-            <ProductHeader 
-                searchTerm={searchTerm} 
-                onColumnToggle={onColumnToggle}
-                onSearch={onSearch}
-                selectedProducts={selectedProducts}
-                />
-          
+            <div className="flex">
+                <div className="">
+                    <span className="p-input-icon-left mr-3">
+                        <i className="pi pi-search" />
+                        <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
+                    </span>
+                    {/* <Button onClick={addAlltoBasket} icon="pi pi-shopping-cart" label="Προσθήκη Όλων" severity="warning" /> */}
+
+                </div>
+                <div className="middle-header">
+                    <MultiSelect value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" className="w-full sm:w-16rem" display="chip" />
+                </div>
+            </div>
+
         );
     };
 
@@ -163,14 +202,6 @@ const dialogStyle = {
     };
 
 
-
-
-
-
-
-
-
-
     const AddToCartTemplate = (rowData) => {
         return (
             <ProductActions
@@ -180,6 +211,7 @@ const dialogStyle = {
             />
         )
     }
+
 
     const rowExpansionTemplate = (data) => {
         return (
@@ -218,11 +250,19 @@ const dialogStyle = {
         setSelectedProducts(e.value)
     }
 
+
+    const footer = () => {
+        return (
+            <Button icon="pi pi-replay" label="Ανανέωση διαθεσιμότητας" />
+        )
+    }
+
+
     return (
         <AdminLayout >
-            <ProductToolbar 
-                setSubmitted={setSubmitted}  
-                selectedProducts={selectedProducts} 
+            <ProductToolbar
+                setSubmitted={setSubmitted}
+                selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
                 className='product-datatable'
@@ -230,7 +270,7 @@ const dialogStyle = {
                 selection={selectedProducts}
                 onSelectionChange={onSelection}
                 paginator
-                rows={50}
+                rows={10}
                 rowsPerPageOptions={[10, 20, 50, 100, 200]}
                 value={filteredData}
                 header={header}
@@ -244,20 +284,26 @@ const dialogStyle = {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
+                footer={footer}
             >
+
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '2rem' }}></Column>
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
-                <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>
-                <Column field="mtrgroups" header="Ομάδα" sortable></Column>
-                <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>
+                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} header="Κωδικός" ></Column>}
+                {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{width: '135px'}} header="Παραγγελία" ></Column>}
+                {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{width: '135px'}}  header="Δεσμευμένα" ></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>}
+                {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" header="Ομάδα" sortable></Column>}
+                {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>}
                 <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column>
-                {visibleColumns.map((col, index) => {
+                {/* {visibleColumns.map((col, index) => {
                     return (
-                        <Column key={index} field={col.field} header={col.header} style={col.style} />
+                        <Column key={index} field={col.field} header={col.header} style={col.style} body={col.body} />
                     )
                 }
-                )}
+                )} */}
+
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
 
@@ -278,7 +324,7 @@ const dialogStyle = {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
-          
+
         </AdminLayout >
     );
 }
@@ -356,10 +402,6 @@ const ExpansionDetails = ({ data }) => {
 
 
 
-
-
-
-
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     console.log(updatedFrom)
     return (
@@ -377,10 +419,24 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 
-
-
-
-
+const productAvailabilityTemplate = ({ availability }) => {
+    
+    return (
+        <ProductAvailability data={availability} />
+    )
+}
+const productOrderedTemplate = ({ availability }) => {
+    
+    return (
+        <ProductOrdered data={availability} />
+    )
+}
+const productReservedTemplate = ({ availability }) => {
+    
+    return (
+        <ProductReserved data={availability} />
+    )
+}
 
 
 
