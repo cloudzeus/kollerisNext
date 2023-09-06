@@ -1,6 +1,7 @@
 
 
 import axios from "axios";
+import format from "date-fns/format";
 import mongoose, { mongo } from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
@@ -57,12 +58,7 @@ export default async function handler(req, res) {
                     as: 'manufacturers'
                 }
             },
-            // {
-            //     $unwind: {
-            //         path: "$mtrcategory",
-            //         preserveNullAndEmptyArrays: true
-            //     }
-            // },
+         
             {
                 $lookup: {
                     from: "mtrgroups",
@@ -135,7 +131,6 @@ export default async function handler(req, res) {
             
            
         ]
-        console.log('test')
   
 
 
@@ -355,18 +350,57 @@ export default async function handler(req, res) {
         }
 
 
-    }   
+    }
+    
+    if(action === 'intervalInventory') {
+        console.log('interval')
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/mtrlInventory`;
+         const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                    })
+                });
+        let buffer = await translateData(response)
+        const now = new Date();
+        const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
+        console.log(`Formatted Date and Time: ${formattedDateTime}`);
+        console.log(buffer.result)
+        let count = 0;
+        try {
+            for(let item of buffer.result) {
+                let product = await Product.updateOne({
+                    MTRL: item.MTRL
+                }, {
+                    $set: {
+                        availability: {
+                            DIATHESIMA: item.AVAILABLE,
+                            SEPARAGELIA: item.ORDERED,
+                            DESVMEVMENA: item.RESERVED,
+                            date: formattedDateTime.toString()
+                        }
+                    }
+                  
+                })
+                if(product.modifiedCount == 1) {
+                    count++;
+                }
+            }
+            if(count == buffer.result.length) {
+                return res.status(200).json({ success: true, result:'ok'});
+            } else {
+                return res.status(200).json({ success: false, result:'not ok'});
+            }
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+        
+
+
+
+    }
 }
 
 
-async function availabilityInterval() {
-    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
-    const response = await fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            username: "Service",
-            password: "Service",
-            ...obj
-        })
-    });
-}
+

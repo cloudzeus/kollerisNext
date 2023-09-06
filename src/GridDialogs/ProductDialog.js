@@ -39,7 +39,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
-    console.log(gridRowData)
 
 
    

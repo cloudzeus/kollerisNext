@@ -29,7 +29,7 @@ export const ProductAvailability = ({ data }) => {
                 <div className='row update-row'>
 
                     <span>updated:</span>
-                    <span className='date'>2023/01/03</span>
+                    <span className='date'>{data?.date}</span>
                 </div>
 
 

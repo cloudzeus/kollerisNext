@@ -107,6 +107,7 @@ const productSchema = new mongoose.Schema({
         DIATHESIMA: String,
         SEPARAGELIA: String,
         DESVMEVMENA: String,
+        date: String,
     },
 
 },

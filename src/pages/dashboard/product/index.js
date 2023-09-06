@@ -23,6 +23,8 @@ import ProductHeader from '@/components/grid/Product/ProductHeader';
 import ProductToolbar from '@/components/grid/Product/ProductToolbar';
 import { Button } from 'primereact/button';
 import {ProductAvailability, ProductOrdered, ProductReserved}  from '@/components/grid/Product/ProductAvailability';
+import { set } from 'mongoose';
+import { Toast } from 'primereact/toast';
 
 
 
@@ -35,33 +37,6 @@ const dialogStyle = {
 
 };
 
-
-export default function MyComponent() {
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [filteredData, setFilteredData] = useState([])
-
-    const memoizedCallback = useCallback(
-        async () => {
-            // Do something
-            const fetch = async () => {
-                setLoading(true)
-                let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-                setData(res.data.result);
-                setFilteredData(res.data.result);
-                setLoading(false)
-            }
-            fetch()
-        },
-        [data]
-    );
-
-    return (
-        <div>
-            <Product onLoad={memoizedCallback} data={data} loading={loading} filteredData={filteredData} setFilteredData={setFilteredData} />
-        </div>
-    );
-};
 
 
 const initialColumns = [
@@ -78,6 +53,7 @@ const initialColumns = [
         id: 4,
     },
   
+   
     {
         header: 'Υποομάδα',
         id: 7
@@ -87,40 +63,66 @@ const initialColumns = [
 
 const columns = [
     ...initialColumns,
-    
-    {
-        header: 'CategoryName',
+     {
+        header: 'Κατηγορία',
         id: 5
     },
+  
     {
         header: 'CategoryName',
         id: 6
     },
   
-
 ]
 
 
-function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
+async function intervalInventory() {
+    let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' })
+}
+
+
+
+export default function Product() {
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [filteredData, setFilteredData] = useState([])
     const dispatch = useDispatch();
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
-
+    const [triggerUpdate, setTriggerUpdate] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState(null);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-
+    const toast = useRef(null);
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Update διαθεσιμότητας', life: 3000});
+    }
     const [searchTerm, setSearchTerm] = useState('')
-
+    console.log(new Date())
     useEffect(() => {
         if (submitted) handleFetch()
     }, [submitted])
 
+    useEffect(() => {
+        const availability = async () => {
+            let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' })
+            console.log(result)
+            if(!result.success) return;
+            
+            setTriggerUpdate(!triggerUpdate)
+            showSuccess()
+        }
+        setInterval(availability, 60000)
 
+        return () => {
+            clearInterval(availability)
+        }
+       
+    }, [])
 
 
     useEffect(() => {
@@ -145,8 +147,16 @@ function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
 
 
     useEffect(() => {
-        onLoad()
-    }, [])
+        console.log('triggerUpdate')
+        const fetch = async () => {
+            setLoading(true)
+            let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
+            setData(res.data.result.slice(0, 10));
+            setFilteredData(res.data.result.slice(0, 10));
+            setLoading(false)
+        }
+        fetch()
+    }, [triggerUpdate])
 
     const editProduct = async (product) => {
         setSubmitted(false);
@@ -168,7 +178,6 @@ function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
     const onSearch = (e) => onGlobalFilterChange(e);
 
     const onColumnToggle = (event) => {
-        console.log(event.value)
         let selectedColumns = event.value;
         let orderedSelectedColumns = columns.filter((col) => selectedColumns.some((sCol) => sCol.id === col.id));
         setVisibleColumns(orderedSelectedColumns);
@@ -260,6 +269,7 @@ function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
 
     return (
         <AdminLayout >
+            <Toast ref={toast} />
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
@@ -287,15 +297,16 @@ function Product({ data, loading, onLoad, filteredData, setFilteredData }) {
                 footer={footer}
             >
 
-                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column selectionMode="multiple" headerStyle={{ width: '2rem' }}></Column>
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
+                <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
-                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} header="Κωδικός" ></Column>}
-                {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{width: '135px'}} header="Παραγγελία" ></Column>}
-                {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{width: '135px'}}  header="Δεσμευμένα" ></Column>}
                 {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" header="Ομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>}
+                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} style={{width: '140px'}} header="Διαθέσιμα" ></Column>}
+                {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{width: '135px'}} header="Παραγγελία" ></Column>}
+                {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{width: '135px'}}  header="Δεσμευμένα" ></Column>}
+             
                 <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column>
                 {/* {visibleColumns.map((col, index) => {
                     return (
@@ -403,7 +414,6 @@ const ExpansionDetails = ({ data }) => {
 
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
-    console.log(updatedFrom)
     return (
         <RegisterUserActions
             actionFrom={updatedFrom}
