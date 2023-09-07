@@ -107,26 +107,26 @@ export default function Product() {
         if (submitted) handleFetch()
     }, [submitted])
 
-    useEffect(() => {
-        const availability = async () => {
-            try {
-                let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' });
-                if (result.data.success) {
-                    setTriggerUpdate(prev => !prev); // This is a safer way to toggle based on previous value
-                    showSuccess();
-                }
-            } catch (error) {
-                console.error("There was an error fetching availability:", error);
-            }
-        };
+    // useEffect(() => {
+    //     const availability = async () => {
+    //         try {
+    //             let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' });
+    //             if (result.data.success) {
+    //                 setTriggerUpdate(prev => !prev); // This is a safer way to toggle based on previous value
+    //                 showSuccess();
+    //             }
+    //         } catch (error) {
+    //             console.error("There was an error fetching availability:", error);
+    //         }
+    //     };
     
-        const intervalID = setInterval(availability, 600000);
+    //     const intervalID = setInterval(availability, 600000);
     
-        return () => {
-            clearInterval(intervalID);
-        };
+    //     return () => {
+    //         clearInterval(intervalID);
+    //     };
        
-    }, [])
+    // }, [])
 
 
     useEffect(() => {
