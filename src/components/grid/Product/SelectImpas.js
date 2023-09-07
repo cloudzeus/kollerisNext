@@ -40,7 +40,6 @@ const MyComponent = ({ gridData }) => {
 
 const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     const [selectedImpa, setSelectedImpa] = useState(null)
-    const [visible, setVisible] = useState(false);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
 
     const [filters, setFilters] = useState({
@@ -50,13 +49,11 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
 
     });
 
-    console.log('grid data')
-    console.log(gridData)
-
-    const handleButton = async () => {
+    useEffect(() => {
         onLoad();
-        setVisible(prev => !prev);
-    }
+    }, [])
+
+
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
@@ -69,11 +66,7 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     };
 
 
-    const footer = () => {
-        return (
-            <Button label={"Επιλογή"} className={'w-full'} onClick={(e) => setVisible(false)} />
-        )
-    }
+   
 
     const renderHeader = () => {
         return (
@@ -96,42 +89,48 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     }
     return (
         <div className="">
-            <Button label={"Επιλογή Impa"} onClick={handleButton} className='w-full' />
             {selectedImpa ? (
-                <div className='surface-100	 p-3 mt-4'>
-                    <p className='font-bold  mb-1'>Στοιχεία Αλλαγής:</p>
+                <>  
                     <div>
-                        <p className='font-semibold mt-2 '>Περιγραφή:</p>
-                        <p>{selectedImpa?.englishDescription}</p>
+                        <Button label="Επίλεξε ξανά" onClick={() => setSelectedImpa(null)}/>
                     </div>
-                    <div className='mb-3'>
-                        <p className='font-semibold mt-2 '>Κωδικός:</p>
-                        <p>{selectedImpa?.code}</p>
-                    </div>
-                    <Button severity='warning' label="Αλλαγή Impa" onClick={handleImpaSubmit} />
-                </div>
-            ) : null}
-            <Dialog header="Επιλογή Impa" visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
-                <DataTable
-                    header={header}
-                    globalFilterFields={['code', 'englishDescription']}
-                    loading={loading}
-                    value={data}
-                    selectionMode="single"
-                    paginator
-                    rows={10}
-                    rowsPerPageOptions={[10, 20, 30]}
-                    selection={selectedImpa}
-                    onSelectionChange={(e) => setSelectedImpa(e.value)}
-                    className='w-full'
-                    footer={footer}
-                    filters={filters}
-                >
-                    <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }} />
-                    <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} />
-                </DataTable>
+                    <div className='surface-100	 p-3 mt-2'>
 
-            </Dialog>
+                        <p className='font-bold  mb-1'>Στοιχεία Αλλαγής:</p>
+                        <div>
+                            <p className='font-semibold mt-2 '>Περιγραφή:</p>
+                            <p>{selectedImpa?.englishDescription}</p>
+                        </div>
+                        <div className='mb-3'>
+                            <p className='font-semibold mt-2 '>Κωδικός:</p>
+                            <p>{selectedImpa?.code}</p>
+                        </div>
+                        <Button severity='warning' label="Αλλαγή Impa" onClick={handleImpaSubmit} />
+                    </div>
+                </>
+
+            ) : (
+                <DataTable
+                header={header}
+                globalFilterFields={['code', 'englishDescription']}
+                loading={loading}
+                value={data}
+                selectionMode="single"
+                paginator
+                rows={10}
+                rowsPerPageOptions={[10, 20, 30]}
+                selection={selectedImpa}
+                onSelectionChange={(e) => setSelectedImpa(e.value)}
+                className='w-full'
+                filters={filters}
+            >
+                <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }} />
+                <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} />
+            </DataTable>
+            )}
+
+          
+
 
         </div>
     )

@@ -14,6 +14,7 @@ import MultiImpa from './MultiImpa';
 import { Dropdown } from 'primereact/dropdown';
 import ToolbarActions from './ToolbarActions';
 import { Badge } from 'primereact/badge';
+import SelectImpas from './SelectImpas';
 
 
 
@@ -24,22 +25,22 @@ const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted })
     console.log(selectedProducts)
 
     const startContent = () => {
-        return <MenuComp selectedProducts={selectedProducts}  setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted}/>
+        return <MenuComp selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
     }
 
     const endContent = () => {
-        return <RightSide selectedProducts={selectedProducts}  setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted}/>
+        return <RightSide selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
     }
 
     return (
         <div>
-            <Toolbar start={startContent} end={endContent}/>
+            <Toolbar start={startContent} end={endContent} />
         </div>
     )
 }
 
 
-const RightSide = ({ selectedProducts}) => {
+const RightSide = ({ selectedProducts }) => {
 
     const CalculateBasket = () => {
         let total = 0
@@ -54,19 +55,92 @@ const RightSide = ({ selectedProducts}) => {
     }
     return (
         <ContainerBasket >
-        <div className='basket-icon'>
-        < CalculateBasket />
-            <i onClick={() => setVisible(true)} className="pi pi-shopping-cart p-overlay-badge" style={{ fontSize: '25px', marginRight: '10px' }}>
-                <Badge value={selectedProducts == null ? "0" :selectedProducts?.length} ></Badge>
-            </i>
-        </div>
-    </ContainerBasket >
+            <div className='basket-icon'>
+                < CalculateBasket />
+                <i onClick={() => setVisible(true)} className="pi pi-shopping-cart p-overlay-badge" style={{ fontSize: '25px', marginRight: '10px' }}>
+                    <Badge value={selectedProducts == null ? "0" : selectedProducts?.length} ></Badge>
+                </i>
+            </div>
+        </ContainerBasket >
     )
 }
 
 
 const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
     const [visible, setVisible] = useState(false)
+    const [showMenu, setShowMenu] = useState(false)
+    const [activeIndex, setActiveIndex] = useState(0)
+    const onMultipleActions = () => {
+        setVisible(true)
+    }
+
+    const customIcons = (
+        <React.Fragment>
+            {activeIndex !== 0 ? (
+                <button onClick={() => setActiveIndex(0)} className="p-sidebar-icon p-link mr-2">
+                <span className="pi pi-arrow-left" />
+            </button>
+            ) : null}
+            
+        </React.Fragment>
+    );
+
+
+    return (
+        <>
+
+            <Button
+                icon="pi pi-shopping-cart"
+                label="Kαλάθι λειτουργειών"
+                className="mr-2"
+                onClick={onMultipleActions}
+                aria-controls="popup_menu_right"
+                aria-haspopup
+                severity="warning"
+                disabled={selectedProducts == null || selectedProducts.length < 1 ? true : false}
+            />
+            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-5	" icons={customIcons}>
+                {activeIndex === 0 ? (
+                    <>
+                        <FirstScreen selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} />
+                        <Button label="Μenu" icon="pi pi-bars" className="surface-ground text-primary w-full  mt-3" onClick={() => setShowMenu((prev) => !prev)} />
+                        {showMenu ? (
+                            <div className='mt-1 grid'>
+                                <div className='col-12'>
+                                    <MenuBtn label="Αλλαγή κατηγοριοποίησης" onClick={() => setActiveIndex(1)} />
+                                    <MenuBtn label="Αλλαγή Impa" onClick={() => setActiveIndex(2)} />
+                                    <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
+                                </div>
+                            </div>
+                        ) : null}
+                    </>
+                ) : null}
+                {activeIndex !== 0 ? (
+                    <SecondScreen>
+                        {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts}  setSubmitted={setSubmitted} />) : null}
+                        {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts}  setSubmitted={setSubmitted} />) : null}
+                        {activeIndex === 3 ? (<p>item 3</p>) : null}
+                    </SecondScreen>
+                ) : null}
+            </Sidebar>
+
+        </>
+
+    )
+}
+
+
+const SecondScreen = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+
+
+
+const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
     const CalculateBasket = () => {
         let total = 0
         selectedProducts && selectedProducts.forEach((item) => {
@@ -78,20 +152,16 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
 
     }
-
-    const onMultipleActions = () => {
-        setVisible(true)
-    }
+ 
 
     const removeProducts = (props) => {
         console.log(props)
         return (
-            <RemoveProductTemplate id={props._id}/>
+            <RemoveProductTemplate id={props._id} />
         )
     }
 
-    const RemoveProductTemplate = ({id}) => {
-
+    const RemoveProductTemplate = ({ id }) => {
         const remove = () => {
             let newArray = selectedProducts.filter((product) => product._id !== id)
             setSelectedProducts(newArray)
@@ -112,47 +182,32 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
     return (
         <>
-
-            <Button 
-                icon="pi pi-shopping-cart" 
-                label="Kαλάθι λειτουργειών" 
-                className="mr-2" 
-                onClick={onMultipleActions} 
-                aria-controls="popup_menu_right"
-                 aria-haspopup 
-                 severity="warning"
-                 disabled={selectedProducts == null || selectedProducts.length < 1 ? true : false}
-                 />
-            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-5	">
-                <div className='flex align-items-center mb-2 mt-2'>
-                    <h2>Επεξεργασία:</h2>
-                </div>
-                <div className='box'>
-                    <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
-                        <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
-                        <Column style={{ width: '30px' }} body={removeProducts} ></Column>
-                    </DataTable>
-                </div>
-                <div className='mb-2 mt-2'>
-                {/* <Button label="Μenu" icon="pi pi-bars" className="surface-ground text-primary w-full p-mr-2 mt-3" onClick={() => setClickMenu((prev) => !prev)} />
-                {clickMenu ?
-                    (
-                        <MenuOptions setId={setId} setClickMenu={setClickMenu} />
-                    )
-                    : null} */}
+            <div className='flex align-items-center mb-2 mt-2'>
+                <h2>Επεξεργασία:</h2>
             </div>
-                <ToolbarActions gridData={selectedProducts} setSubmitted={setSubmitted} />
-              
+            <div className='box'>
+                <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
+                    <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
+                    <Column style={{ width: '30px' }} body={removeProducts} ></Column>
+                </DataTable>
 
-            </Sidebar>
 
+
+            </div>
         </>
-
     )
 }
 
 
 
+
+
+const MenuBtn = ({ label, onClick }) => {
+    return (
+        <Button onClick={onClick} style={{ textAlign: 'left' }} icon="pi pi-arrow-right" className='surface-ground text-primary w-full mb-1' label={label} severity='warning' />
+
+    )
+}
 
 
 
@@ -164,18 +219,15 @@ const ProductBaksetTemplate = ({ name, PRICER, categoryName, }) => {
             </div>
             <div className='details'>
                 <div>
-                    <i className="pi pi-tag" style={{ fontSize: '12px',  marginRight: '3px', marginTop: '2px'  }}></i>
+                    <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
                     <p className='text-xs'>{categoryName}</p>
-                    
                 </div>
-               
             </div>
             <span className='text-xs ml-1'>TIMH:</span>
             <span className='text-xs ml-2'>{PRICER},00$</span>
         </ProductBasket>
     )
 }
-
 
 
 const ContainerBasket = styled.div`
@@ -205,38 +257,6 @@ const ProductBasket = styled.div`
 
 
 
-const ProductGrid = styled.div`
-    .details {
-        display: flex;
-        align-items: center;
-        div {
-            display: flex;
-            margin-top: 2px;
-            margin-right: 10px;
-        }
-    }
-`
-
-const MenuDiv = styled.div`
-    margin-top: 5px;
-    /* display: inline-flex; */
-    border: 1px solid #cacaca;
-    border-radius: 5px;
-    
-    li {
-        list-style: none;
-        cursor: pointer;
-        display: block;
-        padding: 10px;
-    }
-
-    .line {
-        width: 100%;
-        height: 1px;
-        background-color: #cacaca;
-    }
-    
-`
 
 
 

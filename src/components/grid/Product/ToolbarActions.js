@@ -4,6 +4,8 @@ import { Button } from 'primereact/button';
 import styled from 'styled-components';
 import TreeSelectComp from './TreeSelectComp';
 import SelectImpas from './SelectImpas';
+
+
 const MenuOptions = ({ setId, setClickMenu }) => {
     const onClick = (id) => {
         setClickMenu(false)
@@ -28,7 +30,9 @@ const ToolbarActions = ({gridData, setSubmitted}) => {
     const [id, setId] = useState(null);
     return (
         <div className="card">
+
             <div className='mb-2 mt-2'>
+           
                 <Button label="Μenu" icon="pi pi-bars" className="surface-ground text-primary w-full p-mr-2 mt-3" onClick={() => setClickMenu((prev) => !prev)} />
                 {clickMenu ?
                     (
