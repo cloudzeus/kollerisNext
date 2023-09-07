@@ -17,13 +17,14 @@ export default async function handler(req, res) {
         }
         console.log('new array')
         console.log(newArray)
-        // try {
-        //     await connectMongo();
-        //     const impas = await ImpaCodes.insertMany(newArray)
-        //     res.status(200).json({success: true, data: impas})
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        try {
+            await connectMongo();
+            const impas = await ImpaCodes.insertMany(newArray)
+            console.log(impas)
+            res.status(200).json({success: true, data: impas})
+        } catch (e) {
+            console.log(e)
+        }
         
     }
 

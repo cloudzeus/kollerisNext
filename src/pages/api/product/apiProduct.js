@@ -249,18 +249,19 @@ export default async function handler(req, res) {
     }
 
     if(action === 'insert') {
-    //     await connectMongo();
-    //      let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
-    // const response = await fetch(URL, {
-    //                 method: 'POST',
-    //                 body: JSON.stringify({
-    //                     username: "Service",
-    //                     password: "Service",
-    //                 })
-    //             });
-    // let buffer = await translateData(response)
+        await connectMongo();
+         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
+    const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                    })
+                });
+    let buffer = await translateData(response)
+    console.log(buffer.result)
     await connectMongo();
-    // let insert1 = await SoftoneProduct.insertMany(buffer.result)
+    let insert1 = await SoftoneProduct.insertMany(buffer.result)
 
         
         let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
@@ -268,6 +269,7 @@ export default async function handler(req, res) {
         let productsInsert = softone.map((item) => ({
             softoneProduct: item._id,
             name: item.NAME,
+            MTRL: item.MTRL,
         }))
         let insert = await Product.insertMany(productsInsert)
         console.log(insert)
@@ -365,8 +367,6 @@ export default async function handler(req, res) {
         let buffer = await translateData(response)
         const now = new Date();
         const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
-        console.log(`Formatted Date and Time: ${formattedDateTime}`);
-        console.log(buffer.result)
         let count = 0;
         try {
             for(let item of buffer.result) {
@@ -383,6 +383,7 @@ export default async function handler(req, res) {
                     }
                   
                 })
+                console.log(product)
                 if(product.modifiedCount == 1) {
                     count++;
                 }
@@ -399,6 +400,15 @@ export default async function handler(req, res) {
 
 
 
+    }
+
+    if(action === "MTRL") {
+        let find = await Product.find({}).populate('softoneProduct')
+        console.log(find)
+        for(let item of find) {
+            let update = await Product.updateOne({_id: item._id}, {$set: {MTRL: item.softoneProduct.MTRL}})
+        }
+        return res.status(200).json({ success: true, result: find});
     }
 }
 

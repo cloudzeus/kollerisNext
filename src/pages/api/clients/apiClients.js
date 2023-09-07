@@ -36,29 +36,30 @@ export default async function handler(req, res) {
     }
 
 
-    // if (action === "insert") {
-    //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/getCustomers`;
-    //     const response = await fetch(URL, {
-    //         method: 'POST',
-    //         body: JSON.stringify({
-    //             username: "Service",
-    //             password: "Service",
-    //         })
-    //     });
-    //     console.log('response')
-    //     let buffer = await translateData(response)
+    if (action === "insert") {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/getCustomers`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        console.log('response')
+        let buffer = await translateData(response)
 
-    //     try {
-    //         await connectMongo();
-    //         let result = await Clients.insertMany(buffer.result)
-    //         console.log(result)
-    //         return res.status(200).json({ success: true, data: result })
-    //     } catch (e) {
-    //         return res.status(400).json({ success: false, data: [] })
-    //     }
-    // }
+        try {
+            await connectMongo();
+            let result = await Clients.insertMany(buffer.result)
+            console.log(result)
+            return res.status(200).json({ success: true, data: result })
+        } catch (e) {
+            return res.status(400).json({ success: false, data: [] })
+        }
+    }
     if(action === 'upsert') {
         let {data} = req.body;
+        console.log('upsert')
         console.log(data)
        
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Toolbar } from 'primereact/toolbar';
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
@@ -78,10 +78,10 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
         <React.Fragment>
             {activeIndex !== 0 ? (
                 <button onClick={() => setActiveIndex(0)} className="p-sidebar-icon p-link mr-2">
-                <span className="pi pi-arrow-left" />
-            </button>
+                    <span className="pi pi-arrow-left" />
+                </button>
             ) : null}
-            
+
         </React.Fragment>
     );
 
@@ -117,8 +117,8 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                 ) : null}
                 {activeIndex !== 0 ? (
                     <SecondScreen>
-                        {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts}  setSubmitted={setSubmitted} />) : null}
-                        {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts}  setSubmitted={setSubmitted} />) : null}
+                        {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
+                        {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
                         {activeIndex === 3 ? (<p>item 3</p>) : null}
                     </SecondScreen>
                 ) : null}
@@ -141,6 +141,8 @@ const SecondScreen = ({ children }) => {
 
 
 const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
+
+
     const CalculateBasket = () => {
         let total = 0
         selectedProducts && selectedProducts.forEach((item) => {
@@ -152,24 +154,11 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
 
 
     }
- 
 
-    const removeProducts = (props) => {
-        console.log(props)
-        return (
-            <RemoveProductTemplate id={props._id} />
-        )
-    }
 
-    const RemoveProductTemplate = ({ id }) => {
-        const remove = () => {
-            let newArray = selectedProducts.filter((product) => product._id !== id)
-            setSelectedProducts(newArray)
-        }
-        return (
-            <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
-        )
-    }
+
+
+
 
     const footer = () => {
         return (
@@ -180,6 +169,20 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
         )
     }
 
+
+
+
+    const Basket = ({name, categoryName, PRICER}) => {
+        <ProductBaksetTemplate 
+            selectedProducts={selectedProducts}
+            setSelectedProducts={setSelectedProducts}
+            name={name}
+            categoryName={categoryName}
+            PRICER={PRICER}
+        />
+    }
+
+
     return (
         <>
             <div className='flex align-items-center mb-2 mt-2'>
@@ -187,8 +190,9 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
             </div>
             <div className='box'>
                 <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
-                    <Column field="Προϊόν" header="Προϊόν" body={ProductBaksetTemplate}></Column>
-                    <Column style={{ width: '30px' }} body={removeProducts} ></Column>
+                    <Column field="Προϊόν" header="Προϊόν" body={Basket}></Column>
+                    {/* <Column  style={{width: '60px'}}  body={ProductQuantities}></Column>
+                    <Column style={{ width: '30px' }} body={removeProducts} ></Column> */}
                 </DataTable>
 
 
@@ -200,9 +204,37 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
 
 
 
+const ProductQuantitiesTemplate = ({ quantity, setQuantity }) => {
+    const increaseQuantity = () => {
+        setQuantity(prev => prev + 1)
+    }
+    const decreaseQuantity = () => {
+        if (quantity === 1) return
+        setQuantity(prev => prev - 1)
+    }
 
+  
+   
+    return (
+        <div className='font-xs flex justify-content-between border-1 p-2 border-400 border-round'>
+            <div
+                onClick={decreaseQuantity}
+                className='mr-2 border-1  flex align-items-center justify-content-center border-round border-400 pointer-cursor'
+                style={{ width: '25px', height: '25px' }}>
+                <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
+            </div>
+            <p className='text-lg'>{quantity}</p>
+            <div
+                onClick={increaseQuantity}
+                className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
+                <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
+            </div>
+        </div>
+    )
+}
 
 const MenuBtn = ({ label, onClick }) => {
+
     return (
         <Button onClick={onClick} style={{ textAlign: 'left' }} icon="pi pi-arrow-right" className='surface-ground text-primary w-full mb-1' label={label} severity='warning' />
 
@@ -211,20 +243,57 @@ const MenuBtn = ({ label, onClick }) => {
 
 
 
-const ProductBaksetTemplate = ({ name, PRICER, categoryName, }) => {
+const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, setSelectedProducts }) => {
+    const [total, setTotal] = useState(PRICER)
+    const [quantity, setQuantity] = useState(1)
+
+    const increaseQuantity = () => {
+        setQuantity(prev => prev + 1)
+    }
+    const decreaseQuantity = () => {
+        if (quantity === 1) return
+        setQuantity(prev => prev - 1)
+    }
+
+    const remove = () => {
+        let newArray = selectedProducts.filter((product) => product._id !== id)
+        setSelectedProducts(newArray)
+    }
+    useEffect(() => {
+        setTotal(parseInt(PRICER) * quantity)
+    }, [quantity])
     return (
         <ProductBasket>
             <div>
-                <p className='text-md text-900 font-semibold	'>{name}</p>
-            </div>
-            <div className='details'>
                 <div>
-                    <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
-                    <p className='text-xs'>{categoryName}</p>
+                    <p className='text-md text-900 font-semibold'>{name}</p>
                 </div>
+                <div className='details'>
+                        <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
+                        <p className='text-xs'>{categoryName}</p>
+                </div>
+                <span className='text-xs ml-1'>TIMH:</span>
+                <span className='text-xs ml-2'>{total},00$</span>
             </div>
-            <span className='text-xs ml-1'>TIMH:</span>
-            <span className='text-xs ml-2'>{PRICER},00$</span>
+            <div>
+                <div className='font-xs flex align-items-center border-1 p-2 border-400 border-round'>
+                    <div
+                        onClick={decreaseQuantity}
+                        className='mr-2 border-1  flex align-items-center justify-content-center border-round border-400 pointer-cursor'
+                        style={{ width: '25px', height: '25px' }}>
+                        <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
+                    </div>
+                    <p className='text-lg'>{quantity}</p>
+                    <div
+                        onClick={increaseQuantity}
+                        className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
+                        <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
+                    </div>
+                    <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
+
+                </div>
+                
+            </div>
         </ProductBasket>
     )
 }
@@ -243,15 +312,13 @@ const ContainerBasket = styled.div`
 
 
 const ProductBasket = styled.div`
+     display: flex;
+        align-items: center;
+        justify-content: space-between;
     .details {
         display: flex;
         align-items: center;
-        div {
-            display: flex;
-            margin-top: 2px;
-            margin-bottom: 10px;
-            margin-right: 10px;
-        }
+       
     }
 `
 

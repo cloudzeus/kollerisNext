@@ -304,6 +304,7 @@ export default function Product() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="MTRL" style={{ width: '400px' }} header="Όνομα" ></Column>
                 {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" header="Ομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>}
