@@ -77,6 +77,8 @@ const MultiColumnLayout = ({ children }) => {
                                 <SidebarItem goTo="info/currencies" subid={9} subActive={subActive} setSubActive={setSubActive} icon="pi-dollar" title="Νομίσματα" />
                                 <SidebarItem goTo="info/impas" subid={10} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Impa" />
                                 <SidebarItem goTo="info/intrastat" subid={11} subActive={subActive} setSubActive={setSubActive} title="Κωδ. Intrastat" />
+                                <SidebarItem goTo="info/units" subid={12} subActive={subActive} setSubActive={setSubActive} title="Μονάδες Μέτρησης" />
+                                <SidebarItem goTo="info/vat" subid={13} subActive={subActive} setSubActive={setSubActive} title="ΦΠΑ" />
                             </SidebarList>
                         </SidebaContainer>
 
