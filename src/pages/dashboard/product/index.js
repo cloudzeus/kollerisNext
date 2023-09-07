@@ -264,11 +264,11 @@ export default function Product() {
     }
 
 
-    const footer = () => {
-        return (
-            <Button icon="pi pi-replay" label="Ανανέωση διαθεσιμότητας" />
-        )
-    }
+    // const footer = () => {
+    //     return (
+    //         <Button icon="pi pi-replay" label="Ανανέωση διαθεσιμότητας" />
+    //     )
+    // }
 
 
     return (
@@ -298,7 +298,7 @@ export default function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-                footer={footer}
+                // footer={footer}
             >
 
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />

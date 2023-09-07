@@ -23,7 +23,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			<SidebarContainer isSidebarOpen={isSidebarOpen}>
+			{/* <SidebarContainer isSidebarOpen={isSidebarOpen}>
 				<div className="top-div">
 					{isSidebarOpen ? (
 						<Image
@@ -44,10 +44,32 @@ const AdminLayout = ({ children }) => {
 				<div className='main-div'>
 				<SidebarMenu />
 				</div>
-			</SidebarContainer>
-			{/* 
-			\ */}
+			</SidebarContainer> */}
+			<MultiColumnLayout>
 			<Content isSidebarOpen={isSidebarOpen} >
+				{/* <Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
+					<Button
+						icon="pi pi-bars"
+						text aria-label="navburger"
+						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
+						onClick={handleToggleSidebar}
+						// style={{width: '35px', height: '35px', fontSize: '12px'}}
+					/>
+					<div className='navbar-rightdiv'>
+						<FullScreen>
+							{children}
+						</FullScreen>
+						<ProfileButton />
+					</div>
+				</Navbar> */}
+				<MainContent>
+					<BreadCrumbs />
+					{children}
+
+				</MainContent>
+			</Content>	
+			</MultiColumnLayout>
+			{/* <Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button
 						icon="pi pi-bars"
@@ -68,7 +90,7 @@ const AdminLayout = ({ children }) => {
 					{children}
 
 				</MainContent>
-			</Content>
+			</Content> */}
 		</Container>
 	);
 
@@ -95,8 +117,8 @@ function FullScreen({ children }) {
 }
 
 const Container = styled.div`
-  display: flex;
-  height: 100vh;
+  /* display: flex; */
+  /* height: 100vh; */
   transition: width 0.3s ease-in-out;
 `;
 
