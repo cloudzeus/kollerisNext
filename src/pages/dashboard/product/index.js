@@ -120,7 +120,7 @@ export default function Product() {
             }
         };
     
-        const intervalID = setInterval(availability, 60000);
+        const intervalID = setInterval(availability, 600000);
     
         return () => {
             clearInterval(intervalID);

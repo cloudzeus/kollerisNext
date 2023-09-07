@@ -23,49 +23,11 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			{/* <SidebarContainer isSidebarOpen={isSidebarOpen}>
-				<div className="top-div">
-					{isSidebarOpen ? (
-						<Image
-							src={'/static/imgs/logoDG.png'}
-							alt="Picture of the author"
-							width={80}
-							height={24}
-						/>
-					) : (
-						<Image
-							src={'/static/imgs/dg-small.png'}
-							alt="Picture of the author"
-							width={50}
-							height={50}
-						/>
-					)}
-				</div>
-				<div className='main-div'>
-				<SidebarMenu />
-				</div>
-			</SidebarContainer> */}
+			
 			<MultiColumnLayout>
 			<Content isSidebarOpen={isSidebarOpen} >
-				{/* <Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
-					<Button
-						icon="pi pi-bars"
-						text aria-label="navburger"
-						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
-						onClick={handleToggleSidebar}
-						// style={{width: '35px', height: '35px', fontSize: '12px'}}
-					/>
-					<div className='navbar-rightdiv'>
-						<FullScreen>
-							{children}
-						</FullScreen>
-						<ProfileButton />
-					</div>
-				</Navbar> */}
 				<MainContent>
-					<BreadCrumbs />
 					{children}
-
 				</MainContent>
 			</Content>	
 			</MultiColumnLayout>
@@ -117,8 +79,7 @@ function FullScreen({ children }) {
 }
 
 const Container = styled.div`
-  /* display: flex; */
-  /* height: 100vh; */
+
   transition: width 0.3s ease-in-out;
 `;
 
@@ -148,41 +109,18 @@ const SidebarContainer = styled.div`
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
+  /* flex-grow: 1; */
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  /* height: 100vh; */
   overflow-y: auto;
-  background-color: ${({ theme }) => theme.palette.background};
+  /* background-color: ${({ theme }) => theme.palette.background}; */
 `;
 
-const Navbar = styled.nav`
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 70px;
-  background-color: #fff;
-  color: #fff;
-  padding: 10px;
-  z-index: 10;
-  border-bottom: 4px solid ${({ theme }) => theme.palette.background};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 250px)' : 'calc(100% - 60px)'};
-  /* transition: width 0.3s ease-in-out; */
-  .navbar-rightdiv {
-	display: flex;
-	align-items: center;
-	div {
-		margin-left: 5px;
-	}
-  }
-`;
+
 
 const MainContent = styled.div`
   padding: 20px;
-  margin-top: 60px;
   background-color: ${({ theme }) => theme.palette.background};
 `;
 
