@@ -29,14 +29,8 @@ export default function ProfileButton() {
                 return (
                     <Link href="/dashboard/profile">
                     <PopupTopBar className={classNames(options.className, 'w-full p-link flex align-items-center')}>
-                        <Avatar 
-                            aria-controls="popup_menu_left"  
-                            icon="pi pi-user" 
-                            size="small" 
-                            onClick={(event) => menuLeft.current.toggle(event)} 
-                            style={{ backgroundColor: 'primary', color: '#ffffff', fontSize: '1rem' }} 
-                            shape="circle"
-                            />
+                    <Avatar icon="pi pi-user " size="small" shape="circle" onClick={(event) => menuLeft.current.toggle(event)}  />
+                       
                         <div className='name-div'>
                             <span className="font-bold">{user?.lastName}</span>
                             <span className="text-sm">{user?.role}</span>
@@ -70,8 +64,6 @@ export default function ProfileButton() {
                 aria-controls="popup_menu_left"  
                 icon="pi pi-user" 
                 onClick={(event) => menuLeft.current.toggle(event)} 
-                style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
-                
                 />
             <Menu 
                 model={items} 
@@ -85,9 +77,6 @@ export default function ProfileButton() {
 }
 
 
-const Container = styled.div`
-
-`
 
 const PopupTopBar  = styled.button`
     display: flex;
@@ -99,9 +88,7 @@ const PopupTopBar  = styled.button`
         margin-left: 0.5rem;
         justify-content: center;
     }
-    .name-div span:first-child {
-
-    }
+   
     .name-div span:last-child {
         font-size: 0.7rem;
         font-style: italic;

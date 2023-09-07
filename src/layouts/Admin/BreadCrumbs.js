@@ -32,6 +32,18 @@ export default function BreadCrumbs({labels}) {
 
 
 const Container = styled.div`
-    margin: 20px 0;
+    margin-left: 10px;
+    .p-breadcrumb{
+        border: none;
+        border-radius: none;
+        padding: 8px;
+    }
 
+    .p-breadcrumb .p-breadcrumb-list li .p-menuitem-link .p-menuitem-text {
+        color: grey;
+    }
+
+    .p-breadcrumb-chevron {
+        color: grey;
+    }
 `
