@@ -138,10 +138,7 @@ const SecondScreen = ({ children }) => {
     )
 }
 
-
-
 const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
-
 
     const CalculateBasket = () => {
         let total = 0
@@ -151,14 +148,7 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
         return (
             <p className='mr-3 ml-1'><span className='font-normal'>Σύνολο:</span> {`${total},00$`}</p>
         )
-
-
     }
-
-
-
-
-
 
     const footer = () => {
         return (
@@ -169,19 +159,17 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
         )
     }
 
-
-
-
-    const Basket = ({name, categoryName, PRICER}) => {
-        <ProductBaksetTemplate 
+    const Basket = ({ name, categoryName, PRICER }) => {
+        return (
+            <ProductBaksetTemplate
             selectedProducts={selectedProducts}
             setSelectedProducts={setSelectedProducts}
             name={name}
             categoryName={categoryName}
             PRICER={PRICER}
         />
+        )
     }
-
 
     return (
         <>
@@ -213,8 +201,8 @@ const ProductQuantitiesTemplate = ({ quantity, setQuantity }) => {
         setQuantity(prev => prev - 1)
     }
 
-  
-   
+
+
     return (
         <div className='font-xs flex justify-content-between border-1 p-2 border-400 border-round'>
             <div
@@ -269,13 +257,13 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, s
                     <p className='text-md text-900 font-semibold'>{name}</p>
                 </div>
                 <div className='details'>
-                        <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
-                        <p className='text-xs'>{categoryName}</p>
+                    <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
+                    <p className='text-xs'>{categoryName}</p>
                 </div>
                 <span className='text-xs ml-1'>TIMH:</span>
                 <span className='text-xs ml-2'>{total},00$</span>
             </div>
-            <div>
+            <div className='flex'>
                 <div className='font-xs flex align-items-center border-1 p-2 border-400 border-round'>
                     <div
                         onClick={decreaseQuantity}
@@ -289,10 +277,8 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, s
                         className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
                         <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
                     </div>
-                    <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
-
                 </div>
-                
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
             </div>
         </ProductBasket>
     )
