@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useRef, useContext } from "react";
 import { classNames } from "primereact/utils";
 import { Button } from "primereact/button";

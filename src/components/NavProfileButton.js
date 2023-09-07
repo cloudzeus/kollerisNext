@@ -1,3 +1,4 @@
+'use client'
 import React, {useRef} from 'react'; 
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
