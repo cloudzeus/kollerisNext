@@ -45,9 +45,30 @@ const AdminLayout = ({ children }) => {
 				<SidebarMenu />
 				</div>
 			</SidebarContainer>
-			<MultiColumnLayout>
+			{/* <MultiColumnLayout>
+			<Content isSidebarOpen={isSidebarOpen} >
+				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
+					<Button
+						icon="pi pi-bars"
+						text aria-label="navburger"
+						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
+						onClick={handleToggleSidebar}
+						// style={{width: '35px', height: '35px', fontSize: '12px'}}
+					/>
+					<div className='navbar-rightdiv'>
+						<FullScreen>
+							{children}
+						</FullScreen>
+						<ProfileButton />
+					</div>
+				</Navbar>
+				<MainContent>
+					<BreadCrumbs />
+					{children}
 
-			</MultiColumnLayout>
+				</MainContent>
+			</Content>	
+			</MultiColumnLayout> */}
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button
@@ -96,7 +117,7 @@ function FullScreen({ children }) {
 }
 
 const Container = styled.div`
-  display: flex;
+  /* display: flex; */
   height: 100vh;
   transition: width 0.3s ease-in-out;
 `;
