@@ -67,18 +67,18 @@ const MultiColumnLayout = ({ children }) => {
                             </SidebarList>
                             <SidebarList id={2} activeTab={activeTab} title="Πελάτες" >
                                 <SidebarItem goTo="clients" subid={6} subActive={subActive} setSubActive={setSubActive} icon="pi-user" title="Πελάτες" />
-                                <SidebarItem goTo="users" subid={6} subActive={subActive} setSubActive={setSubActive} icon="pi-user" title="Xρήστες" />
+                                <SidebarItem goTo="users" subid={7} subActive={subActive} setSubActive={setSubActive} icon="pi-user" title="Xρήστες" />
                             </SidebarList>
                             <SidebarList id={3} activeTab={activeTab} title="Προμηθευτές" >
-                                <SidebarItem goTo="product/manufacturers" subid={7} subActive={subActive} setSubActive={setSubActive} icon="pi-truck" title="Προμηθευτές" />
+                                <SidebarItem goTo="product/manufacturers" subid={8} subActive={subActive} setSubActive={setSubActive} icon="pi-truck" title="Προμηθευτές" />
                             </SidebarList>
                             <SidebarList id={4} activeTab={activeTab} title="Βοηθητικά Δεδομένα" >
-                                <SidebarItem goTo="info/countries" subid={8} subActive={subActive} setSubActive={setSubActive} icon="pi-map" title="Χώρες" />
-                                <SidebarItem goTo="info/currencies" subid={9} subActive={subActive} setSubActive={setSubActive} icon="pi-dollar" title="Νομίσματα" />
-                                <SidebarItem goTo="info/impas" subid={10} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Impa" />
-                                <SidebarItem goTo="info/intrastat" subid={11} subActive={subActive} setSubActive={setSubActive} title="Κωδ. Intrastat" />
-                                <SidebarItem goTo="info/units" subid={12} subActive={subActive} setSubActive={setSubActive} title="Μονάδες Μέτρησης" />
-                                <SidebarItem goTo="info/vat" subid={13} subActive={subActive} setSubActive={setSubActive} title="ΦΠΑ" />
+                                <SidebarItem goTo="info/countries" subid={9} subActive={subActive} setSubActive={setSubActive} icon="pi-map" title="Χώρες" />
+                                <SidebarItem goTo="info/currencies" subid={10} subActive={subActive} setSubActive={setSubActive} icon="pi-dollar" title="Νομίσματα" />
+                                <SidebarItem goTo="info/impas" subid={11} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Impa" />
+                                <SidebarItem goTo="info/intrastat" subid={12} subActive={subActive} setSubActive={setSubActive} title="Κωδ. Intrastat" />
+                                <SidebarItem goTo="info/units" subid={13} subActive={subActive} setSubActive={setSubActive} title="Μονάδες Μέτρησης" />
+                                <SidebarItem goTo="info/vat" subid={14} subActive={subActive} setSubActive={setSubActive} title="ΦΠΑ" />
                             </SidebarList>
                         </SidebaContainer>
 
