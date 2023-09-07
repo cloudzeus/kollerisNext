@@ -109,18 +109,22 @@ export default function Product() {
 
     useEffect(() => {
         const availability = async () => {
-            let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' })
-            console.log(result)
-            if(!result.success) return;
-            
-            setTriggerUpdate(!triggerUpdate)
-            showSuccess()
-        }
-        setInterval(availability, 60000)
-
+            try {
+                let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' });
+                if (result.data.success) {
+                    setTriggerUpdate(prev => !prev); // This is a safer way to toggle based on previous value
+                    showSuccess();
+                }
+            } catch (error) {
+                console.error("There was an error fetching availability:", error);
+            }
+        };
+    
+        const intervalID = setInterval(availability, 60000);
+    
         return () => {
-            clearInterval(availability)
-        }
+            clearInterval(intervalID);
+        };
        
     }, [])
 
@@ -151,8 +155,8 @@ export default function Product() {
         const fetch = async () => {
             setLoading(true)
             let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-            setData(res.data.result.slice(0, 10));
-            setFilteredData(res.data.result.slice(0, 10));
+            setData(res.data.result);
+            setFilteredData(res.data.result);
             setLoading(false)
         }
         fetch()

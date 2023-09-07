@@ -45,7 +45,9 @@ const AdminLayout = ({ children }) => {
 				<SidebarMenu />
 				</div>
 			</SidebarContainer>
-			{/* <MultiColumnLayout /> */}
+			<MultiColumnLayout>
+
+			</MultiColumnLayout>
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button
