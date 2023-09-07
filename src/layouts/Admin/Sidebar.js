@@ -61,14 +61,22 @@ const MultiColumnLayout = ({ children }) => {
                             <SidebarList id={1} activeTab={activeTab} title="Προϊόντα">
                                 <SidebarItem goTo="product" subid={1} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Προϊόν" />
                                 <SidebarItem goTo="product/brands" subid={2} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Μάρκα" />
-                                <SidebarItem goTo="product/categories" subid={3} subActive={subActive} setSubActive={setSubActive} title="Κατηγορία" />
-                                <SidebarItem goTo="product/categories" subid={4} subActive={subActive} setSubActive={setSubActive} title="Ομάδα" />
-                                <SidebarItem subid={5} subActive={subActive} setSubActive={setSubActive} title="Υποομάδα" />
-
+                                <SidebarItem goTo="product/mtrcategories" subid={3} subActive={subActive} setSubActive={setSubActive} title="Κατηγορία" />
+                                <SidebarItem goTo="product/mtrgroup" subid={4} subActive={subActive} setSubActive={setSubActive} title="Ομάδα" />
+                                <SidebarItem goTo="product/mtrsubgroup" subid={5} subActive={subActive} setSubActive={setSubActive} title="Υποομάδα" />
                             </SidebarList>
-                            <SidebarList id={2} activeTab={activeTab} title="Προϊόντα">
-                                <SidebarItem subid={3} subActive={subActive} setSubActive={setSubActive} />
-                                <SidebarItem subid={4} subActive={subActive} setSubActive={setSubActive} />
+                            <SidebarList id={2} activeTab={activeTab} title="Πελάτες" >
+                                <SidebarItem goTo="clients" subid={6} subActive={subActive} setSubActive={setSubActive} icon="pi-user" title="Πελάτες" />
+                                <SidebarItem goTo="users" subid={6} subActive={subActive} setSubActive={setSubActive} icon="pi-user" title="Xρήστες" />
+                            </SidebarList>
+                            <SidebarList id={3} activeTab={activeTab} title="Προμηθευτές" >
+                                <SidebarItem goTo="product/manufacturers" subid={7} subActive={subActive} setSubActive={setSubActive} icon="pi-truck" title="Προμηθευτές" />
+                            </SidebarList>
+                            <SidebarList id={4} activeTab={activeTab} title="Βοηθητικά Δεδομένα" >
+                                <SidebarItem goTo="info/countries" subid={8} subActive={subActive} setSubActive={setSubActive} icon="pi-map" title="Χώρες" />
+                                <SidebarItem goTo="info/currencies" subid={9} subActive={subActive} setSubActive={setSubActive} icon="pi-dollar" title="Νομίσματα" />
+                                <SidebarItem goTo="info/impas" subid={10} subActive={subActive} setSubActive={setSubActive} icon="pi-tag" title="Impa" />
+                                <SidebarItem goTo="info/intrastat" subid={11} subActive={subActive} setSubActive={setSubActive} title="Κωδ. Intrastat" />
                             </SidebarList>
                         </SidebaContainer>
 
@@ -115,53 +123,17 @@ const IconMenu = ({ activeTab, setActiveTab }) => {
     return (
         <div className="overflow-y-auto mt-3">
             <ul className="list-none py-3 pl-2 pr-0 m-0">
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 0 })} onClick={() => handleIconPress(0)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        {/*ICON */}
-                        <i className="pi pi-home text-xl"></i>
-                        <Ripple />
-                    </a>
-                </li>
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 1 })} onClick={() => handleIconPress(1)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        {/*ICON */}
-                        <i className="pi pi-tags text-xl"></i>
-                        <Ripple />
-                    </a>
-                </li>
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 2 })} onClick={() => handleIconPress(2)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        <i className="pi pi-users text-xl"></i>
-                        <Ripple />
-                    </a>
-                </li>
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 3 })} onClick={() => handleIconPress(3)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        <i className="pi pi-comments text-xl"></i>
-                        <Ripple />
-                    </a>
-                </li>
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 4 })} onClick={() => handleIconPress(4)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        <i className="pi pi-calendar text-xl"></i>
-                        <Ripple />
-                    </a>
+                {/* HOME */}
+                <LinkButton activeTab={activeTab} id={0} goTo="" icon="pi-home"/>
+                {/* PRODUCT */}
+                <MenuItem id={1} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-tags"/>
+                <MenuItem id={2} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-users"/>
+                <MenuItem id={3} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-truck"/>
+                <MenuItem id={4} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-info"/>
+                <MenuItem id={5} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-chart-bar"/>
+                <MenuItem id={6} activeTab={activeTab} setActiveTab={setActiveTab} icon="pi-cog"/>
+             
 
-
-
-                </li>
-                <li className="mb-2">
-                    <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === 5 })} onClick={() => handleIconPress(5)}
-                        style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
-                        <i className="pi pi-cog text-xl"></i>
-                        <Ripple />
-                    </a>
-                </li>
             </ul>
         </div>
     )
@@ -235,19 +207,46 @@ const SidebarItem = ({ subid, subActive, setSubActive, icon, title, goTo }) => {
 }
 
 
-const TopBarItem = () => {
-    return (
-        <>
-            <li>
 
-                <i className="pi pi-inbox text-base lg:text-2xl mr-2 lg:mr-0"></i>
-                <span className="block lg:hidden font-medium">Inbox</span>
+
+const LinkButton = ({goTo, activeTab, id, icon}) => {
+    const classes = `p-ripple flex 
+    align-items-center cursor-pointer py-3 pl-0 pr-2 
+    justify-content-center hover:bg-indigo-600 
+    text-indigo-100 hover:text-indigo-50 
+    transition-duration-150 transition-colors', 
+    { 'bg-indigo-500': ${activeTab} === ${id} }`
+    return (
+        <li className="mb-2">
+            <Link 
+                style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }} 
+                href={`/dashboard/${goTo}`} className={classNames(classes)}>
+            <div
+                >
+                <i className={`pi ${icon} text-xl`}></i>
                 <Ripple />
-            </li>
-        </>
+            </div>
+            </Link>
+          
+        </li>
     )
 }
 
-const LougoutButton = () => {}
+const MenuItem = ({icon, activeTab, setActiveTab, id}) => {
+    const {setIsSidebarOpen} = useContext(SidebarContext);
+    const handleIconPress = (id) => {
+        setIsSidebarOpen(true)
+        setActiveTab(id);
+    }
+    return (
+        <li className="mb-2">
+        <a className={classNames('p-ripple flex align-items-center cursor-pointer py-3 pl-0 pr-2 justify-content-center hover:bg-indigo-600 text-indigo-100 hover:text-indigo-50 transition-duration-150 transition-colors', { 'bg-indigo-500': activeTab === id })} onClick={() => handleIconPress(id)}
+            style={{ borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
+            <i className={`pi ${icon} text-xl`}></i>
+            <Ripple />
+        </a>
+    </li>
+    )
+}
 
 export default MultiColumnLayout;
