@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, createContext, useContext } from 'react'
 import { Toolbar } from 'primereact/toolbar';
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
@@ -15,10 +15,24 @@ import { Dropdown } from 'primereact/dropdown';
 import ToolbarActions from './ToolbarActions';
 import { Badge } from 'primereact/badge';
 import SelectImpas from './SelectImpas';
+import Offer from './Offer';
+import { set } from 'mongoose';
+
+export const ProductQuantityContext = createContext();
+
+export const ProductQuantityProvider = ({ children }) => {
+    const [quantityContext, setQuantityContext] = useState(1);
+    const [mtrlines, setMtrLines] = useState([])
+    return (
+        <ProductQuantityContext.Provider value={{ quantityContext, setQuantityContext, mtrlines, setMtrLines }}>
+            {children}
+        </ProductQuantityContext.Provider>
+    );
+}
 
 
 
-
+//TOOLBAR STUFF
 const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
     console.log('selected products')
@@ -66,6 +80,9 @@ const RightSide = ({ selectedProducts }) => {
 }
 
 
+
+
+//SIDEBAR 
 const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
     const [visible, setVisible] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
@@ -86,9 +103,10 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
     );
 
 
-    return (
-        <>
+        
 
+    return (
+        <ProductQuantityProvider>
             <Button
                 icon="pi pi-shopping-cart"
                 label="Kαλάθι λειτουργειών"
@@ -119,12 +137,12 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                     <SecondScreen>
                         {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
                         {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
-                        {activeIndex === 3 ? (<p>item 3</p>) : null}
+                        {activeIndex === 3 ? (<Offer selectedProducts={selectedProducts} />) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>
 
-        </>
+        </ProductQuantityProvider>
 
     )
 }
@@ -137,6 +155,9 @@ const SecondScreen = ({ children }) => {
         </div>
     )
 }
+
+
+
 
 const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
 
@@ -159,7 +180,7 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
         )
     }
 
-    const Basket = ({ name, categoryName, PRICER }) => {
+    const Basket = ({ name, categoryName, PRICER, MTRL }) => {
         return (
             <ProductBaksetTemplate
             selectedProducts={selectedProducts}
@@ -167,6 +188,7 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
             name={name}
             categoryName={categoryName}
             PRICER={PRICER}
+            MTRL={MTRL}
         />
         )
     }
@@ -179,8 +201,6 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
             <div className='box'>
                 <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
                     <Column field="Προϊόν" header="Προϊόν" body={Basket}></Column>
-                    {/* <Column  style={{width: '60px'}}  body={ProductQuantities}></Column>
-                    <Column style={{ width: '30px' }} body={removeProducts} ></Column> */}
                 </DataTable>
 
 
@@ -192,34 +212,6 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
 
 
 
-const ProductQuantitiesTemplate = ({ quantity, setQuantity }) => {
-    const increaseQuantity = () => {
-        setQuantity(prev => prev + 1)
-    }
-    const decreaseQuantity = () => {
-        if (quantity === 1) return
-        setQuantity(prev => prev - 1)
-    }
-
-
-
-    return (
-        <div className='font-xs flex justify-content-between border-1 p-2 border-400 border-round'>
-            <div
-                onClick={decreaseQuantity}
-                className='mr-2 border-1  flex align-items-center justify-content-center border-round border-400 pointer-cursor'
-                style={{ width: '25px', height: '25px' }}>
-                <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
-            </div>
-            <p className='text-lg'>{quantity}</p>
-            <div
-                onClick={increaseQuantity}
-                className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
-                <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
-            </div>
-        </div>
-    )
-}
 
 const MenuBtn = ({ label, onClick }) => {
 
@@ -231,16 +223,52 @@ const MenuBtn = ({ label, onClick }) => {
 
 
 
-const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, setSelectedProducts }) => {
+const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, setSelectedProducts, MTRL }) => {
     const [total, setTotal] = useState(PRICER)
     const [quantity, setQuantity] = useState(1)
+    const { quantityContext, setQuantityContext, setMtrLines, mtrlines } = useContext(ProductQuantityContext);
+  
+   
+    console.log('MTRLLINES')
+    console.log(mtrlines)
 
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
+        setMtrLines(prev => {
+            return prev.map(item => {
+                if (item.MTRL === MTRL[0]) {
+                    return { ...item, QTY1: item.QTY1 + 1 };
+                }
+                return item;
+            });
+        });
+     
     }
+
+    useEffect(() => {
+        setMtrLines(prev => {
+         
+            if (prev.some(item => item.MTRL === MTRL[0])) {
+                return prev; 
+            }
+            return [...prev, { MTRL: MTRL[0], QTY1: 1}];
+        });
+    }, [quantity])
+
+
     const decreaseQuantity = () => {
         if (quantity === 1) return
+
         setQuantity(prev => prev - 1)
+        setMtrLines(prev => {
+            return prev.map(item => {
+                if (item.MTRL === MTRL[0]) {
+                    return { ...item, QTY1: item.QTY1 - 1 };
+                }
+                return item;
+            });
+        });
+        
     }
 
     const remove = () => {

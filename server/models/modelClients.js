@@ -56,7 +56,11 @@ const clientsSchema= new mongoose.Schema({
 });
 
 
-
+clientsSchema.index({
+    NAME: 'text',
+    PHONE01: 'text',
+    CODE: 'text'
+});
 
 
 

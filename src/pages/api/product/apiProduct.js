@@ -149,7 +149,7 @@ export default async function handler(req, res) {
 
         // setInterval(availabilityInterval, 1500);
 
-        return res.status(200).json({ success: true, result : fetchProducts, count:count});
+        return res.status(200).json({ success: true, result : fetchProducts.slice(0, 10), count:count});
 
     }
     
