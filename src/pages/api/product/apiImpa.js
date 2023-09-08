@@ -59,20 +59,32 @@ export default async function handler(req, res) {
         try {
         await connectMongo();
             let arrayProductID = [];
+            let count = 0;
+            let errorArray = [];
             for(let item of dataToUpdate) {
-                console.log('item: ' + JSON.stringify(item))
                 let response = await Product.updateOne({_id: item._id}, {$set: {impas: id}}, {upsert: true})
+                console.log('response impa')
                 console.log(response)
+                if(response.modifiedCount == 1) {
+                    count++;
+                } else {
+                    errorArray.push(item?.name)
+                }
                 arrayProductID.push(item._id)
-                console.log(response)
               
             }  
-            console.log(arrayProductID)
-            
+
             let updateImpa = await ImpaCodes.updateOne({_id: id}, {$push: {products: {$each: arrayProductID}}})
             console.log('updateImpa')
             console.log(updateImpa)
-            return res.status(200).json({success: true})
+            
+            if(count === dataToUpdate.length && updateImpa) {
+                return res.status(200).json({success: true, message: 'Update Impa ολοκληρώθηκε'})
+            } else {
+                return res.status(200).json({success: true, message: 'Δεν ολοκληρώθηκε το update', result: errorArray})
+            }
+            
+           
         }catch (e) {
           return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
         }

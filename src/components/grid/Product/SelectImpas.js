@@ -9,8 +9,9 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
+import { Toast } from 'primereact/toast';
 
-const MyComponent = ({ gridData }) => {
+const MyComponent = ({ gridData, setSubmitted }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
 
@@ -20,8 +21,6 @@ const MyComponent = ({ gridData }) => {
             const fetch = async () => {
                 setLoading(true)
                 const res = await axios.post('/api/product/apiImpa', { action: 'find' })
-                console.log('dataaa')
-                console.log(data)
                 setData(res.data.data)
                 setLoading(false)
             }
@@ -32,7 +31,7 @@ const MyComponent = ({ gridData }) => {
 
     return (
         <div>
-            <SelectImpas onLoad={memoizedCallback} data={data} loading={loading} gridData={gridData} />
+            <SelectImpas onLoad={memoizedCallback} data={data} loading={loading} gridData={gridData} setSubmitted={setSubmitted} />
         </div>
     );
 };
@@ -41,6 +40,7 @@ const MyComponent = ({ gridData }) => {
 const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     const [selectedImpa, setSelectedImpa] = useState(null)
     const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const toast = useRef(null);
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -52,8 +52,9 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     useEffect(() => {
         onLoad();
     }, [])
+    
 
-
+  
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
@@ -83,12 +84,28 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
 
 
     const handleImpaSubmit = async () => {
-        console.log(gridData)
         let response = await axios.post('/api/product/apiImpa', { action: 'correlateImpa', id: selectedImpa._id, dataToUpdate: gridData })
-        // setVisible(false)
+        if(!response.data.success) {
+            showError()
+        }
+        showSuccess();
+        setSubmitted(true)
     }
+
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Impa update ολοκληρώθηκε', life: 3000});
+    }
+
+   
+   
+
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Ιmpa update δεν ολοκληρώθηκε', life: 3000});
+    }
+
     return (
-        <div className="">
+        <div >
+            <Toast ref={toast} />
             {selectedImpa ? (
                 <>  
                     <div>
