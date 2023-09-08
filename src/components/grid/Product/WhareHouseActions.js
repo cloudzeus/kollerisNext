@@ -29,20 +29,20 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
     let available = parseInt(availability?.DIATHESIMA)
     const [value, setValue] = useState(available);
     
-    console.log('value')
-    console.log(wharehouseLines)
+    // console.log('value')
+    // console.log(wharehouseLines)
 
     const onValueChange = (e) => {
         setValue(e.value);
 
-        setWhereHouseLines(prev => {
-            return prev.map(item => {
-                if (item.MTRL === MTRL[0]) {
-                    return { ...item, QTY1: e.value };
-                }
-                return item;
-            });
-        });
+        // setWhereHouseLines(prev => {
+        //     return prev.map(item => {
+        //         if (item.MTRL === MTRL[0]) {
+        //             return { ...item, QTY1: e.value };
+        //         }
+        //         return item;
+        //     });
+        // });
     }
 
     // const increaseQuantity = () => {
