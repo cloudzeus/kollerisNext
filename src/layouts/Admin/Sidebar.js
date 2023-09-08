@@ -10,7 +10,7 @@ import { sub } from "date-fns";
 import Link from "next/link";
 import { Avatar } from "primereact/avatar";
 import BreadCrumbs from "./BreadCrumbs";
-
+import Image from "next/image";
 import ProfileButton from "@/components/NavProfileButton";
 
 import { createContext } from 'react';
@@ -51,8 +51,8 @@ const MultiColumnLayout = ({ children }) => {
                     <div className="flex h-full">
                         <div className="flex flex-column h-full bg-indigo-900 flex-shrink-0 select-none w-5rem">
                             {/* COMPANY LOGO DIV */}
-                            <div className="flex align-items-center justify-content-center flex-shrink-0" style={{ height: '60px' }}>
-                                <img src="/demo/images/blocks/logos/hyper-light.svg" alt="Image" height="30" />
+                            <div className="flex align-items-center justify-content-center flex-shrink-0 relative" style={{ height: '60px' }}>
+                                <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} />
                             </div>
                             {/* SIDE MENU WITH ICONS */}
                             <IconMenu activeTab={activeTab} setActiveTab={setActiveTab} />
