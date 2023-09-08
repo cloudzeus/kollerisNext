@@ -52,7 +52,7 @@ const MultiColumnLayout = ({ children }) => {
                         <div className="flex flex-column h-full bg-indigo-900 flex-shrink-0 select-none w-5rem">
                             {/* COMPANY LOGO DIV */}
                             <div className="flex align-items-center justify-content-center flex-shrink-0 relative" style={{ height: '60px' }}>
-                                <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} />
+                                <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
                             </div>
                             {/* SIDE MENU WITH ICONS */}
                             <IconMenu activeTab={activeTab} setActiveTab={setActiveTab} />
