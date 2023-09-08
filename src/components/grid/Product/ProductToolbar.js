@@ -1,30 +1,32 @@
 import React, { useEffect, useRef, useState, createContext, useContext } from 'react'
 import { Toolbar } from 'primereact/toolbar';
-import { Menu } from 'primereact/menu';
-import { Toast } from 'primereact/toast';
+
 import { Button } from 'primereact/button';
 import styled from 'styled-components';
 import { Sidebar } from 'primereact/sidebar';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Accordion, AccordionTab } from 'primereact/accordion';
 import TreeSelectComp from './TreeSelectComp';
-import MultiDelete from './MultiDelete';
-import MultiImpa from './MultiImpa';
-import { Dropdown } from 'primereact/dropdown';
-import ToolbarActions from './ToolbarActions';
 import { Badge } from 'primereact/badge';
 import SelectImpas from './SelectImpas';
 import Offer from './Offer';
-import { set } from 'mongoose';
+import WhareHouseActions from './WhareHouseActions';
 
 export const ProductQuantityContext = createContext();
 
 export const ProductQuantityProvider = ({ children }) => {
     const [quantityContext, setQuantityContext] = useState(1);
     const [mtrlines, setMtrLines] = useState([])
+    const [wharehouseLines, setWhereHouseLines] = useState([])
     return (
-        <ProductQuantityContext.Provider value={{ quantityContext, setQuantityContext, mtrlines, setMtrLines }}>
+        <ProductQuantityContext.Provider value={{ 
+            quantityContext, 
+            setQuantityContext, 
+            mtrlines, 
+            setMtrLines, 
+            setWhereHouseLines,
+             wharehouseLines 
+        }}>
             {children}
         </ProductQuantityContext.Provider>
     );
@@ -128,6 +130,7 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                                     <MenuBtn label="Αλλαγή κατηγοριοποίησης" onClick={() => setActiveIndex(1)} />
                                     <MenuBtn label="Αλλαγή Impa" onClick={() => setActiveIndex(2)} />
                                     <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
+                                    <MenuBtn label="Ποσοτική τροποποίηση αποθήκης" onClick={() => setActiveIndex(4)} />
                                 </div>
                             </div>
                         ) : null}
@@ -138,6 +141,7 @@ const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                         {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
                         {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
                         {activeIndex === 3 ? (<Offer selectedProducts={selectedProducts} />) : null}
+                        {activeIndex === 4 ? (<WhareHouseActions selectedProducts={selectedProducts} setSubmitted={setSubmitted} />) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>
