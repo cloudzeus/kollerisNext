@@ -2,15 +2,12 @@
 
 import axios from "axios";
 import format from "date-fns/format";
-import mongoose, { mongo } from "mongoose";
+import mongoose, { connect, mongo } from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
-import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
 import { Product } from "../../../../server/models/newProductModel";
-import { ObjectId } from "mongodb";
-import { original } from "@reduxjs/toolkit";
 
 
 export const config = {
@@ -164,15 +161,12 @@ export default async function handler(req, res) {
         let trimmedSearchTerm = searchTerm && searchTerm.trim();
 
         let {skip, limit} = req.body;
-        console.log(categoryID, groupID, searchTerm)
-        console.log('skip' + skip)
-        console.log('limit' + limit)
-        
+   
+    
 
         await connectMongo();
         let pipeline = [
-           
-          
+            
             {
                 $lookup: {
                     from: "softoneproducts", 
@@ -181,6 +175,7 @@ export default async function handler(req, res) {
                     as: "softoneProduct"
                 },
             },
+           
            
             {
                 $lookup: {
@@ -192,6 +187,11 @@ export default async function handler(req, res) {
                 
             },
             {
+                $match: {
+                    "softoneProduct.MTRCATEGORY": 10
+                },
+            },
+            {
                 $lookup: {
                     from: 'mtrgroups',
                     localField: 'softoneProduct.MTRGROUP',
@@ -199,17 +199,9 @@ export default async function handler(req, res) {
                     as: 'mtrgroup'
                 }
             },
-            // {
-            //     $unwind: "$softoneProduct",
-            // },
            
-            // {
-            //     $unwind: "$mtrcategory",
-            // },
-            // {
-            //     $unwind: "$mtrgroup",
-            // },
             
+          
             {
                 $project: {
                     "name": 1,
@@ -221,40 +213,33 @@ export default async function handler(req, res) {
                     "mtrgroup.groupName": 1,
                 }
             },
-            { $skip: skip },
-            { $limit: limit }
+            {$skip: skip},
+            {$limit: limit}
         ]
 
-        
+        let count = ""
         //FILTER WITH MTRCATEGORY
-        if(categoryID !== null) {
-            pipeline.push({
-                $match: {
-                    "softoneProduct.MTRCATEGORY": categoryID
-                }
-            })
-        } 
+        
+        // if(categoryID !== null) {
+        //     console.log('are we here')
+
+        //     pipeline.splice(1, 0, {
+        //         $match: {
+        //             "softoneProduct.MTRCATEGORY": categoryID
+        //         }
+        //     })
+        // } 
       
         if(groupID !== null ) {
-            pipeline.push({
+            pipeline.shift({
                 $match: {
                     "softoneProduct.MTRGROUP": groupID
                 }
             })
         } 
 
-        // if(searchTerm !== null) {
-        //     pipeline.unshift( {
-        //         $match: {
-        //             "softoneProduct.name": {  // Assuming the name field inside the softoneProduct is what you want to search
-        //                 $regex: searchTerm,
-        //                 $options: 'i'  // Case-insensitive match
-        //             }
-        //         }
-        //     })
-        // }
-
-        let count = ""
+      
+      
         if(searchTerm === null || searchTerm === '') {
             count = await Product.countDocuments();
             pipeline.shift({
@@ -266,6 +251,7 @@ export default async function handler(req, res) {
                 }
         })
         } 
+
 
         if(searchTerm !== null && searchTerm !== '') {
             let res = await Product.countDocuments({
@@ -288,20 +274,31 @@ export default async function handler(req, res) {
             })
         }
           
-         
       
+       
         let result = await Product.aggregate(pipeline)
-      
-        console.log(count)
-        console.log(JSON.stringify(pipeline))
+        console.log(pipeline)
+        console.log(result)
+        
        
     
-        // console.log('count')
-        // console.log(count)
-        // console.log('result')
-     
+    
         return res.status(200).json({ success: true, totalRecords: count, result: result  });
     }
+
+
+    
+    if(action === 'findCategories') {
+        await connectMongo();
+        let response = await MtrCategory.find({}, {categoryName: 1, "softOne.MTRCATEGORY": 1 , _id: 0});
+        try {
+            return res.status(200).json({ success: true, result: response })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+
+ 
 }
 
 

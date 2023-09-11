@@ -25,7 +25,7 @@ import { Button } from 'primereact/button';
 import {ProductAvailability, ProductOrdered, ProductReserved}  from '@/components/grid/Product/ProductAvailability';
 import { set } from 'mongoose';
 import { Toast } from 'primereact/toast';
-
+import { Dropdown } from 'primereact/dropdown'
 
 
 
@@ -90,7 +90,7 @@ const  initalCategories= [
 ]
 
 export default function Product() {
-    const [categroriesFilter] = useState(initalCategories);
+    const [categroriesFilter, setCategoriesFilter] = useState(initalCategories);
     const dispatch = useDispatch();
 
     const [data, setData] = useState([])
@@ -118,9 +118,9 @@ export default function Product() {
         sortOrder: null,
        
     });
-
+    const [categoryID, setCategoryID] = useState(null)
     const toast = useRef(null);
-
+    console.log('category id' + JSON.stringify(categoryID))
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Update διαθεσιμότητας', life: 3000});
@@ -131,8 +131,7 @@ export default function Product() {
         if (submitted) handleFetch()
     }, [submitted])
 
-    console.log('searchterm')
-    console.log(searchTerm)
+ 
 
     const fetch = async () => {
         setLoading(true)
@@ -141,7 +140,7 @@ export default function Product() {
             searchTerm: searchTerm, 
             skip: lazyState.first, 
             limit: lazyState.rows, 
-            categoryID: null,
+            categoryID: categoryID,
             groupID: null,
          })
         setData(res.data.result);
@@ -159,7 +158,7 @@ export default function Product() {
 
     useEffect(() => {
         fetch()
-    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm])
+    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, categoryID])
 
     useEffect(() => {
 
@@ -270,26 +269,44 @@ export default function Product() {
     //     return (
     //         <Button icon="pi pi-replay" label="Ανανέωση διαθεσιμότητας" />
     //     )
+
+
+
     // }
-    const categoriesRowFilterTemplate = (options) => {
+
+
+    const CategoriesRowFilterTemplate = (options) => {
+        // useEffect(() => {
+        //     const handleCategories = async () => {
+        //         let {data} = await axios.post('/api/product/apiProductFilters', { action: 'findCategories' })
+        //         setCategoriesFilter(data.result)
+        //     }
+        //     handleCategories();
+        // }, [])
+
+        // const onFilterChange = (e) => {
+        //     e.value &&
+        //     setCategoryID(e.value.softOne.MTRCATEGORY)
+
+        // }
         return (
-            <MultiSelect
-                value={options.value}
-                options={categroriesFilter}
-                onChange={(e) => options.filterApplyCallback(e.value)}
-                optionLabel="name"
-                placeholder="Any"
-                className="p-column-filter"
-                maxSelectedLabels={1}
-                style={{ minWidth: '14rem' }}
-            />
-        );
+            // <Dropdown
+            // value={options.value || ""}
+            // options={categroriesFilter} // Assuming categroriesFilter is an array of category objects
+            // onChange={onFilterChange}
+            // optionLabel="categoryName"
+            // placeholder="Any"
+            // className="p-column-filter"
+            // maxSelectedLabels={1}
+            // style={{ minWidth: '14rem' }}
+            // />
+            <p>this</p>
+        )
     };
 
 
     const onPage = (event) => {
-        console.log("------------------- EVENT ---------------------")
-        console.log(event)
+    
         setlazyState(event);
     };
     return (
@@ -331,13 +348,12 @@ export default function Product() {
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="name"  style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="MTRL" style={{ width: '400px' }} header="Όνομα" ></Column>
-                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={categoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" header="Ομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} style={{width: '140px'}} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{width: '135px'}} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{width: '135px'}}  header="Δεσμευμένα" ></Column>}
-             
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {/* <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column> */}
