@@ -144,8 +144,8 @@ export default function Product() {
             categoryID: null,
             groupID: null,
          })
-        console.log(res.data.totalRecords)
         setData(res.data.result);
+        console.log(res.data)
         setFilteredData(res.data.result);
          setTotalRecords(prev => {
             if(prev === res.data.totalRecords) {
@@ -314,7 +314,7 @@ export default function Product() {
                 value={filteredData}
                 header={header}
                 showGridlines
-                dataKey="MTRL"
+                dataKey="_id"
                 filterDisplay="row"
                 loading={loading}
                 removableSort

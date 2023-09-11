@@ -221,8 +221,8 @@ export default async function handler(req, res) {
                     "mtrgroup.groupName": 1,
                 }
             },
-            // { $skip: skip },
-            // { $limit: limit }
+            { $skip: skip },
+            { $limit: limit }
         ]
 
         
@@ -265,7 +265,19 @@ export default async function handler(req, res) {
                     }
                 }
         })
-        } else {
+        } 
+
+        if(searchTerm !== null && searchTerm !== '') {
+            let res = await Product.countDocuments({
+                "name": {  // Assuming the name field inside the softoneProduct is what you want to search
+                    $regex: trimmedSearchTerm ,
+                    $options: 'i'  // Case-insensitive match
+                }
+            });
+            
+
+         
+            count = res;
             pipeline.unshift({
                     $match: {
                         "name": {  // Assuming the name field inside the softoneProduct is what you want to search
@@ -274,13 +286,13 @@ export default async function handler(req, res) {
                         }
                     }
             })
-         
         }
+          
+         
       
         let result = await Product.aggregate(pipeline)
-        if(searchTerm !== null || searchTerm !== '') {
-            count = result.length;
-        }
+      
+        console.log(count)
         console.log(JSON.stringify(pipeline))
        
     
