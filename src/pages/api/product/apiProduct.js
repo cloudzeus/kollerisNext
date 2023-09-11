@@ -410,6 +410,56 @@ export default async function handler(req, res) {
         }
         return res.status(200).json({ success: true, result: find});
     }
+
+    if(action === 'filterCategories') {
+        let categoryID = 11;
+        await connectMongo();
+      
+        let result = await Product.aggregate([
+            {
+                $lookup: {
+                    from: "softoneproducts", 
+                    localField: "softoneProduct",  
+                    foreignField: "_id",  
+                    as: "softoneProduct"
+                },
+            },
+            {
+                $match: {
+                    "softoneProduct.MTRCATEGORY": 11
+                }
+            },
+            {
+                $lookup: {
+                    from: 'mtrcategories',
+                    localField: 'softoneProduct.MTRCATEGORY',
+                    foreignField: 'softOne.MTRCATEGORY',
+                    as: 'mtrcategory'
+                }
+            },
+
+            {
+                $unwind: "$mtrcategory"
+            },
+            {
+                $project: {
+                    "softoneProduct": 1,
+                    "mtrcategory.categoryName": 1,
+                }
+            }
+           
+
+        ])
+       
+        
+        
+        
+        
+        
+        
+        
+        return res.status(200).json({ success: true, result: result});
+    }
 }
 
 

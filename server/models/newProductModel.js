@@ -116,6 +116,8 @@ const productSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+productSchema.index({ name: 'text' });
+
 
 const mediaSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -123,24 +125,6 @@ const mediaSchema = new mongoose.Schema({
     url: { type: String, required: true }
 });
 
-
-const impaCodesSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    code: { type: String, required: true },
-    localized: [
-        {
-            locale: String,
-            name: String,
-            fields: [
-                {
-                    fieldName: String,
-                    translation: String
-                }
-
-            ]
-        }
-    ],
-});
 
 
 

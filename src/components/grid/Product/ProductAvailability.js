@@ -18,7 +18,7 @@ export const ProductAvailability = ({ data }) => {
    
 
     return (
-        <Container onClick={(e) => op.current.toggle(e)}>
+        <Container >
             <div  className='content '>
                 <div className='row'>
                     <CircleDiv />

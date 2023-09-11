@@ -81,12 +81,21 @@ async function intervalInventory() {
 }
 
 
+const  initalCategories= [
+   {  name: 'ΗΛΕΚΤΡΙΚΑ ΕΡΓΑΛΕΙΑ',},
+   { name: 'ΕΞΑΡΤΗΜΑΤΑ ΗΛΕΚΤΡΙΚΩΝ ΕΡΓΑΛΕΙΩΝ'},
+    {name: 'ΕΡΓΑΛΕΙΑ ΧΕΙΡΟΣ'},
+   { name: 'ΕΞΑΡΤΗΜΑΤΑ ΕΡΓΑΛΕΙΩΝ ΧΕΙΡΟΣ'},
+
+]
 
 export default function Product() {
+    const [categroriesFilter] = useState(initalCategories);
+    const dispatch = useDispatch();
+
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [filteredData, setFilteredData] = useState([])
-    const dispatch = useDispatch();
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -96,72 +105,65 @@ export default function Product() {
     const [selectedProducts, setSelectedProducts] = useState(null);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        representative: { value: null, matchMode: FilterMatchMode.IN },
+
     });
+    const [searchTerm, setSearchTerm] = useState(null)
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [lazyState, setlazyState] = useState({
+        first: 0,
+        rows: 10,
+        page: 1,
+        sortField: null,
+        sortOrder: null,
+       
+    });
+
     const toast = useRef(null);
+
+
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Update διαθεσιμότητας', life: 3000});
     }
-    const [searchTerm, setSearchTerm] = useState('')
+   
     console.log(new Date())
     useEffect(() => {
         if (submitted) handleFetch()
     }, [submitted])
 
-    // useEffect(() => {
-    //     const availability = async () => {
-    //         try {
-    //             let result = await axios.post('/api/product/apiProduct', { action: 'intervalInventory' });
-    //             if (result.data.success) {
-    //                 setTriggerUpdate(prev => !prev); // This is a safer way to toggle based on previous value
-    //                 showSuccess();
-    //             }
-    //         } catch (error) {
-    //             console.error("There was an error fetching availability:", error);
-    //         }
-    //     };
-    
-    //     const intervalID = setInterval(availability, 600000);
-    
-    //     return () => {
-    //         clearInterval(intervalID);
-    //     };
-       
-    // }, [])
+    console.log('searchterm')
+    console.log(searchTerm)
 
-
-    useEffect(() => {
-        const options = {
-            includeScore: true, // To see how well each result matched
-            threshold: 0.5,
-            keys: ['name', 'MTRL', 'CODE', 'CODE1', 'mrtmark', 'categoryName', 'mtrgroups']
-        };
-        const fuse = new Fuse(data, options);
-        function fuzzySearch(query) {
-            return fuse.search(query).map(result => result.item);
-        }
-        const results = fuzzySearch(searchTerm);
-        if (results.length > 0) {
-            setFilteredData(results);
-        } else {
-            setFilteredData(data);
-        }
-
-
-    }, [searchTerm]);
-
+    const fetch = async () => {
+        setLoading(true)
+        let res = await axios.post('/api/product/apiProductFilters', { 
+            action: 'filterCategories', 
+            searchTerm: searchTerm, 
+            skip: lazyState.first, 
+            limit: lazyState.rows, 
+            categoryID: null,
+            groupID: null,
+         })
+        console.log(res.data.totalRecords)
+        setData(res.data.result);
+        setFilteredData(res.data.result);
+         setTotalRecords(prev => {
+            if(prev === res.data.totalRecords) {
+                return prev;
+            } else {
+                return res.data.totalRecords
+            }
+         })
+        setLoading(false)
+    }
 
     useEffect(() => {
-        console.log('triggerUpdate')
-        const fetch = async () => {
-            setLoading(true)
-            let res = await axios.post('/api/product/apiProduct', { action: 'findSoftoneProducts' })
-            setData(res.data.result);
-            setFilteredData(res.data.result);
-            setLoading(false)
-        }
         fetch()
-    }, [triggerUpdate])
+    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm])
 
+    useEffect(() => {
+
+    })
     const editProduct = async (product) => {
         setSubmitted(false);
         setEditDialog(true)
@@ -269,8 +271,27 @@ export default function Product() {
     //         <Button icon="pi pi-replay" label="Ανανέωση διαθεσιμότητας" />
     //     )
     // }
+    const categoriesRowFilterTemplate = (options) => {
+        return (
+            <MultiSelect
+                value={options.value}
+                options={categroriesFilter}
+                onChange={(e) => options.filterApplyCallback(e.value)}
+                optionLabel="name"
+                placeholder="Any"
+                className="p-column-filter"
+                maxSelectedLabels={1}
+                style={{ minWidth: '14rem' }}
+            />
+        );
+    };
 
 
+    const onPage = (event) => {
+        console.log("------------------- EVENT ---------------------")
+        console.log(event)
+        setlazyState(event);
+    };
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -279,6 +300,10 @@ export default function Product() {
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
+                first={lazyState.first}
+                lazy
+                totalRecords={totalRecords}
+                onPage={onPage}
                 className='product-datatable'
                 selectionMode={'checkbox'}
                 selection={selectedProducts}
@@ -290,6 +315,7 @@ export default function Product() {
                 header={header}
                 showGridlines
                 dataKey="MTRL"
+                filterDisplay="row"
                 loading={loading}
                 removableSort
                 filters={filters}
@@ -300,28 +326,21 @@ export default function Product() {
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 // footer={footer}
             >
-
+{/* body={TranslateName} */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                <Column field="name" body={TranslateName} style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="name"  style={{ width: '400px' }} header="Όνομα" ></Column>
                 <Column field="MTRL" style={{ width: '400px' }} header="Όνομα" ></Column>
-                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={categoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" header="Ομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" sortable></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} style={{width: '140px'}} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{width: '135px'}} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{width: '135px'}}  header="Δεσμευμένα" ></Column>}
              
-                <Column field="UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column>
-                {/* {visibleColumns.map((col, index) => {
-                    return (
-                        <Column key={index} field={col.field} header={col.header} style={col.style} body={col.body} />
-                    )
-                }
-                )} */}
-
+                {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
+                {/* <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column> */}
 
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
@@ -346,7 +365,7 @@ export default function Product() {
 }
 
 
-const Upddate = ({ UPDDATE }) => {
+const Upddate = ({ softoneProduct: {UPDDATE} }) => {
     return (
         <div className='flex align-items-center'>
 
@@ -358,10 +377,10 @@ const Upddate = ({ UPDDATE }) => {
 }
 
 
-const PriceTemplate = ({ PRICER }) => {
+const PriceTemplate = ({ softoneProduct}) => {
     return (
         <div>
-            <GridPriceTemplate PRICER={PRICER[0]} />
+            <GridPriceTemplate PRICER={softoneProduct?.PRICER[0]} />
         </div>
     )
 }
