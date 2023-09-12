@@ -161,21 +161,19 @@ export default async function handler(req, res) {
     if(action === "createRelationships") {
         await connectMongo();
        
-       
         let findGroups = await SubMtrGroup.find({})
         for(let item of findGroups) {
             let id = item.softOne.MTRGROUP;
-            let findCategory = await MtrGroup.findOne({'softOne.MTRGROUP': id})
-         
-            const updateCategories = await MtrGroup.findOneAndUpdate(
-                {_id: findCategory._id},
-                { $push: { 
-                    subGroups : [item._id]
-                }}
-            )
+            let findGroup = await MtrGroup.findOne({'softOne.MTRGROUP': id})
+          
+            console.log(findGroup._id)
+        const updateSubGroups = await SubMtrGroup.findOneAndUpdate(
+            {_id: item._id},
+            { $set: {
+                group: findGroup ?._id
+            }}
+        )
         }
-        console.log(updateCategories)
-        
         return res.status(200).json({ success: true});
         
     
@@ -201,6 +199,40 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true});
     }
 
+    if(action === 'regret') {
+        await connectMongo();
+        let result = await MtrGroup.find({})
+        for(let i of result) {
+            let id = i.softOne.MTRCATEGORY;
+            let findCategory = await MtrCategory.findOne({'softOne.MTRCATEGORY': parseInt(id)})
+            let updateGroup = await MtrGroup.findOneAndUpdate({
+                _id: i._id
+            }, {
+               $set: {
+                    category: findCategory._id
+               }
+            })
+        }
 
+
+        return res.status(200).json({ success: true, result: result});
+    }
+
+    if(action === 'regret2') {
+        await connectMongo();
+        let result = await SubMtrGroup.find({})
+        for(let i of result) {
+            let id = i.softOne.MTRGROUP;
+
+            let findCategory = await MtrGroup.findOne({'softOne.MTRGROUP': id})
+            let updateGroup = await SubMtrGroup.findOneAndUpdate({
+                _id: i._id
+            }, {
+               $set: {
+                    group: findCategory._id
+               }
+            })
+        }
+    }
 }   
 
