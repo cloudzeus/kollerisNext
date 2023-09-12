@@ -29,10 +29,16 @@ const SidebarMenu = () => {
       icon: 'pi pi-shopping-cart',
       children: [
         {
+          key: 'Προϊόντα',
+          label: 'Προϊόντα',
+          link: '/dashboard/product'
+        },
+        {
           key: 'Μάρκες',
           label: 'Μάρκες',
           link: '/dashboard/product/brands'
         },
+       
         {
           key: 'Κατασκευαστές',
           label: 'Κατασκευαστές',
