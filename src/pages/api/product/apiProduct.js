@@ -262,10 +262,10 @@ export default async function handler(req, res) {
     console.log(buffer.result)
     await connectMongo();
     let insert1 = await SoftoneProduct.insertMany(buffer.result)
-
         
         let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
- 
+            
+      
         let productsInsert = softone.map((item) => ({
             softoneProduct: item._id,
             name: item.NAME,
@@ -275,6 +275,8 @@ export default async function handler(req, res) {
         console.log(insert)
         return res.status(200).json({ success: true, result: insert});
       
+
+
     }
 
     if(action === 'updateClass') {
