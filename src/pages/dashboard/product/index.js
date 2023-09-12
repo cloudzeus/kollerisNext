@@ -111,7 +111,7 @@ export default function Product() {
     const [totalRecords, setTotalRecords] = useState(0);
     const [lazyState, setlazyState] = useState({
         first: 0,
-        rows: 10,
+        rows: 100,
         page: 1,
        
 
@@ -263,12 +263,16 @@ export default function Product() {
 
     const onFilterCategoryChange = (e) => {
         setCategory(e.value)
+        setGroup(null)
+        setSubGroup(null)
         setlazyState({ ...lazyState, first: 0 })
     }
 
     const onFilterGroupChange = (e) => {
         setGroup(e.value)
+        setSubGroup(null)
         setlazyState({ ...lazyState, first: 0 })
+
     }
     const onFilterSubGroupChange = (e) => {
         setSubGroup(e.value)
@@ -285,7 +289,7 @@ export default function Product() {
             }
 
             handleCategories()
-        }, [])
+        }, [category])
 
        
         return (
@@ -296,8 +300,7 @@ export default function Product() {
                     onChange={onFilterCategoryChange}
                     optionLabel="categoryName"
                     placeholder="Φίλτρο Κατηγορίας"
-                    className="p-column-filter"
-                    maxSelectedLabels={1}
+                    className="p-column-filter  grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
                 <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setCategory(null)} ></i>
@@ -312,12 +315,11 @@ export default function Product() {
                     action: 'findGroups',
                     categoryID: category?.softOne.MTRCATEGORY
                 })
-                console.log('resultttttttt')
-                console.log(data.result)
+           
                 setGroupFilter(data.result)
             }
             handleCategories()
-        }, [category])
+        }, [category, group])
 
        
         return (
@@ -329,8 +331,7 @@ export default function Product() {
                     onChange={onFilterGroupChange}
                     optionLabel="groupName"
                     placeholder="Φίλτρο Κατηγορίας"
-                    className="p-column-filter"
-                    maxSelectedLabels={1}
+                    className="p-column-filter  grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
                 <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setGroup(null)} ></i>
@@ -350,19 +351,19 @@ export default function Product() {
             }
 
             handleCategories()
-        }, [group])
+        }, [group ,subgroup])
         return (
             <div className="flex align-items-center
             ">
                 <Dropdown
+                    size="small"
                     disabled={!group ? true : false}
                     value={subgroup}
                     options={subGroupsFilter}
                     onChange={onFilterSubGroupChange}
                     optionLabel="subGroupName"
                     placeholder="Φίλτρο Υποομάδας"
-                    className="p-column-filter"
-                    maxSelectedLabels={1}
+                    className="p-column-filter grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
                 <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSubGroup(null)} ></i>
@@ -392,8 +393,8 @@ export default function Product() {
                 selection={selectedProducts}
                 onSelectionChange={onSelection}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[10, 20, 50, 100, 200]}
+                rows={100}
+                rowsPerPageOptions={[100, 200, 500, 1000]}
                 value={filteredData}
                 header={header}
                 showGridlines
@@ -407,6 +408,8 @@ export default function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
+                paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
+
             >
                 {/* body={TranslateName} */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
@@ -424,7 +427,7 @@ export default function Product() {
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                
-                {/* <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column> */}
+                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
 
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
 
@@ -461,10 +464,10 @@ const Upddate = ({ softoneProduct: { UPDDATE } }) => {
 }
 
 
-const PriceTemplate = ({ softoneProduct }) => {
+const PriceTemplate = ({ PRICER }) => {
     return (
         <div>
-            <GridPriceTemplate PRICER={softoneProduct?.PRICER[0]} />
+            <GridPriceTemplate PRICER={PRICER} />
         </div>
     )
 }

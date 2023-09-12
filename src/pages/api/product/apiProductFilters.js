@@ -25,18 +25,14 @@ export default async function handler(req, res) {
 
     if (action === 'filterCategories') {
         Product.createIndexes();
-        let {groupID,categoryID, subgroupID, searchTerm } = req.body;
-
-        console.log('FILTER CATEGORIES')
-        console.log(groupID, categoryID, subgroupID)
-        console.log('SEARCH TERM')
-        console.log(searchTerm)
+        let {groupID,categoryID, subgroupID, searchTerm, skip, limit } = req.body;
+        console.log('skip :' + skip)
+        
         let trimmedSearchTerm = searchTerm && searchTerm.trim();
 
-        let { skip, limit } = req.body;
 
 
-        await connectMongo();
+    
         
         let pipeline = [
 
@@ -96,6 +92,10 @@ export default async function handler(req, res) {
                     name: 1,
                     localized: 1,
                     updatedAt: 1,
+                    availability: 1,
+                    description: 1,
+                    updatedFrom: 1,
+                    updatedAt: 1,
                      MTRL: '$softoneProduct.MTRL',
                     MTRGROUP: '$softoneProduct.MTRGROUP',
                     MTRCATEGORY: '$softoneProduct.MTRCATEGORY',
@@ -131,7 +131,7 @@ export default async function handler(req, res) {
             { $skip: skip },
             { $limit: limit }
         ]
-
+        await connectMongo();
         let count = ""
         // FILTER WITH MTRCATEGORY
         if(categoryID && groupID && subgroupID) {
@@ -139,7 +139,6 @@ export default async function handler(req, res) {
                CCCSUBGOUP2: subgroupID
             });
             count = res;
-            console.log('COUNT CCCSUBGOUP2' + count)
             pipeline.splice(3, 0, {
                 $match: {
                     "softoneProduct.CCCSUBGOUP2": subgroupID
@@ -148,23 +147,22 @@ export default async function handler(req, res) {
         }
 
         if(categoryID && groupID && !subgroupID) {
-            let res = await SoftoneProduct.countDocuments({
-                MTRGROUP: groupID
-            });
-            count = res;
-            console.log('COUNT GROUP' + count)
             pipeline.splice(3, 0, {
                 $match: {
                     "softoneProduct.MTRGROUP": groupID
                 }
             })
+            let res = await SoftoneProduct.countDocuments({
+                MTRGROUP: groupID
+            });
+            count = res;
+           
         }
         if(categoryID && !groupID && !subgroupID) {
             let res = await SoftoneProduct.countDocuments({
                 MTRCATEGORY: categoryID
             });
             count = res;
-            console.log('COUNT CATEGORY' + count)
             pipeline.splice(3, 0, {
                 $match: {
                     "softoneProduct.MTRCATEGORY": categoryID
@@ -200,11 +198,7 @@ export default async function handler(req, res) {
             })
         }
 
-        console.log('--------------------------------------------------------------')
-        console.log('--------------------------------------------------------------')
-        console.log('--------------------------------------------------------------')
-        console.log('--------------------------------------------------------------')
-        console.log(count)
+      
         let result = await Product.aggregate(pipeline)
         return res.status(200).json({ success: true, totalRecords: count, result: result });
     }
@@ -222,14 +216,12 @@ export default async function handler(req, res) {
     }
     if (action === 'findGroups') {
         let {categoryID} = req.body;
-        // console.log('FIND GROUPS')
-        // console.log(categoryID)
+    
 
         await connectMongo();
         
         let response = await MtrGroup.find({'softOne.MTRCATEGORY' : categoryID}, {softOne: 1, groupName: 1, _id: 0})
-        // console.log('response find groups')
-        // console.log(response)
+       
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
