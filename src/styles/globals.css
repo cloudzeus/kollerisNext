@@ -17,7 +17,15 @@
 }
 
 
-
+.wharehouse-msg  .p-inline-message-text  {
+ 
+  font-size: 0.76rem;
+}
+.wharehouse-msg  .p-inline-message-icon {
+ 
+  width: 0.8rem;
+  height: 0.8rem;
+}
 .grid-filter .p-inputtext {
   font-size: 0.8rem;
 }

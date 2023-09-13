@@ -6,16 +6,18 @@ import styled from 'styled-components'
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button'
 import { ProductQuantityContext } from '@/_context/ProductGridContext'
-
-
-
-
-
+import { Message } from 'primereact/message';
 
 const WhareHouseActions = () => {
-    const { selectedProducts, warehouseLines } = useContext(ProductQuantityContext)
-    console.log('warehouseLines')
-    console.log(warehouseLines)
+    const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse } = useContext(ProductQuantityContext)
+  
+    console.log('importwarehouse')
+    console.log(importWarehouse)
+    
+    console.log('exportwarehouse')
+    console.log(exportWarehouse)
+
+
 
 
     const CalculateBasket = () => {
@@ -37,6 +39,13 @@ const WhareHouseActions = () => {
         )
     }
 
+    
+    const handleSubmit = async() => {
+        let {data} = await axios.post('/api/apiProduct', {warehouseLines})
+        console.log(data)
+    }
+
+
     return (
         <div>
             <div className='flex align-items-center mb-2 mt-2'>
@@ -54,33 +63,63 @@ const WhareHouseActions = () => {
 
 
 const Template = ({ categoryName, name, availability, MTRL }) => {
-    const { setWareHouseLines, warehouseLines } = useContext(ProductQuantityContext)
+    const { setWareHouseLines, warehouseLines, setExportWarehouse, setImportWarehouse } = useContext(ProductQuantityContext)
 
     let available = parseInt(availability?.DIATHESIMA)
     const [value, setValue] = useState(available)
+    const ActionMessage = () => {
+       if(available < value) {
+            return (
+                <Message severity="info" text="Eισαγωγή στην αποθήκη" className='wharehouse-msg my-2'  />
 
-    useEffect(() => {
+            )
+       }
+        
+       if(available > value) {
+            return (
+                <Message severity="warn" text="Eξαγωγή στην αποθήκη" className='wharehouse-msg my-2' />
 
-    }, [])
+            )
+       }
+        
+    
+    }
+   
 
     const onValueChange = (e) => {
         let newQTY1 = e.value
         setValue(e.value);
-        setWareHouseLines((prev) => {
-            if (!prev) return [{ MTRL: MTRL, QTY1: newQTY1 }];
 
-            const existingItem = prev.find(item => item.MTRL === MTRL);
-
-            if (existingItem) {
-                return prev.map(item =>
-                    item.MTRL === MTRL
-                        ? { ...item, QTY1: newQTY1 }
-                        : item
-                );
-            }
-
-            return [...prev, { MTRL: MTRL, QTY1: newQTY1 }];
-        })
+        //IMPORT TO THE WAREHOUSE
+        if (e.value > available) {
+            setImportWarehouse((prev) => {
+                const updated = (prev || []).filter(item => item.MTRL !== MTRL);
+                updated.push({ MTRL: MTRL, QTY1: newQTY1 });
+                return updated;
+            });
+        
+            setExportWarehouse((prev) => {
+                return (prev || []).filter(item => item.MTRL !== MTRL);
+            });
+        }
+            //EXPORT FROM THE WAREHOUSE
+        if (e.value < available) {
+            setExportWarehouse((prev) => {
+                const updated = (prev || []).filter(item => item.MTRL !== MTRL);
+                updated.push({ MTRL: MTRL, QTY1: newQTY1 });
+                return updated;
+            });
+        
+            setImportWarehouse((prev) => {
+                return (prev || []).filter(item => item.MTRL !== MTRL);
+            });
+        }
+       
+        
+        
+        
+        
+      
 
     }
 
@@ -104,6 +143,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
                     <label htmlFor="minmax-buttons" className="font-bold block ml-1 mb-2">Αλλαγή:</label>
                     <InputNumber inputId="minmax-buttons" value={value} onValueChange={onValueChange} mode="decimal" showButtons min={0} max={1000} />
                 </div>
+                <ActionMessage />
             </div>
 
         </ProductBasket>
