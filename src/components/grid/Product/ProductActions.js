@@ -9,7 +9,7 @@ const ProductActions = ({rowData, onEdit, onEditClass, openBasket, onAdd}) => {
     <div className="shadow-5">
         
           <div  onClick={(e) => op.current.toggle(e)} className='flex align-items-center justify-content-center w-full h-full cursor-pointer'>
-            <i className=" pi pi-ellipsis-h text-sm text-surface-900"></i>
+            <i className=" pi pi-ellipsis-h text-sm "></i>
           </div>
                 <OverlayPanel className='w-20rem product-overlay' ref={op} showCloseIcon>
                     {/* <Button onClick={openBasket} size="small" text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1 ">

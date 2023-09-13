@@ -18,6 +18,8 @@ export const ProductQuantityProvider = ({ children }) => {
     const [quantityContext, setQuantityContext] = useState(1);
     const [mtrlines, setMtrLines] = useState([])
     const [wharehouseLines, setWhereHouseLines] = useState([])
+    const [wharehouseValue, setWhereHouseValue] = useState();
+    const [productsContext, setProductsContext] = useState(null)
     return (
         <ProductQuantityContext.Provider value={{ 
             quantityContext, 
@@ -25,7 +27,11 @@ export const ProductQuantityProvider = ({ children }) => {
             mtrlines, 
             setMtrLines, 
             setWhereHouseLines,
-             wharehouseLines 
+            wharehouseLines,
+            wharehouseValue,
+            setWhereHouseValue,
+            productsContext,
+            setProductsContext,
         }}>
             {children}
         </ProductQuantityContext.Provider>
@@ -34,14 +40,14 @@ export const ProductQuantityProvider = ({ children }) => {
 
 
 
-//TOOLBAR STUFF
+//TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
 
     console.log('selected products')
     console.log(selectedProducts)
 
     const startContent = () => {
-        return <MenuComp selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
+        return <LeftSide selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
     }
 
     const endContent = () => {
@@ -85,7 +91,7 @@ const RightSide = ({ selectedProducts }) => {
 
 
 //SIDEBAR 
-const MenuComp = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
+const LeftSide = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
     const [visible, setVisible] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const [activeIndex, setActiveIndex] = useState(0)

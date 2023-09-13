@@ -31,8 +31,6 @@ export default async function handler(req, res) {
         let trimmedSearchTerm = searchTerm && searchTerm.trim();
 
 
-
-    
         
         let pipeline = [
 

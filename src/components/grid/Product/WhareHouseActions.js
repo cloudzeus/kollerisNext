@@ -5,18 +5,47 @@ import { Column } from 'primereact/column'
 import styled from 'styled-components'
 import { ProductQuantityContext } from './ProductToolbar'
 import { InputNumber } from 'primereact/inputnumber';
+import { Button } from 'primereact/button'
+
+
+
+
+
 
 
 const WhareHouseActions = ({ selectedProducts }) => {
+    const {wharehouseLines, setWhereHouseLines, mtrlLines} = useContext(ProductQuantityContext)
+    console.log('--------------------------------------------')
+    console.log(mtrlLines)
+    const CalculateBasket = () => {
+        let total = 0
+        selectedProducts && selectedProducts.forEach((item) => {
+            total += parseInt(item.PRICER)
+        })
+        return (
+            <p className='mr-3 ml-1'><span className='font-normal'>Σύνολο:</span> {`${total},00$`}</p>
+        )
+    }
+
+    const footer = () => {
+        return (
+            <div className='flex justify-between p-2'>
+                <p className='mr-3 '><span className='font-normal'>Προϊόντα:</span> {`${selectedProducts !== null ? selectedProducts.length : 0}`}</p>
+                <CalculateBasket />
+            </div>
+        )
+    }
+
     return (
         <div>
             <div className='flex align-items-center mb-2 mt-2'>
                 <h2>Επεξεργασία:</h2>
             </div>
             <div className='box'>
-                <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts}   >
+                <DataTable footer={footer} className='border-1 border-round-sm	border-50' size="small" scrollHeight='390px' scrollable value={selectedProducts}   >
                     <Column field="availability.DIATHESIMA" body={Template} header="Προϊόν" ></Column>
                 </DataTable>
+                <Button label="Αποθήκευση" className='mt-3' />
             </div>
         </div>
     )
@@ -25,38 +54,25 @@ const WhareHouseActions = ({ selectedProducts }) => {
 
 const Template = ({ categoryName, name, availability, MTRL }) => {
 
-    const { setWhereHouseLines, wharehouseLines } = useContext(ProductQuantityContext);
+   
     let available = parseInt(availability?.DIATHESIMA)
     const [value, setValue] = useState(available);
-    
-    // console.log('value')
-    // console.log(wharehouseLines)
+    const { setWhereHouseLines, wharehouseLines } = useContext(ProductQuantityContext);
+   
+
+    useEffect(() => {
+
+    }, [])
 
     const onValueChange = (e) => {
+        console.log(name)
+        console.log(e.value)
         setValue(e.value);
-
-        // setWhereHouseLines(prev => {
-        //     return prev.map(item => {
-        //         if (item.MTRL === MTRL[0]) {
-        //             return { ...item, QTY1: e.value };
-        //         }
-        //         return item;
-        //     });
-        // });
+        
+       
     }
 
-    // const increaseQuantity = () => {
-    //     setQuantity(prev => prev + 1)
-    //     setMtrLines(prev => {
-    //         return prev.map(item => {
-    //             if (item.MTRL === MTRL[0]) {
-    //                 return { ...item, QTY1: item.QTY1 + 1 };
-    //             }
-    //             return item;
-    //         });
-    //     });
-
-    // }
+   
 
     return (
         <ProductBasket>
@@ -68,12 +84,12 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
                     <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
                     <p className='text-xs'>{categoryName}</p>
                 </div>
-                <div className='flex'>
-                    <p className="font-bold block mb-2">Διαθέσιμα στην σύστημα:</p>
-                    <p>{availability.DIATHESIMA}</p>
+                <div className='my-2 inline-flex surface-200 p-2 border-round'>
+                    <p className=" ">Διαθέσιμα στην σύστημα:</p>
+                    <p className='ml-2 font-bold block'>{availability.DIATHESIMA}</p>
                 </div>
                 <div className="">
-                    <label htmlFor="minmax-buttons" className="font-bold block mb-2">Διαθέσιμα στην αποθήκη:</label>
+                    <label htmlFor="minmax-buttons" className="font-bold block ml-1 mb-2">Αλλαγή:</label>
                     <InputNumber inputId="minmax-buttons" value={value} onValueChange={ onValueChange } mode="decimal" showButtons min={0} max={1000} />
                 </div>
             </div>

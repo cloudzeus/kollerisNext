@@ -26,7 +26,7 @@ import { ProductAvailability, ProductOrdered, ProductReserved } from '@/componen
 import { set } from 'mongoose';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown'
-
+import { ProductQuantityProvider } from '@/_context/ProductGridContext';
 
 
 const dialogStyle = {
@@ -58,20 +58,24 @@ const initialColumns = [
         header: 'Υποομάδα',
         id: 7
     },
+    {
+        header: 'UpdatedFrom',
+        id: 8
+    },
 
 ]
 
 const columns = [
     ...initialColumns,
-    {
-        header: 'Κατηγορία',
-        id: 5
-    },
+    // {
+    //     header: 'Κατηγορία',
+    //     id: 5
+    // },
 
-    {
-        header: 'CategoryName',
-        id: 6
-    },
+    // {
+    //     header: 'CategoryName',
+    //     id: 6
+    // },
 
 ]
 
@@ -81,9 +85,15 @@ async function intervalInventory() {
 }
 
 
+export default function ProductLayout() {
+    return (
+        <ProductQuantityProvider>
+            <Product />
+        </ProductQuantityProvider>
+    )
+}
 
-
-export default function Product() {
+function Product() {
     const [categroriesFilter, setCategoriesFilter] = useState(null);
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
     const [groupFilter, setGroupFilter] = useState(null);
@@ -121,7 +131,6 @@ export default function Product() {
 
   
 
-    console.log(new Date())
     useEffect(() => {
         if (submitted) handleFetch()
     }, [submitted])
@@ -428,9 +437,7 @@ export default function Product() {
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                
                 <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
-
                 <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
-
             </DataTable>
             <EditDialog
                 style={dialogStyle}
@@ -446,7 +453,6 @@ export default function Product() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
-
         </AdminLayout >
     );
 }
