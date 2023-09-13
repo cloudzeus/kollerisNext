@@ -45,6 +45,7 @@ const AdminLayout = ({ children }) => {
 				<SidebarMenu />
 				</div>
 			</SidebarContainer>
+			{/* {isSidebarOpen ? <NewSidebar /> : null} */}
 			{/* 
 			\ */}
 			<Content isSidebarOpen={isSidebarOpen} >
@@ -75,6 +76,7 @@ const AdminLayout = ({ children }) => {
 }
 
 import { Sidebar } from 'primereact/sidebar';
+import NewSidebar from './NewSidebar';
 
 function FullScreen({ children }) {
 	const [visible, setVisible] = useState(false);

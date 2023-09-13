@@ -11,8 +11,9 @@ import axios from 'axios'
 
 const WhareHouseActions = () => {
     const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse } = useContext(ProductQuantityContext)
-  
- 
+    const [warehouseResponse, setWarehouseResponse] = useState(null)
+    const [resultImport , setResultImport] = useState(null)
+    const [resultExport , setResultExport] = useState(null)
 
 
 
@@ -39,6 +40,12 @@ const WhareHouseActions = () => {
     const handleSubmit = async() => {
         let {data} = await axios.post('/api/product/apiProduct',  {action: 'warehouse', exportWarehouse: exportWarehouse, importWarehouse: importWarehouse})
         console.log(data)
+        if(data?.resultImport) {
+            setResultImport(data.resultImport)
+        }
+        if(data?.resultExport) {
+            setResultExport(data.resultExport)
+        }
     }
 
 
@@ -52,6 +59,26 @@ const WhareHouseActions = () => {
                     <Column field="availability.DIATHESIMA" body={Template} header="Προϊόν" ></Column>
                 </DataTable>
                 <Button label="Αποθήκευση" className='mt-3' onClick={handleSubmit} />
+                
+                  <div className=''>
+                  {resultImport ? (
+                        <div className=" bg-yellow-400 p-2 mt-2 border-round">
+                        <p  className='font-bold'>Παραστατικό Εισαγωγής:</p>
+                        <p>{resultImport.MTRDOCNUM}</p>  
+                        </div>
+                    ) : null}
+                          
+                   
+                    {resultExport ? (
+                        <div className="bg-yellow-400 p-2 mt-2 border-round">
+                        <p className='font-bold' >Παραστατικό Εξαγωγής:</p>
+                        <p>{resultExport.MTRDOCNUM}</p>    
+                        </div>
+                    ) : null}
+                  </div>
+                          
+                   
+                    
             </div>
         </div>
     )
@@ -146,61 +173,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
     )
 }
 
-// const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, setSelectedProducts, MTRL }) => {
-//     const [total, setTotal] = useState(PRICER)
-//     const [quantity, setQuantity] = useState(1)
-//     const { quantityContext, setQuantityContext, setMtrLines, mtrlines } = useContext(ProductQuantityContext);
 
-
-//     return (
-//         <ProductBasket>
-//             <div>
-//                 <div>
-//                     <p className='text-md text-900 font-semibold'>{name}</p>
-//                 </div>
-//                 <div className='details'>
-//                     <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
-//                     <p className='text-xs'>{categoryName}</p>
-//                 </div>
-//                 <span className='text-xs ml-1'>TIMH:</span>
-//                 <span className='text-xs ml-2'>{total},00$</span>
-//             </div>
-//             <div className='flex'>
-//                 <div className='font-xs flex align-items-center border-1 p-2 border-400 border-round'>
-//                     <div
-//                         onClick={decreaseQuantity}
-//                         className='mr-2 border-1  flex align-items-center justify-content-center border-round border-400 pointer-cursor'
-//                         style={{ width: '25px', height: '25px' }}>
-//                         <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
-//                     </div>
-//                     <p className='text-lg'>{quantity}</p>
-//                     <div
-//                         onClick={increaseQuantity}
-//                         className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
-//                         <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
-//                     </div>
-//                 </div>
-
-
-//                 <div  >
-//                 <div>
-//                     <CircleDiv />
-//                     <span>Διαθεσιμα:</span>
-//                     <span className='available'>{data?.DIATHESIMA}</span>
-//                 </div>
-
-//                 <div className='row update-row'>
-
-//                     <span>updated:</span>
-//                     <span className='date'>{data?.date}</span>
-//                 </div>
-
-
-//             </div>
-//             </div>
-//         </ProductBasket>
-//     )
-// }
 
 
 

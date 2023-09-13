@@ -488,24 +488,23 @@ export default async function handler(req, res) {
                     MTRLINES: data
                 })
             });
-            return await response.json();
+            let resJSON = await response.json();
+            console.log(resJSON);
+            return resJSON ;
         }
 
         try {
             let importRes;
             let exportRes;
             if(exportWarehouse && exportWarehouse.length > 0 ) {
-               importRes = modifySoftonePost(1011, exportWarehouse)
+               importRes = await modifySoftonePost(1011, exportWarehouse)
             }
             if(importWarehouse && importWarehouse.length > 0) {
-               exportRes = modifySoftonePost(1010, importWarehouse)
+               exportRes =  await modifySoftonePost(1010, importWarehouse)
             }
 
-            console.log('importRes')
-            console.log(importRes)
-            console.log('exportRes')
-            console.log(exportRes)
-            return res.status(200).json({ success: true, result: 'ok' });
+          
+            return res.status(200).json({ success: true, resultImport : importRes, resultExport: exportRes});
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
