@@ -7,16 +7,12 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button'
 import { ProductQuantityContext } from '@/_context/ProductGridContext'
 import { Message } from 'primereact/message';
+import axios from 'axios'
 
 const WhareHouseActions = () => {
     const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse } = useContext(ProductQuantityContext)
   
-    console.log('importwarehouse')
-    console.log(importWarehouse)
-    
-    console.log('exportwarehouse')
-    console.log(exportWarehouse)
-
+ 
 
 
 
@@ -41,7 +37,7 @@ const WhareHouseActions = () => {
 
     
     const handleSubmit = async() => {
-        let {data} = await axios.post('/api/apiProduct', {warehouseLines})
+        let {data} = await axios.post('/api/product/apiProduct',  {action: 'warehouse', exportWarehouse: exportWarehouse, importWarehouse: importWarehouse})
         console.log(data)
     }
 
@@ -55,7 +51,7 @@ const WhareHouseActions = () => {
                 <DataTable footer={footer} className='border-1 border-round-sm	border-50' size="small" scrollHeight='390px' scrollable value={selectedProducts}   >
                     <Column field="availability.DIATHESIMA" body={Template} header="Προϊόν" ></Column>
                 </DataTable>
-                <Button label="Αποθήκευση" className='mt-3' />
+                <Button label="Αποθήκευση" className='mt-3' onClick={handleSubmit} />
             </div>
         </div>
     )
@@ -94,7 +90,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         if (e.value > available) {
             setImportWarehouse((prev) => {
                 const updated = (prev || []).filter(item => item.MTRL !== MTRL);
-                updated.push({ MTRL: MTRL, QTY1: newQTY1 });
+                updated.push({ MTRL: MTRL, QTY1: newQTY1 - available });
                 return updated;
             });
         
@@ -106,7 +102,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         if (e.value < available) {
             setExportWarehouse((prev) => {
                 const updated = (prev || []).filter(item => item.MTRL !== MTRL);
-                updated.push({ MTRL: MTRL, QTY1: newQTY1 });
+                updated.push({ MTRL: MTRL, QTY1: available - newQTY1 });
                 return updated;
             });
         
