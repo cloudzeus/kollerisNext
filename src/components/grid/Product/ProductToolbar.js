@@ -11,47 +11,20 @@ import { Badge } from 'primereact/badge';
 import SelectImpas from './SelectImpas';
 import Offer from './Offer';
 import WhareHouseActions from './WhareHouseActions';
-
-export const ProductQuantityContext = createContext();
-
-export const ProductQuantityProvider = ({ children }) => {
-    const [quantityContext, setQuantityContext] = useState(1);
-    const [mtrlines, setMtrLines] = useState([])
-    const [wharehouseLines, setWhereHouseLines] = useState([])
-    const [wharehouseValue, setWhereHouseValue] = useState();
-    const [productsContext, setProductsContext] = useState(null)
-    return (
-        <ProductQuantityContext.Provider value={{ 
-            quantityContext, 
-            setQuantityContext, 
-            mtrlines, 
-            setMtrLines, 
-            setWhereHouseLines,
-            wharehouseLines,
-            wharehouseValue,
-            setWhereHouseValue,
-            productsContext,
-            setProductsContext,
-        }}>
-            {children}
-        </ProductQuantityContext.Provider>
-    );
-}
+import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/ProductGridContext';
 
 
 
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
-const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
-
-    console.log('selected products')
-    console.log(selectedProducts)
+const ProductToolbar = () => {
+    
 
     const startContent = () => {
-        return <LeftSide selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
+        return <LeftSide />
     }
 
     const endContent = () => {
-        return <RightSide selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} setSubmitted={setSubmitted} />
+        return <RightSide />
     }
 
     return (
@@ -61,8 +34,9 @@ const ProductToolbar = ({ selectedProducts, setSelectedProducts, setSubmitted })
     )
 }
 
-
-const RightSide = ({ selectedProducts }) => {
+//TOOLBAR RIGHT SIDE:
+const RightSide = () => {
+    const {selectedProducts} = useContext(ProductQuantityContext)
 
     const CalculateBasket = () => {
         let total = 0
@@ -87,11 +61,9 @@ const RightSide = ({ selectedProducts }) => {
     )
 }
 
-
-
-
-//SIDEBAR 
-const LeftSide = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
+//TOOLBAR LEFT SIDE:
+const LeftSide = () => {
+    const {selectedProducts, setSelectedProducts} = useContext(ProductQuantityContext)
     const [visible, setVisible] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const [activeIndex, setActiveIndex] = useState(0)
@@ -114,7 +86,7 @@ const LeftSide = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
         
 
     return (
-        <ProductQuantityProvider>
+        <>
             <Button
                 icon="pi pi-shopping-cart"
                 label="Kαλάθι λειτουργειών"
@@ -128,7 +100,7 @@ const LeftSide = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
             <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-5	" icons={customIcons}>
                 {activeIndex === 0 ? (
                     <>
-                        <FirstScreen selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} />
+                        <FirstScreen  />
                         <Button label="Μenu" icon="pi pi-bars" className="surface-ground text-primary w-full  mt-3" onClick={() => setShowMenu((prev) => !prev)} />
                         {showMenu ? (
                             <div className='mt-1 grid'>
@@ -144,32 +116,23 @@ const LeftSide = ({ selectedProducts, setSelectedProducts, setSubmitted }) => {
                 ) : null}
                 {activeIndex !== 0 ? (
                     <SecondScreen>
-                        {activeIndex === 1 ? (<TreeSelectComp gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
-                        {activeIndex === 2 ? (<SelectImpas gridData={selectedProducts} setSubmitted={setSubmitted} />) : null}
-                        {activeIndex === 3 ? (<Offer selectedProducts={selectedProducts} />) : null}
-                        {activeIndex === 4 ? (<WhareHouseActions selectedProducts={selectedProducts} setSubmitted={setSubmitted} />) : null}
+                        {activeIndex === 1 ? (<TreeSelectComp  />) : null}
+                        {activeIndex === 2 ? (<SelectImpas />) : null}
+                        {activeIndex === 3 ? (<Offer />) : null}
+                        {activeIndex === 4 ? (<WhareHouseActions/>) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>
 
-        </ProductQuantityProvider>
+        </>
 
     )
 }
 
 
-const SecondScreen = ({ children }) => {
-    return (
-        <div>
-            {children}
-        </div>
-    )
-}
-
-
-
-
-const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
+//FIRST SCREEN OF THE
+const FirstScreen = () => {
+    const {selectedProducts} = useContext(ProductQuantityContext)
 
     const CalculateBasket = () => {
         let total = 0
@@ -193,13 +156,11 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
     const Basket = ({ name, categoryName, PRICER, MTRL }) => {
         return (
             <ProductBaksetTemplate
-            selectedProducts={selectedProducts}
-            setSelectedProducts={setSelectedProducts}
-            name={name}
-            categoryName={categoryName}
-            PRICER={PRICER}
-            MTRL={MTRL}
-        />
+                name={name}
+                categoryName={categoryName}
+                PRICER={PRICER}
+                MTRL={MTRL}
+            />
         )
     }
 
@@ -212,14 +173,19 @@ const FirstScreen = ({ selectedProducts, setSelectedProducts }) => {
                 <DataTable className='border-1 border-round-sm	border-50' size="small" scrollHeight='350px' scrollable value={selectedProducts} footer={footer}  >
                     <Column field="Προϊόν" header="Προϊόν" body={Basket}></Column>
                 </DataTable>
-
-
-
             </div>
         </>
     )
 }
 
+
+const SecondScreen = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
 
 
 
@@ -233,14 +199,18 @@ const MenuBtn = ({ label, onClick }) => {
 
 
 
-const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, setSelectedProducts, MTRL }) => {
+const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
     const [total, setTotal] = useState(PRICER)
     const [quantity, setQuantity] = useState(1)
-    const { quantityContext, setQuantityContext, setMtrLines, mtrlines } = useContext(ProductQuantityContext);
+    const { 
+        setMtrLines, 
+        mtrlines, 
+        selectedProducts, 
+        setSelectedProducts 
+    } = useContext(ProductQuantityContext);
   
    
-    console.log('MTRLLINES')
-    console.log(mtrlines)
+   
 
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
@@ -324,8 +294,6 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, selectedProducts, s
 
 
 const ContainerBasket = styled.div`
-   
-
     .basket-icon {
         display: flex;
         align-items: center;
@@ -342,7 +310,6 @@ const ProductBasket = styled.div`
     .details {
         display: flex;
         align-items: center;
-       
     }
 `
 

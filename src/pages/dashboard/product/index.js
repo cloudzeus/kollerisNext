@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import { MultiSelect } from 'primereact/multiselect';
-import Fuse from 'fuse.js';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -18,16 +17,11 @@ import ProductActions from '@/components/grid/Product/ProductActions';
 import { EditDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
 import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
-import { Badge } from 'primereact/badge';
-import ProductHeader from '@/components/grid/Product/ProductHeader';
 import ProductToolbar from '@/components/grid/Product/ProductToolbar';
-import { Button } from 'primereact/button';
 import { ProductAvailability, ProductOrdered, ProductReserved } from '@/components/grid/Product/ProductAvailability';
-import { set } from 'mongoose';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown'
-import { ProductQuantityProvider } from '@/_context/ProductGridContext';
-
+import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -94,6 +88,9 @@ export default function ProductLayout() {
 }
 
 function Product() {
+    const toast = useRef(null);
+    //Context:
+    const{selectedProducts, setSelectedProducts, submitted, setSubmitted} = useContext( ProductQuantityContext)
     const [categroriesFilter, setCategoriesFilter] = useState(null);
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
     const [groupFilter, setGroupFilter] = useState(null);
@@ -107,11 +104,12 @@ function Product() {
     const [filteredData, setFilteredData] = useState([])
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
     const [triggerUpdate, setTriggerUpdate] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+
+    // const [selectedProducts, setSelectedProducts] = useState(null);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         representative: { value: null, matchMode: FilterMatchMode.IN },
@@ -123,11 +121,9 @@ function Product() {
         first: 0,
         rows: 100,
         page: 1,
-       
-
     });
 
-    const toast = useRef(null);
+
 
   
 
@@ -361,6 +357,7 @@ function Product() {
 
             handleCategories()
         }, [group ,subgroup])
+
         return (
             <div className="flex align-items-center
             ">

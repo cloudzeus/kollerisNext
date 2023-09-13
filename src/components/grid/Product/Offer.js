@@ -2,14 +2,11 @@ import React, { useState, useContext } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
-import { lazy } from 'react'
 import { useEffect } from 'react'
 import { InputText } from 'primereact/inputtext'
-import { set } from 'mongoose'
 import { Button } from 'primereact/button'
-import { ProductQuantityContext } from './ProductToolbar'
-
-const Offer = ({ total, selectedProducts }) => {
+import { ProductQuantityContext } from '@/_context/ProductGridContext'
+const Offer = () => {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState([])
     const [filteredData, setFilteredData] = useState([])
@@ -24,19 +21,11 @@ const Offer = ({ total, selectedProducts }) => {
 
     });
     const [selectedClient, setSelectedClient] = useState(null)
-    console.log(selectedClient)
+
+
     const [rowClick, setRowClick] = useState(true);
 
-    // const handleClients = async () => {
-    //         let {data} = await axios.post('/api/clients/apiClients', {action: 'fetchBatch', skip: lazyState.first, limit: lazyState.rows})
-    //         setData(data.result)
-    //         setFilteredData(data.result)
-    //         setTotalRecords(data.totalRecords)
-    // }
-
-    // useEffect(() => {
-    //     handleClients()
-    // }, [lazyState.first])
+ 
 
     const onSelection = (e) => {
         setSelectedClient(e.value)
@@ -55,10 +44,8 @@ const Offer = ({ total, selectedProducts }) => {
 
     useEffect(() => {
         let handleSearch = async () => {
-            console.log('searchterm ' + searchTerm)
             setLoading(true)
             let res = await axios.post('/api/clients/apiClients', { action: 'search', searchTerm: searchTerm, skip: lazyState.first, limit: lazyState.rows })
-            console.log(res.data.result)
 
             setFilteredData(res.data.result)
             setTotalRecords(res.data.totalRecords)
@@ -90,7 +77,7 @@ const Offer = ({ total, selectedProducts }) => {
 
     return (
         <div>
-            <div className='box border-1 border-200'>
+            <div className='box'>
 
             </div>
             {!selectedClient ? (
@@ -113,14 +100,15 @@ const Offer = ({ total, selectedProducts }) => {
                     <Column field="NAME" header="Προϊόν"></Column>
                 </DataTable>
             ) : (
-                <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient} selectedProducts={selectedProducts} />
+                <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient}  />
             )}
         </div>
     )
 }
 
 
-const AfterClientSelection = ({ selectedClient, setSelectedClient, selectedProducts }) => {
+const AfterClientSelection = ({ selectedClient, setSelectedClient }) => {
+    const {selectedProducts} = useContext(ProductQuantityContext)
     const { mtrlines } = useContext(ProductQuantityContext);
     const [saldoc, setSaldoc] = useState(null)
 
@@ -135,15 +123,12 @@ const AfterClientSelection = ({ selectedClient, setSelectedClient, selectedProdu
     }
 
     const sendOffer = async () => {
-        console.log(mtrlines)
         const obj = {
             TRDR: parseInt(selectedClient.TRDR),
             MTRLINES: mtrlines,
         }
 
-        console.log(obj)
         let { data } = await axios.post('/api/clients/apiClients', { action: 'sendOffer', data: obj })
-        console.log(data.result)
         setSaldoc(data.result)
     }
 
@@ -152,7 +137,6 @@ const AfterClientSelection = ({ selectedClient, setSelectedClient, selectedProdu
         <div>
             <Button label="Eπίλεξε Πελάτη" severity="warning" onClick={() => setSelectedClient(null)} />
             <div className='surface-100 p-4 mt-3 mb-2 border-round'>
-
                 <p className='text-lg font-bold '>Λεπτομέριες Πελάτη</p>
                 <div className='mt-3'>
                     <span className='font-bold text-sm mr-2'>Κωδικός:</span>
@@ -167,7 +151,6 @@ const AfterClientSelection = ({ selectedClient, setSelectedClient, selectedProdu
                     <span className='text-sm'>{selectedClient.ADDRESS}</span>
                 </div>
                 <div className='border-400 border-top-1  mt-3'>
-
                     <div className='flex mt-2'>
                         <p>Προϊόντα:</p>
                         <p className='ml-1 font-bold'>{selectedProducts.length}</p>
@@ -178,15 +161,13 @@ const AfterClientSelection = ({ selectedClient, setSelectedClient, selectedProdu
 
                 </div>
             </div>
-
-
             {saldoc ? (
                 <div className='bg-yellow-400 inline-flex p-3'>
                     <p>Αριθμός Προσφοράς:</p>
                     <p className='font-bold ml-2 border-round'>{saldoc && saldoc.SALDOCNUM}</p>
                 </div>
             ) :
-                (<Button onClick={sendOffer} className='w-full mt-2' label="Aποστολή Προσφοράς" />)}
+            (<Button onClick={sendOffer} className='w-full mt-2' label="Aποστολή Προσφοράς" />)}
 
         </div>
     )

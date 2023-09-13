@@ -1,6 +1,6 @@
 import React from 'react'
 import { Dropdown } from 'primereact/dropdown';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
@@ -10,34 +10,15 @@ import { Dialog } from 'primereact/dialog';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
+import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
 
-const MyComponent = ({ gridData, setSubmitted }) => {
+
+
+ const SelectImpas = () => {
+    const {selectedProducts, setSubmitted} = useContext( ProductQuantityContext)
+
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-
-    const memoizedCallback = useCallback(
-        async () => {
-            // Do something
-            const fetch = async () => {
-                setLoading(true)
-                const res = await axios.post('/api/product/apiImpa', { action: 'find' })
-                setData(res.data.data)
-                setLoading(false)
-            }
-            fetch()
-        },
-        [data]
-    );
-
-    return (
-        <div>
-            <SelectImpas onLoad={memoizedCallback} data={data} loading={loading} gridData={gridData} setSubmitted={setSubmitted} />
-        </div>
-    );
-};
-
-
-const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     const [selectedImpa, setSelectedImpa] = useState(null)
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const toast = useRef(null);
@@ -49,8 +30,15 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
 
     });
 
+    const handleFetch = async () => {
+        setLoading(true)
+        const res = await axios.post('/api/product/apiImpa', { action: 'find' })
+        setData(res.data.data)
+        setLoading(false)
+    }
+
     useEffect(() => {
-        onLoad();
+        handleFetch();
     }, [])
     
 
@@ -59,15 +47,11 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
         let _filters = { ...filters };
-
         _filters['global'].value = value;
 
         setFilters(_filters);
         setGlobalFilterValue(value);
     };
-
-
-   
 
     const renderHeader = () => {
         return (
@@ -82,9 +66,8 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
 
     const header = renderHeader();
 
-
     const handleImpaSubmit = async () => {
-        let response = await axios.post('/api/product/apiImpa', { action: 'correlateImpa', id: selectedImpa._id, dataToUpdate: gridData })
+        let response = await axios.post('/api/product/apiImpa', { action: 'correlateImpa', id: selectedImpa._id, dataToUpdate: selectedProducts })
         if(!response.data.success) {
             showError()
         }
@@ -95,9 +78,6 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Impa update ολοκληρώθηκε', life: 3000});
     }
-
-   
-   
 
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Ιmpa update δεν ολοκληρώθηκε', life: 3000});
@@ -146,11 +126,8 @@ const SelectImpas = ({ onLoad, data, loading, gridData, setSubmitted }) => {
             </DataTable>
             )}
 
-          
-
-
         </div>
     )
 }
 
-export default MyComponent
+export default SelectImpas

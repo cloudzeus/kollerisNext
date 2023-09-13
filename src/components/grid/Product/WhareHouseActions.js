@@ -3,20 +3,21 @@ import React, { useEffect, useState, useContext } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import styled from 'styled-components'
-import { ProductQuantityContext } from './ProductToolbar'
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button'
+import { ProductQuantityContext } from '@/_context/ProductGridContext'
 
 
 
 
 
 
+const WhareHouseActions = () => {
+    const { selectedProducts, warehouseLines } = useContext(ProductQuantityContext)
+    console.log('warehouseLines')
+    console.log(warehouseLines)
 
-const WhareHouseActions = ({ selectedProducts }) => {
-    const {wharehouseLines, setWhereHouseLines, mtrlLines} = useContext(ProductQuantityContext)
-    console.log('--------------------------------------------')
-    console.log(mtrlLines)
+
     const CalculateBasket = () => {
         let total = 0
         selectedProducts && selectedProducts.forEach((item) => {
@@ -53,26 +54,37 @@ const WhareHouseActions = ({ selectedProducts }) => {
 
 
 const Template = ({ categoryName, name, availability, MTRL }) => {
+    const { setWareHouseLines, warehouseLines } = useContext(ProductQuantityContext)
 
-   
     let available = parseInt(availability?.DIATHESIMA)
-    const [value, setValue] = useState(available);
-    const { setWhereHouseLines, wharehouseLines } = useContext(ProductQuantityContext);
-   
+    const [value, setValue] = useState(available)
 
     useEffect(() => {
 
     }, [])
 
     const onValueChange = (e) => {
-        console.log(name)
-        console.log(e.value)
+        let newQTY1 = e.value
         setValue(e.value);
-        
-       
+        setWareHouseLines((prev) => {
+            if (!prev) return [{ MTRL: MTRL, QTY1: newQTY1 }];
+
+            const existingItem = prev.find(item => item.MTRL === MTRL);
+
+            if (existingItem) {
+                return prev.map(item =>
+                    item.MTRL === MTRL
+                        ? { ...item, QTY1: newQTY1 }
+                        : item
+                );
+            }
+
+            return [...prev, { MTRL: MTRL, QTY1: newQTY1 }];
+        })
+
     }
 
-   
+
 
     return (
         <ProductBasket>
@@ -90,10 +102,10 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
                 </div>
                 <div className="">
                     <label htmlFor="minmax-buttons" className="font-bold block ml-1 mb-2">Αλλαγή:</label>
-                    <InputNumber inputId="minmax-buttons" value={value} onValueChange={ onValueChange } mode="decimal" showButtons min={0} max={1000} />
+                    <InputNumber inputId="minmax-buttons" value={value} onValueChange={onValueChange} mode="decimal" showButtons min={0} max={1000} />
                 </div>
             </div>
-            
+
         </ProductBasket>
     )
 }
@@ -154,16 +166,6 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
 //     )
 // }
 
-const ContainerBasket = styled.div`
-   
-
-    .basket-icon {
-        display: flex;
-        align-items: center;
-
-    }
-
-`
 
 
 const ProductBasket = styled.div`

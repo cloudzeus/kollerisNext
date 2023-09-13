@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
+import { ProductQuantityContext } from '@/_context/ProductGridContext';
 
-const TreeSelectComp = ({ gridData,  setSubmitted }) => {
+const TreeSelectComp = () => {
+
+    const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
+
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState(null);
 
@@ -36,7 +40,6 @@ const TreeSelectComp = ({ gridData,  setSubmitted }) => {
                 subgroups={subgroups}
                 subgroup={subgroup}
                 setSubgroup={setSubgroup}
-                gridData={gridData}
                 setSubmitted={ setSubmitted}
             />
         </div>
@@ -44,8 +47,6 @@ const TreeSelectComp = ({ gridData,  setSubmitted }) => {
 }
 
 const TreeSelectDropDown = ({
-    gridData,
-    setSubmitted,
     categories,
     groups,
     subgroups,
@@ -58,6 +59,7 @@ const TreeSelectDropDown = ({
     category,
     group,
     subgroup }) => {
+    const {selectedProducts} = useContext(ProductQuantityContext)
 
     const [data, setData] = useState(null);
     const toast = useRef(null);
@@ -73,8 +75,6 @@ const TreeSelectDropDown = ({
 
         //FETCH CATEGORIES AND BUILD SUBGROUPS AND MTRGROUPS
         let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
-        console.log('result find categories')
-        console.log(res.data.result)
         setData(res.data.result)
 
     }
@@ -135,23 +135,19 @@ const TreeSelectDropDown = ({
 
 
     const chooseCategory = (e) => {
-        console.log(e)
         setCategory(e.value)
     }
     const chooseGroup = (e) => {
-        console.log(e)
         setGroup(e.value)
     }
     const chooseSub = (e) => {
-        console.log(e)
         setSubgroup(e.value)
     }
 
     const onSubmit = async () => {
-        console.log('onSubmit')
         let res = await axios.post('/api/product/apiProduct', { 
             action: 'updateClass', 
-            gridData: gridData, 
+            gridData: selectedProducts, 
             categoryid: category?.categoryId, 
             groupid: group?.groupId, 
             subgroupid:subgroup?.subgroupId })
