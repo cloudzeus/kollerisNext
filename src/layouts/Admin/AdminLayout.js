@@ -8,7 +8,8 @@ import { Button } from 'primereact/button';
 import Image from 'next/image';
 import ProfileButton from '@/components/NavProfileButton';
 import BreadCrumbs from './BreadCrumbs';
-import MultiColumnLayout from './Sidebar';
+import { Sidebar } from 'primereact/sidebar';
+import NewSidebar from './NewSidebar';
 
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
@@ -46,8 +47,7 @@ const AdminLayout = ({ children }) => {
 				</div>
 			</SidebarContainer> */}
 			{isSidebarOpen ? <NewSidebar /> : null}
-			{/* 
-			\ */}
+			
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
 					<Button
@@ -65,9 +65,7 @@ const AdminLayout = ({ children }) => {
 					</div>
 				</Navbar>
 				<MainContent>
-					<BreadCrumbs />
 					{children}
-
 				</MainContent>
 			</Content>
 		</Container>
@@ -75,8 +73,7 @@ const AdminLayout = ({ children }) => {
 
 }
 
-import { Sidebar } from 'primereact/sidebar';
-import NewSidebar from './NewSidebar';
+
 
 function FullScreen({ children }) {
 	const [visible, setVisible] = useState(false);
@@ -100,35 +97,14 @@ const Container = styled.div`
   display: flex;
   height: 100vh;
   transition: width 0.3s ease-in-out;
+  width: 100%;
 `;
 
 
 
-const SidebarContainer = styled.div`
-  height: 100vh;
-  min-width: ${({ isSidebarOpen }) => isSidebarOpen ? '250px' : '60px'};
-  background-color: white;
-  overflow-y: auto;
-  /* transition: all 0.3s ease-in; */
-
-
-  .top-div {
-    height: 67px;
-    border-bottom: 1px solid ${({ theme }) => theme.palette.background};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .main-div {
-    height: calc(100% - 67px);
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-  }
-`;
 
 const Content = styled.div`
-  flex-grow: 1;
+	flex: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -149,8 +125,7 @@ const Navbar = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 250px)' : 'calc(100% - 60px)'};
-  /* transition: width 0.3s ease-in-out; */
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
   .navbar-rightdiv {
 	display: flex;
 	align-items: center;
@@ -164,6 +139,8 @@ const MainContent = styled.div`
   padding: 20px;
   margin-top: 60px;
   background-color: ${({ theme }) => theme.palette.background};
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
+  transition: width 0.3s ease-in-out;
 `;
 
 
