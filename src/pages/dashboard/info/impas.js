@@ -65,6 +65,7 @@ const Impas = () => {
     return (
         <AdminLayout>
             <DataTable 
+                loading={showData.length == 0 ? true : false}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={rowExpansionTemplate}

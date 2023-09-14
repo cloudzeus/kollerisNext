@@ -7,6 +7,8 @@ import Categories from "../dashboard/product/mtrcategories";
 import Markes from "../../../server/models/markesModel";
 import Vat from "../../../server/models/vatModel";
 import Intrastat from "../../../server/models/intrastatMode";
+import Countries from "../../../server/models/countriesModel";
+import Currency from "../../../server/models/currencyModel";
 export default async function handler(req, res) {
     let action = req.body.action;
     
@@ -234,6 +236,45 @@ export default async function handler(req, res) {
 
         let result = await Intrastat.insertMany(buffer.result)
         console.log(result)
+        return res.status(200).json({ success: true, result: result});
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null});
+        }
+    }
+  
+    if(action === "createCountries") {
+        try {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllCountries`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        await connectMongo();
+        let result = await Countries.insertMany(buffer.result)
+        
+        return res.status(200).json({ success: true, result: result});
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null});
+        }
+    }
+    if(action === "createCurrency") {
+        try {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllCurrencies`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        await connectMongo();
+        let result = await Currency.insertMany(buffer.result)
+        
         return res.status(200).json({ success: true, result: result});
         } catch (e) {
             return res.status(400).json({ success: false, result: null});

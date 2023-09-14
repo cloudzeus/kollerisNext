@@ -26,7 +26,6 @@ export default function Manufacturers() {
     const [data, setData] = useState([])
     const [stat, setStat] = useState()
     const toast = useRef(null);
-    const [loading, setLoading] = useState(false);
 
 
     const [filters, setFilters] = useState({
@@ -36,7 +35,6 @@ export default function Manufacturers() {
 
     const handleFetch = async () => {
         let res = await axios.post('/api/product/apiHelperInfo', { action: 'findIntrastats' })
-        console.log(res.data.result)
         setData(res.data.result)
     }
 
@@ -64,40 +62,20 @@ export default function Manufacturers() {
     const onGlobalFilterChange = (event) => {
         const value = event.target.value;
         let _filters = { ...filters };
-
         _filters['global'].value = value;
-
         setFilters(_filters);
     };
 
 
-
     
 
-    const dialogStyle = {
-        marginTop: '10vh', // Adjust the top margin as needed
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
 
-    };
-
-
-    const CountryIcon = (props) => {
-        return (
-            <div className="flex align-content-center justify-content-start">
-                <Flag code={ props.INTERCODE} style={{width: '40px', height: '15px'}} />
-                <span className="ml-2">{props.NAME}</span>
-            </div>
-        )
-    }
-
- 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             
             <DataTable
+                loading={data.length == 0 ? true : false}
                 header={header}
                 value={data}
                 paginator
@@ -109,7 +87,6 @@ export default function Manufacturers() {
                 paginatorRight={true}
                 removableSort
                 onFilter={(e) => setFilters(e.filters)}
-                loading={loading}
                 editMode="row"
                 selectOnEdit
             >   
@@ -129,24 +106,6 @@ export default function Manufacturers() {
 
 
 
-
-const CountriesDetailCard = ({stat}) => {
-    return (
-        <div className="mb-3 surface-0 shadow-1 p-3 border-1 border-50 border-round">
-        <div className="flex justify-content-between ">
-            <div>
-                <span className="block text-500 font-medium mb-3">Intrastat</span>
-                <div className="text-900 font-medium text-xl">{stat}</div>
-            </div>
-            <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                <i className="pi pi-tag text-orange-500 text-xl"></i>
-            </div>
-        </div>
-        {/* <span className="text-green-500 font-medium">%52+ </span>
-        <span className="text-500">since last week</span> */}
-    </div>
-    )
-}
 
 
 

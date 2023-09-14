@@ -42,6 +42,7 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
+            <SidebarItem icon={"pi-home"} title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/catalogs'} />
             <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
             <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
             <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
@@ -50,6 +51,8 @@ const SidebarList = () => {
                 <div >
                     <SidebarSubItem title={'ΦΠΑ'} goTo={'/dashboard/info/vat'} />
                     <SidebarSubItem title={'Intrastat'} goTo={'/dashboard/info/intrastat'} />
+                    <SidebarSubItem title={'Χώρες'} goTo={'/dashboard/info/countries'} />
+                    <SidebarSubItem title={'Νόμισμα'} goTo={'/dashboard/info/currencies'} />
                 </div>
             ) : null}
         </ul>
