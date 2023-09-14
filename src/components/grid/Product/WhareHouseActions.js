@@ -67,8 +67,6 @@ const WhareHouseActions = () => {
                         <p>{resultImport.MTRDOCNUM}</p>  
                         </div>
                     ) : null}
-                          
-                   
                     {resultExport ? (
                         <div className="bg-yellow-400 p-2 mt-2 border-round">
                         <p className='font-bold' >Παραστατικό Εξαγωγής:</p>

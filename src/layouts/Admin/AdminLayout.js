@@ -23,7 +23,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			<SidebarContainer isSidebarOpen={isSidebarOpen}>
+			{/* <SidebarContainer isSidebarOpen={isSidebarOpen}>
 				<div className="top-div">
 					{isSidebarOpen ? (
 						<Image
@@ -44,8 +44,8 @@ const AdminLayout = ({ children }) => {
 				<div className='main-div'>
 				<SidebarMenu />
 				</div>
-			</SidebarContainer>
-			{/* {isSidebarOpen ? <NewSidebar /> : null} */}
+			</SidebarContainer> */}
+			{isSidebarOpen ? <NewSidebar /> : null}
 			{/* 
 			\ */}
 			<Content isSidebarOpen={isSidebarOpen} >
