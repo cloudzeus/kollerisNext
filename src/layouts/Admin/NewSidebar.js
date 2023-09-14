@@ -23,15 +23,15 @@ const SidebarList = () => {
         <ul>
             <SidebarItem icon={"pi-home"} title={'Aρχική'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard'} />
             {/* PRODUCT */}
-            <SidebarItem icon={"pi-shopping-cart"} title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarHeader icon={"pi-shopping-cart"} title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 2 ? (
                 <div >
-                    <SidebarSubItem title={'Προϊον'} id={21} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product'} />
-                    <SidebarSubItem title={'Μάρκες'} id={22} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product/brands'} />
-                    <SidebarSubItem title={'Κατασκευαστές'} id={23} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product/manufacturers'} />
-                    <SidebarSubItem title={'Κατηγορίες'} id={24} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product/mtrcategories'} />
-                    <SidebarSubItem title={'Oμάδες'} id={25} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product/mtrgroup'} />
-                    <SidebarSubItem title={'Υποομάδες'} id={26} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/product/mtrsubgroup'} />
+                    <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
+                    <SidebarSubItem title={'Μάρκες'} goTo={'/dashboard/product/brands'} />
+                    <SidebarSubItem title={'Κατασκευαστές'}  goTo={'/dashboard/product/manufacturers'} />
+                    <SidebarSubItem title={'Κατηγορίες'} goTo={'/dashboard/product/mtrcategories'} />
+                    <SidebarSubItem title={'Oμάδες'}  goTo={'/dashboard/product/mtrgroup'} />
+                    <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
              <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
@@ -40,32 +40,53 @@ const SidebarList = () => {
     )
 }
 
-const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, dropdown, goTo }) => {
-    const [activeIcon, setActiveIcon] = useState(false)
 
+const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) => {
+    const [activeIcon, setActiveIcon] = useState(false)
     const handleClick = () => {
         setActiveIcon(!activeIcon)
         setActiveTab((prev) => prev == id ? 0 : id)
     }
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-            <Link href={goTo}>
-                <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
-                <span className='text-lg ml-3'>{title}</span>
-            </Link>
-            {dropdown ? (<i className={` pi ${activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
-        </li>
+           <div>
+           <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
+            <span className='text-lg ml-3'>{title}</span>
+           </div>
+        {dropdown ? (<i className={` pi ${!activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
+    </li>
     )
 }
 
-const SidebarSubItem = ({ id, setActiveTab, activeTab, title,  goTo }) => {
 
+
+const SidebarItem = ({ icon, id, setActiveTab, activeTab, title,  goTo }) => {
+    const handleClick = () => {
+        setActiveTab((prev) => prev == id ? 0 : id)
+    }
     return (
-        <li onClick={() => setActiveTab(id)} className={` sub-item ${activeTab == id ? "active" : null}`}>
+       
             <Link href={goTo}>
+                 <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
+                    <div>
+                    <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                 <span className='text-lg ml-3'>{title}</span>
+                    </div>
+                </li>
             </Link>
-        </li>
+       
+    )
+}
+
+const SidebarSubItem = ({ id,title,  goTo }) => {
+    return (
+       
+            <Link href={goTo}>
+                 <li  className={` sub-item`}>
+                <span className='text-lg ml-3'>{title}</span>
+                </li>
+            </Link>
+       
     )
 }
 
@@ -149,6 +170,11 @@ const Container = styled.div`
         list-style: none;
         position: relative;
        
+    }
+
+    .sub-item:active {
+        background-color: #1a1f25;
+        transition: background-color 1s, color 0.3s; /* This line is responsible for the smooth transition */
     }
 
     .sub-item::before {

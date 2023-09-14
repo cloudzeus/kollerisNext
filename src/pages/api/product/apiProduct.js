@@ -2,15 +2,13 @@
 
 import axios from "axios";
 import format from "date-fns/format";
-import mongoose, { mongo } from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
 import { Product } from "../../../../server/models/newProductModel";
-import { ObjectId } from "mongodb";
-import { original } from "@reduxjs/toolkit";
+
 
 
 export const config = {
@@ -299,27 +297,7 @@ export default async function handler(req, res) {
 
         await connectMongo()
 
-        async function updateSoftone(item) {
-            console.log(item.MTRL)
-            console.log(item.name)
-            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
-            const response = await fetch(URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: "Service",
-                    password: "Service",
-                    MTRL: item.MTRL[0],
-                    ...softoneOBJ
-                })
-            });
-            let responseJSON = await response.json();
-
-            if (responseJSON.success) {
-                return ({ MTRLID: item.MTRL[0], updated: true })
-            } else {
-                return ({ MTRLID: item.MTRL[0], updated: false })
-            }
-        }
+      
 
         async function updateMongo(item) {
             let MTRLID = item.MTRL[0];
