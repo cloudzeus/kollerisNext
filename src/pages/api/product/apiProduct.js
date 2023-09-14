@@ -18,6 +18,7 @@ export const config = {
 }
 
 export default async function handler(req, res) {
+    res.setHeader('Cache-Control', 's-maxage=10'); 
     const action = req.body.action;
 
 

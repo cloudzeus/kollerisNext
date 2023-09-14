@@ -2,11 +2,19 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Image from 'next/image'
 import Link from 'next/link'
+import { toggleSidebar } from '@/features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 const NewSidebar = () => {
+    const dispatch = useDispatch()
+    const handleToggleSidebar = () => {
+		dispatch(toggleSidebar())
+	}
     return (
         <Container>
             <div className='top'>
                 <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
+                <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem' }}></i>
+
             </div>
             <div className='main'>
                 <SidebarList />
@@ -28,14 +36,22 @@ const SidebarList = () => {
                 <div >
                     <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
                     <SidebarSubItem title={'Μάρκες'} goTo={'/dashboard/product/brands'} />
-                    <SidebarSubItem title={'Κατασκευαστές'}  goTo={'/dashboard/product/manufacturers'} />
+                    <SidebarSubItem title={'Κατασκευαστές'} goTo={'/dashboard/product/manufacturers'} />
                     <SidebarSubItem title={'Κατηγορίες'} goTo={'/dashboard/product/mtrcategories'} />
-                    <SidebarSubItem title={'Oμάδες'}  goTo={'/dashboard/product/mtrgroup'} />
+                    <SidebarSubItem title={'Oμάδες'} goTo={'/dashboard/product/mtrgroup'} />
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-             <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
-             <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
+            <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
+            <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
+            <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
+            <SidebarHeader icon={"pi-shopping-cart"} title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {activeTab == 6 ? (
+                <div >
+                    <SidebarSubItem title={'ΦΠΑ'} goTo={'/dashboard/info/vat'} />
+                    <SidebarSubItem title={'Intrastat'} goTo={'/dashboard/info/intrastat'} />
+                </div>
+            ) : null}
         </ul>
     )
 }
@@ -49,44 +65,44 @@ const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) =
     }
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-           <div>
-           <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
-            <span className='text-lg ml-3'>{title}</span>
-           </div>
-        {dropdown ? (<i className={` pi ${!activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
-    </li>
+            <div>
+                <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
+                <span className='text-lg ml-3'>{title}</span>
+            </div>
+            {dropdown ? (<i className={` pi ${!activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
+        </li>
     )
 }
 
 
 
-const SidebarItem = ({ icon, id, setActiveTab, activeTab, title,  goTo }) => {
+const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
     const handleClick = () => {
         setActiveTab((prev) => prev == id ? 0 : id)
     }
     return (
-       
-            <Link href={goTo}>
-                 <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                    <div>
+
+        <Link href={goTo}>
+            <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
+                <div>
                     <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
-                <span className='text-lg ml-3'>{title}</span>
-                    </div>
-                </li>
-            </Link>
-       
+                    <span className='text-lg ml-3'>{title}</span>
+                </div>
+            </li>
+        </Link>
+
     )
 }
 
-const SidebarSubItem = ({ id,title,  goTo }) => {
+const SidebarSubItem = ({ title, goTo }) => {
     return (
-       
-            <Link href={goTo}>
-                 <li  className={` sub-item`}>
+
+        <Link href={goTo}>
+            <li className={` sub-item`}>
                 <span className='text-lg ml-3'>{title}</span>
-                </li>
-            </Link>
-       
+            </li>
+        </Link>
+
     )
 }
 
@@ -111,8 +127,13 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
         padding: 20px;
-    }
 
+    }
+    .burger-close {
+        cursor: pointer;
+        display: none;
+        color: white;
+    }
     .main {
         overflow-y: auto;
         flex: 1;
@@ -158,8 +179,9 @@ const Container = styled.div`
             background-color:#1a1f25 ;
         }
         
-
     }
+
+
     .bottom {
         height: 70px;
     }
@@ -187,6 +209,19 @@ const Container = styled.div`
         width: 5px;
         background-color: #fff;
     }
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        .top {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .burger-close {
+            display: block;
+        }
+        
+   }
 `
 
 

@@ -2,22 +2,19 @@ import '@/styles/globals.css'
 import { Provider } from 'react-redux';
 import { store } from '../store';
 
-import { registerLicense } from '@syncfusion/ej2-base';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from '@/theme/theme';
 import { SessionProvider } from "next-auth/react"
 import "primeflex/primeflex.css";
 
-import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 
 function App({ Component, pageProps: {session, pageProps} }) {
    
     return (
             <Provider store={store}>
                     < ThemeProvider theme={theme}>
-                    
-                            
                             <SessionProvider session={session}>
                                 <ToastContainer
                                     position="top-center"

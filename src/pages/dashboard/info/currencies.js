@@ -123,7 +123,7 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <CountriesDetailCard stat={data?.length} />
+          
             <DataTable
                 header={header}
                 value={data}

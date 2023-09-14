@@ -11,19 +11,6 @@ const vatSchema = new mongoose.Schema({
     ACNMSKX: String,
     MYDATACODE: String,
     DEPART: String,
-    localized: [
-        {
-            locale: String,
-            name: String,
-            fields: [
-              {
-                fieldName: String,
-                translation: String
-              }
-
-            ]
-        }
-    ],
     },
     {
     timestamps: true

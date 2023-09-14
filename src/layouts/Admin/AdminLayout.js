@@ -3,20 +3,14 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { toggleSidebar } from '@/features/userSlice';
-import SidebarMenu from './PanelMenu';
 import { Button } from 'primereact/button';
-import Image from 'next/image';
 import ProfileButton from '@/components/NavProfileButton';
-import BreadCrumbs from './BreadCrumbs';
 import { Sidebar } from 'primereact/sidebar';
 import NewSidebar from './NewSidebar';
-
+import BreadCrumbs from './BreadCrumbs';
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
-	const [isScrolled, setScrolled] = useState(false);
-
 	const dispatch = useDispatch()
-
 	const handleToggleSidebar = () => {
 		dispatch(toggleSidebar())
 	}
@@ -24,32 +18,10 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			{/* <SidebarContainer isSidebarOpen={isSidebarOpen}>
-				<div className="top-div">
-					{isSidebarOpen ? (
-						<Image
-							src={'/static/imgs/logoDG.png'}
-							alt="Picture of the author"
-							width={80}
-							height={24}
-						/>
-					) : (
-						<Image
-							src={'/static/imgs/dg-small.png'}
-							alt="Picture of the author"
-							width={50}
-							height={50}
-						/>
-					)}
-				</div>
-				<div className='main-div'>
-				<SidebarMenu />
-				</div>
-			</SidebarContainer> */}
-			{isSidebarOpen ? <NewSidebar /> : null}
-			
+			{isSidebarOpen ? <NewSidebar  /> : null}
 			<Content isSidebarOpen={isSidebarOpen} >
-				<Navbar isScrolled={isScrolled} isSidebarOpen={isSidebarOpen}>
+				<Navbar  isSidebarOpen={isSidebarOpen}>
+					<div className='top'>
 					<Button
 						icon="pi pi-bars"
 						text aria-label="navburger"
@@ -63,8 +35,15 @@ const AdminLayout = ({ children }) => {
 						</FullScreen>
 						<ProfileButton />
 					</div>
+					</div>
+					<div className='bottom'>
+					<BreadCrumbs />
+					</div>
+					
 				</Navbar>
+		
 				<MainContent>
+
 					{children}
 				</MainContent>
 			</Content>
@@ -116,15 +95,12 @@ const Navbar = styled.nav`
   position: fixed;
   top: 0;
   right: 0;
-  height: 70px;
+  
   background-color: #fff;
   color: #fff;
-  padding: 10px;
   z-index: 10;
   border-bottom: 4px solid ${({ theme }) => theme.palette.background};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+
   width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
   .navbar-rightdiv {
 	display: flex;
@@ -133,14 +109,34 @@ const Navbar = styled.nav`
 		margin-left: 5px;
 	}
   }
+  .top {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	justify-content: space-between;
+	border-bottom: 1px solid #dbdcdc;
+	padding: 10px;
+	height: 70px;
+  }
+
+  .bottom {
+	padding: 5px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+  }
+  @media (max-width: 1024px) {
+		width: ${({ isSidebarOpen }) => isSidebarOpen ? '0' : '100%'};
+   }
 `;
 
 const MainContent = styled.div`
   padding: 20px;
-  margin-top: 60px;
+  margin-top: 110px;
   background-color: ${({ theme }) => theme.palette.background};
   width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
   transition: width 0.3s ease-in-out;
+  
 `;
 
 

@@ -79,10 +79,14 @@ async function intervalInventory() {
 }
 
 
+
+
+
+
 export default function ProductLayout() {
     return (
         <ProductQuantityProvider>
-            <Product />
+            <Product/>
         </ProductQuantityProvider>
     )
 }
@@ -99,7 +103,6 @@ function Product() {
     const [subgroup, setSubGroup] = useState(null)
     const dispatch = useDispatch();
 
-    const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [filteredData, setFilteredData] = useState([])
     const [editDialog, setEditDialog] = useState(false);
@@ -132,7 +135,6 @@ function Product() {
     }, [submitted])
 
 
-
     const fetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProductFilters', {
@@ -144,7 +146,6 @@ function Product() {
             groupID: group?.softOne.MTRGROUP,
             subgroupID: subgroup?.softOne.cccSubgroup2,
         })
-        setData(res.data.result);
         setFilteredData(res.data.result);
         setTotalRecords(prev => {
             if (prev === res.data.totalRecords) {
@@ -160,9 +161,7 @@ function Product() {
         fetch()
     }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup])
 
-    useEffect(() => {
-
-    })
+   
     const editProduct = async (product) => {
         setSubmitted(false);
         setEditDialog(true)
@@ -190,17 +189,15 @@ function Product() {
 
     const renderHeader = () => {
         return (
-            <div className="flex">
+            <div className="flex lg:no-wrap  sm:flex-wrap">
                 <div className="">
-                    <span className="p-input-icon-left mr-3">
+                    <span className="p-input-icon-left mr-3 sm:w-full">
                         <i className="pi pi-search" />
-                        <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
+                        <InputText  type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
                     </span>
-                    {/* <Button onClick={addAlltoBasket} icon="pi pi-shopping-cart" label="Προσθήκη Όλων" severity="warning" /> */}
-
                 </div>
-                <div className="middle-header">
-                    <MultiSelect value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" className="w-full sm:w-16rem" display="chip" />
+                <div className="sm:mt-1  lg:mt-0">
+                    <MultiSelect value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" className="" display="chip" />
                 </div>
             </div>
 

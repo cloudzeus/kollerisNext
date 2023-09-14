@@ -11,8 +11,7 @@ const initialState = {
 		error: null,
 	},
 	isLoading: false,
-	isSidebarOpen: false,
-	asycnedMarkes: 0,
+	isSidebarOpen:true,
 }
 
 

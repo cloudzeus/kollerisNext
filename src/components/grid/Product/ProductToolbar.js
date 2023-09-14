@@ -53,7 +53,7 @@ const RightSide = () => {
         <ContainerBasket >
             <div className='basket-icon'>
                 < CalculateBasket />
-                <i onClick={() => setVisible(true)} className="pi pi-shopping-cart p-overlay-badge" style={{ fontSize: '25px', marginRight: '10px' }}>
+                <i  className="pi pi-shopping-cart p-overlay-badge" style={{ fontSize: '25px', marginRight: '10px' }}>
                     <Badge value={selectedProducts == null ? "0" : selectedProducts?.length} ></Badge>
                 </i>
             </div>

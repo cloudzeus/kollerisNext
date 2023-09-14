@@ -6,18 +6,12 @@ const ProductActions = ({rowData, onEdit, onEditClass, openBasket, onAdd}) => {
 
     const op = useRef(null)
   return (
-    <div className="shadow-5">
+    <div className="">
         
           <div  onClick={(e) => op.current.toggle(e)} className='flex align-items-center justify-content-center w-full h-full cursor-pointer'>
-            <i className=" pi pi-ellipsis-h text-sm "></i>
+            <i className=" pi pi-cog"  style={{ color: 'var(--primary-color)' }}></i>
           </div>
                 <OverlayPanel className='w-20rem product-overlay' ref={op} showCloseIcon>
-                    {/* <Button onClick={openBasket} size="small" text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1 ">
-                        <div className='mr-2 w-2rem	h-2rem bg-yellow-500 border-circle flex  align-items-center justify-content-center'>
-                        <i className="text-white pi pi-shopping-cart text-sm"></i>
-                        </div>
-                         Προσθήκη στο καλάθι
-                    </Button> */}
                     <Button 
                       onClick={() => onEdit(rowData)} 
                       text 

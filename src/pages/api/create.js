@@ -5,6 +5,8 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../server/models/categ
 import connectMongo from "../../../server/config";
 import Categories from "../dashboard/product/mtrcategories";
 import Markes from "../../../server/models/markesModel";
+import Vat from "../../../server/models/vatModel";
+import Intrastat from "../../../server/models/intrastatMode";
 export default async function handler(req, res) {
     let action = req.body.action;
     
@@ -120,7 +122,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false});
       }
     }
-
     if(action === "createSubGroups") {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/getCccGroup`
         const response = await fetch(URL, {
@@ -198,41 +199,46 @@ export default async function handler(req, res) {
         
         return res.status(200).json({ success: true});
     }
-
-    if(action === 'regret') {
-        await connectMongo();
-        let result = await MtrGroup.find({})
-        for(let i of result) {
-            let id = i.softOne.MTRCATEGORY;
-            let findCategory = await MtrCategory.findOne({'softOne.MTRCATEGORY': parseInt(id)})
-            let updateGroup = await MtrGroup.findOneAndUpdate({
-                _id: i._id
-            }, {
-               $set: {
-                    category: findCategory._id
-               }
+    if(action === "createVat") {
+        try {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllVat`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
             })
-        }
+        });
+        let buffer = await translateData(response)
+        await connectMongo();
 
-
+        let result = await Vat.insertMany(buffer.result)
+        console.log(result)
         return res.status(200).json({ success: true, result: result});
-    }
-
-    if(action === 'regret2') {
-        await connectMongo();
-        let result = await SubMtrGroup.find({})
-        for(let i of result) {
-            let id = i.softOne.MTRGROUP;
-
-            let findCategory = await MtrGroup.findOne({'softOne.MTRGROUP': id})
-            let updateGroup = await SubMtrGroup.findOneAndUpdate({
-                _id: i._id
-            }, {
-               $set: {
-                    group: findCategory._id
-               }
-            })
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null});
         }
     }
+    if(action === "createIntrastat") {
+        try {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllIntrastat`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        await connectMongo();
+
+        let result = await Intrastat.insertMany(buffer.result)
+        console.log(result)
+        return res.status(200).json({ success: true, result: result});
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null});
+        }
+    }
+  
 }   
 
