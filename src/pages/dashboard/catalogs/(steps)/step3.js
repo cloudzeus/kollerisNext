@@ -1,18 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect} from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import AdminLayout from '@/layouts/Admin/AdminLayout'
 import { Button } from 'primereact/button'
-const Step3 = ({selectedHeaders, currentPage, setCurrentPage, data}) => {
-    console.log('data')
-    console.log(data)
-    console.log('selectedHeaders')
-    console.log(selectedHeaders)
+import { useSelector, useDispatch } from 'react-redux';
+import {  setCurrentPage } from '@/features/catalogSlice';
+
+
+const Step3 = () => {
+    const { selectedHeaders, gridData,selectedMongoKey, currentPage  } = useSelector((state) => state.catalog)
+    const dispatch = useDispatch();
+    useEffect(() => {
+ 
+        if(currentPage !== 3) return;
+        const keysToCheck = selectedHeaders
+     
+        const filteredData = gridData.map(dataObj => {
+            let newObj = {};
+            keysToCheck.forEach(item => {
+                if (dataObj[`${item.key}`]) {
+                    newObj[`${item.related}`] = dataObj[`${item.key}`];
+                }
+            });
+            return newObj;
+        });
+
+        console.log('filtered data')
+        console.log(filteredData)
+    }, [])
+
+ 
   return (
         <div>
                 <DataTable
+                showGridlines
+                stripedRows
                     paginator rows={100} rowsPerPageOptions={[20, 50, 100, 200]}
-                    value={data}
+                    value={gridData}
                     tableStyle={{ minWidth: '50rem' }}>
                         {
                             selectedHeaders.map((header, index) => {
@@ -23,7 +46,7 @@ const Step3 = ({selectedHeaders, currentPage, setCurrentPage, data}) => {
                         }
                 </DataTable>
                 <div>
-                    <Button label="back" icon="pi pi-arrow-left" onClick={() => setCurrentPage(2)} />
+                    <Button label="back" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(2))} />
                 </div>
         </div>
   )

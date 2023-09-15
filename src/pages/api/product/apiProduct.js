@@ -448,10 +448,7 @@ export default async function handler(req, res) {
 
     if (action === 'warehouse') {
         const { exportWarehouse, importWarehouse } = req.body;
-        console.log('export from warehouse')
-        console.log(exportWarehouse)
-        console.log('import to warehouse')
-        console.log(importWarehouse)
+       
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getItemDoc`;
 
         async function modifySoftonePost(SERIES, data) {
