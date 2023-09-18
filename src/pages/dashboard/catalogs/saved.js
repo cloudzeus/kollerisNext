@@ -120,7 +120,7 @@ const ActionTemplate = ({ url }) => {
     return (
         <div>
             <Button icon="pi pi-download" className="p-button-warning" onClick={download} />
-            <Button icon="pi pi-info" className="p-button-primary ml-3" onClick={readCSV} />
+            {/* <Button icon="pi pi-info" className="p-button-primary ml-3" onClick={readCSV} /> */}
         </div>
     )
 }

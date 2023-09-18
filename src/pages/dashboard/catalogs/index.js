@@ -68,6 +68,8 @@ const Step1 = () => {
             method: 'POST',
             body: formData,
         });
+
+        console.log(response)
         let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
       
        

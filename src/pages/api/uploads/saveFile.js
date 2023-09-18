@@ -5,9 +5,6 @@ import fs from 'fs';
 
 
 
-
-
-
 // Set up the multer middleware to handle file uploads
 const upload = multer({ dest: 'public/uploads/' });
 
@@ -32,9 +29,14 @@ export default async function handler(req, res) {
         // Process each uploaded file
         for (const file of files) {
           // const timestamp = Date.now();
-          const randomId = generateRandomId(6);
           const newFileName = `${file.originalname}`;
           // const newFileName = `${timestamp}-${file.originalname}`;
+          const filePath = path.join('public/uploads/', file.originalname);
+          if (fs.existsSync(filePath)) {
+            return reject({ statusCode: 500, message: 'File exists' });
+
+          } 
+            
           fs.renameSync(file.path, path.join('public/uploads/', newFileName));
           const publicURL = `${newFileName}`;
           uploadedURLs.push(publicURL);

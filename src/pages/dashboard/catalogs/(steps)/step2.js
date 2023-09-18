@@ -86,8 +86,9 @@ const Step2 = () => {
 
     return (
         <div>
-            <div className='card bg-white p-2 border-round mb-3 mt-2'>
-                <p>customattributes</p>
+            <div className='card bg-white p-4 border-round mb-3 mt-2'>
+                <p className="text-red-600 font-bold text-xl">CREATE CUSTOM ATTRIBUTE*:</p>
+                <p className='text-xl'>Δημιουργούμε custom attributes αν δεν υπάρχει ήδη το κλειδί στο selecte box. Τα custom attributes κατά βάση μεγέθη, fields οπως "size/content".</p>
             </div>
             <Toast ref={toast} />
             <DataTable
