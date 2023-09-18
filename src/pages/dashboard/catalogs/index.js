@@ -50,18 +50,25 @@ const Step1 = () => {
             const data = e.target.result;
             const workbook = XLSX.read(data, { type: "binary" });
             const sheetName = workbook.SheetNames[0];
-            console.log('sheetname')
-            console.log(sheetName)
+      
             const sheet = workbook.Sheets[sheetName];
             const parsedData = XLSX.utils.sheet_to_json(sheet);
-            console.log(parsedData)
             dispatch(setGridData(parsedData))
-            let saveFile = XLSX.writeFile( workbook, 'test2.xlsx')
-            setSavedFile(saveFile)
+            
+            
         }
 
+        let formData = new FormData();
+        let acceptedFiles = e.target.files[0]
+        console.log(acceptedFiles)
+        formData.append('files', acceptedFiles);
+        
+
+        const response = await fetch('/api/uploads/saveFile', {
+            method: 'POST',
+            body: formData,
+        });
         let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
-        console.log(savedatabasefile)
       
        
     }

@@ -1,13 +1,9 @@
 import multer from 'multer';
 import path from 'path';
-
-import { parse } from 'path';
-import { promises as fs } from 'fs';
-import xlsx from 'xlsx'
+import fs from 'fs';
 
 
 
-// Generate a random small ID with a length of 6 characters
 
 
 
@@ -36,6 +32,7 @@ export default async function handler(req, res) {
         // Process each uploaded file
         for (const file of files) {
           // const timestamp = Date.now();
+          const randomId = generateRandomId(6);
           const newFileName = `${file.originalname}`;
           // const newFileName = `${timestamp}-${file.originalname}`;
           fs.renameSync(file.path, path.join('public/uploads/', newFileName));
