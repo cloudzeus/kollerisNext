@@ -42,7 +42,14 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-            <SidebarItem icon={"pi-home"} title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/catalogs'} />
+            <SidebarHeader icon={"pi-shopping-cart"} title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {activeTab == 7 ? (
+                <div >
+                    <SidebarSubItem title={'Upload Κατάλογοι'} goTo={'/dashboard/catalogs'} />
+                    <SidebarSubItem title={'Αποθηκευμένοι Κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
+                 
+                </div>
+            ) : null}
             <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
             <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
             <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />

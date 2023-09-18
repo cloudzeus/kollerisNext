@@ -5,7 +5,6 @@ import { model, models, Schema } from 'mongoose';
     
 
 
-
 const productAttributesSchema = new mongoose.Schema({
     product: {
         type: Schema.Types.ObjectId,
@@ -23,6 +22,5 @@ const productAttributesSchema = new mongoose.Schema({
 const ProductAttributes = models.ProductAttributes || model('ProductAttributes', productAttributesSchema);
 
 export {
-
     ProductAttributes
 }

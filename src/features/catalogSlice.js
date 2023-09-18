@@ -4,9 +4,7 @@ const initialState = {
     gridData: [],
 	headers: [],
 	selectedHeaders: null,
-    selectedMongoKey: null,
     currentPage: 1,
-	selectedMongoKey: [],
 	dropdownValue: null,
 }
 

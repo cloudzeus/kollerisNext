@@ -14,9 +14,9 @@ import {
     setDropdownValue
 } from '@/features/catalogSlice';
 import { InputText } from "primereact/inputtext";
-import { ListBox } from 'primereact/listbox';
-import { OverlayPanel } from 'primereact/overlaypanel';
 
+
+import { Toast } from 'primereact/toast';
 
 const OurDatabaseKeys = [
     {
@@ -62,43 +62,61 @@ const OurDatabaseKeys = [
 const Step2 = () => {
     const { selectedHeaders } = useSelector((state) => state.catalog)
     const dispatch = useDispatch();
+    const [continueBtn, setContinue] = useState(false)
+    const toast = useRef(null);
+
+
+    const showWarn = () => {
+        toast.current.show({severity:'warn', summary: 'Warning', detail:'Message Content', life: 3000});
+    }
+
+    useEffect(() => {
+        let array = [];
+        setContinue(false)
+        selectedHeaders.map((item) => {
+            if(item.hasOwnProperty('related')) {
+                array.push(item)
+            }
+        })
+        if(array.length === selectedHeaders.length) {
+            setContinue(true)
+        }
+    }, [ selectedHeaders])
+
+
     return (
         <div>
             <div className='card bg-white p-2 border-round mb-3 mt-2'>
-                <p>sefseff</p>
+                <p>customattributes</p>
             </div>
+            <Toast ref={toast} />
             <DataTable
                 showGridlines
                 paginator rows={100} rowsPerPageOptions={[20, 50, 100, 200]}
                 value={selectedHeaders}
                 tableStyle={{ minWidth: '50rem' }}>
                 <Column header="Headers" field="value" body={Template} />
-                <Column header="Headers" field="value" body={Second} style={{ width: '150px' }} />
+                <Column  body={Second} style={{ width: '150px' }} />
                 <Column field="value" body={Remove} style={{ width: '30px' }} />
             </DataTable>
 
             <div>
                 <Button label="back" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(1))} />
-                <Button label="next" icon="pi pi-arrow-right" onClick={() => dispatch(setCurrentPage(3))} />
+                <Button disabled={!continueBtn} label="next" icon="pi pi-arrow-right" onClick={() => {
+                    if(continueBtn) {
+                        dispatch(setCurrentPage(3))
+                    } else {
+                        showWarn()
+                    }
+                }} />
             </div>
         </div>
     )
 }
 
 const Template = ({ value, text }) => {
-    const dispatch = useDispatch()
-    const { selectedMongoKey } = useSelector((state) => state.catalog)
-    const [dvalue, setdValue] = useState(null)
-
-    const handleChange = (e) => {
-        setdValue(e.value)
-
-        dispatch(setSelectedMongoKey({
-            old: value,
-            new: e.value
-        }))
-
-    }
+  
+   
     return (
         <div className='flex justify-content-between'>
             <div>
@@ -108,21 +126,29 @@ const Template = ({ value, text }) => {
         </div>
     )
 }
+
+
+
 const Second = ({ value, text }) => {
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
-    const { selectedMongoKey } = useSelector((state) => state.catalog)
-    const [dvalue, setdValue] = useState(null)
-    const op = useRef(null);
+    const [dvalue, setdValue] = useState('')
 
     const handleChange = (e) => {
         setdValue(e.value)
-
         dispatch(setSelectedMongoKey({
             old: value,
             new: e.value
         }))
 
+    }
+
+    const handleInputChange = (e) => {
+        setdValue(e.target.value)
+        dispatch(setSelectedMongoKey({
+            old: value,
+            new: e.target.value
+        }))
     }
     return (
         <div >
@@ -139,8 +165,10 @@ const Second = ({ value, text }) => {
              />
             ) : null}
                
+            
+               
            
-                {show ? (<InputText className='w-full' placeholder="custom attribute" value={dvalue} onChange={handleChange }/>) : null}
+                {show ? (<InputText className='w-full' placeholder="custom attribute" value={dvalue} onChange={handleInputChange }/>) : null}
                 <p 
                 onClick={() => setShow(prev => !prev)} 
                 className='ml-2 mt-1 underline text-blue-500 cursor-pointer w-full'

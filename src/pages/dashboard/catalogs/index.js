@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
@@ -8,7 +8,8 @@ import Step2 from './(steps)/step2';
 import Step3 from './(steps)/step3';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGridData, setHeaders, setSelectedHeaders, setCurrentPage } from '@/features/catalogSlice';
-
+import { set } from 'mongoose';
+import axios from 'axios';
 
 const PageContainer = () => {
     const { currentPage} = useSelector((state) => state.catalog)
@@ -37,22 +38,41 @@ const PageContainer = () => {
 
 const Step1 = () => {
     const {gridData, headers, selectedHeaders} = useSelector((state) => state.catalog)
-
+    const [urls, setUrls] = useState([])
     const dispatch = useDispatch()
-
-    const handleFileUpload = (e) => {
+    const [savedfile, setSavedFile] = useState('')
+   
+    const handleFileUpload = async (e) => {
         const reader = new FileReader();
+        let name = e.target.files[0].name
         reader.readAsBinaryString(e.target.files[0]);
         reader.onload = (e) => {
             const data = e.target.result;
             const workbook = XLSX.read(data, { type: "binary" });
             const sheetName = workbook.SheetNames[0];
+            console.log('sheetname')
+            console.log(sheetName)
             const sheet = workbook.Sheets[sheetName];
             const parsedData = XLSX.utils.sheet_to_json(sheet);
             console.log(parsedData)
             dispatch(setGridData(parsedData))
+            let saveFile = XLSX.writeFile( workbook, 'test2.xlsx')
+            setSavedFile(saveFile)
         }
+
+        let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
+        console.log(savedatabasefile)
+      
+       
     }
+
+    
+   
+    
+    
+    
+  
+
 
 
     useEffect(() => {
@@ -88,13 +108,15 @@ const Step1 = () => {
         <>
             <input type="file" onChange={handleFileUpload} />
             <p>Step 1:</p>
+            <a download={savedfile}>urls</a>
             {gridData ? (
                 <DataTable
                     selectionMode={'checkbox'}
                     selection={selectedHeaders}
                     onSelectionChange={onSelection}
                     footer={footer}
-                    paginator rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
+                    paginator 
+                    rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
                     value={headers}
                     tableStyle={{ minWidth: '50rem' }}>
                                   <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>

@@ -24,16 +24,16 @@ const Step3 = () => {
             return newObj;
         });
 
-        console.log('filtered data')
-        console.log(filteredData)
+       
     }, [])
 
  
   return (
         <div>
                 <DataTable
-                showGridlines
-                stripedRows
+                    key={'index'}
+                    showGridlines
+                    stripedRows
                     paginator rows={100} rowsPerPageOptions={[20, 50, 100, 200]}
                     value={gridData}
                     tableStyle={{ minWidth: '50rem' }}>

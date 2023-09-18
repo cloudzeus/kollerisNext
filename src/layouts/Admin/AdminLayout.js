@@ -8,6 +8,7 @@ import ProfileButton from '@/components/NavProfileButton';
 import { Sidebar } from 'primereact/sidebar';
 import NewSidebar from './NewSidebar';
 import BreadCrumbs from './BreadCrumbs';
+
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
 	const dispatch = useDispatch()
