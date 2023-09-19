@@ -6,7 +6,7 @@ const GridPriceTemplate = ({PRICER}) => {
         <div className="price-icon">
             <p>$</p>
         </div>
-        <p>{`${PRICER},00`}</p>
+        <p>{PRICER ? `${PRICER}` : 'NO PRICE'} </p>
     </Container >
   )
 }

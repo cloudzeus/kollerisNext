@@ -9,6 +9,9 @@ export const ProductQuantityProvider = ({ children }) => {
     const [warehouseLines, setWareHouseLines] = useState()
     const [exportWarehouse, setExportWarehouse] = useState(null)
     const [importWarehouse, setImportWarehouse] = useState(null)
+    const [attribute, setAttribute] = useState([
+        {attributes: []}
+    ])
   
     return (
         <ProductQuantityContext.Provider value={{ 
@@ -20,7 +23,8 @@ export const ProductQuantityProvider = ({ children }) => {
             mtrlines, setMtrLines, 
             warehouseLines, setWareHouseLines,
             exportWarehouse, setExportWarehouse,
-            importWarehouse, setImportWarehouse
+            importWarehouse, setImportWarehouse,
+            attribute, setAttribute
            
         }}>
             {children}

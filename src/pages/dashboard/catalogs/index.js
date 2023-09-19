@@ -95,6 +95,7 @@ const Step1 = () => {
               
             })
         }
+        //All the availabe headers from the import: The user selected the headers he wants to use and proceeds to the next step
         dispatch(setHeaders(array))
 
     }, [gridData])
@@ -117,7 +118,6 @@ const Step1 = () => {
         <>
             <input type="file" onChange={handleFileUpload} />
             <p>Step 1:</p>
-            <a download={savedfile}>urls</a>
             {gridData ? (
                 <DataTable
                     selectionMode={'checkbox'}
@@ -128,8 +128,8 @@ const Step1 = () => {
                     rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
                     value={headers}
                     tableStyle={{ minWidth: '50rem' }}>
-                                  <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                          <Column  header="this" field="value" body={template} />
+                        <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
+                        <Column  header="this" field="value" body={template} />
                 </DataTable>)
                 : null}
          

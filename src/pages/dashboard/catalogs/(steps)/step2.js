@@ -6,16 +6,13 @@ import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    setGridData,
-    setHeaders,
+   
     setSelectedHeaders,
     setSelectedMongoKey,
     setCurrentPage,
-    setDropdownValue
+    setAttribute
 } from '@/features/catalogSlice';
 import { InputText } from "primereact/inputtext";
-
-
 import { Toast } from 'primereact/toast';
 
 const OurDatabaseKeys = [
@@ -37,51 +34,45 @@ const OurDatabaseKeys = [
     },
     {
         key: 'CODE2',
-        value: 'Κωδικός εργοστασίου'
+        value: 'Κωδικός ----'
     },
     {
         key: 'PRICER',
         value: 'Tιμή Λιανικής'
     },
+   
+   
     {
         key: 'PRICER',
-        value: 'Tιμή Λιανικής'
-    },
-    {
-        key: 'PRICER',
-        value: 'Tιμή Λιανικής'
-    },
-    {
-        key: 'PRICER',
-        value: 'Tιμή Λιανικής'
+        value: 'Tιμή Χονδρικής'
     },
 
 
 ]
 
 const Step2 = () => {
-    const { selectedHeaders } = useSelector((state) => state.catalog)
+    const { selectedHeaders, attributes, mongoKeys } = useSelector((state) => state.catalog)
     const dispatch = useDispatch();
     const [continueBtn, setContinue] = useState(false)
     const toast = useRef(null);
-
+    console.log('attributes')
+    console.log(attributes)
+    console.log('mongo keys')
+    console.log(mongoKeys)
 
     const showWarn = () => {
         toast.current.show({severity:'warn', summary: 'Warning', detail:'Message Content', life: 3000});
     }
 
     useEffect(() => {
-        let array = [];
         setContinue(false)
-        selectedHeaders.map((item) => {
-            if(item.hasOwnProperty('related')) {
-                array.push(item)
-            }
-        })
-        if(array.length === selectedHeaders.length) {
+        let totalLength = attributes.length + mongoKeys.length
+        console.log(totalLength)
+        console.log( selectedHeaders.length)
+        if(totalLength === selectedHeaders.length) {
             setContinue(true)
         }
-    }, [ selectedHeaders])
+    }, [ selectedHeaders, mongoKeys, attributes])
 
 
     return (
@@ -97,25 +88,26 @@ const Step2 = () => {
                 value={selectedHeaders}
                 tableStyle={{ minWidth: '50rem' }}>
                 <Column header="Headers" field="value" body={Template} />
-                <Column  body={Second} style={{ width: '150px' }} />
+                <Column  body={SelectTemplate} style={{ width: '150px' }} />
                 <Column field="value" body={Remove} style={{ width: '30px' }} />
             </DataTable>
 
             <div>
                 <Button label="back" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(1))} />
-                <Button disabled={!continueBtn} label="next" icon="pi pi-arrow-right" onClick={() => {
-                    if(continueBtn) {
-                        dispatch(setCurrentPage(3))
-                    } else {
-                        showWarn()
-                    }
+                <Button label="next" icon="pi pi-arrow-right" onClick={() => {
+                       dispatch(setCurrentPage(3))
+                    // if(continueBtn) {
+                    //     dispatch(setCurrentPage(3))
+                    // } else {
+                    //     showWarn()
+                    // }
                 }} />
             </div>
         </div>
     )
 }
 
-const Template = ({ value, text }) => {
+const Template = ({ value, text, key }) => {
   
    
     return (
@@ -130,26 +122,33 @@ const Template = ({ value, text }) => {
 
 
 
-const Second = ({ value, text }) => {
+const SelectTemplate = ({ value, text, key }) => {
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
     const [dvalue, setdValue] = useState('')
 
     const handleChange = (e) => {
+        console.log(value)
+
         setdValue(e.value)
         dispatch(setSelectedMongoKey({
-            old: value,
-            new: e.value
+            oldKey: key,
+            newkey: value,
+            related: e.value
         }))
 
     }
 
     const handleInputChange = (e) => {
         setdValue(e.target.value)
-        dispatch(setSelectedMongoKey({
-            old: value,
-            new: e.target.value
-        }))
+        console.log(e.target.value)
+        let object = {
+            ogKey: key,
+            name: value,
+            value: e.target.value,
+
+        }
+        dispatch(setAttribute(object))
     }
     return (
         <div >

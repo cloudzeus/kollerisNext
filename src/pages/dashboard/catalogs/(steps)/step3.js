@@ -4,29 +4,58 @@ import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
 import { useSelector, useDispatch } from 'react-redux';
 import {  setCurrentPage } from '@/features/catalogSlice';
-
+import axios from 'axios';
 
 const Step3 = () => {
-    const { selectedHeaders, gridData,selectedMongoKey, currentPage  } = useSelector((state) => state.catalog)
+    const { selectedHeaders, gridData, selectedMongoKey, currentPage, attributes, mongoKeys } = useSelector((state) => state.catalog)
+    const [newData, setNewData] = React.useState([])
     const dispatch = useDispatch();
     useEffect(() => {
  
         if(currentPage !== 3) return;
-        const keysToCheck = selectedHeaders
-     
+        const keysToCheck = mongoKeys;
+        const keysToCheckAttributes = attributes;
+        console.log(attributes)
+
+
+
         const filteredData = gridData.map(dataObj => {
+            
             let newObj = {};
             keysToCheck.forEach(item => {
-                if (dataObj[`${item.key}`]) {
-                    newObj[`${item.related}`] = dataObj[`${item.key}`];
+                // console.log(item)
+                // console.log(item.oldKey)
+                // console.log(dataObj[`${item.oldKey}`])
+                if (dataObj[`${item.oldKey}`]) {
+                    newObj[`${item.related}`] = dataObj[`${item.oldKey}`];
                 }
             });
+           
+            keysToCheckAttributes.forEach(item => {
+                
+                if (dataObj[`${item.ogKey}`]) {
+                    newObj.attribute = {
+                        name: item.value,
+                        value: dataObj[`${item.ogKey}`]
+                    }
+                   
+                }
+            })
             return newObj;
         });
 
+
+
+
+        setNewData(filteredData)
+        console.log(filteredData)
        
     }, [])
 
+    const handleSubmit = async () => {
+        let {data } = await axios.post('/api/product/apiProduct', {data: newData, action: 'importCSVProducts'})
+
+    }
  
   return (
         <div>
@@ -46,7 +75,8 @@ const Step3 = () => {
                         }
                 </DataTable>
                 <div>
-                    <Button label="back" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(2))} />
+                    <Button label="Πίσω" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(2))} />
+                    <Button label="Αποστολή" className='ml-2' onClick={handleSubmit} />
                 </div>
         </div>
   )

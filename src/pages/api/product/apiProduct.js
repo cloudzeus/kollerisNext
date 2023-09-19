@@ -8,6 +8,7 @@ import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
 import { Product } from "../../../../server/models/newProductModel";
+import { ProductAttributes } from "../../../../server/models/attributesModel";
 
 
 
@@ -485,6 +486,29 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null });
         }
 
+    }
+
+    if(action === "importCSVProducts") {
+        const { data } = req.body;
+        console.log(data)
+        for(let item of data) {
+            let insert = await Product.create({
+                name: item.name,
+                description: item.description,
+
+            })
+            let attributeProduct = await ProductAttributes.create({
+                product: insert._id,
+            })
+            if(attributeProduct) {
+                console.log('ok')
+                await ProductAttributes.updateOne({product: attributeProduct.product} , {
+                    $set: {
+                        attributes: {$push: item.attribute}
+                    }
+                })
+            }
+        }
     }
 }
 
