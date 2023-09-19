@@ -6,42 +6,39 @@ import * as XLSX from 'xlsx';
 import { Button } from 'primereact/button';
 import Step2 from './(steps)/step2';
 import Step3 from './(steps)/step3';
+import StepCalculatePrice from './(steps)/stepCalculatePrice';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGridData, setHeaders, setSelectedHeaders, setCurrentPage } from '@/features/catalogSlice';
-import { set } from 'mongoose';
+import { setGridData, setHeaders, setSelectedHeaders, setCurrentPage, setSelectedPriceKey } from '@/features/catalogSlice';
 import axios from 'axios';
-
+import { InputSwitch } from 'primereact/inputswitch';
+import StepCalcPrice from './(steps)/stepCalculatePrice';
 const PageContainer = () => {
     const { currentPage} = useSelector((state) => state.catalog)
 
     return (
         <AdminLayout>  
             {currentPage == 1 ? (
-                <Step1  
-                   
-                  
-                />
+                <Step1  />
             ) : null}
             {currentPage == 2 ? (
-                <Step2  
-                  
-                    /> 
+                <StepCalcPrice /> 
             ): null}
+          
             {currentPage == 3 ? (
                 <Step3  
-                  
                     /> 
             ): null}
+           
         </AdminLayout>
     )
 }
 
 const Step1 = () => {
-    const {gridData, headers, selectedHeaders} = useSelector((state) => state.catalog)
-    const [urls, setUrls] = useState([])
+    const {gridData, headers, selectedHeaders,selectedPriceKey} = useSelector((state) => state.catalog)
     const dispatch = useDispatch()
-    const [savedfile, setSavedFile] = useState('')
-   
+    const [rowClick, setRowClick] = useState(true);
+    console.log('select price key')
+    console.log(selectedPriceKey)
     const handleFileUpload = async (e) => {
         const reader = new FileReader();
         let name = e.target.files[0].name
@@ -71,19 +68,9 @@ const Step1 = () => {
 
         console.log(response)
         let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
-      
-       
     }
 
     
-   
-    
-    
-    
-  
-
-
-
     useEffect(() => {
         if(gridData.length < 0) return;
         let array = []
@@ -106,7 +93,9 @@ const Step1 = () => {
         )
     }
     const onSelection = (e) => {
-        dispatch(setSelectedHeaders(e.value))
+        console.log('key')
+        console.log(e.value.key)
+        dispatch(setSelectedPriceKey(e.value.key))
     }
 
 
@@ -117,19 +106,22 @@ const Step1 = () => {
     return (
         <>
             <input type="file" onChange={handleFileUpload} />
-            <p>Step 1:</p>
+            <h2 className='mb-2 mt-4'>Επιλογή Κλειδιού Τιμής:</h2>
+           
             {gridData ? (
+                
                 <DataTable
-                    selectionMode={'checkbox'}
-                    selection={selectedHeaders}
+                    selectionMode={selectedPriceKey ? null : 'radiobutton'}
+                    selection={selectedPriceKey}
                     onSelectionChange={onSelection}
                     footer={footer}
                     paginator 
-                    rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
+                    rows={20} 
+                    rowsPerPageOptions={[20, 50, 100, 200]}
                     value={headers}
                     tableStyle={{ minWidth: '50rem' }}>
-                        <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                        <Column  header="this" field="value" body={template} />
+                        <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
+                        <Column  header="Κλειδιά" field="value" body={template} />
                 </DataTable>)
                 : null}
          
@@ -137,6 +129,8 @@ const Step1 = () => {
         </ >
     )
 }
+
+
 
 const template = ({value, text}) => {
     return (

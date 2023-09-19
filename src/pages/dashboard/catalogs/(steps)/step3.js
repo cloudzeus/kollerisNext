@@ -7,7 +7,7 @@ import {  setCurrentPage } from '@/features/catalogSlice';
 import axios from 'axios';
 
 const Step3 = () => {
-    const { selectedHeaders, gridData, selectedMongoKey, currentPage, attributes, mongoKeys } = useSelector((state) => state.catalog)
+    const { selectedHeaders, gridData, selectedMongoKey, currentPage, attributes, mongoKeys, prices } = useSelector((state) => state.catalog)
     const [newData, setNewData] = React.useState([])
     const dispatch = useDispatch();
     useEffect(() => {
@@ -17,15 +17,11 @@ const Step3 = () => {
         const keysToCheckAttributes = attributes;
         console.log(attributes)
 
-
-
         const filteredData = gridData.map(dataObj => {
             
             let newObj = {};
             keysToCheck.forEach(item => {
-                // console.log(item)
-                // console.log(item.oldKey)
-                // console.log(dataObj[`${item.oldKey}`])
+             
                 if (dataObj[`${item.oldKey}`]) {
                     newObj[`${item.related}`] = dataObj[`${item.oldKey}`];
                 }
@@ -41,19 +37,20 @@ const Step3 = () => {
                    
                 }
             })
+
             return newObj;
+
+         
         });
 
-
-
-
-        setNewData(filteredData)
         console.log(filteredData)
+        setNewData(filteredData)
        
     }, [])
 
     const handleSubmit = async () => {
-        let {data } = await axios.post('/api/product/apiProduct', {data: newData, action: 'importCSVProducts'})
+        console.log(newData)
+        // let {data } = await axios.post('/api/product/apiProduct', {data: newData, action: 'importCSVProducts'})
 
     }
  
@@ -75,7 +72,7 @@ const Step3 = () => {
                         }
                 </DataTable>
                 <div>
-                    <Button label="Πίσω" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(2))} />
+                    <Button label="Πίσω" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(3))} />
                     <Button label="Αποστολή" className='ml-2' onClick={handleSubmit} />
                 </div>
         </div>

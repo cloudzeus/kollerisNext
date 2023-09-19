@@ -3,12 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     gridData: [],
 	headers: [],
+	selectedPriceKey: null,
 	selectedHeaders: null,
     currentPage: 1,
 	dropdownValue: null,
 	attributes: [],
 	object: [],
 	mongoKeys: [],
+	prices: {
+		PRICER: 0,
+		PRICEW: 0,
+		PRICER05: 0,
+	}
 }
 
 
@@ -52,14 +58,42 @@ const catalogSlice = createSlice({
 			}
 			state.mongoKeys = state.mongoKeys.filter(item => item.newkey !== payload.name);
 		},
-		
+		setPrices: (state, {payload}) => {
+			
+			switch (payload.type) {
+				case "PRICER":
+					state.prices.PRICER = payload.value;
+				  break;
+				case "PRICEW":
+					state.prices.PRICEW = payload.value;
+				  break;
+				case "PRICER05":
+					state.prices.PRICER05 = payload.value;
+				  break;
+				default:
+			}  
+		},
+		setSelectedPriceKey: (state, {payload}) => {
+			state.selectedPriceKey = payload;
+		}
 		
 	},
 
 })
 
 
-export const {	setGridData,   setSelectedHeaders, setHeaders, setSelectedMongoKey, setCurrentPage, setDropdownValue, setAttribute } = catalogSlice.actions;
+export const {	
+	setGridData,   
+	setSelectedHeaders, 
+	setHeaders, 
+	setSelectedMongoKey, 
+	setCurrentPage, 
+	setDropdownValue, 
+	setAttribute, 
+	setPrices,
+	setSelectedPriceKey
+} = catalogSlice.actions;
+
 export default catalogSlice.reducer;
 
 
