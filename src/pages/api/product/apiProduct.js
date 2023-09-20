@@ -9,6 +9,7 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/ca
 
 import { Product } from "../../../../server/models/newProductModel";
 import { ProductAttributes } from "../../../../server/models/attributesModel";
+import Offer from "@/components/grid/Product/Offer";
 
 
 
@@ -490,25 +491,56 @@ export default async function handler(req, res) {
 
     if(action === "importCSVProducts") {
         const { data } = req.body;
-        console.log(data)
+        await connectMongo();
+      
+       
+        //ADD THE SOFTONE PRODUCT
+       try {
         for(let item of data) {
-            let insert = await Product.create({
-                name: item.name,
-                description: item.description,
-
-            })
-            let attributeProduct = await ProductAttributes.create({
-                product: insert._id,
-            })
-            if(attributeProduct) {
-                console.log('ok')
-                await ProductAttributes.updateOne({product: attributeProduct.product} , {
-                    $set: {
-                        attributes: {$push: item.attribute}
-                    }
-                })
+            let softone = {
+                NAME: item.name || '',
+                CODE: item.CODE || '',   
+                CODE1: item.CODE1 || '',
+                CODE2: item.CODE2 || '',
+                VAT: item.VAT || '',
+                COUNTRY: item.COUNTRY || '',
+                INTRASTAT: item.INTRASTAT || '',
+                WIDTH: item.WIDTH || '',
+                HEIGHT: item.HEIGHT || '',
+                LENGTH: item.LENGTH || '',
+                GWEIGHT: item.GWEIGHT || '',
+                VOLUME: item.VOLUME || '',
+                STOCK: item.STOCK || '',
+                PRICER: item.PRICER || '',
+                PRICEW: item.PRICEW || '',
+                PRICER05: item.PRICER05 || '',
             }
+
+            let createSoftone = await SoftoneProduct.create(softone)
+            console.log('createSoftone')
+            console.log(createSoftone)
+             
+            //ADD THE PRODUCT
+            if(!createSoftone) return res.status(400).json({ success: false, error: 'softoneproduct mongo database insert error'});
+
+            let product = {
+                name: item.name || '',
+                description: item.description || '',
+                softoneStatus: false,
+                attributes: item.attributes || [],
+            } 
+            let createProduct = await Product.create(product)
+            console.log('create product')
+            console.log(createProduct)
+            if(!createProduct) return res.status(400).json({ success: false, error: 'product mongo database insert error'});
+           
         }
+        return res.status(200).json({ success: true, result: 'ok'});
+
+       } catch {
+            return res.status(400).json({ success: false, error: 'error'});
+       }
+      
     }
 }
 

@@ -2,12 +2,9 @@ import mongoose from 'mongoose';
 import { model, models, Schema } from 'mongoose';
 
 
-
-
-
 const softoneProduct = new mongoose.Schema({
     product: { type: Schema.Types.ObjectId, ref: "Product" },
-    MTRL: { type: String, required: true },
+    MTRL: { type: String },
     ISACTIVE: String,
     NAME: String,
     CODE: String,
@@ -72,7 +69,10 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'SoftoneProduct',
     },
-    attributes: [{ type: Schema.Types.ObjectId, ref: "ProductAttributes" }],
+    attributes: [{
+        name: String,
+        value: String,
+    }],
     name: { type: String, required: true },
     description: { type: String, required: false },
     localized: [{
@@ -109,6 +109,7 @@ const productSchema = new mongoose.Schema({
         DESVMEVMENA: String,
         date: String,
     },
+    softoneStatus: Boolean,
 
 },
 {

@@ -7,7 +7,7 @@ import { setCurrentPage } from '@/features/catalogSlice';
 import axios from 'axios';
 
 const StepshowData = () => {
-  const { selectedHeaders, gridData, attributes, mongoKeys, newData } = useSelector((state) => state.catalog)
+  const {  gridData, attributes, mongoKeys, newData } = useSelector((state) => state.catalog)
   const [showData, setShowData] = useState([])
 
 
@@ -66,7 +66,7 @@ const StepshowData = () => {
 
   const handleSubmit = async () => {
     console.log(showData)
-    // let {data } = await axios.post('/api/product/apiProduct', {data: newData, action: 'importCSVProducts'})
+    let {data } = await axios.post('/api/product/apiProduct', {data: showData, action: 'importCSVProducts'})
 
   }
 

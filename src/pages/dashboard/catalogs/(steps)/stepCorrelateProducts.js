@@ -40,12 +40,59 @@ const OurDatabaseKeys = [
         value: 'Tιμή Λιανικής'
     },
    
-   
     {
         key: 'PRICER',
         value: 'Tιμή Χονδρικής'
     },
-
+    {
+        key: 'COUNTRY',
+        value: 'Χώρα'
+    },
+    {
+        key: 'COUNTRY',
+        value: 'Χώρα'
+    },
+    {
+        key: 'WIDTH',
+        value: 'Μήκος'
+    },
+    
+    {
+        key: 'HEIGHT',
+        value: 'Ύψος'
+    },
+    {
+        key: 'ΠΛΑΤΟΣ',
+        value: 'Πλάτος'
+    },
+    {
+        key: 'GWEIGHT',
+        value: 'GWEIGHT'
+    },
+    {
+        key: 'STOCK',
+        value: 'STOCK'
+    },
+    {
+        key: 'ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
+        value: 'ENLISH-DESCRIPTION'
+    },
+    {
+        key: 'ΓΕΡΜΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
+        value: 'GERMAN-DESCRIPTION'
+    },
+    {
+        key: 'ΓΑΛΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
+        value: 'GERMAN-DESCRIPTION'
+    },
+    {
+        key: 'ΙΣΠΑΝΙΚΗ DESCRIPTION',
+        value: 'SPANISH-DESCRIPTION'
+    },
+    {
+        key: 'ΙΤΑΛΙΚΗ DESCRIPTION',
+        value: 'ITALIAN-DESCRIPTION'
+    },
 
 ]
 

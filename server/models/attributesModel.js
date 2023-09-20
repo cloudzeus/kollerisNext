@@ -10,11 +10,6 @@ const productAttributesSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product'
     },
-    attributes: [{
-        name: String,
-        value: String,
-    }],
-   
 });
 
 
