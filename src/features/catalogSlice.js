@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     gridData: [],
+	newData: [],
 	headers: [],
 	selectedPriceKey: null,
 	selectedHeaders: null,
@@ -14,6 +15,11 @@ const initialState = {
 		PRICER: 0,
 		PRICEW: 0,
 		PRICER05: 0,
+	},
+	pricesMultiplier: {
+		PRICER: 1,
+		PRICEW: 1,
+		PRICER05: 1,
 	}
 }
 
@@ -25,6 +31,9 @@ const catalogSlice = createSlice({
 	reducers: {
 		setGridData: (state, {payload}) => {
 			state.gridData = payload;
+		},
+		setNewData: (state, {payload}) => {
+			state.newData = payload;
 		},
 		setCurrentPage: (state, {payload}) => {
 			state.currentPage = payload;
@@ -43,7 +52,7 @@ const catalogSlice = createSlice({
 		},
         setSelectedMongoKey: (state, {payload}) => {
 			state.attributes = state.attributes.filter(item => item.name !== payload.newkey);
-			const existingKey = state.attributes.find(item => item.name === payload.name);
+			const existingKey = state.mongoKeys.find(item => item.oldKey === payload.oldKey);
 			if(existingKey) return;
 			state.mongoKeys.push(payload);
 		},
@@ -58,23 +67,26 @@ const catalogSlice = createSlice({
 			}
 			state.mongoKeys = state.mongoKeys.filter(item => item.newkey !== payload.name);
 		},
-		setPrices: (state, {payload}) => {
-			
+	
+		setSelectedPriceKey: (state, {payload}) => {
+			state.selectedPriceKey = payload;
+		},
+		setPricesMultiplier: (state, {payload}) => {
 			switch (payload.type) {
 				case "PRICER":
-					state.prices.PRICER = payload.value;
+					state.pricesMultiplier.PRICER = payload.value;
+					state.prices.PRICER = payload.value * state.prices.PRICER;
 				  break;
 				case "PRICEW":
-					state.prices.PRICEW = payload.value;
+					state.pricesMultiplier.PRICEW = payload.value;
+					state.prices.PRICEW = payload.value * state.prices.PRICEW;
 				  break;
 				case "PRICER05":
-					state.prices.PRICER05 = payload.value;
+					state.pricesMultiplier.PRICER05 = payload.value;
+					state.prices.PRICER05 = payload.value * state.prices.PRICER05;
 				  break;
 				default:
 			}  
-		},
-		setSelectedPriceKey: (state, {payload}) => {
-			state.selectedPriceKey = payload;
 		}
 		
 	},
@@ -90,8 +102,9 @@ export const {
 	setCurrentPage, 
 	setDropdownValue, 
 	setAttribute, 
-	setPrices,
-	setSelectedPriceKey
+	setSelectedPriceKey,
+	setPricesMultiplier,
+	setNewData
 } = catalogSlice.actions;
 
 export default catalogSlice.reducer;
