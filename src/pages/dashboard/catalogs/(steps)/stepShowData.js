@@ -82,7 +82,7 @@ const StepshowData = () => {
         tableStyle={{ minWidth: '50rem' }}>
         {dynamicColumns.map(key => {
           if(key === 'attributes') null;
-          return <Column  field={key} header={key} />
+          return <Column key={key} field={key} header={key} />
         })}
       </DataTable>
 
