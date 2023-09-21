@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import Image from 'next/image';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
 import { Tag } from 'primereact/tag';
@@ -12,14 +11,14 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/mtrcategoriesDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ImageDiv, ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
+import {  SubGridStyles } from '@/componentsStyles/grid';
 
-import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridActions from '@/components/grid/GridActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -61,7 +60,7 @@ export default function Categories() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
-    
+ 
     const [translateCategoryName, setTranslateCategoryName] = useState(initialTranslateState)
 
     const [filters, setFilters] = useState({
@@ -69,7 +68,8 @@ export default function Categories() {
 
     });
     //Set the toggled columns
-
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
 
@@ -260,9 +260,11 @@ export default function Categories() {
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="categoryName" body={TranslateName} header="Ονομα Κατηγορίας" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
+                {user?.role === 'admin' ? (
+                   <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                ) : null}
+                
 
             </DataTable>
             <EditDialog

@@ -293,12 +293,12 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        let softoneProduct = await SoftoneProduct.insertMany(item)
-
         await connectMongo();
+        let softoneProduct = await SoftoneProduct.insertMany(item)
+        
+  
 
-        let totalSoftone = 0;
-        let totalProducts = 0;
+
 
         for(let item of buffer.result) {
             let softoneProduct = await SoftoneProduct.create(item)

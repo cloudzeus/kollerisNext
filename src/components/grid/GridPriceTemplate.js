@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 const GridPriceTemplate = ({PRICER}) => {
-  console.log(PRICER)
   return (
     <Container >
         <div className="price-icon">

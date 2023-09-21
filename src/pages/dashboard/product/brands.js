@@ -24,6 +24,8 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridTranslate from '@/components/grid/GridTranslate';
 import GridActions from '@/components/grid/GridActions';
+import { useSession } from 'next-auth/react';
+
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -39,7 +41,8 @@ export default function TemplateDemo() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
     const handleFetch = async () => {
@@ -271,10 +274,12 @@ export default function TemplateDemo() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="name" header="Ονομα" sortable></Column>
-                <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
+                {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="status" bodyStyle={{ textAlign: 'center' }} sortable header="Status" style={{ width: '90px' }} body={ActiveTempate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {/* <Column field="status" bodyStyle={{ textAlign: 'center' }} sortable header="Status" style={{ width: '90px' }} body={ActiveTempate}></Column> */}
+                {user?.role === 'admin' ? (
+                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
+                ) : null}
 
             </DataTable>
             <EditDialog

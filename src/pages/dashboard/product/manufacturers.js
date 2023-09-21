@@ -17,6 +17,7 @@ import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import SyncManufacturers from '@/GridSync/SyncManufacturers';
 import GridActions from '@/components/grid/GridActions';
+import { useSession } from 'next-auth/react';
 
 export default function Manufacturers() {
     const [editData, setEditData] = useState(null)
@@ -27,6 +28,8 @@ export default function Manufacturers() {
     const dispatch = useDispatch();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
     const [filters, setFilters] = useState({
@@ -179,9 +182,12 @@ export default function Manufacturers() {
             >
                 <Column field="softOne.NAME" header="Kατασκευαστής" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
+                {/* <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column> */}
+                {user?.role === 'admin' ? (
+                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
+                ) : null}
+               
             </DataTable>
             <EditDialog
                 style={dialogStyle}

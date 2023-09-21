@@ -19,6 +19,7 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -32,6 +33,8 @@ export default function Categories() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
     const [filters, setFilters] = useState({
@@ -216,10 +219,12 @@ export default function Categories() {
                 <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
                 <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
                 <Column field="subGroupName"  body={TranslateName} header="Όνομα Sub Group" sortable ></Column>
-                <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column>
+                {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="status" sortable header="Status" bodyStyle={{textAlign: 'center'}} style={{ width: '90px' }} body={ActiveTempate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {/* <Column field="status" sortable header="Status" bodyStyle={{textAlign: 'center'}} style={{ width: '90px' }} body={ActiveTempate}></Column> */}
+                {user?.role === 'admin' ? (
+                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{width: '90px'}} ></Column>
+                ) : null}
 
             </DataTable>
           

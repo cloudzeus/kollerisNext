@@ -495,7 +495,7 @@ export default async function handler(req, res) {
        try {
 
         const softOneData = data.map((item) => {
-            return [{
+            return {
                 NAME: item.name || '',
                 CODE: item.CODE || '',   
                 CODE1: item.CODE1 || '',
@@ -512,7 +512,7 @@ export default async function handler(req, res) {
                 PRICER: item.PRICER || '',
                 PRICEW: item.PRICEW || '',
                 PRICER05: item.PRICER05 || '',
-            }]
+            }
         })
         let createSoftone = await SoftoneProduct.create(softOneData)
 

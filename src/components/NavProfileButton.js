@@ -82,7 +82,6 @@ export default function ProfileButton() {
 const PopupTopBar  = styled.button`
     display: flex;
     align-items: center;
-    width: 100%;
     .name-div {
         display: flex;
         flex-direction: column;

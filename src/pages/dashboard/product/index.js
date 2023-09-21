@@ -23,6 +23,10 @@ import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown'
 import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
 import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
+import { useSession } from 'next-auth/react';
+
+
+
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -54,6 +58,14 @@ const initialColumns = [
 const columns = [
     ...initialColumns,
  
+    {
+        header: 'Κατηγορία',
+        id: 5
+    },
+    {
+        header: 'Ομάδα',
+        id: 6
+    },
     {
         header: 'Υποομάδα',
         id: 7
@@ -100,6 +112,8 @@ export default function ProductLayout() {
 function Product() {
     const toast = useRef(null);
     //Context:
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
     const{selectedProducts, setSelectedProducts, submitted, setSubmitted} = useContext( ProductQuantityContext)
     const [categroriesFilter, setCategoriesFilter] = useState(null);
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
@@ -445,7 +459,8 @@ function Product() {
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                
                 <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
-                <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
+                {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
+ : null }
             </DataTable>
             <EditDialog
                 style={dialogStyle}
@@ -479,7 +494,6 @@ const Upddate = ({ softoneProduct: { UPDDATE } }) => {
 
 
 const PriceTemplate = ({ PRICER }) => {
-    console.log(PRICER)
     return (
         <div>
             <GridPriceTemplate PRICER={PRICER} />
