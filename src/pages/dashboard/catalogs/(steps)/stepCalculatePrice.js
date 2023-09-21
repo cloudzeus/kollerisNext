@@ -42,7 +42,7 @@ const StepCalcPrice = () => {
     }).filter(item => Object.keys(item).length !== 0);  // Remove items that don't have the key
 
     dispatch(setNewData(_newData))
-  }, [gridData, pricesMultiplier, dispatch])
+  }, [gridData, pricesMultiplier, dispatch, selectedPriceKey])
 
   return (
     <div>

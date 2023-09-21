@@ -81,8 +81,6 @@ export default async function handler(req, res) {
                     as: "mrtmark"
                 }
             },
-           
-           
             {
                 $project: {
                     name: 1,

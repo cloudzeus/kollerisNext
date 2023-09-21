@@ -257,7 +257,7 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
     }
     useEffect(() => {
         setTotal(parseInt(PRICER) * quantity)
-    }, [quantity])
+    }, [quantity, PRICER])
     return (
         <ProductBasket>
             <div>

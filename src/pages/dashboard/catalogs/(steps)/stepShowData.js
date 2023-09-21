@@ -62,7 +62,7 @@ const StepshowData = () => {
     setDynamicColumns(result)
 
 
-  }, [gridData])
+  }, [gridData, attributes, mongoKeys, newData])
 
   const handleSubmit = async () => {
     console.log(showData)
@@ -74,7 +74,7 @@ const StepshowData = () => {
   return (
     <div>
       <DataTable
-        key={'index'}
+        key={Math.random()}
         showGridlines
         stripedRows
         paginator rows={10} rowsPerPageOptions={[20, 50, 100, 200]}

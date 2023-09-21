@@ -62,7 +62,7 @@ const UploadProducts = () => {
         }
         dispatch(setHeaders(array))
 
-    }, [gridData])
+    }, [gridData, dispatch])
 
 
     const onSelection = (e) => {
