@@ -23,7 +23,7 @@ const StepsSelectKey1 = () => {
     useEffect(() => {
         setSelectedGridKeys(null)
         dispatch(setSelectedHeaders(null))
-    }, [])
+    }, [dispatch])
 
     return (
         <>

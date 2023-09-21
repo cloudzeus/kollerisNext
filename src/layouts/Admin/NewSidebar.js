@@ -92,26 +92,27 @@ const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
     }
     return (
 
-        <Link href={goTo}>
             <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                <div>
+                <Link href={goTo}>
                     <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                     <span className='text-lg ml-3'>{title}</span>
-                </div>
+                </Link>
+                    
             </li>
-        </Link>
 
     )
 }
-
+{/* <Link href={goTo}> */}
 const SidebarSubItem = ({ title, goTo }) => {
     return (
 
-        <Link href={goTo}>
+      
             <li className={` sub-item`}>
-                <span className='text-lg ml-3'>{title}</span>
+                  <Link href={goTo}>
+                    <span className='text-lg ml-3'>{title}</span>
+                  </Link>
             </li>
-        </Link>
+      
 
     )
 }
@@ -173,7 +174,6 @@ const Container = styled.div`
 
         li.sidebar-item {
             padding: 15px;
-           
         }
 
         li:hover {

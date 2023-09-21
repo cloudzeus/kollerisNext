@@ -61,10 +61,10 @@ const initialColumns = [
 
 const columns = [
     ...initialColumns,
-    // {
-    //     header: 'Κατηγορία',
-    //     id: 5
-    // },
+    {
+        header: 'SoftoneStatus',
+        id: 5
+    },
 
     // {
     //     header: 'CategoryName',
@@ -418,6 +418,8 @@ function Product() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="name" style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="description"  header="Όνομα" ></Column>
+                
                 <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter  filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
                 <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
                 <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column>
@@ -427,6 +429,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} style={{ width: '140px' }} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '135px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '135px' }} header="Δεσμευμένα" ></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="softoneStatus"  style={{ width: '135px' }} header="Softone Status" ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                

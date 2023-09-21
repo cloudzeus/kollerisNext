@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, lazy } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
@@ -52,7 +52,7 @@ const Offer = () => {
             setLoading(false)
         }
         handleSearch();
-    }, [searchTerm, lazyState.first])
+    }, [searchTerm, lazyState.first, lazyState.rows])
 
 
 

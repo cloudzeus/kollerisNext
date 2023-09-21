@@ -233,7 +233,7 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
             }
             return [...prev, { MTRL: MTRL[0], QTY1: 1}];
         });
-    }, [quantity])
+    }, [quantity, MTRL, setMtrLines])
 
 
     const decreaseQuantity = () => {

@@ -92,6 +92,7 @@ export default async function handler(req, res) {
                     description: 1,
                     updatedFrom: 1,
                     updatedAt: 1,
+                    softoneStatus: 1,
                      MTRL: '$softoneProduct.MTRL',
                     MTRGROUP: '$softoneProduct.MTRGROUP',
                     MTRCATEGORY: '$softoneProduct.MTRCATEGORY',

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import AdminLayout from '@/layouts/Admin/AdminLayout'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown';
 import { useDispatch, useSelector } from 'react-redux';
@@ -105,17 +104,13 @@ const StepCorrelateProducts = () => {
     console.log(mongoKeys)
     useEffect(() => {
         setContinue(false)
-        console.log(attributes.length)
-        console.log(mongoKeys.length)
+    
         let totalLength = attributes.length + mongoKeys.length
 
         if(totalLength === selectedHeaders.length) {
             setContinue(true)
         }
-        // console.log('total length')
-        // console.log( totalLength )
-        // console.log('selectedHeaders')
-        // console.log(selectedHeaders.length )
+     
     }, [ selectedHeaders, mongoKeys, attributes])
 
 
@@ -123,7 +118,7 @@ const StepCorrelateProducts = () => {
         <div>
             <div className='card bg-white p-4 border-round mb-3 mt-2'>
                 <p className="text-red-600 font-bold text-xl">CREATE CUSTOM ATTRIBUTE*:</p>
-                <p className='text-xl'>Δημιουργούμε custom attributes αν δεν υπάρχει ήδη το κλειδί στο selecte box. Τα custom attributes κατά βάση μεγέθη, fields οπως "size/content".</p>
+                <p className='text-xl'>Δημιουργούμε custom attributes αν δεν υπάρχει ήδη το κλειδί στο selecte box. Τα custom attributes κατά βάση μεγέθη, fields οπως size/content.</p>
             </div>
             <Toast ref={toast} />
             <DataTable
