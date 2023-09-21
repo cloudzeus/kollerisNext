@@ -27,9 +27,6 @@ export default async function handler(req, res) {
         let {groupID,categoryID, subgroupID, searchTerm, skip, limit } = req.body;
         
         let trimmedSearchTerm = searchTerm && searchTerm.trim();
-
-
-        
         let pipeline = [
 
             {
@@ -103,16 +100,8 @@ export default async function handler(req, res) {
                     VAT: '$softoneProduct.VAT',
                     PRICER: '$softoneProduct.PRICER',
                     PRICEW: '$softoneProduct.PRICEW',
-                    PRICER01: '$softoneProduct.PRICER01',
-                    PRICER02: '$softoneProduct.PRICER02',
-                    PRICER03: '$softoneProduct.PRICER03',
-                    PRICER04: '$softoneProduct.PRICER04',
                     PRICER05: '$softoneProduct.PRICER05',
                     PRICEW01: '$softoneProduct.PRICEW01',
-                    PRICEW02: '$softoneProduct.PRICEW02',
-                    PRICEW03: '$softoneProduct.PRICEW03',
-                    PRICEW04: '$softoneProduct.PRICEW04',
-                    PRICEW05: '$softoneProduct.PRICEW05',
                     ISACTIVE: '$softoneProduct.ISACTIVE',
                     UPDDATE: '$softoneProduct.UPDDATE',
                     categoryName: '$mtrcategory.categoryName',
@@ -195,7 +184,7 @@ export default async function handler(req, res) {
 
       
         let result = await Product.aggregate(pipeline)
-        checkAvailability()
+        // checkAvailability()
         return res.status(200).json({ success: true, totalRecords: count, result: result });
     }
 

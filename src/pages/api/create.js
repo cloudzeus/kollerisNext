@@ -9,11 +9,11 @@ import Vat from "../../../server/models/vatModel";
 import Intrastat from "../../../server/models/intrastatMode";
 import Countries from "../../../server/models/countriesModel";
 import Currency from "../../../server/models/currencyModel";
+import SoftoneProduct from "../../../server/models/newProductModel";
+import { Product } from "../../../server/models/newProductModel";
 export default async function handler(req, res) {
     let action = req.body.action;
     
-
-
     if(action === "createBrands") {
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`
@@ -201,6 +201,7 @@ export default async function handler(req, res) {
         
         return res.status(200).json({ success: true});
     }
+
     if(action === "createVat") {
         try {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllVat`
@@ -280,6 +281,43 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null});
         }
     }
-  
+    
+
+    if(action === "ONEOFPRODUCT") {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        let softoneProduct = await SoftoneProduct.insertMany(item)
+
+        await connectMongo();
+
+        let totalSoftone = 0;
+        let totalProducts = 0;
+
+        for(let item of buffer.result) {
+            let softoneProduct = await SoftoneProduct.create(item)
+            if(softoneProduct) {
+                totalSoftone++;
+            }
+            let createProduct = await Product.create({
+                softoneProduct: softoneProduct._id,
+                name: item.NAME,
+                MTRL: item.MTRL,
+                softoneStatus: true,
+            })
+            if(createProduct) {
+                totalProducts++;
+            }
+           
+        }
+        return res.status(200).json({ success: true, result: {totalSoftone, totalProducts}});
+    }
+
 }   
 

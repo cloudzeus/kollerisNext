@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 const GridPriceTemplate = ({PRICER}) => {
+  console.log(PRICER)
   return (
     <Container >
         <div className="price-icon">
             <p>$</p>
         </div>
-        <p>{PRICER ? `${PRICER}` : 'NO PRICE'} </p>
+        <p>{PRICER} </p>
     </Container >
   )
 }

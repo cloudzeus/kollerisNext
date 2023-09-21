@@ -1,6 +1,7 @@
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../server/config";
 import { Product } from "../../../server/models/newProductModel";
+import format from "date-fns/format";
 
 export default async function handler(req, res) {
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAvailability`;
@@ -14,6 +15,8 @@ export default async function handler(req, res) {
     try {
         await connectMongo();
         let buffer = await translateData(response)
+        const now = new Date();
+        const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
         for(let item of buffer.result) {
             let update = await Product.updateOne({MTRL: item.MTRL}, {
                 $set: {
@@ -21,6 +24,7 @@ export default async function handler(req, res) {
                         DIATHESIMA: item.DIATHESIMA,
                         SEPARAGELIA: item.SEPARAGELIA,
                         DESVMEVMENA: item.DESVMEVMENA,
+                        date: formattedDateTime.toString()
                     }
                 }
             })

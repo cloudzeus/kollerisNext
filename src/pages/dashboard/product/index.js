@@ -22,7 +22,7 @@ import { ProductAvailability, ProductOrdered, ProductReserved } from '@/componen
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown'
 import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
-
+import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -47,23 +47,29 @@ const initialColumns = [
         id: 4,
     },
 
-
-    {
-        header: 'Υποομάδα',
-        id: 7
-    },
-    {
-        header: 'UpdatedFrom',
-        id: 8
-    },
+  
 
 ]
 
 const columns = [
     ...initialColumns,
+ 
+    {
+        header: 'Υποομάδα',
+        id: 7
+    },
+      
+    {
+        header: 'UpdatedFrom',
+        id: 8
+    },
     {
         header: 'SoftoneStatus',
-        id: 5
+        id: 9
+    },
+    {
+        header: 'Description',
+        id: 10
     },
 
     // {
@@ -374,6 +380,11 @@ function Product() {
         )
     };
 
+    const softstatusTemplate = ({ softoneStatus }) => {
+        return (
+            <SoftoneStatusTemplate softoneStatus={softoneStatus} />
+        )
+    }
 
     const onPage = (event) => {
 
@@ -396,8 +407,8 @@ function Product() {
                 selection={selectedProducts}
                 onSelectionChange={onSelection}
                 paginator
-                rows={100}
-                rowsPerPageOptions={[100, 200, 500, 1000]}
+                rows={10}
+                rowsPerPageOptions={[10, 20 , 50, 100, 200, 500]}
                 value={filteredData}
                 header={header}
                 showGridlines
@@ -412,29 +423,29 @@ function Product() {
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
-
             >
                 {/* body={TranslateName} */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="name" style={{ width: '400px' }} header="Όνομα" ></Column>
-                <Column field="description"  header="Όνομα" ></Column>
+             
                 
-                <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter  filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
+                {/* <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter  filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
                 <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
-                <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column>
-                {/* {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>} */}
-                {/* {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" showFilterMenu={false}  header="Ομάδα" ></Column>}
-                {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>} */}
-                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" body={productAvailabilityTemplate} style={{ width: '140px' }} header="Διαθέσιμα" ></Column>}
-                {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '135px' }} header="Παραγγελία" ></Column>}
-                {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '135px' }} header="Δεσμευμένα" ></Column>}
-                {visibleColumns.some(column => column.id === 5) && <Column field="softoneStatus"  style={{ width: '135px' }} header="Softone Status" ></Column>}
-                {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>}
+                <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column> */}
+                {visibleColumns.some(column => column.id === 10) && <Column field="description"  header="Περιγραφή" ></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
+                {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" showFilterMenu={false}  header="Ομάδα" ></Column>}
+                {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
+                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate}  style={{ width: '90px' }} header="Διαθέσιμα" ></Column>}
+                {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate}  style={{ width: '90px' }} header="Παραγγελία" ></Column>}
+                {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
+                {visibleColumns.some(column => column.id === 9) && <Column field="softoneStatus"    style={{ width: '90px' }}  body={softstatusTemplate} header="Softone Status" ></Column>}
+                {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                
-                <Column field="PRICER" sortable header="Τιμή λιανικής" style={{ width: '90px' }} body={PriceTemplate}></Column>
-                <Column style={{ width: '50px' }} body={AddToCartTemplate}></Column>
+                <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
+                <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
             </DataTable>
             <EditDialog
                 style={dialogStyle}
@@ -468,6 +479,7 @@ const Upddate = ({ softoneProduct: { UPDDATE } }) => {
 
 
 const PriceTemplate = ({ PRICER }) => {
+    console.log(PRICER)
     return (
         <div>
             <GridPriceTemplate PRICER={PRICER} />

@@ -102,7 +102,6 @@ const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
 
     )
 }
-{/* <Link href={goTo}> */}
 const SidebarSubItem = ({ title, goTo }) => {
     return (
 

@@ -275,9 +275,10 @@ export default async function handler(req, res) {
             softoneProduct: item._id,
             name: item.NAME,
             MTRL: item.MTRL,
+            softoneStatus: true,
         }))
         let insert = await Product.insertMany(productsInsert)
-        console.log(insert)
+     
         return res.status(200).json({ success: true, result: insert });
 
 
@@ -389,14 +390,7 @@ export default async function handler(req, res) {
 
     }
 
-    if (action === "MTRL") {
-        let find = await Product.find({}).populate('softoneProduct')
-        console.log(find)
-        for (let item of find) {
-            let update = await Product.updateOne({ _id: item._id }, { $set: { MTRL: item.softoneProduct.MTRL } })
-        }
-        return res.status(200).json({ success: true, result: find });
-    }
+  
 
     if (action === 'filterCategories') {
         let categoryID = 11;
@@ -490,14 +484,18 @@ export default async function handler(req, res) {
     }
 
     if(action === "importCSVProducts") {
+
+        
+
+
+
         const { data } = req.body;
         await connectMongo();
-      
-       
         //ADD THE SOFTONE PRODUCT
        try {
-        for(let item of data) {
-            let softone = {
+
+        const softOneData = data.map((item) => {
+            return [{
                 NAME: item.name || '',
                 CODE: item.CODE || '',   
                 CODE1: item.CODE1 || '',
@@ -514,28 +512,20 @@ export default async function handler(req, res) {
                 PRICER: item.PRICER || '',
                 PRICEW: item.PRICEW || '',
                 PRICER05: item.PRICER05 || '',
-            }
+            }]
+        })
+        let createSoftone = await SoftoneProduct.create(softOneData)
 
-            let createSoftone = await SoftoneProduct.create(softone)
-            console.log('createSoftone')
-            console.log(createSoftone)
-             
-            //ADD THE PRODUCT
-            if(!createSoftone) return res.status(400).json({ success: false, error: 'softoneproduct mongo database insert error'});
-
-            let product = {
-                name: item.name || '',
+        let productInsert = createSoftone.map((item) => {
+            return {
+                name: item.NAME || '',
                 description: item.description || '',
                 softoneStatus: false,
                 attributes: item.attributes || [],
-            } 
-            let createProduct = await Product.create(product)
-            console.log('create product')
-            console.log(createProduct)
-            if(!createProduct) return res.status(400).json({ success: false, error: 'product mongo database insert error'});
-           
-        }
-        return res.status(200).json({ success: true, result: 'ok'});
+            }
+        })
+        let insert = await Product.insertMany(productInsert)
+        return res.status(200).json({ success: true, result: insert });
 
        } catch {
             return res.status(400).json({ success: false, error: 'error'});
