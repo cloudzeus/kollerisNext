@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { ProductQuantityContext } from '@/_context/ProductGridContext';
-
 const TreeSelectComp = () => {
 
     const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
@@ -58,7 +57,9 @@ const TreeSelectDropDown = ({
     setSubgroup,
     category,
     group,
-    subgroup }) => {
+    subgroup,
+    setSubmitted
+}) => {
     const {selectedProducts} = useContext(ProductQuantityContext)
 
     const [data, setData] = useState(null);
@@ -81,7 +82,6 @@ const TreeSelectDropDown = ({
 
     useEffect(() => {
         handleFetch()
-
     }, [])
 
 
@@ -149,8 +149,12 @@ const TreeSelectDropDown = ({
             action: 'updateClass', 
             gridData: selectedProducts, 
             categoryid: category?.categoryId, 
+            categoryName: category?.name,
             groupid: group?.groupId, 
-            subgroupid:subgroup?.subgroupId })
+            groupName: group?.name,
+            subgroupid:subgroup?.subgroupId,
+            subGroupName: subgroup?.name
+        })
 
             if(!res.data.success) {
                 res.data.result.map((item) => {

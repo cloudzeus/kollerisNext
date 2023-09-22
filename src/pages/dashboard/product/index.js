@@ -83,6 +83,10 @@ const columns = [
         header: 'Description',
         id: 10
     },
+    {
+        header: 'Impas',
+        id: 11
+    },
 
     // {
     //     header: 'CategoryName',
@@ -147,13 +151,10 @@ function Product() {
         rows: 10,
         page: 1,
     });
-
-
-
   
 
     useEffect(() => {
-        if (submitted) handleFetch()
+        if (submitted) fetch()
     }, [submitted])
 
 
@@ -169,6 +170,7 @@ function Product() {
             subgroupID: subgroup?.softOne.cccSubgroup2,
             softoneStatusFilter: softoneStatusFilter
         })
+        console.log(res.data.result[0])
         setFilteredData(res.data.result);
         setTotalRecords(prev => {
             if (prev === res.data.totalRecords) {
@@ -184,6 +186,8 @@ function Product() {
         fetch()
     }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter])
 
+
+    
    
     const editProduct = async (product) => {
         setSubmitted(false);
@@ -320,7 +324,7 @@ function Product() {
         const onDelete = () => {
             setCategory(null)
             setGroup(null)
-            setSu
+            setSubGroup(null)
         }
         return (
             <div className='flex align-items-center'>
@@ -419,7 +423,7 @@ function Product() {
                     className="p-column-filter grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSubGroup(null)} ></i>
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSoftoneStatusFilter(null)} ></i>
             </div>
         )
     }
@@ -477,16 +481,16 @@ function Product() {
                 <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
                 <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column> */}
                 {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή" ></Column>}
-                {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία"filterField="representative"  showFilterMenu={false}></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter  filterElement={CategoriesRowFilterTemplate}    showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate}  style={{ width: '90px' }} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate}  style={{ width: '90px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
-                {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '210px' }}  body={softstatusTemplate} header="Softone Status" filter  filterElement={SoftoneStatusFilter}   ></Column>}
+                {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '120px' }}  body={softstatusTemplate} header="Softone Status" filter  filterElement={SoftoneStatusFilter}   ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
-               
+                {visibleColumns.some(column => column.id === 11) && <Column field="impas.englishDescription" style={{ width: '400px' }} header="Impas" ></Column> }
                 <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
  : null }

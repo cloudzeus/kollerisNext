@@ -31,7 +31,6 @@ export default async function handler(req, res) {
         await connectMongo();
         let count = await Product.countDocuments()
 
-
         let pipeline = [
             {
                 $lookup: {
@@ -286,7 +285,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'updateClass') {
-        let { categoryid, groupid, subgroupid, gridData } = req.body;
+        let { categoryid, categoryName, groupName,  subGroupName, groupid, subgroupid, gridData } = req.body;
 
         //All products that will change classes
         //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
@@ -294,17 +293,23 @@ export default async function handler(req, res) {
         //MTRL = ID -> TO FIND THE PRODUCT IN THE DATABASE AND UPDATE THEM
         let OBJ = {
             MTRGROUP: groupid,
+            GROUP_NAME: groupName,
             MTRCATEGORY: categoryid,
+            CATEGORY_NAME: categoryName,
             CCCSUBGOUP2: subgroupid,
+            SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
 
+        console.log(OBJ)
         await connectMongo()
 
       
 
         async function updateMongo(item) {
-            let MTRLID = item.MTRL[0];
+
+            let MTRLID = item.MTRL;
+            console.log(MTRLID)
             let result = await SoftoneProduct.updateOne({
                 MTRL: MTRLID
             }, {

@@ -24,7 +24,7 @@ import { model, models, Schema } from 'mongoose';
             ]
     }],
     status: Boolean,
-    products:[{ type: Schema.Types.ObjectId, ref: "Product" }]
+    products:[{ type: Schema.Types.ObjectId, ref: "SoftoneProduct" }]
 
 }, {
 

@@ -153,11 +153,11 @@ const FirstScreen = () => {
         )
     }
 
-    const Basket = ({ name, categoryName, PRICER, MTRL }) => {
+    const Basket = ({ NAME, CATEGORY_NAME, PRICER, MTRL }) => {
         return (
             <ProductBaksetTemplate
-                name={name}
-                categoryName={categoryName}
+                name={NAME}
+                categoryName={CATEGORY_NAME}
                 PRICER={PRICER}
                 MTRL={MTRL}
             />

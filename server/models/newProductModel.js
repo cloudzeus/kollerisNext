@@ -62,7 +62,12 @@ const softoneProduct = new mongoose.Schema({
         value: String,
     }],
     UPDATEFROM: String,
+    impas: {
+        type: Schema.Types.ObjectId,
+        ref: 'ImpaCodes'
+    },
 },
+
  
 {
     timestamps: true,
@@ -85,10 +90,7 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Media'
     }],
-    impas: [{
-        type: Schema.Types.ObjectId,
-        ref: 'ImpaCodes'
-    }],
+   
     videos: [{
         type: Schema.Types.ObjectId,
         ref: 'Media'
@@ -102,15 +104,18 @@ const productSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-productSchema.index({ name: 'text' });
 
 
 
 
 
+
+softoneProduct.index({ NAME: "text" });
 
 
 const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
+SoftoneProduct.createIndexes();
+
 const Product = models.Product || model('Product', productSchema);
 
 export {

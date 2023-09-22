@@ -1,5 +1,5 @@
 import { ImpaCodes } from "../../../../server/models/impaSchema"
-import { Product } from "../../../../server/models/newProductModel"
+import SoftoneProduct, { Product } from "../../../../server/models/newProductModel"
 import connectMongo from "../../../../server/config"
 import { array } from "yup"
 export default async function handler(req, res) {
@@ -52,17 +52,14 @@ export default async function handler(req, res) {
 
     if(action === 'correlateImpa') {
         let {dataToUpdate, id} = req.body
-        //id = impa id 
-        console.log(dataToUpdate)
-        console.log(id)
-    
+     
         try {
         await connectMongo();
             let arrayProductID = [];
             let count = 0;
             let errorArray = [];
             for(let item of dataToUpdate) {
-                let response = await Product.updateOne({_id: item._id}, {$set: {impas: id}}, {upsert: true})
+                let response = await SoftoneProduct.updateOne({_id: item._id}, {$set: {impas: id}}, {upsert: true})
                 console.log('response impa')
                 console.log(response)
                 if(response.modifiedCount == 1) {

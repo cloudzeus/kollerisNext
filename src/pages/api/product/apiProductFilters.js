@@ -19,186 +19,18 @@ export default async function handler(req, res) {
     const action = req.body.action;
 
 
-   
 
-
-    // if (action === 'filterCategories') {
-    //     Product.createIndexes();
-    //     let {groupID,categoryID, subgroupID, searchTerm, skip, limit } = req.body;
-        
-    //     let trimmedSearchTerm = searchTerm && searchTerm.trim();
-    //     let pipeline = [
-
-    //         {
-    //             $lookup: {
-    //                 from: "softoneproducts",
-    //                 localField: "softoneProduct",
-    //                 foreignField: "_id",
-    //                 as: "softoneProduct"
-    //             },
-    //         },
-    //         {
-    //             $unwind: {
-    //                 path: '$softoneProduct',
-    //                 preserveNullAndEmptyArrays: true,
-
-    //             }
-    //         },
-          
-    //         {
-    //             $lookup: {
-    //                 from: 'mtrcategories',
-    //                 localField: 'softoneProduct.MTRCATEGORY',
-    //                 foreignField: 'softOne.MTRCATEGORY',
-    //                 as: 'mtrcategory'
-    //             }
-
-    //         },
-    //         {
-    //             $lookup: {
-    //                 from: "mtrgroups",
-    //                 localField: "softoneProduct.MTRGROUP",
-    //                 foreignField: "softOne.MTRGROUP",
-    //                 as: "mtrgroups"
-    //             }
-    //         },
-    //         {
-    //             $lookup: {
-    //                 from: "submtrgroups",
-    //                 localField: "softoneProduct.CCCSUBGOUP2",
-    //                 foreignField: "softOne.cccSubgroup2",
-    //                 as: "mtrsubgroup"
-    //             }
-    //         },
-    //         {
-    //             $lookup: {
-    //                 from: "markes",
-    //                 localField: "softoneProduct.MTRMARK",
-    //                 foreignField: "softOne.MTRMARK",
-    //                 as: "mrtmark"
-    //             }
-    //         },
-    //         {
-    //             $project: {
-    //                 name: 1,
-    //                 localized: 1,
-    //                 updatedAt: 1,
-    //                 availability: 1,
-    //                 description: 1,
-    //                 updatedFrom: 1,
-    //                 updatedAt: 1,
-    //                 softoneStatus: 1,
-    //                 MTRL: '$softoneProduct.MTRL',
-    //                 MTRGROUP: '$softoneProduct.MTRGROUP',
-    //                 MTRCATEGORY: '$softoneProduct.MTRCATEGORY',
-    //                 CCCSUBGOUP2: '$softoneProduct.CCCSUBGOUP2',
-    //                 CODE: '$softoneProduct.CODE',
-    //                 CODE1: '$softoneProduct.CODE1',
-    //                 CODE2: '$softoneProduct.CODE2',
-    //                 UPDDATE: '$softoneProduct.UPDDATE',
-    //                 INTRASTAT: '$softoneProduct.INTRASTAT',
-    //                 VAT: '$softoneProduct.VAT',
-    //                 PRICER: '$softoneProduct.PRICER',
-    //                 PRICEW: '$softoneProduct.PRICEW',
-    //                 PRICER05: '$softoneProduct.PRICER05',
-    //                 PRICEW01: '$softoneProduct.PRICEW01',
-    //                 ISACTIVE: '$softoneProduct.ISACTIVE',
-    //                 UPDDATE: '$softoneProduct.UPDDATE',
-    //                 categoryName: '$mtrcategory.categoryName',
-    //                 mrtmark: '$mrtmark.name',
-    //                 mrtmanufact: '$manufacturers.softOne.NAME',
-    //                 MTRMANFCTR: '$manufacturers.softOne.MTRMANFCTR',
-    //                 mtrgroups: "$mtrgroups.groupName",
-    //                 mtrsubgroup: "$mtrsubgroup.subGroupName",
-    //             }
-    //         },
-    //         { $skip: skip },
-    //         { $limit: limit }
-    //     ]
-    //     await connectMongo();
-    //     let count = ""
-    //     // FILTER WITH MTRCATEGORY
-    //     if(categoryID && groupID && subgroupID) {
-    //         let res = await SoftoneProduct.countDocuments({
-    //            CCCSUBGOUP2: subgroupID
-    //         });
-    //         count = res;
-    //         pipeline.splice(3, 0, {
-    //             $match: {
-    //                 "softoneProduct.CCCSUBGOUP2": subgroupID
-    //             }
-    //         })
-    //     }
-
-    //     if(categoryID && groupID && !subgroupID) {
-    //         pipeline.splice(3, 0, {
-    //             $match: {
-    //                 "softoneProduct.MTRGROUP": groupID
-    //             }
-    //         })
-    //         let res = await SoftoneProduct.countDocuments({
-    //             MTRGROUP: groupID
-    //         });
-    //         count = res;
-           
-    //     }
-    //     if(categoryID && !groupID && !subgroupID) {
-    //         let res = await SoftoneProduct.countDocuments({
-    //             MTRCATEGORY: categoryID
-    //         });
-    //         count = res;
-    //         pipeline.splice(3, 0, {
-    //             $match: {
-    //                 "softoneProduct.MTRCATEGORY": categoryID
-    //             }
-    //         })
-    //     }
-      
-
-
-       
-    //     //FIRST TIME WE ENTER -> NO FITLERS -> FIND THE TOTAL NUMBER OF DOCUMENTS
-    //     if ( !categoryID && !groupID && !subgroupID && searchTerm == '') {
-    //         let res = await Product.countDocuments();
-    //         count = res;
-           
-    //     }
-
-    //     if ( searchTerm !== '' ) {
-    //         let res = await Product.countDocuments({
-    //             "name": {  
-    //                 $regex: trimmedSearchTerm,
-    //                 $options: 'i' 
-    //             }
-    //         });
-    //         count = res;
-    //         pipeline.unshift({
-    //             $match: {
-    //                 "name": {  
-    //                     $regex: trimmedSearchTerm,
-    //                     $options: 'i' 
-    //                 }
-    //             }
-    //         })
-    //     }
-
-      
-    //     let result = await Product.aggregate(pipeline)
-    //     // checkAvailability()
-    //     return res.status(200).json({ success: true, totalRecords: count, result: result });
-    // }
     if(action === 'filterCategories') {
         await connectMongo();
 
         let {groupID,categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter } = req.body;
-        console.log('softoneStatusFilter')
-        console.log(softoneStatusFilter)
+        
 
         let totalRecords;
         let softonefind;
         if(!categoryID && !groupID && !subgroupID && searchTerm == '') {
             totalRecords =  await SoftoneProduct.countDocuments();
-            softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit);
+            softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).populate('impas');
           
         }
 
@@ -208,7 +40,7 @@ export default async function handler(req, res) {
             });
             softonefind = await SoftoneProduct.find({
                 MTRCATEGORY: categoryID
-            }).skip(skip).limit(limit);
+            }).skip(skip).limit(limit).populate('impas');
         }
 
         if(categoryID && groupID) {
@@ -219,7 +51,7 @@ export default async function handler(req, res) {
             softonefind = await SoftoneProduct.find({
                 MTRCATEGORY: categoryID,
                 MTRGROUP: groupID
-            }).skip(skip).limit(limit);
+            }).skip(skip).limit(limit).populate('impas');
         }
 
         if(categoryID && groupID && subgroupID) {
@@ -232,23 +64,28 @@ export default async function handler(req, res) {
                 MTRCATEGORY: categoryID,
                 MTRGROUP: groupID,
                 CCCSUBGOUP2: subgroupID
-            }).skip(skip).limit(limit);
+            }).skip(skip).limit(limit).populate('impas');
         }
 
 
 
         //FILTER BASED ON SOFTONE STATUS:
-        if(softoneStatusFilter || !softoneStatusFilter) {
+        if(softoneStatusFilter === true || softoneStatusFilter === false) {
             totalRecords =  await SoftoneProduct.countDocuments({
                 SOFTONESTATUS: softoneStatusFilter
             });
             softonefind = await SoftoneProduct.find({
                 SOFTONESTATUS: softoneStatusFilter
-            }).skip(skip).limit(limit);
-        }
+            }).skip(skip).limit(limit).populate('impas');
+        } 
       
 
-        
+        let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+
+        if(searchTerm !== '') {
+            totalRecords =  await SoftoneProduct.countDocuments({ NAME: regexSearchTerm});
+            softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm}).skip(skip).limit(limit).populate('impas');
+        }
 
 
         // console.log(softonefind)
