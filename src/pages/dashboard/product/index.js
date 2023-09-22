@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, lazy } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -142,7 +142,7 @@ function Product() {
     const [totalRecords, setTotalRecords] = useState(0);
     const [lazyState, setlazyState] = useState({
         first: 0,
-        rows: 100,
+        rows: 10,
         page: 1,
     });
 
@@ -306,6 +306,7 @@ function Product() {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
                     action: 'findCategories',
+                 
                 })
                 setCategoriesFilter(data.result)
             }
@@ -313,7 +314,11 @@ function Product() {
             handleCategories()
         }, [category])
 
-       
+        const onDelete = () => {
+            setCategory(null)
+            setGroup(null)
+            setSubGroup(null)
+        }
         return (
             <div className='flex align-items-center'>
                 <Dropdown
@@ -325,11 +330,13 @@ function Product() {
                     className="p-column-filter  grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setCategory(null)} ></i>
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
             </div>
 
         )
     };
+    
+    
     const GroupRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
@@ -361,7 +368,6 @@ function Product() {
 
         )
     };
-    
     const SubGroupsRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
@@ -394,14 +400,13 @@ function Product() {
         )
     };
 
-    const softstatusTemplate = ({ softoneStatus }) => {
+    const softstatusTemplate = ({ SOFTONESTATUS }) => {
         return (
-            <SoftoneStatusTemplate softoneStatus={softoneStatus} />
+            <SoftoneStatusTemplate softoneStatus={SOFTONESTATUS} />
         )
     }
 
     const onPage = (event) => {
-
         setlazyState(event);
     };
     return (
@@ -421,8 +426,8 @@ function Product() {
                 selection={selectedProducts}
                 onSelectionChange={onSelection}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[10, 20 , 50, 100, 200, 500]}
+                rows={lazyState.rows}
+                rowsPerPageOptions={[10, 20 ,50, 100, 200]}
                 value={filteredData}
                 header={header}
                 showGridlines
@@ -441,20 +446,20 @@ function Product() {
                 {/* body={TranslateName} */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                <Column field="name" style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="NAME" style={{ width: '400px' }} header="Όνομα" ></Column>
              
                 
                 {/* <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter  filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
                 <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
                 <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column> */}
-                {visibleColumns.some(column => column.id === 10) && <Column field="description"  header="Περιγραφή" ></Column>}
-                {visibleColumns.some(column => column.id === 5) && <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
-                {visibleColumns.some(column => column.id === 6) && <Column field="mtrgroups" showFilterMenu={false}  header="Ομάδα" ></Column>}
-                {visibleColumns.some(column => column.id === 7) && <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
+                {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή" ></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
+                {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
+                {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate}  style={{ width: '90px' }} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate}  style={{ width: '90px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
-                {visibleColumns.some(column => column.id === 9) && <Column field="softoneStatus"    style={{ width: '90px' }}  body={softstatusTemplate} header="Softone Status" ></Column>}
+                {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '210px' }}  body={softstatusTemplate} header="Softone Status" ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                

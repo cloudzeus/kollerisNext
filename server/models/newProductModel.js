@@ -3,8 +3,13 @@ import { model, models, Schema } from 'mongoose';
 
 
 const softoneProduct = new mongoose.Schema({
-    product: { type: Schema.Types.ObjectId, ref: "Product" },
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+    },
     MTRL: { type: String },
+    DESCRIPTION: String,
+   
     ISACTIVE: String,
     NAME: String,
     CODE: String,
@@ -14,15 +19,17 @@ const softoneProduct = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    CATEGORY_NAME: String,
     MTRGROUP: {
         type: Number,
         default: 0
     },
-
+    GROUP_NAME: String,
     CCCSUBGOUP2: {
         type: Number,
         default: 0
     },
+    SUBGROUP_NAME: String,
     MTRMANFCTR: String,
     MTRMARK: {
         type: Number,
@@ -31,50 +38,38 @@ const softoneProduct = new mongoose.Schema({
     VAT: String,
     COUNTRY: String,
     INTRASTAT: String,
-    MTRUNIT1: String,
-    MTRUNIT3: String,
-    MU31: String,
-    MTRUNIT4: String,
-    MU41: String,
+   
     WIDTH: String,
     HEIGHT: String,
     LENGTH: String,
     GWEIGHT: String,
     VOLUME: String,
     STOCK: String,
-    SOCURRENCY: String,
     PRICER: String,
     PRICEW: String,
-    PRICER01: String,
     PRICER02: String,
-    PRICER03: String,
-    PRICER04: String,
     PRICER05: String,
-    PRICEW01: String,
-    PRICEW02: String,
-    PRICEW03: String,
-    PRICEW04: String,
-    PRICEW05: String,
     UPDDATE: String,
-  
-}, {
-
+    availability: {
+        DIATHESIMA: String,
+        SEPARAGELIA: String,
+        DESVMEVMENA: String,
+        date: String,
+    },
+    SOFTONESTATUS: Boolean,
+    ATTRIBUTES: [{
+        name: String,
+        value: String,
+    }],
+    UPDATEFROM: String,
+},
+ 
+{
     timestamps: true,
 });
 
 
 const productSchema = new mongoose.Schema({
-    MTRL: String,
-    softoneProduct: {
-        type: Schema.Types.ObjectId,
-        ref: 'SoftoneProduct',
-    },
-    attributes: [{
-        name: String,
-        value: String,
-    }],
-    name: { type: String, required: true },
-    description: { type: String, required: false },
     localized: [{
         fieldName: String,
         translations: [
@@ -85,8 +80,6 @@ const productSchema = new mongoose.Schema({
             }
         ]
 }],
-    expected: { type: Number, required: false, },
-    reserved: { type: Number, required: false },
    
     images: [{
         type: Schema.Types.ObjectId,
@@ -100,31 +93,18 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Media'
     }],
-    //Σελίδα κατασκευαστή
     ventorUrl: { type: String, required: false },
-    updatedFrom: String,
-    availability: {
-        DIATHESIMA: String,
-        SEPARAGELIA: String,
-        DESVMEVMENA: String,
-        date: String,
-    },
-    softoneStatus: Boolean,
+    // updatedFrom: String,
+    // softoneStatus: Boolean,
 
 },
 {
-
     timestamps: true,
 });
 
 productSchema.index({ name: 'text' });
 
 
-const mediaSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    type: { type: String, required: true },
-    url: { type: String, required: true }
-});
 
 
 
@@ -132,10 +112,8 @@ const mediaSchema = new mongoose.Schema({
 
 const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
 const Product = models.Product || model('Product', productSchema);
-const Media = models.Media || model('Media', mediaSchema);
 
 export {
     Product,
-    Media,
 }
 export default SoftoneProduct;

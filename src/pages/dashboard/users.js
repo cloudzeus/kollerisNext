@@ -6,20 +6,18 @@ import { Button } from 'primereact/button';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
 import { Tag } from 'primereact/tag';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { FilterMatchMode} from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/userDialog';
 import UserRoleChip from '@/components/RoleChip';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ActionDiv } from '@/componentsStyles/grid';
-import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import GridIconTemplate from '@/components/grid/gridIconTemplate';
 import { useSession } from 'next-auth/react';
 import GridOverlay from '@/components/grid/GridOverlay';
-
+import GridActions from '@/components/grid/GridActions';
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -125,14 +123,14 @@ export default function TemplateDemo() {
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
+  
+
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button size="small" style={{width: '40px', height: '40px'}}  disabled={!rowData.status} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status}  />
-            </ActionDiv>
-        );
-    };
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+        )
+    }
+
 
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
@@ -177,9 +175,12 @@ export default function TemplateDemo() {
                 <Column field="details" body={gridDetails} header="Λεπτομέριες" sortable></Column>
                 <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
                 <Column field="createdAt"  body={userCreate} sortable header="Ημερομηνία Δημιουργίας" tableStyle={{ width: '5rem' }}></Column>
-                <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+                {/* <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column> */}
                 <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
-                {role === 'admin' ? <Column body={actionBodyTemplate} header="Ενέργειες" tableStyle={{ width: '5rem' }}></Column> : null}
+               
+                {role === 'admin' ? (
+                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
+                ) : null}
 
             </DataTable>
             <EditDialog

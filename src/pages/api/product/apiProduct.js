@@ -158,7 +158,6 @@ export default async function handler(req, res) {
         let { data } = req.body;
         console.log(data.updatedFrom)
         let obj = {
-
             MTRL: data.MTRL[0],
             ISACTIVE: data.ISACTIVE[0],
             NAME: data.name,
@@ -255,6 +254,7 @@ export default async function handler(req, res) {
 
     if (action === 'insert') {
         await connectMongo();
+
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
         const response = await fetch(URL, {
             method: 'POST',
@@ -512,21 +512,16 @@ export default async function handler(req, res) {
                 PRICER: item.PRICER || '',
                 PRICEW: item.PRICEW || '',
                 PRICER05: item.PRICER05 || '',
+
             }
         })
-        let createSoftone = await SoftoneProduct.create(softOneData)
+    
+        // let createSoftone = await SoftoneProduct.create(softOneData)
+        // let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
 
-        let productInsert = createSoftone.map((item) => {
-            return {
-                name: item.NAME || '',
-                description: item.description || '',
-                softoneStatus: false,
-                attributes: item.attributes || [],
-            }
-        })
-        let insert = await Product.insertMany(productInsert)
-        return res.status(200).json({ success: true, result: insert });
 
+       
+     
        } catch {
             return res.status(400).json({ success: false, error: 'error'});
        }
