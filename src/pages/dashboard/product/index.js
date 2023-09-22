@@ -118,9 +118,11 @@ function Product() {
     const [categroriesFilter, setCategoriesFilter] = useState(null);
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
     const [groupFilter, setGroupFilter] = useState(null);
+    const [softoneStatusFilter, setSoftoneStatusFilter] = useState(null);
     const [category, setCategory] = useState(null)
     const [group, setGroup] = useState(null)
     const [subgroup, setSubGroup] = useState(null)
+    const [softOneStatus, setSoftoneStatus]  = useState(null)
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false)
@@ -165,6 +167,7 @@ function Product() {
             categoryID: category?.softOne.MTRCATEGORY,
             groupID: group?.softOne.MTRGROUP,
             subgroupID: subgroup?.softOne.cccSubgroup2,
+            softoneStatusFilter: softoneStatusFilter
         })
         setFilteredData(res.data.result);
         setTotalRecords(prev => {
@@ -179,7 +182,7 @@ function Product() {
 
     useEffect(() => {
         fetch()
-    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup])
+    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter])
 
    
     const editProduct = async (product) => {
@@ -317,7 +320,7 @@ function Product() {
         const onDelete = () => {
             setCategory(null)
             setGroup(null)
-            setSubGroup(null)
+            setSu
         }
         return (
             <div className='flex align-items-center'>
@@ -382,8 +385,7 @@ function Product() {
         }, [group ,subgroup])
 
         return (
-            <div className="flex align-items-center
-            ">
+            <div className="flex align-items-center">
                 <Dropdown
                     size="small"
                     disabled={!group ? true : false}
@@ -399,6 +401,28 @@ function Product() {
             </div>
         )
     };
+
+    const SoftoneStatusFilter = (options) => {
+        const statusOptions = [
+            { label: 'Ενεργό', value: true },
+            { label: 'Ανενεργό', value: false },
+        ]
+        return (
+            <div className="flex align-items-center">
+                <Dropdown
+                    size="small"
+                    value={softoneStatusFilter}
+                    options={statusOptions}
+                    onChange={(e) => setSoftoneStatusFilter(e.value)}
+                    optionLabel="label"
+                    placeholder="Φίλτρο Υποομάδας"
+                    className="p-column-filter grid-filter"
+                    style={{ minWidth: '14rem', fontSize: '12px' }}
+                />
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSubGroup(null)} ></i>
+            </div>
+        )
+    }
 
     const softstatusTemplate = ({ SOFTONESTATUS }) => {
         return (
@@ -453,13 +477,13 @@ function Product() {
                 <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
                 <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column> */}
                 {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή" ></Column>}
-                {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" sortable filter filterField="representative" filterElement={CategoriesRowFilterTemplate }  showFilterMenu={false}></Column>}
+                {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία"filterField="representative"  showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate}  style={{ width: '90px' }} header="Διαθέσιμα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate}  style={{ width: '90px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
-                {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '210px' }}  body={softstatusTemplate} header="Softone Status" ></Column>}
+                {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '210px' }}  body={softstatusTemplate} header="Softone Status" filter  filterElement={SoftoneStatusFilter}   ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
                

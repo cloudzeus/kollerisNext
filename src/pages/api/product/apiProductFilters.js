@@ -190,7 +190,9 @@ export default async function handler(req, res) {
     if(action === 'filterCategories') {
         await connectMongo();
 
-        let {groupID,categoryID, subgroupID, searchTerm, skip, limit } = req.body;
+        let {groupID,categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter } = req.body;
+        console.log('softoneStatusFilter')
+        console.log(softoneStatusFilter)
 
         let totalRecords;
         let softonefind;
@@ -232,10 +234,24 @@ export default async function handler(req, res) {
                 CCCSUBGOUP2: subgroupID
             }).skip(skip).limit(limit);
         }
-       
 
 
-        console.log(softonefind)
+
+        //FILTER BASED ON SOFTONE STATUS:
+        if(softoneStatusFilter || !softoneStatusFilter) {
+            totalRecords =  await SoftoneProduct.countDocuments({
+                SOFTONESTATUS: softoneStatusFilter
+            });
+            softonefind = await SoftoneProduct.find({
+                SOFTONESTATUS: softoneStatusFilter
+            }).skip(skip).limit(limit);
+        }
+      
+
+        
+
+
+        // console.log(softonefind)
         return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
     }
 
