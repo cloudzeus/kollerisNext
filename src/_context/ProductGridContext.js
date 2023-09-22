@@ -9,6 +9,7 @@ export const ProductQuantityProvider = ({ children }) => {
     const [warehouseLines, setWareHouseLines] = useState()
     const [exportWarehouse, setExportWarehouse] = useState(null)
     const [importWarehouse, setImportWarehouse] = useState(null)
+    const [diathesima, setDiathesima]   = useState(null)
     const [attribute, setAttribute] = useState([
         {attributes: []}
     ])
@@ -24,7 +25,8 @@ export const ProductQuantityProvider = ({ children }) => {
             warehouseLines, setWareHouseLines,
             exportWarehouse, setExportWarehouse,
             importWarehouse, setImportWarehouse,
-            attribute, setAttribute
+            attribute, setAttribute,
+            diathesima, setDiathesima
            
         }}>
             {children}

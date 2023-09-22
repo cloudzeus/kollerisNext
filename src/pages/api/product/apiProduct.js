@@ -10,6 +10,7 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/ca
 import { Product } from "../../../../server/models/newProductModel";
 import { ProductAttributes } from "../../../../server/models/attributesModel";
 import Offer from "@/components/grid/Product/Offer";
+import { id } from "date-fns/locale";
 
 
 
@@ -449,35 +450,58 @@ export default async function handler(req, res) {
 
     if (action === 'warehouse') {
         const { exportWarehouse, importWarehouse } = req.body;
+        console.log('importWarehouse')
+        console.log(importWarehouse)
+        console.log('exportwarehouse')
+        console.log(exportWarehouse)
+        await connectMongo();
        
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getItemDoc`;
 
         async function modifySoftonePost(SERIES, data) {
-            const response = await fetch(URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: "Service",
-                    password: "Service",
-                    COMPANY: 1001,
-                    WHOUSE: 1000,
-                    SERIES: SERIES,
-                    WHOUSESEC: 1000,
-                    MTRLINES: data
-                })
-            });
-            let resJSON = await response.json();
-            console.log(resJSON);
-            return resJSON ;
+            console.log('daaaata')
+            console.log(data)
+            // const response = await fetch(URL, {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         username: "Service",
+            //         password: "Service",
+            //         COMPANY: 1001,
+            //         WHOUSE: 1000,
+            //         SERIES: SERIES,
+            //         WHOUSESEC: 1000,
+            //         MTRLINES: data
+            //     })
+            // });
+            // let resJSON = await response.json();
+            // console.log(resJSON);
+            // return resJSON ;
         }
+
+       
 
         try {
             let importRes;
             let exportRes;
             if(exportWarehouse && exportWarehouse.length > 0 ) {
-               importRes = await modifySoftonePost(1011, exportWarehouse)
+                let _newdata = []
+                for(let item of exportWarehouse) {
+                    _newdata.push({
+                        MTRL: item.MTRL,
+                        QTY1: item.QTY1 
+                    })
+                }
+               exportRes = await modifySoftonePost(1011, _newdata)
             }
             if(importWarehouse && importWarehouse.length > 0) {
-               exportRes =  await modifySoftonePost(1010, importWarehouse)
+                let _newdata = []
+                for(let item of importWarehouse) {
+                    _newdata.push({
+                        MTRL: item.MTRL,
+                        QTY1: item.QTY1 
+                    })
+                }
+               importRes =  await modifySoftonePost(1010,  _newdata)
             }
 
           
@@ -489,10 +513,6 @@ export default async function handler(req, res) {
     }
 
     if(action === "importCSVProducts") {
-
-        
-
-
 
         const { data } = req.body;
         await connectMongo();
@@ -532,6 +552,8 @@ export default async function handler(req, res) {
        }
       
     }
+
+
 }
 
 

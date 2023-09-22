@@ -10,7 +10,7 @@ import { Message } from 'primereact/message';
 import axios from 'axios'
 
 const WhareHouseActions = () => {
-    const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse } = useContext(ProductQuantityContext)
+    const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse, diathesima } = useContext(ProductQuantityContext)
     const [warehouseResponse, setWarehouseResponse] = useState(null)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)
@@ -84,7 +84,7 @@ const WhareHouseActions = () => {
 
 
 const Template = ({ categoryName, name, availability, MTRL }) => {
-    const { setWareHouseLines, warehouseLines, setExportWarehouse, setImportWarehouse } = useContext(ProductQuantityContext)
+    const {  setExportWarehouse, setImportWarehouse } = useContext(ProductQuantityContext)
 
     let available = parseInt(availability?.DIATHESIMA)
     const [value, setValue] = useState(available)
@@ -115,9 +115,11 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         if (e.value > available) {
             setImportWarehouse((prev) => {
                 const updated = (prev || []).filter(item => item.MTRL !== MTRL);
-                updated.push({ MTRL: MTRL, QTY1: newQTY1 - available });
+                updated.push({ MTRL: MTRL, QTY1: newQTY1 - available});
                 return updated;
             });
+           
+
         
             setExportWarehouse((prev) => {
                 return (prev || []).filter(item => item.MTRL !== MTRL);
@@ -127,10 +129,10 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         if (e.value < available) {
             setExportWarehouse((prev) => {
                 const updated = (prev || []).filter(item => item.MTRL !== MTRL);
-                updated.push({ MTRL: MTRL, QTY1: available - newQTY1 });
+                updated.push({ MTRL: MTRL, QTY1: available - newQTY1});
                 return updated;
             });
-        
+
             setImportWarehouse((prev) => {
                 return (prev || []).filter(item => item.MTRL !== MTRL);
             });
@@ -158,7 +160,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
                 </div>
                 <div className='my-2 inline-flex surface-200 p-2 border-round'>
                     <p className=" ">Διαθέσιμα στην σύστημα:</p>
-                    <p className='ml-2 font-bold block'>{availability.DIATHESIMA}</p>
+                    <p className='ml-2 font-bold block'>{availability?.DIATHESIMA}</p>
                 </div>
                 <div className="">
                     <label htmlFor="minmax-buttons" className="font-bold block ml-1 mb-2">Αλλαγή:</label>
