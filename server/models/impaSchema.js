@@ -45,7 +45,7 @@ import { model, models, Schema } from 'mongoose';
 
 
 
-const   ImpaCodes = mongoose.models.ImpaCodes || mongoose.model('ImpaCodes', impaSchema );
+const  ImpaCodes = models.ImpaCodes || model('ImpaCodes', impaSchema );
 
 
 export {

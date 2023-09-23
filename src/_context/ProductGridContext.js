@@ -6,9 +6,9 @@ export const ProductQuantityProvider = ({ children }) => {
     const [selectedProducts, setSelectedProducts] = useState(null)
     const [quantityContext, setQuantityContext] = useState(1);
     const [mtrlines, setMtrLines] = useState([])
-    const [warehouseLines, setWareHouseLines] = useState()
     const [exportWarehouse, setExportWarehouse] = useState(null)
     const [importWarehouse, setImportWarehouse] = useState(null)
+    const [diathesimotita, setDiathesimotita] = useState(null)
     const [attribute, setAttribute] = useState([
         {attributes: []}
     ])
@@ -21,10 +21,10 @@ export const ProductQuantityProvider = ({ children }) => {
             selectedProducts, setSelectedProducts,
             quantityContext, setQuantityContext, 
             mtrlines, setMtrLines, 
-            warehouseLines, setWareHouseLines,
             exportWarehouse, setExportWarehouse,
             importWarehouse, setImportWarehouse,
-            attribute, setAttribute
+            attribute, setAttribute,
+            diathesimotita, setDiathesimotita
            
         }}>
             {children}

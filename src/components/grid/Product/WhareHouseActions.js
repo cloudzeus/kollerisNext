@@ -10,8 +10,13 @@ import { Message } from 'primereact/message';
 import axios from 'axios'
 
 const WhareHouseActions = () => {
-    const { selectedProducts, warehouseLines, importWarehouse, exportWarehouse, setImportWarehouse, setExportWarehouse } = useContext(ProductQuantityContext)
-    const [warehouseResponse, setWarehouseResponse] = useState(null)
+    const { 
+        selectedProducts, 
+        importWarehouse, 
+        exportWarehouse,
+        diathesimotita,
+        setSubmitted,
+    } = useContext(ProductQuantityContext)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)
 
@@ -38,16 +43,22 @@ const WhareHouseActions = () => {
 
     
     const handleSubmit = async() => {
-        let {data} = await axios.post('/api/product/apiProduct',  {action: 'warehouse', exportWarehouse: exportWarehouse, importWarehouse: importWarehouse})
-        console.log(data)
+        let {data} = await axios.post('/api/product/apiProduct',  
+        {
+            action: 'warehouse', 
+            exportWarehouse: exportWarehouse, 
+            importWarehouse: importWarehouse,
+            diathesimotita: diathesimotita
+    })
         if(data?.resultImport) {
             setResultImport(data.resultImport)
         }
         if(data?.resultExport) {
             setResultExport(data.resultExport)
         }
+        setSubmitted(true)
     }
-
+   
 
     return (
         <div>
@@ -84,7 +95,7 @@ const WhareHouseActions = () => {
 
 
 const Template = ({ categoryName, name, availability, MTRL }) => {
-    const { setWareHouseLines, warehouseLines, setExportWarehouse, setImportWarehouse } = useContext(ProductQuantityContext)
+    const {setExportWarehouse, setImportWarehouse, setDiathesimotita} = useContext(ProductQuantityContext)
 
     let available = parseInt(availability?.DIATHESIMA)
     const [value, setValue] = useState(available)
@@ -111,6 +122,11 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         let newQTY1 = e.value
         setValue(e.value);
 
+        setDiathesimotita((prev) => {
+            const updated = (prev || []).filter(item => item.MTRL !== MTRL);
+            updated.push({ MTRL: MTRL, available: e.value });
+            return updated;
+        })
         //IMPORT TO THE WAREHOUSE
         if (e.value > available) {
             setImportWarehouse((prev) => {
