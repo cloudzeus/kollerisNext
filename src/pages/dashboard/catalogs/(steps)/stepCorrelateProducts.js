@@ -82,7 +82,7 @@ const OurDatabaseKeys = [
     },
     {
         key: 'ΓΑΛΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'GERMAN-DESCRIPTION'
+        value: 'FRENCH-DESCRIPTION'
     },
     {
         key: 'ΙΣΠΑΝΙΚΗ DESCRIPTION',
@@ -90,6 +90,10 @@ const OurDatabaseKeys = [
     },
     {
         key: 'ΙΤΑΛΙΚΗ DESCRIPTION',
+        value: 'ITALIAN-DESCRIPTION'
+    },
+    {
+        key: 'ΕΛΛΗΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
         value: 'ITALIAN-DESCRIPTION'
     },
 
@@ -135,7 +139,7 @@ const StepCorrelateProducts = () => {
             <div className='mt-3'>
         <Button     label="STEP 3"   severity="success"  icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(3))} />
         <Button 
-        disabled={!continueBtn}
+        // disabled={!continueBtn}
          label="FINAL STEP 5"   
          severity="success" 
          icon="pi pi-arrow-right" 
@@ -168,6 +172,11 @@ const SelectTemplate = ({ value, text, key }) => {
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
     const [dvalue, setdValue] = useState('')
+
+    // useEffect(() => {
+    //     dispatch(setSelectedMongoKey(null))
+    //     dispatch(setAttribute(null))
+    // }, [dispatch])
 
     const handleChange = (e) => {
         console.log(value)
@@ -224,8 +233,7 @@ const Remove = ({ value }) => {
     const dispatch = useDispatch()
     const { selectedHeaders } = useSelector((state) => state.catalog)
     const remove = (e) => {
-        console.log('remove')
-        console.log(selectedHeaders)
+      
         const filtered = selectedHeaders.filter(item => item.value !== value)
         dispatch(setSelectedHeaders(filtered))
     }
