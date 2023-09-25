@@ -7,6 +7,7 @@ import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
+
 import { Product } from "../../../../server/models/newProductModel";
 import { ProductAttributes } from "../../../../server/models/attributesModel";
 import Offer from "@/components/grid/Product/Offer";
@@ -21,7 +22,7 @@ export const config = {
 }
 
 export default async function handler(req, res) {
-    res.setHeader('Cache-Control', 's-maxage=10'); 
+    res.setHeader('Cache-Control', 's-maxage=10');
     const action = req.body.action;
 
 
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
 
         await connectMongo();
         let count = await Product.countDocuments()
+
 
         let pipeline = [
             {
@@ -158,6 +160,7 @@ export default async function handler(req, res) {
         let { data } = req.body;
         console.log(data.updatedFrom)
         let obj = {
+
             MTRL: data.MTRL[0],
             ISACTIVE: data.ISACTIVE[0],
             NAME: data.name,
@@ -254,7 +257,6 @@ export default async function handler(req, res) {
 
     if (action === 'insert') {
         await connectMongo();
-
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
         const response = await fetch(URL, {
             method: 'POST',
@@ -278,7 +280,7 @@ export default async function handler(req, res) {
             softoneStatus: true,
         }))
         let insert = await Product.insertMany(productsInsert)
-     
+
         return res.status(200).json({ success: true, result: insert });
 
 
@@ -286,7 +288,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'updateClass') {
-        let { categoryid, categoryName, groupName,  subGroupName, groupid, subgroupid, gridData } = req.body;
+        let { categoryid, groupid, subgroupid, gridData } = req.body;
 
         //All products that will change classes
         //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
@@ -294,23 +296,17 @@ export default async function handler(req, res) {
         //MTRL = ID -> TO FIND THE PRODUCT IN THE DATABASE AND UPDATE THEM
         let OBJ = {
             MTRGROUP: groupid,
-            GROUP_NAME: groupName,
             MTRCATEGORY: categoryid,
-            CATEGORY_NAME: categoryName,
             CCCSUBGOUP2: subgroupid,
-            SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
 
-        console.log(OBJ)
         await connectMongo()
 
-      
+
 
         async function updateMongo(item) {
-
-            let MTRLID = item.MTRL;
-            console.log(MTRLID)
+            let MTRLID = item.MTRL[0];
             let result = await SoftoneProduct.updateOne({
                 MTRL: MTRLID
             }, {
@@ -396,7 +392,7 @@ export default async function handler(req, res) {
 
     }
 
-  
+
 
     if (action === 'filterCategories') {
         let categoryID = 11;
@@ -449,108 +445,113 @@ export default async function handler(req, res) {
     }
 
     if (action === 'warehouse') {
-        const { exportWarehouse, importWarehouse } = req.body;
-        console.log('importWarehouse')
-        console.log(importWarehouse)
-        console.log('exportwarehouse')
-        console.log(exportWarehouse)
-        await connectMongo();
-       
+        const { exportWarehouse, importWarehouse, diathesimotita } = req.body;
+        const now = new Date();
+        const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
+     
+        const updates =  diathesimotita.map(item => ({
+            updateOne: {
+                filter: { MTRL: item.MTRL },
+                update: {
+                    $set: {
+                        "availability.DIATHESIMA": item.available,
+                        "availability.date":  formattedDateTime.toString(),
+                    }
+                },
+                upsert: false  // optional: set to true if you want to create a new document when no document matches the filter
+            }
+        }));
+        SoftoneProduct.bulkWrite(updates)
+            .then(result => {
+                console.log(result);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getItemDoc`;
-
         async function modifySoftonePost(SERIES, data) {
-            console.log('daaaata')
-            console.log(data)
-            // const response = await fetch(URL, {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //         username: "Service",
-            //         password: "Service",
-            //         COMPANY: 1001,
-            //         WHOUSE: 1000,
-            //         SERIES: SERIES,
-            //         WHOUSESEC: 1000,
-            //         MTRLINES: data
-            //     })
-            // });
-            // let resJSON = await response.json();
-            // console.log(resJSON);
-            // return resJSON ;
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    COMPANY: 1001,
+                    WHOUSE: 1000,
+                    SERIES: SERIES,
+                    WHOUSESEC: 1000,
+                    MTRLINES: data
+                })
+            });
+            let resJSON = await response.json();
+            console.log(resJSON);
+            return resJSON;
         }
-
-       
 
         try {
             let importRes;
             let exportRes;
-            if(exportWarehouse && exportWarehouse.length > 0 ) {
-                let _newdata = []
-                for(let item of exportWarehouse) {
-                    _newdata.push({
-                        MTRL: item.MTRL,
-                        QTY1: item.QTY1 
-                    })
-                }
-               exportRes = await modifySoftonePost(1011, _newdata)
+            if (exportWarehouse && exportWarehouse.length > 0) {
+                   importRes = await modifySoftonePost(1011, exportWarehouse)
             }
-            if(importWarehouse && importWarehouse.length > 0) {
-                let _newdata = []
-                for(let item of importWarehouse) {
-                    _newdata.push({
-                        MTRL: item.MTRL,
-                        QTY1: item.QTY1 
-                    })
-                }
-               importRes =  await modifySoftonePost(1010,  _newdata)
+            if (importWarehouse && importWarehouse.length > 0) {
+                   exportRes =  await modifySoftonePost(1010, importWarehouse)
             }
 
-          
-            return res.status(200).json({ success: true, resultImport : importRes, resultExport: exportRes});
+
+            return res.status(200).json({ success: true, resultImport: importRes, resultExport: exportRes });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
 
     }
 
-    if(action === "importCSVProducts") {
+    if (action === "importCSVProducts") {
+
+
 
         const { data } = req.body;
         await connectMongo();
         //ADD THE SOFTONE PRODUCT
-       try {
+        try {
 
-        const softOneData = data.map((item) => {
-            return {
-                NAME: item.name || '',
-                CODE: item.CODE || '',   
-                CODE1: item.CODE1 || '',
-                CODE2: item.CODE2 || '',
-                VAT: item.VAT || '',
-                COUNTRY: item.COUNTRY || '',
-                INTRASTAT: item.INTRASTAT || '',
-                WIDTH: item.WIDTH || '',
-                HEIGHT: item.HEIGHT || '',
-                LENGTH: item.LENGTH || '',
-                GWEIGHT: item.GWEIGHT || '',
-                VOLUME: item.VOLUME || '',
-                STOCK: item.STOCK || '',
-                PRICER: item.PRICER || '',
-                PRICEW: item.PRICEW || '',
-                PRICER05: item.PRICER05 || '',
+            const softOneData = data.map((item) => {
+                return {
+                    NAME: item.name || '',
+                    CODE: item.CODE || '',
+                    CODE1: item.CODE1 || '',
+                    CODE2: item.CODE2 || '',
+                    VAT: item.VAT || '',
+                    COUNTRY: item.COUNTRY || '',
+                    INTRASTAT: item.INTRASTAT || '',
+                    WIDTH: item.WIDTH || '',
+                    HEIGHT: item.HEIGHT || '',
+                    LENGTH: item.LENGTH || '',
+                    GWEIGHT: item.GWEIGHT || '',
+                    VOLUME: item.VOLUME || '',
+                    STOCK: item.STOCK || '',
+                    PRICER: item.PRICER || '',
+                    PRICEW: item.PRICEW || '',
+                    PRICER05: item.PRICER05 || '',
+                }
+            })
+            let createSoftone = await SoftoneProduct.create(softOneData)
 
-            }
-        })
-    
-        // let createSoftone = await SoftoneProduct.create(softOneData)
-        // let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
+            let productInsert = createSoftone.map((item) => {
+                return {
+                    name: item.NAME || '',
+                    description: item.description || '',
+                    softoneStatus: false,
+                    attributes: item.attributes || [],
+                }
+            })
+            let insert = await Product.insertMany(productInsert)
+            return res.status(200).json({ success: true, result: insert });
 
+        } catch {
+            return res.status(400).json({ success: false, error: 'error' });
+        }
 
-       
-     
-       } catch {
-            return res.status(400).json({ success: false, error: 'error'});
-       }
-      
     }
 
 
