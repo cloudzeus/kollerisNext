@@ -554,7 +554,45 @@ export default async function handler(req, res) {
 
     }
 
+	if(action === "translate") {
+		let data = req.body.data;
 
+		let {id, fieldName, index} = req.body
+		
+
+		try {
+			await connectMongo();
+			const result = await Product.findOne({ _id: id  });
+			if(result.localized.length == 0) {
+				result.localized.push({
+					fieldName: fieldName,
+					translations: data
+				})
+
+				
+
+			} 
+
+			if(result.localized.length > 0) {
+				result.localized.map((item) => {
+					if(item.fieldName == fieldName) {
+						item.translations = data;
+					}
+					return item;
+				})
+			
+				
+			}
+			const finalUpdate = await Product.updateOne(
+				{_id: id},
+				{$set: {localized:result.localized}}
+			  	);
+
+			return res.status(200).json({ success: true, result: finalUpdate  });
+		} catch(e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 }
 
 

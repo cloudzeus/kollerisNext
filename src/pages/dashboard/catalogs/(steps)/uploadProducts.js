@@ -67,7 +67,7 @@ const UploadProducts = () => {
 
     const onSelection = (e) => {
         setOnSelectKey(e.value)
-        dispatch(setSelectedPriceKey(e.value.key))
+        dispatch(setSelectedPriceKey(e.value?.key))
     }
 
 

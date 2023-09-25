@@ -266,18 +266,7 @@ function Product() {
         );
     };
 
-    const TranslateName = ({ _id, name, localized }) => {
-        return (
-            <TranslateField
-                url="/api/product/apiProduct"
-                id={_id}
-                value={name}
-                fieldName="Όνομα"
-                translations={localized[0]?.translations}
-                index={0}
-            />
-        )
-    }
+ 
 
 
     const hideDialog = () => {
@@ -437,6 +426,22 @@ function Product() {
     const onPage = (event) => {
         setlazyState(event);
     };
+
+    const TranslateDesc = ({DESCRIPTION, _id, localized}) => {
+        
+        return (
+            <TranslateField 
+                url="/api/product/apiProduct"
+                id={_id}
+                value={DESCRIPTION}
+                fieldName="description"
+                translations={localized && localized[0]?.translations}
+                index={0}
+                />
+            
+        )
+    }
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -471,16 +476,13 @@ function Product() {
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
             >
-                {/* body={TranslateName} */}
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="NAME" style={{ width: '400px' }} header="Όνομα" ></Column>
              
                 
-                {/* <Column field="categoryName" header="Εμπορική Κατηγορία" sortable filter  filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
-                <Column field="mtrgroups" header="Ομάδα" filter  filterElement={GroupRowFilterTemplate} showFilterMenu={false} ></Column>
-                <Column field="mtrsubgroup" header="Υποομάδα" filter showFilterMenu={false}  filterElement={SubGroupsRowFilterTemplate}></Column> */}
-                {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή" ></Column>}
+            
+                {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή"  ></Column>}
                 {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter  filterElement={CategoriesRowFilterTemplate}    showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}

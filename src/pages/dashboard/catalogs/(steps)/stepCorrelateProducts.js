@@ -73,6 +73,10 @@ const OurDatabaseKeys = [
         value: 'STOCK'
     },
     {
+        key: 'ΚΥΡΙΑ ΠΕΡΙΓΡΑΦΗ',
+        value: 'MAIN-DESCRIPTION'
+    },
+    {
         key: 'ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
         value: 'ENLISH-DESCRIPTION'
     },

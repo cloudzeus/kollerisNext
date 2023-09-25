@@ -74,6 +74,7 @@ const softoneProduct = new mongoose.Schema({
 
 
 const productSchema = new mongoose.Schema({
+    name: { type: String},
     localized: [{
         fieldName: String,
         translations: [
@@ -95,8 +96,6 @@ const productSchema = new mongoose.Schema({
         ref: 'Media'
     }],
     ventorUrl: { type: String, required: false },
-    // updatedFrom: String,
-    // softoneStatus: Boolean,
 
 },
 {
