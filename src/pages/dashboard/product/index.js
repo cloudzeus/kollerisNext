@@ -191,6 +191,8 @@ function Product() {
     
    
     const editProduct = async (product) => {
+        console.log('product')
+        console.log(product)
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -242,9 +244,7 @@ function Product() {
 
 
     const AddToCartTemplate = (rowData) => {
-        console.log('row data')
-        console.log(rowData)
-        console.log('handleclick')
+      
         return (
             <ProductActions
                 rowData={rowData}

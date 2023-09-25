@@ -5,8 +5,9 @@ import styled from 'styled-components'
 import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/ProductGridContext';
 
 const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
-  const { setActiveIndex, setVisible} = useContext(ProductQuantityContext)
+  const { setActiveIndex, setVisible,setSelectedProducts} = useContext(ProductQuantityContext)
   const handleChangeClass = () => {
+    setSelectedProducts([rowData])
     setVisible(true)
     setActiveIndex(1)
   }
