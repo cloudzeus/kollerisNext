@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         let softonefind;
         if(!categoryID && !groupID && !subgroupID && searchTerm == '') {
             totalRecords =  await SoftoneProduct.countDocuments();
-            softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit);
+            softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).populate('descriptions');
           
         }
 
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
             });
             softonefind = await SoftoneProduct.find({
                 MTRCATEGORY: categoryID
-            }).skip(skip).limit(limit).populate('product');
+            }).skip(skip).limit(limit).populate('descriptions');
         }
 
         if(categoryID && groupID) {
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
             softonefind = await SoftoneProduct.find({
                 MTRCATEGORY: categoryID,
                 MTRGROUP: groupID
-            }).skip(skip).limit(limit).populate('product');
+            }).skip(skip).limit(limit).populate('descriptions');
         }
 
         if(categoryID && groupID && subgroupID) {
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
                 MTRCATEGORY: categoryID,
                 MTRGROUP: groupID,
                 CCCSUBGOUP2: subgroupID
-            }).skip(skip).limit(limit).populate('product');
+            }).skip(skip).limit(limit).populate('descriptions');
         }
 
 
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
             });
             softonefind = await SoftoneProduct.find({
                 SOFTONESTATUS: softoneStatusFilter
-            }).skip(skip).limit(limit).populate('product');
+            }).skip(skip).limit(limit).populate('descriptions');
         } 
       
 
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
 
         if(searchTerm !== '') {
             totalRecords =  await SoftoneProduct.countDocuments({ NAME: regexSearchTerm});
-            softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm}).skip(skip).limit(limit).populate('product');
+            softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm}).skip(skip).limit(limit).populate('descriptions');
         }
 
 

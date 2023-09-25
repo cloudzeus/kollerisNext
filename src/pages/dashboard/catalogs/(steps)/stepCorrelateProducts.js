@@ -72,10 +72,7 @@ const OurDatabaseKeys = [
         key: 'STOCK',
         value: 'STOCK'
     },
-    {
-        key: 'ΚΥΡΙΑ ΠΕΡΙΓΡΑΦΗ',
-        value: 'MAIN-DESCRIPTION'
-    },
+  
     {
         key: 'ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
         value: 'ENLISH-DESCRIPTION'
@@ -89,17 +86,14 @@ const OurDatabaseKeys = [
         value: 'FRENCH-DESCRIPTION'
     },
     {
-        key: 'ΙΣΠΑΝΙΚΗ DESCRIPTION',
+        key: 'ΙΣΠΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
         value: 'SPANISH-DESCRIPTION'
     },
     {
-        key: 'ΙΤΑΛΙΚΗ DESCRIPTION',
+        key: 'ΙΤΑΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
         value: 'ITALIAN-DESCRIPTION'
     },
-    {
-        key: 'ΕΛΛΗΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'ITALIAN-DESCRIPTION'
-    },
+   
 
 ]
 

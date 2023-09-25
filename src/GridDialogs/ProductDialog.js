@@ -13,6 +13,7 @@ import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
 import { useSession } from "next-auth/react"
+import TranslateInput from '@/components/Forms/TranslateInpit';
 
 
 const addSchema = yup.object().shape({
@@ -26,57 +27,51 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     //This component has one Image only:
-
+    const [descriptions, setDescriptions] = useState(
+        {
+            de: '',
+            en: '',
+            es: '',
+            fr: '',
+        }
+    )
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
-
+    const handleGerman = async (value) => {
+        setDescriptions({ ...descriptions, de: value })
+    }
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
-    
 
 
-   
-   
+
+
+
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-        
-        let obj = {
-            ...data,
-            PRICER01: gridRowData.PRICER01[0],
-            PRICER02: gridRowData.PRICER02[0],
-            PRICER03: gridRowData.PRICER03[0],
-            PRICER04: gridRowData.PRICER04[0],
-            PRICER05: gridRowData.PRICER05[0],
-
-            PRICEW01: gridRowData.PRICEW01[0],
-            PRICEW02: gridRowData.PRICEW02[0],
-            PRICEW03: gridRowData.PRICEW03[0],
-            PRICEW04: gridRowData.PRICEW04[0],
-            PRICEW05: gridRowData.PRICEW05[0],
-            updatedFrom: user
-        }
-      
+        console.log(data)
+     
 
         try {
             let resp = await axios.post('/api/product/apiProduct', {
                 action: "update",
-                data: obj
+                data: data,
             })
-            if(!resp.data.success) return showError()
+            if (!resp.data.success) return showError()
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-               
+
         } catch (e) {
             console.log(e)
         }
-       
+
     }
 
     const showSuccess = (message) => {
@@ -106,96 +101,128 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Τροποποίηση Κατασκευαστή"
+                    header="Τροποποίηση Κατασκευαστή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                   <FormTitle>Λεπτομέριες</FormTitle>
-                   <Input
-                   label={"Όνομα"}
-                   name={'name'}
-                   control={control}
-                   required
-                //    error={errors.NAME}
-               />
-                                   <TextAreaInput
+                    <FormTitle>Λεπτομέριες</FormTitle>
+                    <Input
+                        label={"Όνομα"}
+                        name={'NAME'}
+                        control={control}
+                        required
+                    //    error={errors.NAME}
+                    />
+                    <TextAreaInput
                         autoResize={true}
-                        label={'Περιγραφή'}
-                        name={'description'}
+                        label={'Ελληνική Περιγραφή'}
+                        name={'DESCRIPTION'}
                         control={control}
                     />
-                   <Input
-                   label={'Κωδικός ΕΑΝ'}
-                   name={'CODE'}
-                   control={control}
-                   required
-                //    error={errors.NAME}
-               />
-                 
-                   <Input
-                   label={'Κωδικός εργοστασίου'}
-                   name={'CODE1'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Κωδικός 2'}
-                   name={'CODE2'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'VAT'}
-                   name={'VAT'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ'}
-                   name={'PRICER'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
-                   name={'PRICER01'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
-                   name={'PRICER02'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
-                   name={'PRICER03'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
-                   name={'PRICER04'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΛΙΑΝΙΚΗΣ 05'}
-                   name={'PRICER05'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Τιμή ΑΠΟΘΗΚΗΣ'}
-                   name={'PRICEW'}
-                   control={control}
-                   required
-               />
-              
+                    <Input
+                        label={'Κωδικός ΕΑΝ'}
+                        name={'CODE'}
+                        control={control}
+                        required
+                    //    error={errors.NAME}
+                    />
+
+                    <Input
+                        label={'Κωδικός εργοστασίου'}
+                        name={'CODE1'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Κωδικός 2'}
+                        name={'CODE2'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'VAT'}
+                        name={'VAT'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΛΙΑΝΙΚΗΣ'}
+                        name={'PRICER'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
+                        name={'PRICER01'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
+                        name={'PRICER02'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
+                        name={'PRICER03'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
+                        name={'PRICER04'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή ΑΠΟΘΗΚΗΣ'}
+                        name={'PRICEW'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Τιμή Scroutz'}
+                        name={'PRICE05'}
+                        control={control}
+                        required
+                    />
+                    <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
+                    <TranslateInput 
+                       label={'Περιγραφή Γερμανική'}
+                       name={'descriptions.de'}
+                       control={control}
+                       state={descriptions.de}
+                       setState={handleGerman}
+                       targetLang="GE"
+                    />
+                    <TranslateInput 
+                       label={'Περιγραφή Aγγλική'}
+                       name={'descriptions.en'}
+                       control={control}
+                       state={descriptions.en}
+                       setState={handleGerman}
+                       targetLang="EN"
+                    />
+                    <TranslateInput 
+                       label={'Περιγραφή Ισπανική'}
+                       name={'descriptions.es'}
+                       control={control}
+                       state={descriptions.es}
+                       setState={handleGerman}
+                       targetLang="ES"
+                    />
+                    <TranslateInput 
+                       label={'Περιγραφή Γαλλική'}
+                       name={'descriptions.fr'}
+                       control={control}
+                       state={descriptions.fr}
+                       setState={handleGerman}
+                       targetLang="FR"
+                    />
                 </Dialog>
             </form>
         </Container>
@@ -207,8 +234,27 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
+const AutoTranslateInput = ({control, label, name}) => {
+    console.log(control)
+    console.log(label)
+    console.log(name)
+    const handletranslate = async () => {
+        console.log('translate')
+        let resp = await axios.post('/api/deepL', {text: 'Καλημέρα', targetLang: 'EN'})
+    }
+    return (
+        <>  
+          <Input
+                        label={label}
+                        name={name}
+                        control={control}
+                        required
+                    />
+            <Button label="auto-tr" />
 
-
+        </>
+    )
+}
 
 
 

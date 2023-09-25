@@ -427,20 +427,6 @@ function Product() {
         setlazyState(event);
     };
 
-    const TranslateDesc = ({DESCRIPTION, _id, localized}) => {
-        
-        return (
-            <TranslateField 
-                url="/api/product/apiProduct"
-                id={_id}
-                value={DESCRIPTION}
-                fieldName="description"
-                translations={localized && localized[0]?.translations}
-                index={0}
-                />
-            
-        )
-    }
 
     return (
         <AdminLayout >
@@ -482,7 +468,6 @@ function Product() {
              
                 
             
-                {visibleColumns.some(column => column.id === 10) && <Column field="DESCRIPTION"  header="Περιγραφή"  ></Column>}
                 {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter  filterElement={CategoriesRowFilterTemplate}    showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
@@ -492,7 +477,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '120px' }}  body={softstatusTemplate} header="Softone Status" filter  filterElement={SoftoneStatusFilter}   ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
-                {visibleColumns.some(column => column.id === 11) && <Column field="impas.englishDescription" style={{ width: '400px' }} header="Impas" ></Column> }
+                {/* {visibleColumns.some(column => column.id === 11) && <Column field="impas.englishDescription" style={{ width: '400px' }} header="Impas" ></Column> } */}
                 <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
  : null }

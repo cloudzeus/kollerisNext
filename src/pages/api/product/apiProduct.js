@@ -4,7 +4,7 @@ import axios from "axios";
 import format from "date-fns/format";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
-import SoftoneProduct from "../../../../server/models/newProductModel"
+import SoftoneProduct, { Descriptions } from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
 
@@ -158,31 +158,7 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
-        console.log(data.updatedFrom)
-        let obj = {
-
-            MTRL: data.MTRL[0],
-            ISACTIVE: data.ISACTIVE[0],
-            NAME: data.name,
-            CODE: data.CODE[0],
-            CODE1: data.CODE1[0],
-            CODE2: data.CODE2[0],
-            MTRMANFCTR: data.MTRMANFCTR[0],
-            VAT: data.VAT[0],
-            PRICER: data.PRICER[0],
-            PRICEW: data.PRICEW[0],
-            PRICER01: data.PRICER01,
-            PRICER02: data.PRICER02,
-            PRICER03: data.PRICER03,
-            PRICER04: data.PRICER04,
-            PRICER05: data.PRICER05,
-            PRICEW01: data.PRICEW01,
-            PRICEW02: data.PRICEW02,
-            PRICEW03: data.PRICEW03,
-            PRICEW04: data.PRICEW04,
-            PRICEW05: data.PRICEW05,
-        }
-        console.log(obj)
+        console.log(data)
 
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         const response = await fetch(URL, {
@@ -194,31 +170,23 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-        // if(responseJSON.error) return res.status(400).json({ success: false, result: null });
+        if(responseJSON.error) return res.status(400).json({ success: false, result: null });
+        let updateSoftoneProduct = await SoftoneProduct.updateOne({ NAME: data.NAME }, {
+            $set: {
+                ...data
+            }
+        })
+        let updateDescriptions = await Descriptions.updateOne({ _id: data?.descriptions?._id }, {
+            $set: {
+                en: data?.descriptions?.en,
+                es: data?.descriptions?.es,
+                de: data?.descriptions?.de,
+                fr: data?.descriptions?.fr,
+            }
+        })
+        console.log(updateDescriptions)
+        return res.status(200).json({ success: true, result: updateSoftoneProduct });
 
-        try {
-            await connectMongo();
-
-
-
-            let result = await Product.updateOne({
-                description: data.description,
-                updatedFrom: data.updatedFrom
-            })
-
-
-            let result2 = await SoftoneProduct.updateOne({
-                ...obj
-            })
-
-            console.log('result')
-            console.log(result)
-            return res.status(200).json({ success: true, result: result, result2: result2 });
-
-
-        } catch (e) {
-            return res.status(400).json({ success: false, result: null });
-        }
     }
     if (action === "translate") {
         let data = req.body.data;

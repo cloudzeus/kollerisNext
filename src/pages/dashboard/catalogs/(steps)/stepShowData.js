@@ -67,7 +67,7 @@ const StepshowData = () => {
   const handleSubmit = async () => {
     console.log(showData)
     // let {data } = await axios.post('/api/product/apiProduct', {data: showData, action: 'importCSVProducts'})
-    let {data} = await axios.post('/api/insertProductFromFile', {data: [showData[0]], action: 'importCSVProducts'})
+    let {data} = await axios.post('/api/insertProductFromFile', {data: showData, action: 'importCSVProducts'})
 
   }
 

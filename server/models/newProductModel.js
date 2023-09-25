@@ -65,6 +65,10 @@ const softoneProduct = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'ImpaCodes'
     },
+    descriptions: {
+        type: Schema.Types.ObjectId,
+        ref: 'Descriptions'
+    }
 },
 
  
@@ -72,6 +76,17 @@ const softoneProduct = new mongoose.Schema({
     timestamps: true,
 });
 
+
+const descriptionSchema = new mongoose.Schema({
+    en: String,
+    de: String,
+    fr: String,
+    es: String,
+    gr: String,
+},
+{
+    timestamps: true,
+})
 
 const productSchema = new mongoose.Schema({
     name: { type: String},
@@ -112,11 +127,13 @@ softoneProduct.index({ NAME: "text" });
 
 
 const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)
+const Descriptions = models.Descriptions || model('Descriptions', descriptionSchema)
 SoftoneProduct.createIndexes();
 
 const Product = models.Product || model('Product', productSchema);
 
 export {
     Product,
+    Descriptions
 }
 export default SoftoneProduct;

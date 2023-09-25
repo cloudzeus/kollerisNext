@@ -8,7 +8,11 @@ const authKey = '01218e44-5bfd-365e-0a13-8a16c54724c0:fx';
 export default async function handler(req, res) {
 
     const { text, targetLang } = req.body;
-   
+
+    // let languages = await axios.post('https://api.deepl.com/v2/languages', {
+    //     auth_key: authKey,
+    // })
+    // console.log(languages.data)
     let lang = targetLang;
     if( targetLang === 'GB') {
         lang = 'en-GB'
