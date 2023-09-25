@@ -12,7 +12,7 @@ import SelectImpas from './SelectImpas';
 import Offer from './Offer';
 import WhareHouseActions from './WhareHouseActions';
 import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/ProductGridContext';
-
+import ManufctOrder from './ManufctOrder';
 
 
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
@@ -63,10 +63,8 @@ const RightSide = () => {
 
 //TOOLBAR LEFT SIDE:
 const LeftSide = () => {
-    const {selectedProducts, setSelectedProducts} = useContext(ProductQuantityContext)
-    const [visible, setVisible] = useState(false)
+    const {selectedProducts, setSelectedProducts, activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
     const [showMenu, setShowMenu] = useState(false)
-    const [activeIndex, setActiveIndex] = useState(0)
     const onMultipleActions = () => {
         setVisible(true)
     }
@@ -109,6 +107,7 @@ const LeftSide = () => {
                                     <MenuBtn label="Αλλαγή Impa" onClick={() => setActiveIndex(2)} />
                                     <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
                                     <MenuBtn label="Ποσοτική τροποποίηση αποθήκης" onClick={() => setActiveIndex(4)} />
+                                    <MenuBtn label="Παραγγελία σε προμηθευτή" onClick={() => setActiveIndex(5)} />
                                 </div>
                             </div>
                         ) : null}
@@ -120,6 +119,7 @@ const LeftSide = () => {
                         {activeIndex === 2 ? (<SelectImpas />) : null}
                         {activeIndex === 3 ? (<Offer />) : null}
                         {activeIndex === 4 ? (<WhareHouseActions/>) : null}
+                        {activeIndex === 5 ? (<ManufctOrder/>) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>

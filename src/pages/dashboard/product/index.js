@@ -24,6 +24,7 @@ import { Dropdown } from 'primereact/dropdown'
 import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
 import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
+import { set } from 'mongoose';
 
 
 
@@ -241,6 +242,9 @@ function Product() {
 
 
     const AddToCartTemplate = (rowData) => {
+        console.log('row data')
+        console.log(rowData)
+        console.log('handleclick')
         return (
             <ProductActions
                 rowData={rowData}
@@ -530,6 +534,31 @@ const ExpansionDetails = ({ data }) => {
                 </label>
                 <InputTextarea autoResize disabled value={data.description} />
             </div>
+            <div className="disabled-card">
+                <label>
+                    Γερμανική Περιγραφή
+                </label>
+                <InputTextarea autoResize disabled value={data.descriptions.de} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Αγγλική Περιγραφή
+                </label>
+                <InputTextarea autoResize disabled value={data.descriptions.de} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Γαλλική Περιγραφή
+                </label>
+                <InputTextarea autoResize disabled value={data.descriptions.de} />
+            </div>
+            <div className="disabled-card">
+                <label>
+                    Ισπανική Περιγραφή
+                </label>
+                <InputTextarea autoResize disabled value={data.descriptions.de} />
+            </div>
+            
             <div className="disabled-card">
                 <label>
                     Μάρκα

@@ -17,6 +17,7 @@ const WhareHouseActions = () => {
         exportWarehouse,
         diathesimotita,
         setSubmitted,
+        setDiathesimotita,
     } = useContext(ProductQuantityContext)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)

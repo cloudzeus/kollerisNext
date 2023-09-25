@@ -176,6 +176,7 @@ export default async function handler(req, res) {
                 ...data
             }
         })
+        
         let updateDescriptions = await Descriptions.updateOne({ _id: data?.descriptions?._id }, {
             $set: {
                 en: data?.descriptions?.en,

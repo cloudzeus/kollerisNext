@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState, createContext, useContext } from 'r
 export const ProductQuantityContext = createContext();
 export const ProductQuantityProvider = ({ children }) => {
     const [submitted, setSubmitted] = useState(false)
+    const [visible, setVisible] = useState(false)
+
     const [selectedProducts, setSelectedProducts] = useState(null)
     const [quantityContext, setQuantityContext] = useState(1);
     const [mtrlines, setMtrLines] = useState([])
@@ -10,6 +12,8 @@ export const ProductQuantityProvider = ({ children }) => {
     const [importWarehouse, setImportWarehouse] = useState(null)
     const [diathesima, setDiathesima]   = useState(null)
     const [diathesimotita, setDiathesimotita] = useState(null)
+    const [activeIndex, setActiveIndex] = useState(0)
+
     const [attribute, setAttribute] = useState([
         {attributes: []}
     ])
@@ -25,8 +29,10 @@ export const ProductQuantityProvider = ({ children }) => {
             exportWarehouse, setExportWarehouse,
             importWarehouse, setImportWarehouse,
             attribute, setAttribute,
-            diathesima, setDiathesima
-           
+            diathesima, setDiathesima,
+            diathesimotita, setDiathesimotita,
+            activeIndex, setActiveIndex,
+            visible, setVisible
         }}>
             {children}
         </ProductQuantityContext.Provider>
