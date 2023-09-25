@@ -7,10 +7,6 @@ const clientsSchema= new mongoose.Schema({
         type: String,
         require: true
     },
-    BALANCE: {
-        type: String,
-        require: true
-    },
     CODE: {
         type: String,
         require: true
@@ -19,6 +15,9 @@ const clientsSchema= new mongoose.Schema({
     NAME: {
         type: String,
         require: true
+    },
+    jobtypetrd: {
+        type: String,
     },
     AFM: {
         type: String,
@@ -36,6 +35,9 @@ const clientsSchema= new mongoose.Schema({
         type: String,
         require: true
     },
+    DIASCODE: {
+        type: String
+    },
     ADDRESS: {
         type: String,
         require: true
@@ -45,6 +47,18 @@ const clientsSchema= new mongoose.Schema({
         require: true
     },
     PHONE01: {
+        type: String,
+    },
+    PHONE02: {
+        type: String,
+    },
+    FAX: {
+        type: String,
+    },
+    TRDGROUP: {
+        type: String,
+    },
+    TRDGROUP_NAME: {
         type: String,
     },
     CMPMODE: {

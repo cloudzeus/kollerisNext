@@ -42,9 +42,9 @@ export default async function handler(req, res) {
             body: JSON.stringify({
                 username: "Service",
                 password: "Service",
+                sodtype: 13,
             })
         });
-        console.log('response')
         let buffer = await translateData(response)
 
         try {
@@ -93,41 +93,38 @@ export default async function handler(req, res) {
 
     if(action === 'search') {
         let {searchTerm, skip, limit} = req.body;
+        let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+        console.log(searchTerm)
 
-        console.log('searchTerm ' + searchTerm)
-        console.log('skip ' + skip)
-        console.log('limit ' + limit)
-
+        console.log('skip')
+        console.log(skip)
+        console.log('limit')
+        console.log(limit)
         try {
             await connectMongo();
-            const totalRecords = await Clients.countDocuments({})
+            let clients;
+            let totalRecords;
             if(searchTerm === '') {
-                
-                const clients = await Clients.find({})
+                totalRecords = await Clients.countDocuments({})
+               
+                clients = await Clients.find({})
                 .skip(skip)
                 .limit(limit);
-                return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-            } else {
-
-                const clients = await Clients.find({
-                    $text: {
-                        $search: searchTerm
-                    }
-                }).skip(skip).limit(limit);
-               
-                const clientsTotal = await Clients.find({
-                    $text: {
-                        $search: searchTerm
-                    }
-                })
-
-                let totalRecords = clientsTotal.length;
-               
-              
-                return res.status(200).json({ success: true, result: clients , totalRecords: totalRecords })
+            } 
+            if(searchTerm !== '') {
+                clients = await Clients.find({
+                    NAME: regexSearchTerm
+                 });
+                
+                 totalRecords = await Clients.countDocuments({
+                    NAME: regexSearchTerm
+                 }).skip(skip).limit(limit);
             }
 
+            console.log('total')
+            console.log(totalRecords)
 
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
 
 
         } catch (e) {

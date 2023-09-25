@@ -14,10 +14,8 @@ const Offer = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [lazyState, setlazyState] = useState({
         first: 0,
-        rows: 10,
-        page: 1,
-        sortField: null,
-        sortOrder: null,
+        rows: 4,
+      
 
     });
     const [selectedClient, setSelectedClient] = useState(null)
@@ -46,7 +44,7 @@ const Offer = () => {
         let handleSearch = async () => {
             setLoading(true)
             let res = await axios.post('/api/clients/apiClients', { action: 'search', searchTerm: searchTerm, skip: lazyState.first, limit: lazyState.rows })
-
+            console.log(res.data)
             setFilteredData(res.data.result)
             setTotalRecords(res.data.totalRecords)
             setLoading(false)
