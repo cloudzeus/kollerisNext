@@ -257,25 +257,32 @@ export default async function handler(req, res) {
     }
 
     if (action === 'updateClass') {
-        let { categoryid, groupid, subgroupid, gridData } = req.body;
-
+        let { categoryid, groupid, subgroupid, gridData, categoryName , groupName, subGroupName  } = req.body;
+        console.log('------------------------------------ gridData')
+        console.log('------------------------------------ gridData')
+        console.log('------------------------------------ gridData')
+        console.log(gridData)
         //All products that will change classes
         //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
 
         //MTRL = ID -> TO FIND THE PRODUCT IN THE DATABASE AND UPDATE THEM
         let OBJ = {
             MTRGROUP: groupid,
+            GROUP_NAME: groupName,
             MTRCATEGORY: categoryid,
+            CATEGORY_NAME: categoryName,
             CCCSUBGOUP2: subgroupid,
+            SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
+        console.log(OBJ )
 
         await connectMongo()
 
 
 
         async function updateMongo(item) {
-            let MTRLID = item.MTRL[0];
+            let MTRLID = item.MTRL;
             let result = await SoftoneProduct.updateOne({
                 MTRL: MTRLID
             }, {
@@ -295,8 +302,7 @@ export default async function handler(req, res) {
             let results = [];
             if (gridData) {
                 for (let item of gridData) {
-                    // let sonftoneresult = await updateSoftone(item)
-                    // results.push(sonftoneresult)
+                   
 
                     let mongoresult = await updateMongo(item)
                     results.push(mongoresult)
@@ -304,8 +310,10 @@ export default async function handler(req, res) {
 
 
                 }
-                return res.status(200).json({ success: true, result: results });
             }
+            console.log(results)
+            return res.status(200).json({ success: true, result: results });
+
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }

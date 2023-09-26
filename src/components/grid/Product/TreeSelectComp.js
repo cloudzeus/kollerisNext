@@ -39,7 +39,6 @@ const TreeSelectComp = () => {
                 subgroups={subgroups}
                 subgroup={subgroup}
                 setSubgroup={setSubgroup}
-                setSubmitted={ setSubmitted}
             />
         </div>
     )
@@ -58,9 +57,8 @@ const TreeSelectDropDown = ({
     category,
     group,
     subgroup,
-    setSubmitted
 }) => {
-    const {selectedProducts} = useContext(ProductQuantityContext)
+    const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
 
     const [data, setData] = useState(null);
     const toast = useRef(null);
@@ -73,7 +71,6 @@ const TreeSelectDropDown = ({
         toast.current.show({severity:'error', detail:`Aποτυχία Ενημέρωσης MTRL : ${MTRL}`, life: 3000});
     }
     const handleFetch = async () => {
-
         //FETCH CATEGORIES AND BUILD SUBGROUPS AND MTRGROUPS
         let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
         setData(res.data.result)
@@ -145,6 +142,7 @@ const TreeSelectDropDown = ({
     }
 
     const onSubmit = async () => {
+        setSubmitted(false)
         let res = await axios.post('/api/product/apiProduct', { 
             action: 'updateClass', 
             gridData: selectedProducts, 
@@ -155,7 +153,6 @@ const TreeSelectDropDown = ({
             subgroupid:subgroup?.subgroupId,
             subGroupName: subgroup?.name
         })
-
             if(!res.data.success) {
                 res.data.result.map((item) => {
                     showError(item.MTRLID)
@@ -166,6 +163,7 @@ const TreeSelectDropDown = ({
                 setSubmitted(true)
 
             })
+          
     }
 
    

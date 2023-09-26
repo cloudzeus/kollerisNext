@@ -216,7 +216,7 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
         setQuantity(prev => prev + 1)
         setMtrLines(prev => {
             return prev.map(item => {
-                if (item.MTRL === MTRL[0]) {
+                if (item.MTRL === MTRL) {
                     return { ...item, QTY1: item.QTY1 + 1 };
                 }
                 return item;
@@ -228,10 +228,10 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
     useEffect(() => {
         setMtrLines(prev => {
          
-            if (prev.some(item => item.MTRL === MTRL[0])) {
+            if (prev.some(item => item.MTRL === MTRL)) {
                 return prev; 
             }
-            return [...prev, { MTRL: MTRL[0], QTY1: 1}];
+            return [...prev, { MTRL: mtrlines, QTY1: 1}];
         });
     }, [quantity, MTRL, setMtrLines])
 
@@ -242,7 +242,7 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
         setQuantity(prev => prev - 1)
         setMtrLines(prev => {
             return prev.map(item => {
-                if (item.MTRL === MTRL[0]) {
+                if (item.MTRL === MTRL) {
                     return { ...item, QTY1: item.QTY1 - 1 };
                 }
                 return item;
