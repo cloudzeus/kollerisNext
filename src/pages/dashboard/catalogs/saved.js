@@ -33,16 +33,18 @@ const readCSV = async (filenameArr) => {
 
 const Saved = () => {
     const [catalogs, setCatalogs] = useState([])
-
-
+    const [submitted, setSubmitted] = useState(false)
+    const [loading, setLoading] = useState(false)
     const handleFetch = async () => {
+        setLoading(true)
         let { data } = await axios.post('/api/saveCatalog', { action: 'findAll' })
         setCatalogs(data.result)
+        setLoading(false)
     }
 
     useEffect(() => {
         handleFetch()
-    }, [])
+    }, [submitted])
 
 
 
@@ -52,13 +54,13 @@ const Saved = () => {
         <AdminLayout>
             <div>
                 <DataTable
-
+                    loading={loading}
                     paginator
                     rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
                     value={catalogs}
                     tableStyle={{ minWidth: '50rem' }}>
-                    <Column header="this" field="url" />
-                    <Column body={ActionTemplate} style={{ textAlign: 'end' }} />
+                    <Column header="Τιμοκατάλογοι" field="url" />
+                    <Column body={({url}) => <ActionTemplate url={url} setSubmitted={setSubmitted} />} style={{ textAlign: 'end' }} />
                 </DataTable>
             </div>
         </AdminLayout>
@@ -66,7 +68,7 @@ const Saved = () => {
 }
 
 
-const ActionTemplate = ({ url }) => {
+const ActionTemplate = ({ url, setSubmitted}) => {
     const [savedfile, setSavedFile] = useState('')
 
 
@@ -82,7 +84,6 @@ const ActionTemplate = ({ url }) => {
             reader.onload = function (event) {
                 const binary = event.target.result;
                 const workbook = xlsx.read(binary, { type: 'binary' });
-
                 const sheetNameList = workbook.SheetNames;
                 const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
                 console.log(data)
@@ -117,10 +118,17 @@ const ActionTemplate = ({ url }) => {
             console.error("Error reading the file:", error);
         }
     };
+
+    const onDelete = async () => {
+        console.log(url)
+        let {data} = await axios.post('/api/saveCatalog', {url: url, action: 'delete'})
+        setSubmitted(true)
+        
+    }
     return (
         <div>
             <Button icon="pi pi-download" className="p-button-warning" onClick={download} />
-            {/* <Button icon="pi pi-info" className="p-button-primary ml-3" onClick={readCSV} /> */}
+            <Button icon="pi  pi-trash" text className="p-button-danger" onClick={onDelete}  />
         </div>
     )
 }

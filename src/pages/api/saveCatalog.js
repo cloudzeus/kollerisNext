@@ -29,6 +29,21 @@ export default async function handler(req, res) {
             return res.status(500).json({result: null, error: "catalog not saved in the database" });
         }
     }
+
+    if(action === 'delete') {
+        let {url} = req.body
+        console.log(url)
+        
+        try {
+            let deleteCatalog = await Catalogs.deleteOne({url: url})
+            console.log('delete')
+            console.log(deleteCatalog)
+            return res.status(200).json({result: deleteCatalog, error: null });
+        } catch (e) {
+            return res.status(500).json({result: null, error: "catalog not deleted" });
+
+        }
+    }
    
 
     
