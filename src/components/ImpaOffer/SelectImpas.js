@@ -1,24 +1,17 @@
 import React, { lazy } from 'react'
-import { Dropdown } from 'primereact/dropdown';
 import { useState, useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dialog } from 'primereact/dialog';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
-import { Toast } from 'primereact/toast';
-import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedImpa } from '@/features/impaofferSlice';
 
 const SelectImpa = () => {
-
+    const dispatch = useDispatch();
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [selectedImpa, setSelectedImpa] = useState(null)
+    const {selectedImpa} = useSelector(state => state.impaoffer)
     const [searchTerm, setSearchTerm] = useState({
         code: '',
         english: '',
@@ -54,18 +47,7 @@ const SelectImpa = () => {
 
 
 
-    const renderHeader = () => {
-        return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    {/* <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Αναζήτηση" /> */}
-                </span>
-            </div>
-        );
-    };
-
-    const header = renderHeader();
+ 
 
 
 
@@ -111,6 +93,23 @@ const SelectImpa = () => {
         )
     }
 
+    const renderHeader = () => {
+        return (
+            <div className="flex lg:no-wrap  sm:flex-wrap">
+                <div className="">
+                    <span className="p-input-icon-left mr-3 sm:w-full">
+                        <i className="pi pi-search" />
+                        <InputText  type="search" placeholder="Αναζήτηση" />
+                    </span>
+                </div>
+              
+            </div>
+
+        );
+    };
+  
+
+    const header = renderHeader();
     return (
         <div >
 
@@ -118,7 +117,6 @@ const SelectImpa = () => {
                 first={lazyState.first}
                 lazy
                 onPage={onPage}
-                globalFilterFields={['code', 'englishDescription']}
                 loading={loading}
                 value={data}
                 selectionMode="single"
@@ -127,10 +125,12 @@ const SelectImpa = () => {
                 rows={lazyState.rows}
                 rowsPerPageOptions={[10, 20, 30]}
                 selection={selectedImpa}
-                onSelectionChange={(e) => setSelectedImpa(e.value)}
+                onSelectionChange={(e) => dispatch(setSelectedImpa(e.value))}
                 className='w-full'
                 filterDisplay="row"
-            >
+                
+            >   
+                <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
                 <Column field="code" header="Code"  style={{ minWidth: '12rem' }}  filter filterElement={searchCode} showFilterMenu={false}/>
                 <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
                 <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false}/>

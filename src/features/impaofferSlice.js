@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    gridData: [],
-	newData: [],
-	headers: [],
+	selectedImpa: null
 	
 }
 
@@ -13,8 +11,8 @@ const impaofferSlice = createSlice({
 	name: 'catalog',
 	initialState,
 	reducers: {
-		setGridData: (state, {payload}) => {
-			state.gridData = payload;
+		setSelectedImpa: (state, {payload}) => {
+			state.selectedImpa = payload;
 		},
 	
 		
@@ -24,8 +22,7 @@ const impaofferSlice = createSlice({
 
 
 export const {	
-	setGridData,   
-	setSelectedHeaders, 
+	setSelectedImpa
 	
 } = impaofferSlice.actions;
 

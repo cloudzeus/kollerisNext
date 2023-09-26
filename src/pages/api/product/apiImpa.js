@@ -103,21 +103,15 @@ export default async function handler(req, res) {
     if(action === "searchGreekImpa") {
         let {skip, limit, searchTerm} = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm.greek, 'i');
-        console.log(searchTerm)
         const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm});
         const impas  = await ImpaCodes.find({ greekDescription: regexSearchTerm}).skip(skip).limit(limit);
-        console.log('impas')
-        console.log(impas)
         return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
     }
     if(action === "searchEng") {
         let {skip, limit, searchTerm} = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm.english, 'i');
-        console.log(searchTerm)
         const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm});
         const impas  = await ImpaCodes.find({ englishDescription: regexSearchTerm}).skip(skip).limit(limit);
-        console.log('impas')
-        console.log(impas)
         return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
     }
     if(action === "searchCode") {
@@ -125,8 +119,20 @@ export default async function handler(req, res) {
         let regexSearchTerm = new RegExp("^" + searchTerm.code, 'i');
         const totalRecords = await ImpaCodes.countDocuments({code: regexSearchTerm});
         const impas  = await ImpaCodes.find({ code: regexSearchTerm}).skip(skip).limit(limit);
-        console.log('impas')
-        console.log(impas)
         return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
     }
+
+    if(action === "findImpaProducts") {
+        let {code } = req.body
+        try {
+            await connectMongo();
+            const impas = await ImpaCodes.find({code: code}).populate('products');
+            let products = impas[0].products
+            return res.status(200).json({success: true, result: products})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+         
+    }
+
 }
