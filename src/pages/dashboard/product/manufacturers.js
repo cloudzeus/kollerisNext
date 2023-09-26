@@ -43,16 +43,11 @@ export default function Manufacturers() {
     }
 
 
-    useEffect(() => {
-        handleFetch()
-    }, [])
-
 
 
     //Refetch on add edit:
     useEffect(() => {
-        console.log('submitted: ' + submitted)
-        if (submitted) handleFetch()
+        handleFetch()
     }, [submitted])
 
 
@@ -111,9 +106,9 @@ export default function Manufacturers() {
     //Edit:
     const editProduct = async (product) => {
         // console.log('edit product: ' + JSON.stringify(product))
-        setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
+        setSubmitted(true);
     };
 
     //Add product
@@ -180,7 +175,7 @@ export default function Manufacturers() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="softOne.NAME" header="Kατασκευαστής" sortable></Column>
+                <Column field="NAME" header="Kατασκευαστής" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
                 {/* <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column> */}

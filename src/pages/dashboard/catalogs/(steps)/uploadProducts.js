@@ -44,7 +44,7 @@ const UploadProducts = () => {
             body: formData,
         });
 
-        // let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
+        let savedatabasefile = await axios.post('/api/saveCatalog', {url: name, action: 'insert'})
         setLoading(false)
     }
 

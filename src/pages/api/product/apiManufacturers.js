@@ -12,9 +12,6 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const items = await Manufacturers.find({})
-
-
-
             return res.status(200).json({ success: true, result: items });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -54,8 +51,9 @@ export default async function handler(req, res) {
     }
 
     if (action === 'update') {
-
+        console.log('update')
         const { NAME, MTRMANFCTR, id, updatedFrom } = req.body;
+        console.log( NAME, MTRMANFCTR, id, updatedFrom )
 
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrManufacture/updateMtrManufacture`;
@@ -78,11 +76,13 @@ export default async function handler(req, res) {
             }
 
             console.log(obj)
-            const updatedManufacturers = await Manufacturers.findOneAndUpdate(
+            const updatedManufacturers = await Manufacturers.updateOne(
                 { _id: id },
-                obj,
-                { new: true }
+                {$set: {
+                    NAME: NAME
+                }}
             );
+            console.log('updated manufacturers')
             console.log(updatedManufacturers)
             return res.status(200).json({ success: true, result: updatedManufacturers, error: null });
 
@@ -122,18 +122,12 @@ export default async function handler(req, res) {
                 })
             });
 
-    
+            
          
             let buffer = await translateData(response)
-            const transformedArray = buffer.result.map(obj => ({ 
-                softOne: obj, 
-                status: true,
-            }));
-
-           
+            console.log(buffer.result)
            await connectMongo();
-            let insert = await Manufacturers.insertMany(transformedArray)
-
+            let insert = await Manufacturers.insertMany(buffer.result)
 
             return res.status(200).json({ success: true, result: insert  });
         } catch (e) {

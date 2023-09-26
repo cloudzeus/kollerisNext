@@ -49,6 +49,20 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === 'findImpaBatch') {
+        let {skip, limit} = req.body;
+        console.log('skip', skip, 'limit', limit)
+        try {
+            await connectMongo();
+            let totalRecords;
+            totalRecords = await ImpaCodes.countDocuments();
+            const impas = await ImpaCodes.find({}).skip(skip).limit(limit);
+            return res.status(200).json({success: true, result: impas, totalRecords})
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     if(action === 'correlateImpa') {
         let {dataToUpdate, id} = req.body
      
@@ -84,5 +98,35 @@ export default async function handler(req, res) {
         }catch (e) {
           return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
         }
+    }
+
+    if(action === "searchGreekImpa") {
+        let {skip, limit, searchTerm} = req.body;
+        let regexSearchTerm = new RegExp("^" + searchTerm.greek, 'i');
+        console.log(searchTerm)
+        const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm});
+        const impas  = await ImpaCodes.find({ greekDescription: regexSearchTerm}).skip(skip).limit(limit);
+        console.log('impas')
+        console.log(impas)
+        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
+    }
+    if(action === "searchEng") {
+        let {skip, limit, searchTerm} = req.body;
+        let regexSearchTerm = new RegExp("^" + searchTerm.english, 'i');
+        console.log(searchTerm)
+        const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm});
+        const impas  = await ImpaCodes.find({ englishDescription: regexSearchTerm}).skip(skip).limit(limit);
+        console.log('impas')
+        console.log(impas)
+        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
+    }
+    if(action === "searchCode") {
+        let {skip, limit, searchTerm} = req.body;
+        let regexSearchTerm = new RegExp("^" + searchTerm.code, 'i');
+        const totalRecords = await ImpaCodes.countDocuments({code: regexSearchTerm});
+        const impas  = await ImpaCodes.find({ code: regexSearchTerm}).skip(skip).limit(limit);
+        console.log('impas')
+        console.log(impas)
+        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
     }
 }

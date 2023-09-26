@@ -49,10 +49,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
         console.log(user)
+        console.log(gridRowData)
         const object = {
             action: "update", 
-            NAME: data.softOne.NAME,
-            MTRMANFCTR: gridRowData.softOne.MTRMANFCTR,
+            NAME: data.NAME,
+            MTRMANFCTR: gridRowData.MTRMANFCTR,
             id: gridRowData._id, 
             updatedFrom: user
         }
@@ -108,7 +109,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
               
                    <Input
                    label={'Όνομα Kατασκευαστή'}
-                   name={'softOne.NAME'}
+                   name={'NAME'}
                    control={control}
                    required
                    error={errors.NAME}

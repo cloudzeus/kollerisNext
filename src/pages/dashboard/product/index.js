@@ -25,6 +25,8 @@ import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/Prod
 import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
 import { set } from 'mongoose';
+import { Button } from 'primereact/button';
+import Link from 'next/link';
 
 
 
@@ -435,6 +437,13 @@ function Product() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <div className='bg-white p-3 border-round mb-3 flex'>
+            <Link href="/dashboard/offers/impaOffers">
+            <Button label="Προσφορά πολλαπλών επιλογών" className='mr-2'  />
+
+            </Link>
+
+            </div>
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}

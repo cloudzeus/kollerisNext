@@ -17,8 +17,8 @@ const Impas = () => {
         return rowData
 
     };
-   
-      
+
+
     const handleAddImpas = async () => {
         const chunkSize = 100;
         let arrayOfChunks = [];
@@ -27,43 +27,43 @@ const Impas = () => {
             let slice = data.slice(i, i + chunkSize);
             arrayOfChunks = slice
 
-        await axios.post('/api/product/apiImpa', { action: 'insert', data: arrayOfChunks })
+            await axios.post('/api/product/apiImpa', { action: 'insert', data: arrayOfChunks })
         }
-        
-}
+
+    }
 
 
     const handleFetch = async () => {
-        const res = await axios.post('/api/product/apiImpa', {action: 'findAll'})
+        const res = await axios.post('/api/product/apiImpa', { action: 'findAll' })
         setShowData(res.data.data)
     }
 
-  
+
     useEffect(() => {
         handleFetch()
     }, [])
 
     const rowExpansionTemplate = (props) => {
         return (
-            <ExpandedDataTable products={props.products}/>
+            <ExpandedDataTable products={props.products} />
         )
     }
-  
+
     return (
         <AdminLayout>
-            <DataTable 
+            <DataTable
                 loading={showData.length == 0 ? true : false}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={rowExpansionTemplate}
                 paginator rows={10} rowsPerPageOptions={[20, 50, 100, 200]}
-                value={showData} 
+                value={showData}
                 tableStyle={{ minWidth: '50rem' }}>
-                    <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                    <Column field="code" header="code"></Column>
-                    <Column field="englishDescription" header="Code"></Column>
-                    <Column field="greekDescription" header="Code"></Column>
-                    <Column field="unit" header="Unit"></Column>
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                <Column field="code" header="code"></Column>
+                <Column field="englishDescription" header="Code"></Column>
+                <Column field="greekDescription" header="Code"></Column>
+                <Column field="unit" header="Unit"></Column>
             </DataTable>
             {/* <input type="file" onChange={handleFileUpload} />
             {data ? ( 
@@ -83,14 +83,14 @@ const Impas = () => {
 
 
 
-const ExpandedDataTable = ({products}) => {
+const ExpandedDataTable = ({ products }) => {
     console.log(products)
     return (
         <div className="p-4">
             <p className="font-semibold mb-3 ">Προϊόντα συσχετισμένα με impa:</p>
             <DataTable dataKey="_id" value={products}>
                 <Column field="NAME" header="Προϊόν"></Column>
-        </DataTable>
+            </DataTable>
         </div>
     )
 }

@@ -7,8 +7,8 @@ import styled from 'styled-components';
 const GridActions = ({ rowData, onEdit, onDelete }) => {
     return (
         <ActionDiv>
-            <Button disabled={!rowData.status} style={{ width: '35px', height: '35px' }} icon="pi pi-pencil" onClick={() => onEdit(rowData)} />
-            <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
+            <Button  style={{ width: '35px', height: '35px' }} icon="pi pi-pencil" onClick={() => onEdit(rowData)} />
+            {/* <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} /> */}
         </ActionDiv>
     )
 }
