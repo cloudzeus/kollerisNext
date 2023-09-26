@@ -31,9 +31,8 @@ export default async function handler(req, res) {
     if(action === 'findAll') {
         try {
             await connectMongo();
-            const impas = await ImpaCodes.find({})
-            .populate('products', 'name');
-            console.log(impas)
+            const impas = await ImpaCodes.find({}).populate('products', "NAME");
+            console.log(impas[0])
             res.status(200).json({success: true, data: impas})
         } catch (e) {
             console.log(e)
