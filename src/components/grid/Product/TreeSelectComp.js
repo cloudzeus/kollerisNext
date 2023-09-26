@@ -63,12 +63,12 @@ const TreeSelectDropDown = ({
     const [data, setData] = useState(null);
     const toast = useRef(null);
 
-    const showSuccess = (MTRL) => {
-        toast.current.show({severity:'success', detail:`Επιτυχής Ενημέρωση MTRL : ${MTRL}`, life: 3000});
+    const showSuccess = (name) => {
+        toast.current.show({severity:'success', detail:`Επιτυχής Ενημέρωση MTRL : ${name}`, life: 3000});
     }
 
-    const showError = (MTRL) => {
-        toast.current.show({severity:'error', detail:`Aποτυχία Ενημέρωσης MTRL : ${MTRL}`, life: 3000});
+    const showError = (name, message) => {
+        toast.current.show({severity:'error', detail:`Aποτυχία Ενημέρωσης MTRL : ${name} // ${message}`, life: 3000});
     }
     const handleFetch = async () => {
         //FETCH CATEGORIES AND BUILD SUBGROUPS AND MTRGROUPS
@@ -155,11 +155,17 @@ const TreeSelectDropDown = ({
         })
             if(!res.data.success) {
                 res.data.result.map((item) => {
-                    showError(item.MTRLID)
+                    showError(item?.name)
                 })
             }
+
             res.data.result.map((item) => {
-                showSuccess(item.MTRLID)
+                if(item.mtrl && item.updated) {
+                    showSuccess(item?.name)
+                } else {
+                    showError(item?.name, 'ΤΟ ΠΡΟΪΟΝ ΔΕΝ ΕΧΕΙ MTRL. ΠΡΟΣΘΕΣΤΕ ΤΟ ΣΤΟ SOFTONE')
+                }
+              
                 setSubmitted(true)
 
             })

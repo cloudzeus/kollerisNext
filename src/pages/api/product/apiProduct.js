@@ -258,10 +258,11 @@ export default async function handler(req, res) {
 
     if (action === 'updateClass') {
         let { categoryid, groupid, subgroupid, gridData, categoryName , groupName, subGroupName  } = req.body;
-        console.log('------------------------------------ gridData')
-        console.log('------------------------------------ gridData')
-        console.log('------------------------------------ gridData')
-        console.log(gridData)
+        // console.log('------------------------------------ gridData')
+        // console.log('------------------------------------ gridData')
+        // console.log('------------------------------------ gridData')
+        // console.log(gridData)
+        
         //All products that will change classes
         //Από εργαλεία χειρός θα ανήκει σε Ηλεκτρικά εργαλεία πχ
 
@@ -280,39 +281,57 @@ export default async function handler(req, res) {
         await connectMongo()
 
 
+        
 
-        async function updateMongo(item) {
-            let MTRLID = item.MTRL;
-            let result = await SoftoneProduct.updateOne({
-                MTRL: MTRLID
-            }, {
-                ...OBJ
-            })
-
-            if (result.modifiedCount > 0) {
-                return { MTRLID: MTRLID, updated: true }
-            }
-            if (result.modifiedCount < 1) {
-                return { MTRLID: MTRLID, updated: false }
-            }
-
+        async function updateSoft(item) {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlCat`;
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    MTRL: item.MTRL,
+                    MTRCATEGORY: categoryid,
+                    MTRGROUP: groupid,
+                    CCCSUBGOUP2: subgroupid,
+                    CCCSUBGROUP3:""   
+                })
+            });
+           
+            let respJSON = await response.json()
+            console.log(respJSON)
+            return respJSON ;
         }
 
         try {
             let results = [];
             if (gridData) {
                 for (let item of gridData) {
+                    if(!item.hasOwnProperty('MTRL')) {
+                       results.push({name: item?.NAME, updated: false, mtrl: false  }) 
+                    }
+                    let MTRLID = item.MTRL;
+                    let result = await SoftoneProduct.updateOne({
+                        MTRL: MTRLID
+                    }, {
+                        ...OBJ
+                    })
+        
+                    if (result.modifiedCount > 0  && item.hasOwnProperty('MTRL')) {
+                       results.push({ name: item.NAME, updated: true, mtrl: true  }) 
+                    }
+                    if (result.modifiedCount < 1) {
+                       results.push({ MTRLID: MTRLID, updated: false, mtrl: true })
+                    }
                    
-
-                    let mongoresult = await updateMongo(item)
-                    results.push(mongoresult)
+                    updateSoft(item)
 
 
 
                 }
             }
-            console.log(results)
-            return res.status(200).json({ success: true, result: results });
+            // console.log(results)
+            return res.status(200).json({ success: true, result: results});
 
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -323,7 +342,7 @@ export default async function handler(req, res) {
 
     if (action === 'intervalInventory') {
         console.log('interval')
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/mtrlInventory`;
+        let missingMTRLKEY = []
         const response = await fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
