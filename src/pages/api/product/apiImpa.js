@@ -135,4 +135,15 @@ export default async function handler(req, res) {
          
     }
 
+    if(action === 'findProducts') {
+        let {skip, limit} = req.body;
+        try {
+            await connectMongo();
+            const products = await SoftoneProduct.find({}).skip(skip).limit(limit);
+            return res.status(200).json({success: true, result: products})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
 }
