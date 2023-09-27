@@ -6,7 +6,6 @@ import axios from 'axios';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import SelectImpa from '@/components/ImpaOffer/SelectImpas';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
 import { setSelectedImpa, setSelectedProducts } from '@/features/impaofferSlice';

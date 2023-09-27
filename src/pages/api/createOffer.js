@@ -84,4 +84,14 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "relateProducts") {
+        let { products, impa} = req.body;
+        console.log(products, impa)
+        try {
+            return res.status(200).json({success: true, result: null})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
 }

@@ -1,27 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { PickList } from 'primereact/picklist';
-import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import SelectImpa from '@/components/ImpaOffer/SelectImpas';
-import { InputText } from 'primereact/inputtext';
-import { setSelectedImpa, setSelectedProducts } from '@/features/impaofferSlice';
-import { Badge } from 'primereact/badge';
-import { Dropdown } from 'primereact/dropdown';
 import { Toolbar } from 'primereact/toolbar';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedClient } from '@/features/impaofferSlice';
+import StepHeader from './StepHeader';
 
 
-const endContent = (
-    <div className='mr-5'>
-        <p className='font-bold text-lg'>ΟΝΟΜΑ ΠΕΛΑΤΗ:</p>
-        <p>Καραμιτσιος</p>
-    </div>
-)
 
 
 const ChooseCustomer = () => {
@@ -56,13 +44,10 @@ const ChooseCustomer = () => {
         fetchClients();
     }, [lazyState.rows, lazyState.first])
 
-    const startContent = (
-        <div className='w-full flex justify-content-between '>
-            <Button label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
-        </div>
-    );
+ 
     const onSelectionChange = (e) => {
         dispatch(setSelectedClient(e.value))
+        setShowTable(false)
     }
 
     const onPage = (event) => {
@@ -70,8 +55,9 @@ const ChooseCustomer = () => {
     };
 
     return (
-        <>
-            <Toolbar start={startContent} end={endContent} />
+        <>  
+            <StepHeader  text={"Βήμα 1:"}/>
+            <CustomToolbar setShowTable={setShowTable} />
             {showTable ? (
                 <DataTable
                 paginator
@@ -92,6 +78,29 @@ const ChooseCustomer = () => {
                     <Column field="NAME" header="Όνομα Πελάτη"></Column>
                 </DataTable>
             ) : null}
+
+        </>
+    )
+}
+
+const CustomToolbar = ({setShowTable}) => {
+    const { selectedClient } = useSelector(state => state.impaoffer)
+    const startContent = (
+        <div className='w-full flex justify-content-between '>
+            <Button severity='secondary' label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
+        </div>
+    );
+
+    const endContent = (
+        <div className='mr-5 w-15rem'>
+              <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ:</p>
+            <p>{selectedClient?.NAME}</p>
+        </div>
+    )
+
+    return (
+        <>
+                    <Toolbar start={startContent} end={endContent} />
 
         </>
     )

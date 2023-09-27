@@ -1,17 +1,21 @@
-import React, { lazy } from 'react'
-import { useState, useEffect, useRef, useContext } from 'react';
+import React from 'react'
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedImpa } from '@/features/impaofferSlice';
+import StepHeader from './StepHeader';
+import { Button } from 'primereact/button';
+import { Toolbar } from 'primereact/toolbar';
 
-const SelectImpa = () => {
+const ChooseImpa = () => {
     const dispatch = useDispatch();
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const {selectedImpa} = useSelector(state => state.impaoffer)
+    const [showTable, setShowTable] = useState(false)
     const [searchTerm, setSearchTerm] = useState({
         code: '',
         english: '',
@@ -36,7 +40,6 @@ const SelectImpa = () => {
             limit: lazyState.rows, 
             searchTerm: searchTerm 
         })
-        console.log(res.data.result)
 
         setData(res.data.result)
         setTotalRecords(res.data.totalRecords)
@@ -52,13 +55,7 @@ const SelectImpa = () => {
     }, [searchTerm, lazyState.rows, lazyState.first])
 
 
-    // const showSuccess = () => {
-    //     toast.current.show({severity:'success', summary: 'Success', detail:'Impa update ολοκληρώθηκε', life: 3000});
-    // }
-
-    // const showError = () => {
-    //     toast.current.show({severity:'error', summary: 'Error', detail:'Ιmpa update δεν ολοκληρώθηκε', life: 3000});
-    // }
+   
     const onPage = (event) => {
         setlazyState(event);
     };
@@ -108,37 +105,67 @@ const SelectImpa = () => {
 
         );
     };
-  
 
     const header = renderHeader();
-    return (
-        <div >
 
-            <DataTable
-                first={lazyState.first}
-                lazy
-                onPage={onPage}
-                loading={loading}
-                value={data}
-                selectionMode="single"
-                paginator
-                totalRecords={totalRecords}
-                rows={lazyState.rows}
-                rowsPerPageOptions={[10, 20, 30]}
-                selection={selectedImpa}
-                onSelectionChange={(e) => dispatch(setSelectedImpa(e.value))}
-                className='w-full'
-                filterDisplay="row"
-                
-            >   
-                <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                <Column field="code" header="Code"  style={{ minWidth: '12rem' }}  filter filterElement={searchCode} showFilterMenu={false}/>
-                <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
-                <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false}/>
-            </DataTable>
+    const onSelectionChange = (e) => {
+        dispatch(setSelectedImpa(e.value))
+        setShowTable(false)
+        
+    }
+    return (
+        <div className='mt-4' >
+            <StepHeader text={"Βήμα 2"} />
+            <CustomToolbar setState={setShowTable}/>
+            {showTable ? (
+                  <DataTable
+                  first={lazyState.first}
+                  lazy
+                  onPage={onPage}
+                  loading={loading}
+                  value={data}
+                  selectionMode="single"
+                  paginator
+                  totalRecords={totalRecords}
+                  rows={lazyState.rows}
+                  rowsPerPageOptions={[10, 20, 30]}
+                  selection={selectedImpa}
+                  onSelectionChange={onSelectionChange}
+                  className='w-full'
+                  filterDisplay="row"
+                  
+              >   
+                  <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
+                  <Column field="code" header="Code"  style={{ minWidth: '12rem' }}  filter filterElement={searchCode} showFilterMenu={false}/>
+                  <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
+                  <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false}/>
+              </DataTable>
+            ) : null}
 
         </div>
     )
 }
 
-export default SelectImpa
+
+const CustomToolbar = ({setState}) => {
+    const { selectedImpa } = useSelector(state => state.impaoffer)
+    const startContent = (
+        <div className='w-full flex justify-content-between '>
+            <Button severity='secondary' label="Επιλογή Impa" onClick={() => setState(prev => !prev)} />
+        </div>
+    );
+
+    const endContent = (
+        <div className='mr-5 w-15rem'>
+              <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ IMPA:</p>
+            <p>{selectedImpa?.englishDescription}</p>
+            <p>{selectedImpa?.code}</p>
+        </div>
+    )
+
+    return (
+        <Toolbar start={startContent} end={endContent} />
+    )
+}
+
+export default ChooseImpa;
