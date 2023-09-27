@@ -39,12 +39,12 @@ const ChooseCustomer = () => {
         setLoading(false)
 
     }
-    
+
     useEffect(() => {
         fetchClients();
-    }, [lazyState.rows, lazyState.first])
+    }, [lazyState.rows, lazyState.first, fetchClients])
 
- 
+
     const onSelectionChange = (e) => {
         dispatch(setSelectedClient(e.value))
         setShowTable(false)
@@ -55,24 +55,24 @@ const ChooseCustomer = () => {
     };
 
     return (
-        <>  
-            <StepHeader  text={"Βήμα 1:"}/>
+        <>
+            <StepHeader text={"Βήμα 1:"} />
             <CustomToolbar setShowTable={setShowTable} />
             {showTable ? (
                 <DataTable
-                paginator
-                rows={lazyState.rows}
-                rowsPerPageOptions={[5, 10, 20 ,50, 100, 200]}
-                first={lazyState.first}
-                lazy
-                totalRecords={totalRecords}
-                onPage={onPage}
-                selectionMode={'radio'} 
-                selection={selectedClient} 
-                onSelectionChange={onSelectionChange}
-                value={data} 
-                className='border-1 border-round-sm	border-50' 
-                size="small" 
+                    paginator
+                    rows={lazyState.rows}
+                    rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
+                    first={lazyState.first}
+                    lazy
+                    totalRecords={totalRecords}
+                    onPage={onPage}
+                    selectionMode={'radio'}
+                    selection={selectedClient}
+                    onSelectionChange={onSelectionChange}
+                    value={data}
+                    className='border-1 border-round-sm	border-50'
+                    size="small"
                 >
                     <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="NAME" header="Όνομα Πελάτη"></Column>
@@ -83,26 +83,28 @@ const ChooseCustomer = () => {
     )
 }
 
-const CustomToolbar = ({setShowTable}) => {
+const CustomToolbar = ({ setShowTable }) => {
     const { selectedClient } = useSelector(state => state.impaoffer)
-    const startContent = (
-        <div className='w-full flex justify-content-between '>
-            <Button severity='secondary' label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
-        </div>
-    );
+    const StartContent = () => {
+        return (
+            <div className='w-full flex justify-content-between '>
+                <Button severity='secondary' label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
+            </div>
+        )
+    }
 
-    const endContent = (
-        <div className='mr-5 w-15rem'>
-              <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ:</p>
-            <p>{selectedClient?.NAME}</p>
-        </div>
-    )
+    const EndContent = () => {
+        return (
+            <div className='mr-5 w-15rem'>
+                <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ:</p>
+                <p>{selectedClient?.NAME}</p>
+            </div>
+        )
+    }
 
     return (
-        <>
-                    <Toolbar start={startContent} end={endContent} />
+        <Toolbar start={StartContent} end={EndContent} />
 
-        </>
     )
 }
 

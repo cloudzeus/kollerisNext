@@ -22,7 +22,7 @@ const ImpaDataTable = () => {
 
     useEffect(() => {
         handleFetch()
-    }, [selectedImpa])
+    }, [selectedImpa, handleFetch])
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))

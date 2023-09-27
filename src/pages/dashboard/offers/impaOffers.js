@@ -21,7 +21,7 @@ const sources = [
 ];
 
 
-export default function impaOffers() {
+const ImpaOffers = () => {
     const { selectedImpa, selectedClient } = useSelector(state => state.impaoffer)
     const [chooseImpa, setChooseImpa] = useState(true)
     useEffect(() => {
@@ -57,25 +57,28 @@ const PickListComp = () => {
         setDataSource(e.value)
     }
 
-    const startContent = (
-        <React.Fragment>
+    const StartContent = () => {
+        return (
+            <React.Fragment>
             <Dropdown value={dataSource} onChange={onDataSourceChange} options={sources} optionLabel="name"
                 placeholder="Επιλογή Πίνακα" className="w-full" />
         </React.Fragment>
-    );
+        )
+    } 
 
-    const endContent = (
-        <React.Fragment>
+    const EndContent = () => {
+        return (
+            <React.Fragment>
             <Button icon={`pi ${!show ? " pi-angle-up" : " pi-angle-down"}`} rounded outlined severity="secondary" aria-label="Search" onClick={() => setShow(prev => !prev)} />
         </React.Fragment>
-    );
-
+        )
+    } 
 
     return (
         <div className='mt-4' >
             <StepHeader text={"Βήμα 3:"} />
             <div >
-                <Toolbar start={startContent} end={endContent} />
+                <Toolbar start={StartContent} end={EndContent} />
                 {!show ? (
                     <>
                         {dataSource.id == 1 ? (<ImpaDataTable />) : null}
@@ -99,6 +102,7 @@ const PickListComp = () => {
 
 }
 
+export default ImpaOffers;
 
 
 
