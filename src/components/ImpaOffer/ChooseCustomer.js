@@ -42,7 +42,7 @@ const ChooseCustomer = () => {
 
     useEffect(() => {
         fetchClients();
-    }, [lazyState.rows, lazyState.first, fetchClients])
+    }, [lazyState.rows, lazyState.first, ])
 
 
     const onSelectionChange = (e) => {

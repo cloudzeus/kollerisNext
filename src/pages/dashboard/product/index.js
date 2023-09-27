@@ -187,7 +187,7 @@ function Product() {
 
     useEffect(() => {
         fetch()
-    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, fetch])
+    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
 
     

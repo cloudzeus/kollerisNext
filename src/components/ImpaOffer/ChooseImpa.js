@@ -52,7 +52,7 @@ const ChooseImpa = () => {
         if (searchTerm.english) handleFetch('searchEng');
         if (searchTerm.code) handleFetch('searchCode');
         if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') handleFetch('findImpaBatch')
-    }, [searchTerm, lazyState.rows, lazyState.first, handleFetch])
+    }, [searchTerm, lazyState.rows, lazyState.first, ])
 
 
 

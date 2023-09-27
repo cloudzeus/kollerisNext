@@ -42,7 +42,7 @@ const ProductsDataTable = () => {
 
     useEffect(() => {
         handleFetchProducts()
-    }, [lazyState.rows, lazyState.first, handleFetchProducts])
+    }, [lazyState.rows, lazyState.first])
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))
