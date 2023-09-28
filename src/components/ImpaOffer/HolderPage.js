@@ -38,7 +38,7 @@ const HolderPage = () => {
     const onHolderCompletions = () => {
         dispatch(setHolder({
             id: generateRandomId(),
-            name: selectedImpa?.code,
+            impaCode: selectedImpa?.code,
             products: mtrLines
         }))
         dispatch(setPageId(2))

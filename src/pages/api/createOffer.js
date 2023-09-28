@@ -2,7 +2,8 @@ import SoftoneProduct from "../../../server/models/newProductModel";
 import connectMongo from "../../../server/config"
 import { ImpaCodes } from "../../../server/models/impaSchema"
 import Clients from "../../../server/models/modelClients";
-
+import Holders from "../../../server/models/holderModel";
+import { closeMongo } from "../../../server/config";
 
 export default async function handler(req, res) {
     const action = req.body.action 
@@ -97,4 +98,36 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "finalizedOffer") {
+        const {holders, client} = req.body;
+
+        try {
+            await connectMongo();
+            let insert = await Holders.create({
+                clientName: client.NAME,
+                clientEmail: client.EMAIL || '',
+                clientPhone: client.PHONE01 || '',
+                holders: holders,
+                status: 'pending'
+            })
+            console.log(insert)
+            await closeMongo();
+            return res.status(200).json({success: true, result: insert })
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
+    if(action === "findHolders") {
+        
+        try {
+            await connectMongo();
+            const holders = await Holders.find({});
+            console.log(holders)
+            // await closeMongo();
+            return res.status(200).json({success: true, result: holders})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
 }

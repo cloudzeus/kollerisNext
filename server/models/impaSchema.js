@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
 import { model, models, Schema } from 'mongoose';
+import mongoose from 'mongoose';
+
 
  const impaSchema = new mongoose.Schema({
     code: {
@@ -39,13 +40,7 @@ import { model, models, Schema } from 'mongoose';
 
 
 
-
-
-
-
-
-
-const  ImpaCodes = models.ImpaCodes || model('ImpaCodes', impaSchema );
+const ImpaCodes = models.ImpaCodes || model('ImpaCodes', impaSchema);
 
 
 export {

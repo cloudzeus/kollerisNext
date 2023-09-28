@@ -51,12 +51,11 @@ const impaofferSlice = createSlice({
 			state.showImpaTable = payload;
 		},
 		setHolder: (state, {payload}) => {
-			state.holder = [...state.holder, payload];
+			
+			state.holder.push(payload);
 		},
 		setMtrLines: (state, {payload}) => {
 			state.mtrLines = state.mtrLines.map(item => {
-				console.log(item)
-				console.log(payload.QUANTITY)
 				if (item.MTRL === payload.MTRL) {
 					return { ...item, QUANTITY: payload.QUANTITY, TOTAL_PRICE: payload.QUANTITY * parseInt(item.PRICE) };
 				}
