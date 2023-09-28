@@ -14,6 +14,12 @@ import ProductsDataTable from '@/components/ImpaOffer/ProductTable';
 import ChosenProducts from '@/components/ImpaOffer/ChosenProducts';
 import ChooseCustomer from '@/components/ImpaOffer/ChooseCustomer';
 import ChooseImpa from '@/components/ImpaOffer/ChooseImpa';
+import CreateHolder from '@/components/ImpaOffer/HolderPage';
+import Holders from '@/components/ImpaOffer/Holders';
+
+
+import MainPage from '@/components/ImpaOffer/MainPage';
+import HolderPage from '@/components/ImpaOffer/HolderPage';
 const sources = [
     { name: 'Πηγή: Προϊόντα με Impa', id: 1 },
     { name: 'Πηγή: Όλα τα προϊόντα', id: 2 },
@@ -22,7 +28,7 @@ const sources = [
 
 
 const ImpaOffers = () => {
-    const { selectedImpa, selectedClient } = useSelector(state => state.impaoffer)
+    const { selectedImpa, selectedClient, holderPage } = useSelector(state => state.impaoffer)
     const [chooseImpa, setChooseImpa] = useState(true)
     useEffect(() => {
         if (selectedImpa) {
@@ -33,74 +39,76 @@ const ImpaOffers = () => {
 
     return (
         <AdminLayout>
-            <ChooseCustomer />
-            {selectedClient ? (<ChooseImpa />) : null}
-            {selectedImpa ? (<PickListComp />) : (null)}
+           <div className='p-2'>
+           <MainPage />
+           </div>
         </AdminLayout>
 
     );
 }
 
 
-const PickListComp = () => {
-    const { selectedProducts, selectedImpa } = useSelector(state => state.impaoffer)
-    const [show, setShow] = useState(false)
-    const [dataSource, setDataSource] = useState(
-        { name: 'Πηγή: Προϊόντα με Impa', id: 1 },
-    )
 
-    useEffect(() => {
-        setDataSource({ name: 'Πηγή: Προϊόντα με Impa', id: 1 },)
-    }, [])
 
-    const onDataSourceChange = (e) => {
-        setDataSource(e.value)
-    }
+// const PickListComp = () => {
+//     const { selectedProducts, selectedImpa } = useSelector(state => state.impaoffer)
+//     const [show, setShow] = useState(false)
+//     const [dataSource, setDataSource] = useState(
+//         { name: 'Πηγή: Προϊόντα με Impa', id: 1 },
+//     )
 
-    const StartContent = () => {
-        return (
-            <React.Fragment>
-            <Dropdown value={dataSource} onChange={onDataSourceChange} options={sources} optionLabel="name"
-                placeholder="Επιλογή Πίνακα" className="w-full" />
-        </React.Fragment>
-        )
-    } 
+//     useEffect(() => {
+//         setDataSource({ name: 'Πηγή: Προϊόντα με Impa', id: 1 },)
+//     }, [])
 
-    const EndContent = () => {
-        return (
-            <React.Fragment>
-            <Button icon={`pi ${!show ? " pi-angle-up" : " pi-angle-down"}`} rounded outlined severity="secondary" aria-label="Search" onClick={() => setShow(prev => !prev)} />
-        </React.Fragment>
-        )
-    } 
+//     const onDataSourceChange = (e) => {
+//         setDataSource(e.value)
+//     }
 
-    return (
-        <div className='mt-4' >
-            <StepHeader text={"Βήμα 3:"} />
-            <div >
-                <Toolbar start={StartContent} end={EndContent} />
-                {!show ? (
-                    <>
-                        {dataSource.id == 1 ? (<ImpaDataTable />) : null}
-                        {dataSource.id == 2 ? (<ProductsDataTable />) : null}
-                    </>
-                ) : null}
-            </div>
+//     const StartContent = () => {
+//         return (
+//             <React.Fragment>
+//             <Dropdown value={dataSource} onChange={onDataSourceChange} options={sources} optionLabel="name"
+//                 placeholder="Επιλογή Πίνακα" className="w-full" />
+//         </React.Fragment>
+//         )
+//     } 
 
-            <div className='col-12 mt-4'>
+//     const EndContent = () => {
+//         return (
+//             <React.Fragment>
+//             <Button icon={`pi ${!show ? " pi-angle-up" : " pi-angle-down"}`} rounded outlined severity="secondary" aria-label="Search" onClick={() => setShow(prev => !prev)} />
+//         </React.Fragment>
+//         )
+//     } 
 
-                {selectedProducts.length > 0 ? (
-                    <>
-                        <StepHeader text={`Συνολο Προϊόντων για Impa ${selectedImpa?.code}:`} />
-                        <ChosenProducts />
-                    </>
-                ) : null}
+//     return (
+//         <div className='mt-4' >
+//             <StepHeader text={"Βήμα 3:"} />
+//             <div >
+//                 <Toolbar start={StartContent} end={EndContent} />
+//                 {!show ? (
+//                     <>
+//                         {dataSource.id == 1 ? (<ImpaDataTable />) : null}
+//                         {dataSource.id == 2 ? (<ProductsDataTable />) : null}
+//                     </>
+//                 ) : null}
+//             </div>
 
-            </div>
-        </div>
-    )
+//             <div className='col-12 mt-4'>
 
-}
+//                 {selectedProducts.length > 0 ? (
+//                     <>
+//                         <StepHeader text={`Συνολο Προϊόντων για Impa ${selectedImpa?.code}:`} />
+//                         <ChosenProducts />
+//                     </>
+//                 ) : null}
+
+//             </div>
+//         </div>
+//     )
+
+// }
 
 export default ImpaOffers;
 

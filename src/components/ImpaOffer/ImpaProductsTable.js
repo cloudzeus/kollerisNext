@@ -32,13 +32,13 @@ const ImpaDataTable = () => {
         return (
             <div className="flex flex-wrap p-2 align-items-center gap-3">
                 <div className="flex-1 flex flex-column gap-2">
-                    <span className="font-bold">{item.NAME}</span>
+                    <span className="font-bold">{item?.NAME}</span>
                     <div className="flex align-items-center gap-2">
                         <i className="pi pi-tag text-sm"></i>
-                        <span>{item.CODE}</span>
+                        <span>{item?.CODE}</span>
                     </div>
                 </div>
-                <span className="font-bold text-900">${item.PRICER}</span>
+                <span className="font-bold text-900">${item?.PRICER}</span>
             </div>
         );
     };
@@ -63,11 +63,15 @@ const ImpaDataTable = () => {
                     <div className='flex align-items-center'>
                         <i className="pi pi-info-circle" style={{ fontSize: '1.5rem', color: 'orange' }}></i>
                         <div className='ml-3'>
-                            <p>Δεν υπάρχουν προϊόντα συσχετισμένα στον κωδικό Impa <span className='font-bold'>{selectedImpa.code}</span></p>
+                            <p>Δεν υπάρχουν προϊόντα συσχετισμένα στον κωδικό Impa <span className='font-bold'>{selectedImpa?.code}</span></p>
                             <p>Αλλάξτε πηγή δεδομένων και αναζητείστε όλα τα προϊόντα</p>
                         </div>
-                    </div>
+                        
 
+                    </div>
+                    <div className='mt-3 ml-4'>
+                        <p>Τα προίόντα που θα προσθέσετε στο holder θα συνδεθούν με αυτόν τον IMPA </p>        
+                    </div>
 
                 </div>
             )}

@@ -10,8 +10,6 @@ import { setSelectedClient } from '@/features/impaofferSlice';
 import StepHeader from './StepHeader';
 
 
-
-
 const ChooseCustomer = () => {
     const { selectedClient } = useSelector(state => state.impaoffer)
     const [showTable, setShowTable] = useState(false)
@@ -55,8 +53,8 @@ const ChooseCustomer = () => {
     };
 
     return (
-        <>
-            <StepHeader text={"Βήμα 1:"} />
+        <>  
+            
             <CustomToolbar setShowTable={setShowTable} />
             {showTable ? (
                 <DataTable

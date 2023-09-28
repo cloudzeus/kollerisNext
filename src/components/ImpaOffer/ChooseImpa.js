@@ -5,7 +5,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedImpa } from '@/features/impaofferSlice';
+import { setSelectedImpa, setDataSource, setShowImpaTable } from '@/features/impaofferSlice';
 import StepHeader from './StepHeader';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
@@ -52,7 +52,7 @@ const ChooseImpa = () => {
         if (searchTerm.english) handleFetch('searchEng');
         if (searchTerm.code) handleFetch('searchCode');
         if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') handleFetch('findImpaBatch')
-    }, [searchTerm, lazyState.rows, lazyState.first, ])
+    }, [searchTerm, lazyState.rows, lazyState.first,])
 
 
 
@@ -91,40 +91,39 @@ const ChooseImpa = () => {
         )
     }
 
-   
+
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedImpa(e.value))
+       
         setShowTable(false)
+        dispatch(setShowImpaTable(false))
+        dispatch(setDataSource(1))
     }
     return (
-        <div className='mt-4' >
-            <StepHeader text={"Βήμα 2"} />
-            <CustomToolbar setState={setShowTable} />
-            {showTable ? (
-                <DataTable
-                    first={lazyState.first}
-                    lazy
-                    onPage={onPage}
-                    loading={loading}
-                    value={data}
-                    selectionMode="single"
-                    paginator
-                    totalRecords={totalRecords}
-                    rows={lazyState.rows}
-                    rowsPerPageOptions={[10, 20, 30]}
-                    selection={selectedImpa}
-                    onSelectionChange={onSelectionChange}
-                    className='w-full'
-                    filterDisplay="row"
+        <div >
+            <DataTable
+                first={lazyState.first}
+                lazy
+                onPage={onPage}
+                loading={loading}
+                value={data}
+                selectionMode="single"
+                paginator
+                totalRecords={totalRecords}
+                rows={lazyState.rows}
+                rowsPerPageOptions={[10, 20, 30]}
+                selection={selectedImpa}
+                onSelectionChange={onSelectionChange}
+                className='w-full'
+                filterDisplay="row"
 
-                >
-                    <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="code" header="Code" style={{ minWidth: '12rem' }} filter filterElement={searchCode} showFilterMenu={false} />
-                    <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
-                    <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false} />
-                </DataTable>
-            ) : null}
+            >
+                <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
+                <Column field="code" header="Code" style={{ minWidth: '12rem' }} filter filterElement={searchCode} showFilterMenu={false} />
+                <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
+                <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false} />
+            </DataTable>
 
         </div>
     )
@@ -135,8 +134,8 @@ const CustomToolbar = ({ setState }) => {
     const { selectedImpa } = useSelector(state => state.impaoffer)
     const StartContent = () => {
         return (
-            <div className='w-full flex justify-content-between '>
-                <Button severity='secondary' label="Επιλογή Impa" onClick={() => setState(prev => !prev)} />
+            <div className='w-full flex justify-content-between align-items-center'>
+                <Button severity='secondary' label={`Eπιλογή Impa ${selectedImpa?.code}`} onClick={() => setState(prev => !prev)} />
             </div>
         )
     }

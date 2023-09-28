@@ -67,7 +67,7 @@ const ProductsDataTable = () => {
             size="small" 
             >
             <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-            <Column field="Επιλέξτε από όλα τα Προϊόντα" header="Προϊόν" body={itemTemplate}></Column>
+            <Column  header="Επιλέξτε από όλα τα Προϊόντα" body={itemTemplate}></Column>
         </DataTable>
     )
 }
