@@ -21,6 +21,7 @@ const ImpaDataTable = () => {
     }
 
     useEffect(() => {
+        if(selectedImpa == null) return;
         handleFetch()
     }, [selectedImpa])
 
@@ -46,7 +47,7 @@ const ImpaDataTable = () => {
 
     return (
         <>
-            {data.length > 0 ? (
+            { data.length > 0 ? (
                 <DataTable
                     selectionMode={'checkbox'}
                     selection={selectedProducts}

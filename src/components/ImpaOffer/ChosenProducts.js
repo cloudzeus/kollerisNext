@@ -4,7 +4,6 @@ import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataTable } from 'primereact/datatable';
 import { deleteSelectedProduct } from '@/features/impaofferSlice';
-import { Button } from 'primereact/button';
 const ChosenProducts = () => {
     const { selectedProducts } = useSelector(state => state.impaoffer)
     const [length, setLength] = useState(selectedProducts.length)
@@ -14,22 +13,10 @@ const ChosenProducts = () => {
             setLength(selectedProducts.length)
     }, [selectedProducts])
 
-    const onFinalStep = async () => {
-        // firstly relate those products with the selected impa
-        // let {data} = await axios.post('/api/createOffer', {action: 'relateProducts', products: selectedProducts, impa: selectedImpa})
-    }
-
-    const footer = () => {
-        return (
-            <div>
-                <Button severity='warning' label="Τελική Προεπισκόπιση" onClick={onFinalStep}/>
-            </div>
-        )
-    }
-
+   
+  
     return (
         <DataTable
-            footer={footer}
             paginator
             rows={5}
             totalRecords={length}
@@ -38,7 +25,7 @@ const ChosenProducts = () => {
             className='border-1 border-round-sm	border-50' 
             size="small"
             >
-            <Column field="Επιλέξτε από όλα τα Προϊόντα" header="Προσφορ" body={itemTemplate}></Column>
+            <Column field="Επιλέξτε από όλα τα Προϊόντα" header="Προσφορά" body={itemTemplate}></Column>
             <Column style={{width: '30px'}}   body={RemoveTemplate}></Column>
         </DataTable>
     )

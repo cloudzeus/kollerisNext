@@ -7,7 +7,6 @@ import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedClient } from '@/features/impaofferSlice';
-import StepHeader from './StepHeader';
 
 
 const ChooseCustomer = () => {

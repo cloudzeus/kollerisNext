@@ -7,6 +7,7 @@ const initialState = {
 	pageId: 1,
 	dataSource: 1,
 	showImpaTable: false,
+	holder: []
 }
 
 
@@ -37,7 +38,12 @@ const impaofferSlice = createSlice({
 		},
 		setShowImpaTable: (state, {payload}) => {
 			state.showImpaTable = payload;
+		},
+		setHolder: (state, {payload}) => {
+			state.holder = [...state.holder, payload];
 		}
+
+
 		
 	},
 
@@ -54,6 +60,7 @@ export const {
 	setPageId,
 	setDataSource,
 	setShowImpaTable,
+	setHolder,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

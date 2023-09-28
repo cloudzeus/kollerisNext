@@ -6,7 +6,6 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedImpa, setDataSource, setShowImpaTable } from '@/features/impaofferSlice';
-import StepHeader from './StepHeader';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 

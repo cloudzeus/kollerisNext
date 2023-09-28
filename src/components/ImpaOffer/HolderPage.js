@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setPageId, setDataSource, setShowImpaTable } from '@/features/impaofferSlice';
+import { setPageId, setDataSource, setShowImpaTable, setHolder, setSelectedProducts } from '@/features/impaofferSlice';
 import StepHeader from './StepHeader';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
@@ -11,20 +11,51 @@ import ChosenProducts from './ChosenProducts';
 import ProductsDataTable from './ProductTable';
 
 
+function generateRandomId(length = 8) {
+    return Math.random().toString(36).substr(2, length);
+}
+
+
+
+
+
 
 const HolderPage = () => {
     const dispatch = useDispatch();
-    const { selectedClient, selectedImpa } = useSelector(state => state.impaoffer)
+    const { selectedClient, selectedProducts, holder, selectedImpa } = useSelector(state => state.impaoffer)
 
+    console.log('SELECTED PRODUCTS')
+    console.log(selectedProducts)
+
+    console.log('holderrrrrrr')
+    console.log(holder)
+
+    useEffect(() => {
+        dispatch(setSelectedProducts([]))
+    }, [] )
+
+
+    const onHolderCompletions = () => {
+        dispatch(setHolder({
+            id: generateRandomId(),
+            name: selectedImpa?.code,
+            products: selectedProducts
+        }))
+        dispatch(setPageId(2))
+    }
+
+   
     return (
         <div className=''>
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => dispatch(setPageId(2))} />
             </div>
             <StepHeader text={"Δημιουργία Holder"} />
-            <p>{selectedClient.NAME}</p>
+            <p>{selectedClient?.NAME}</p>
             <PickListComp />
-
+            <div className='mt-4 mb-5'>
+            <Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
+            </div>
         </div>
     )
 }
@@ -42,12 +73,15 @@ const PickListComp = () => {
             <div className='mt-4' >
                     <StepHeader text={"Eπιλογή Impa"} />
                     <CustomToolbar setShow={setShow} show={show} />
-                    {showImpaTable ? (<ChooseImpa />) : (
+                    {showImpaTable ? (<ChooseImpa />) : null}
+
+                    {(!showImpaTable && selectedImpa) ? (
                         <div>
                             {(dataSource == 2 && show) ? (<ProductsDataTable />) : null}
                             {(dataSource == 1 && show )  ? (<ImpaDataTable />) : null}
-                        </div>
-                    )}
+                    </div>
+                    ) : null}
+                    
 
 
             </div>
