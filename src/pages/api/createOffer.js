@@ -47,7 +47,8 @@ export default async function handler(req, res) {
         let {code } = req.body
         try {
             await connectMongo();
-            const impas = await ImpaCodes.find({code: code}).populate('products');
+            const impas = await ImpaCodes.find({code: code})
+            .populate('products', 'MTRL CODE PRICER _id NAME');
             let products = impas[0].products
             return res.status(200).json({success: true, result: products})
         } catch (e) {
@@ -62,7 +63,9 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const totalRecords = await SoftoneProduct.countDocuments();
-            const products = await SoftoneProduct.find({}).skip(skip).limit(limit).populate('impas');
+            const products = await SoftoneProduct.find({}).skip(skip).limit(limit)
+            .select('MTRL CODE PRICER _id NAME')
+            .populate('impas');
             return res.status(200).json({success: true, result: products, totalRecords: totalRecords})
         } catch (e) {
             return res.status(500).json({success: false, result: null})

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { combineReducers, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedImpa: null,
@@ -7,7 +7,8 @@ const initialState = {
 	pageId: 1,
 	dataSource: 1,
 	showImpaTable: false,
-	holder: []
+	holder: [],
+	mtrLines: [],
 }
 
 
@@ -21,6 +22,16 @@ const impaofferSlice = createSlice({
 		},
 		setSelectedProducts: (state, {payload}) => {
 			state.selectedProducts = payload;
+		
+			const updateMTRLINES = payload.map(item => {
+				return {
+					NAME: item.NAME,
+					QUANTITY: 1,
+					PRICE: parseInt(item.PRICER),
+					MTRL: item.MTRL,
+				}
+			})
+			state.mtrLines = updateMTRLINES;
 
 		},
 		setSelectedClient: (state, {payload}) => {
@@ -41,6 +52,16 @@ const impaofferSlice = createSlice({
 		},
 		setHolder: (state, {payload}) => {
 			state.holder = [...state.holder, payload];
+		},
+		setMtrLines: (state, {payload}) => {
+			state.mtrLines = state.mtrLines.map(item => {
+				console.log(item)
+				console.log(payload.QUANTITY)
+				if (item.MTRL === payload.MTRL) {
+					return { ...item, QUANTITY: payload.QUANTITY, TOTAL_PRICE: payload.QUANTITY * parseInt(item.PRICE) };
+				}
+				return item;
+			});
 		}
 
 
@@ -61,6 +82,7 @@ export const {
 	setDataSource,
 	setShowImpaTable,
 	setHolder,
+	setMtrLines,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

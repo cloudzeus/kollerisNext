@@ -11,13 +11,15 @@ import { setSelectedImpa, setSelectedProducts } from '@/features/impaofferSlice'
 
 const ImpaDataTable = () => {
     const [data, setData] = useState([])
-    const { selectedImpa, selectedProducts } = useSelector(state => state.impaoffer)
+    const { selectedImpa, selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
     const dispatch = useDispatch()
 
+  
+
+ 
     const handleFetch = async () => {
         let { data } = await axios.post('/api/createOffer', { action: 'findImpaProducts', code: selectedImpa?.code })
         setData(data.result)
-        console.log(data.result)
     }
 
     useEffect(() => {
@@ -27,6 +29,7 @@ const ImpaDataTable = () => {
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))
+
     }
 
     const itemTemplate = (item) => {

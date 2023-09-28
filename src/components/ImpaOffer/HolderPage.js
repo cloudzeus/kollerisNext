@@ -22,13 +22,13 @@ function generateRandomId(length = 8) {
 
 const HolderPage = () => {
     const dispatch = useDispatch();
-    const { selectedClient, selectedProducts, holder, selectedImpa } = useSelector(state => state.impaoffer)
+    const { selectedClient, selectedProducts, holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
 
-    console.log('SELECTED PRODUCTS')
-    console.log(selectedProducts)
+    // console.log('SELECTED PRODUCTS')
+    // console.log(selectedProducts)
 
-    console.log('holderrrrrrr')
-    console.log(holder)
+    // console.log('holderrrrrrr')
+    // console.log(holder)
 
     useEffect(() => {
         dispatch(setSelectedProducts([]))
@@ -39,7 +39,7 @@ const HolderPage = () => {
         dispatch(setHolder({
             id: generateRandomId(),
             name: selectedImpa?.code,
-            products: selectedProducts
+            products: mtrLines
         }))
         dispatch(setPageId(2))
     }

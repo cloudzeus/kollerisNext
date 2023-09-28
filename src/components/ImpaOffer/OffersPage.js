@@ -34,9 +34,9 @@ const ΟffersPage = () => {
 const MapHolders = () => {
     const { holder } = useSelector(state => state.impaoffer)
     const [showContent, setShowContent] = useState(null)
-
+    console.log('--------------- THIS IS THE HOLDER --------------------')
+    console.log(holder)
     const dropDownClick = (id) => {
-        console.log(id)
         setShowContent(id)
     }
     return (
@@ -69,7 +69,7 @@ const MapHolders = () => {
                     </div>
 
                     {/* //HIDDEN CONTENT */}
-                    <div className='p-4 border-top-1 border-300' >
+                    <div className='border-top-1 border-300' >
                         {showContent == item.id ? (
                             <MapProducts products={item.products} />
                         ) : null}
@@ -86,10 +86,23 @@ const MapProducts = ({ products }) => {
     return (
         <div>
             {products.map((item, index) => {
-                console.log(item)
                 return (
-                    <div className='p-2' key={index}>
-                        <p>{item.NAME}</p>
+                    <div className=' border-bottom-1 border-400 ' key={index}>
+                        <div className='p-4 flex justify-content-between'>
+                            <div>
+                                <p>{item.NAME}</p>
+                            </div>
+                            <div className='flex '>
+                                <div className='flex mr-5 '>
+                                    <p>QNT:</p>
+                                    <p className='ml-1 font-bold'>{item.QUANTITY}</p>
+                                </div>
+                                <div className='flex'>
+                                    <p>PRICE:</p>
+                                    <p className='ml-1 font-bold'>${item.TOTAL_PRICE}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 )

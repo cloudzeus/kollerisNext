@@ -30,7 +30,6 @@ const ChooseCustomer = () => {
             skip: lazyState.first,
             limit: lazyState.rows,
         })
-        console.log(data.result)
         setData(data.result)
         setTotalRecords(data.totalRecords)
         setLoading(false)
