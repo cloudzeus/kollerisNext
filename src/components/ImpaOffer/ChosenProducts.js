@@ -28,13 +28,13 @@ const ChosenProducts = () => {
             size="small"
         >
             <Column header="Προσφορά" body={itemTemplate}></Column>
-            <Column header="Προσφορά" style={{ width: '70px' }} body={calculateTemplate}></Column>
+            <Column header="Προσφορά" style={{ width: '70px' }} body={CalculateTemplate}></Column>
             <Column style={{ width: '30px' }} body={RemoveTemplate}></Column>
         </DataTable>
     )
 }
 
-const calculateTemplate = (item) => {
+const CalculateTemplate = (item) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
    
