@@ -193,8 +193,6 @@ function Product() {
     
    
     const editProduct = async (product) => {
-        console.log('product')
-        console.log(product)
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -314,7 +312,7 @@ function Product() {
             }
 
             handleCategories()
-        }, [category])
+        }, [])
 
         const onDelete = () => {
             setCategory(null)
@@ -350,7 +348,7 @@ function Product() {
                 setGroupFilter(data.result)
             }
             handleCategories()
-        }, [category, group])
+        }, [])
 
        
         return (
@@ -381,7 +379,7 @@ function Product() {
             }
 
             handleCategories()
-        }, [group ,subgroup])
+        }, [])
 
         return (
             <div className="flex align-items-center">
