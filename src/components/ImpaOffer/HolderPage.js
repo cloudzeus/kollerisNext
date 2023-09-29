@@ -1,5 +1,5 @@
+'use client';
 import { useState, useEffect } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageId, setDataSource, setShowImpaTable, setHolder, setSelectedProducts } from '@/features/impaofferSlice';
 import StepHeader from './StepHeader';
@@ -24,11 +24,7 @@ const HolderPage = () => {
     const dispatch = useDispatch();
     const { selectedClient, selectedProducts, holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
 
-    // console.log('SELECTED PRODUCTS')
-    // console.log(selectedProducts)
-
-    // console.log('holderrrrrrr')
-    // console.log(holder)
+    
 
     useEffect(() => {
         dispatch(setSelectedProducts([]))

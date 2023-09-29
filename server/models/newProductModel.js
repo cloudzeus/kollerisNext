@@ -123,7 +123,6 @@ const productSchema = new mongoose.Schema({
 
 
 
-softoneProduct.index({ NAME: "text" });
 
 
 const SoftoneProduct = models.SoftoneProduct || model('SoftoneProduct', softoneProduct)

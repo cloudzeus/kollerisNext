@@ -1,4 +1,4 @@
-
+'use client';
 import React, { useState, useEffect, use } from 'react';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';

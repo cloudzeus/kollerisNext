@@ -1,4 +1,5 @@
 
+'use client'
 import React, { useState, useEffect } from 'react';
 import { PickList } from 'primereact/picklist';
 import AdminLayout from '@/layouts/Admin/AdminLayout';

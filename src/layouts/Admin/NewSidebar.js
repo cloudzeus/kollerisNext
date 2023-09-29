@@ -4,8 +4,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { toggleSidebar } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+
 const NewSidebar = () => {
     const dispatch = useDispatch()
+    const router = useRouter()
+
     const handleToggleSidebar = () => {
 		dispatch(toggleSidebar())
 	}
@@ -31,7 +35,7 @@ const SidebarList = () => {
         <ul>
             <SidebarItem icon={"pi-home"} title={'Aρχική'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard'} />
             {/* PRODUCT */}
-            <SidebarHeader icon={"pi-shopping-cart"} title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarHeader icon={"pi-shopping-cart"} title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab}  dropdown />
             {activeTab == 2 ? (
                 <div >
                     <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
@@ -50,7 +54,7 @@ const SidebarList = () => {
                  
                 </div>
             ) : null}
-            <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
+            {/* <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} /> */}
             <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
             <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
             <SidebarHeader icon={"pi-shopping-cart"} title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
@@ -69,9 +73,11 @@ const SidebarList = () => {
 
 const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) => {
     const [activeIcon, setActiveIcon] = useState(false)
+    const router = useRouter()
     const handleClick = () => {
         setActiveIcon(!activeIcon)
         setActiveTab((prev) => prev == id ? 0 : id)
+       
     }
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
@@ -87,29 +93,37 @@ const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) =
 
 
 const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
+    const router = useRouter()
     const handleClick = () => {
         setActiveTab((prev) => prev == id ? 0 : id)
+        router.push(goTo)
     }
+
+
     return (
 
             <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                <Link href={goTo}>
-                    <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
+                {/* <Link href={goTo} > */}
+                <div>
+                <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                     <span className='text-lg ml-3'>{title}</span>
-                </Link>
+                </div>
+                  
+                {/* </Link> */}
                     
             </li>
 
     )
 }
 const SidebarSubItem = ({ title, goTo }) => {
+    const router = useRouter()
+
     return (
 
-      
-            <li className={` sub-item`}>
-                  <Link href={goTo}>
+            <li onClick={() => router.push(goTo)} className={` sub-item`}>
+                  {/* <Link href={goTo}> */}
                     <span className='text-lg ml-3'>{title}</span>
-                  </Link>
+                  {/* </Link> */}
             </li>
       
 
