@@ -452,18 +452,18 @@ function Product() {
 
     return (
         <AdminLayout >
-            <Toast ref={toast} />
+            {/* <Toast ref={toast} />
             <div className='bg-white p-3 border-round mb-3 flex'>
             <Link href="/dashboard/offers/impaOffers">
             <Button label="Προσφορά πολλαπλών επιλογών" className='mr-2'  />
 
             </Link>
 
-            </div>
-            <ProductToolbar
+            </div> */}
+            {/* <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
-                setSelectedProducts={setSelectedProducts} />
+                setSelectedProducts={setSelectedProducts} /> */}
             <DataTable
                 first={lazyState.first}
                 lazy
@@ -477,9 +477,9 @@ function Product() {
                 rows={lazyState.rows}
                 rowsPerPageOptions={[10, 20 ,50, 100, 200]}
                 value={filteredData}
-                header={header}
+                // header={header}
                 showGridlines
-                dataKey="_id"
+                dataKey="MTRL"
                 filterDisplay="row"
                 loading={loading}
                 removableSort
