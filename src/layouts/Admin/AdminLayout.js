@@ -43,7 +43,6 @@ const AdminLayout = ({ children }) => {
 					</div>
 					
 				</Navbar>
-		
 				<MainContent>
 
 					{children}
@@ -66,7 +65,7 @@ function FullScreen({ children }) {
 			</Sidebar>
 			<Button
 				style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}}
-				icon="pi pi-window-maximize				"
+				icon="pi pi-window-maximize"
 				aria-label="Maximize"
 				onClick={() => setVisible(true)}
 				/>
@@ -97,13 +96,9 @@ const Navbar = styled.nav`
   position: fixed;
   top: 0;
   right: 0;
-  
   background-color: #fff;
-  color: #fff;
   z-index: 10;
-  border-bottom: 4px solid ${({ theme }) => theme.palette.background};
-
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 240px)' : '100%'};
   .navbar-rightdiv {
 	display: flex;
 	align-items: center;
@@ -136,9 +131,8 @@ const MainContent = styled.div`
   padding: 20px;
   margin-top: 110px;
   background-color: ${({ theme }) => theme.palette.background};
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 270px)' : '100%'};
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 240px)' : '100%'};
   transition: width 0.3s ease-in-out;
-  
 `;
 
 
