@@ -161,33 +161,51 @@ function Product() {
     }, [submitted])
 
 
+
     const fetch = async () => {
         setLoading(true)
-        let res = await axios.post('/api/product/apiProductFilters', {
-            action: 'filterCategories',
-            searchTerm: searchTerm,
-            skip: lazyState.first,
-            limit: lazyState.rows,
-            categoryID: category?.softOne.MTRCATEGORY,
-            groupID: group?.softOne.MTRGROUP,
-            subgroupID: subgroup?.softOne.cccSubgroup2,
-            softoneStatusFilter: softoneStatusFilter
-        })
-        console.log(res.data.result[0])
-        setFilteredData(res.data.result);
-        setTotalRecords(prev => {
-            if (prev === res.data.totalRecords) {
-                return prev;
-            } else {
-                return res.data.totalRecords
-            }
-        })
-        setLoading(false)
+        console.log('res result 2')
+        try {
+            let res = await axios.post('/api/product/apiProductFilters', {
+                action: 'filterCategories',
+                searchTerm: searchTerm,
+                skip: lazyState.first,
+                limit: lazyState.rows,
+                categoryID: category?.softOne.MTRCATEGORY,
+                groupID: group?.softOne.MTRGROUP,
+                subgroupID: subgroup?.softOne.cccSubgroup2,
+                softoneStatusFilter: softoneStatusFilter
+            },
+            {timeout: 3000})
+            console.log('res result')
+            setLoading(false)
+            console.log(res.data.result)
+            setFilteredData(res.data.result);
+            setTotalRecords(prev => {
+                if (prev === res.data.totalRecords) {
+                    return prev;
+                } else {
+                    return res.data.totalRecords
+                }
+            })
+        } catch (e) {
+            console.log(e)
+            setLoading(false)
+        }
+       
     }
 
     useEffect(() => {
-        fetch()
-    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
+        // fetch()
+        setFilteredData([])
+    }, [])
+
+    // useEffect(() => {
+    //     if (category === null || group === null || subgroup == null || softoneStatusFilter == null) {
+    //         return;
+    //     }
+    //     fetch()
+    // }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
 
     
