@@ -161,7 +161,6 @@ function Product() {
         if (submitted) fetch()
     }, [submitted])
 
-    const controller = new AbortController();
     const fetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProductFilters', {
@@ -173,7 +172,8 @@ function Product() {
             groupID: group?.softOne.MTRGROUP,
             subgroupID: subgroup?.softOne.cccSubgroup2,
             softoneStatusFilter: softoneStatusFilter
-        }
+        },
+         {timeout: 3000}
         )
         console.log(res.data.result[0])
         setFilteredData(res.data.result);
