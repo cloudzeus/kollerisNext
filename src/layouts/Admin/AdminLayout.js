@@ -8,6 +8,7 @@ import ProfileButton from '@/components/NavProfileButton';
 import { Sidebar } from 'primereact/sidebar';
 import NewSidebar from './NewSidebar';
 import BreadCrumbs from './BreadCrumbs';
+import TestSidebar from './TestSidebar';
 
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
@@ -19,7 +20,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			{isSidebarOpen ? <NewSidebar  /> : null}
+			{isSidebarOpen ? <TestSidebar  /> : null}
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar  isSidebarOpen={isSidebarOpen}>
 					<div className='top'>

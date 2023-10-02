@@ -157,10 +157,11 @@ function Product() {
   
 
     useEffect(() => {
+        "submitted"
         if (submitted) fetch()
     }, [submitted])
 
-
+    const controller = new AbortController();
     const fetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/product/apiProductFilters', {
@@ -172,7 +173,8 @@ function Product() {
             groupID: group?.softOne.MTRGROUP,
             subgroupID: subgroup?.softOne.cccSubgroup2,
             softoneStatusFilter: softoneStatusFilter
-        })
+        }
+        )
         console.log(res.data.result[0])
         setFilteredData(res.data.result);
         setTotalRecords(prev => {
@@ -187,6 +189,7 @@ function Product() {
 
     useEffect(() => {
         fetch()
+       
     }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
 

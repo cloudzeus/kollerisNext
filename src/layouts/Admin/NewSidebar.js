@@ -55,7 +55,11 @@ const SidebarList = () => {
                 </div>
             ) : null}
             {/* <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} /> */}
-            <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} />
+            <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} />
+            {activeTab == 4 ? (
+                    <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
+
+            ) : null}
             <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
             <SidebarHeader icon={"pi-shopping-cart"} title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 6 ? (
