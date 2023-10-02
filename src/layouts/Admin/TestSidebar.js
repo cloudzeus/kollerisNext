@@ -17,19 +17,19 @@ const TestSidebar = () => {
             </TopSidebar>
             <MainSidebar className='p-2'>
                 <Item >
-                    <Link className='w-full h-full text-white block flex align-items-center p-4' href='/dashboard/product' shallow>Product</Link>
+                    <Link className='w-full h-full text-white block flex align-items-center p-4' href='/page1' shallow>Product</Link>
                 </Item>
                 <Item >
-                    <Link className='w-full h-full text-white block flex align-items-center p-4' href='/dashboard/product/brands' shallow >Test brand</Link>
+                    <Link className='w-full h-full text-white block flex align-items-center p-4' href='/page2' shallow >Test brand</Link>
                 </Item>
                 <Expandable header="Προϊόντα" state={state.products} onClick={handleProducts} />
                 {state.products ? (
                     <>
                         <SubItem >
-                            <Link className='w-full h-full text-white block flex align-items-center p-4' href='/dashboard/product '  shallow>Προϊόντα</Link>
+                            <Link className='w-full h-full text-white block flex align-items-center p-4' href='/page1'  shallow>Προϊόντα</Link>
                         </SubItem>
                         <SubItem >
-                            <Link className='w-full h-full text-white block flex align-items-center p-4' href='/dashboard/product/brands'  shallow>Μάρκες</Link>
+                            <Link className='w-full h-full text-white block flex align-items-center p-4' href='/page2'  shallow>Μάρκες</Link>
                         </SubItem>
                     </>
                 ) : null}
