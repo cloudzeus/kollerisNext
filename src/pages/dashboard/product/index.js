@@ -4,6 +4,5 @@ import ProductLayout from "@/content/Product";
 export default function ProductPage() {
     return (
         <ProductLayout />
-     
     )
 }

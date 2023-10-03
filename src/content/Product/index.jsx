@@ -175,8 +175,7 @@ function Product() {
                 groupID: group?.softOne.MTRGROUP,
                 subgroupID: subgroup?.softOne.cccSubgroup2,
                 softoneStatusFilter: softoneStatusFilter
-            },
-            {timeout: 3000})
+            })
             console.log('res result')
             setLoading(false)
             console.log(res.data.result)
