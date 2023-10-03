@@ -1,12 +1,9 @@
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import ProductLayout from "@/PagesLayout/Product/Product";
-
+import ProductLayout from "@/content/Product";
 
 export default function ProductPage() {
     return (
         <ProductLayout />
-        // <AdminLayout>
-        //     <p>sefsesefeff</p>
-        // </AdminLayout>
+     
     )
 }

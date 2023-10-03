@@ -1,3 +1,10 @@
+.fullPageWrapper {
+    display: flex;
+    height: 100vh;
+    transition: width 0.3s ease-in-out;
+    width: 100%;
+}
+
 .container {
     background-color: #37404C;
     width: 260px;
@@ -12,6 +19,7 @@
     padding: 20px;
 
 }
+
 .mainSidebar {
     height: calc(100vh - 70px);
     display: flex;
@@ -20,8 +28,9 @@
     padding: 8px;
     padding-right: 14px;
 }
+
 .item {
-    background-color:#323a45;
+    background-color: #323a45;
     border-radius: 5px;
     height: 50px;
     width: 100%;
@@ -32,7 +41,7 @@
 }
 
 .subItem {
-    background-color:#2a313b;
+    background-color: #2a313b;
     border-radius: 5px;
     height: 50px;
     width: 100%;
@@ -44,7 +53,7 @@
 
 .expandable {
     color: white;
-    background-color:#323a45;
+    background-color: #323a45;
     border-radius: 5px;
     height: 50px;
     width: 100%;
@@ -54,4 +63,54 @@
     width: 100%;
     padding: 4px 20px;
     margin-bottom: 5px;
+}
+
+
+/* style the navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 10;
+    padding: 20px;
+}
+
+.navClosed {
+    width: calc(100% - 260px);
+}
+
+.navOpen {
+    width: 100%;
+}
+
+.navTop {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-bottom: 1px solid #dbdcdc;
+    padding: 10px;
+    height: 70px;
+}
+
+.navBottom {
+    padding: 5px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color:  #EEF2F6;
+}
+
+
+.mainContent {
+    padding: 20px;
+    margin-top: 60px;
 }

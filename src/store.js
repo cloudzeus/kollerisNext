@@ -3,6 +3,7 @@ import userSlice from "./features/userSlice";
 import gridSlice from "./features/grid/gridSlice";
 import catalogSlice from "./features/catalogSlice";
 import impaofferSlice from "./features/impaofferSlice";
+import { createWrapper } from 'next-redux-wrapper';
 export const store = configureStore({
   reducer: {
     user: userSlice,
@@ -11,3 +12,6 @@ export const store = configureStore({
     impaoffer: impaofferSlice
   }
 })
+
+const makeStore = () => store;
+export const wrapper = createWrapper(makeStore, {debug: true});

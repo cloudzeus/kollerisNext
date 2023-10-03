@@ -446,7 +446,7 @@ function Product() {
 
     return (
         <AdminLayout >
-            {/* <Toast ref={toast} />
+            <Toast ref={toast} />
             <div className='bg-white p-3 border-round mb-3 flex'>
             <Link href="/dashboard/offers/impaOffers">
             <Button label="Προσφορά πολλαπλών επιλογών" className='mr-2'  />
@@ -455,8 +455,8 @@ function Product() {
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
-                setSelectedProducts={setSelectedProducts} /> */}
-            {/* <DataTable
+                setSelectedProducts={setSelectedProducts} />
+            <DataTable
                 first={lazyState.first}
                 lazy
                 totalRecords={totalRecords}
@@ -500,8 +500,9 @@ function Product() {
                 <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
  : null }
-            </DataTable> */}
-            {/* <EditDialog
+            </DataTable>
+            
+            <EditDialog
                 style={dialogStyle}
                 dialog={editDialog}
                 setDialog={setEditDialog}
@@ -514,7 +515,7 @@ function Product() {
                 setDialog={setClassDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-            /> */}
+            />
         </AdminLayout >
     );
 }
