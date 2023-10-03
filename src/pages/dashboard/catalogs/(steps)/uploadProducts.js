@@ -51,6 +51,8 @@ const UploadProducts = () => {
 
     useEffect(() => {
         if (gridData.length === 0) return;
+        console.log('grid data')
+        console.log(gridData)
         let array = []
         for (const key in gridData[0]) {
             array.push({
@@ -82,7 +84,7 @@ const UploadProducts = () => {
             </UploadBtn>
 
             <h2 className='mb-3 mt-4'>Επιλογή Κλειδιού Τιμής:</h2>
-
+{/* 
             {gridData ? (
 
                 <DataTable
@@ -98,7 +100,7 @@ const UploadProducts = () => {
                     <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
                     <Column header="Κλειδιά" field="value" body={template} />
                 </DataTable>)
-                : null}
+                : null} */}
             <div>
                 <Button
                 severity="success"

@@ -107,13 +107,10 @@ const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
     return (
 
             <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                {/* <Link href={goTo} > */}
                 <div>
                 <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                     <span className='text-lg ml-3'>{title}</span>
                 </div>
-                  
-                {/* </Link> */}
                     
             </li>
 
@@ -125,9 +122,7 @@ const SidebarSubItem = ({ title, goTo }) => {
     return (
 
             <li onClick={() => router.push(goTo)} className={` sub-item`}>
-                  {/* <Link href={goTo}> */}
                     <span className='text-lg ml-3'>{title}</span>
-                  {/* </Link> */}
             </li>
       
 
@@ -145,7 +140,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 270px;
+    width: 240px;
     background-color: #37404C;
   
     .top {

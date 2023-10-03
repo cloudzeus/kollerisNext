@@ -82,7 +82,6 @@ export default async function handler(req, res) {
 
     }
     if (action === "createGroups") {
-        console.log('createCategories')
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/getMtrGroup`
 
@@ -97,12 +96,16 @@ export default async function handler(req, res) {
                 })
             });
             let buffer = await translateData(response)
-            console.log(buffer);
 
             await connectMongo();
-            let newArray = [];
-            buffer.result.map((item) => {
+
+            for (let item of buffer.result) {
+                // console.log(item)
+                let relationship = await MtrCategory.findOne({ 'softOne.MTRCATEGORY': item.cccMTRCATEGORY })
+
+
                 let obj = {
+                    category: relationship._id,
                     groupName: item.NAME,
                     groupIcon: "",
                     groupImage: "",
@@ -115,10 +118,9 @@ export default async function handler(req, res) {
                         MTRCATEGORY: item.cccMTRCATEGORY,
                     }
                 }
-                newArray.push(obj)
-            })
-            let insert = await MtrGroup.insertMany(newArray, { upsert: true })
-            console.log(insert)
+                let insert = await MtrGroup.create(obj)
+            }
+
             return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false });
@@ -139,9 +141,10 @@ export default async function handler(req, res) {
         let buffer = await translateData(response)
         await connectMongo();
 
-        let newArray = [];
-        buffer.result.map((item) => {
+        for (let item of buffer.result) {
+            let groupFind = await MtrGroup.findOne({ 'softOne.MTRGROUP': item.MTRGROUP })
             let obj = {
+                group: groupFind._id,
                 subGroupName: item.name,
                 subGroupIcon: "",
                 subGroupImage: "",
@@ -153,37 +156,14 @@ export default async function handler(req, res) {
                     MTRGROUP: item.MTRGROUP,
                 }
             }
-            newArray.push(obj)
+            await SubMtrGroup.create(obj)
 
-        })
-        let insert = await SubMtrGroup.insertMany(newArray, { upsert: true })
-        console.log(insert)
-        return res.status(200).json({ success: true });
-    }
-
-    if (action === "createRelationships") {
-        await connectMongo();
-
-        let findGroups = await SubMtrGroup.find({})
-        for (let item of findGroups) {
-            let id = item.softOne.MTRGROUP;
-            let findGroup = await MtrGroup.findOne({ 'softOne.MTRGROUP': id })
-
-            console.log(findGroup._id)
-            const updateSubGroups = await SubMtrGroup.findOneAndUpdate(
-                { _id: item._id },
-                {
-                    $set: {
-                        group: findGroup?._id
-                    }
-                }
-            )
         }
+
         return res.status(200).json({ success: true });
-
-
-
     }
+
+
 
     if (action === "groupsToCategories") {
         await connectMongo();
@@ -201,6 +181,27 @@ export default async function handler(req, res) {
                     }
                 }
             )
+        }
+
+        return res.status(200).json({ success: true });
+    }
+    if (action === "subgroupsToGroups") {
+        await connectMongo();
+
+
+        let find = await SubMtrGroup.find({})
+
+        for (let item of find) {
+            let id = item.softOne.MTRGROUP;
+            const updates = await MtrGroup.findOneAndUpdate(
+                { 'softOne.MTRGROUP': parseInt(id) },
+                {
+                    $push: {
+                        subGroups: [item._id]
+                    }
+                }
+            )
+            console.log(updates)
         }
 
         return res.status(200).json({ success: true });
@@ -287,41 +288,6 @@ export default async function handler(req, res) {
     }
 
 
-    if (action === "ONEOFPRODUCT") {
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-            })
-        });
-        let buffer = await translateData(response)
-        await connectMongo();
-        let softoneProduct = await SoftoneProduct.insertMany(item)
-
-
-
-
-
-        for (let item of buffer.result) {
-            let softoneProduct = await SoftoneProduct.create(item)
-            if (softoneProduct) {
-                totalSoftone++;
-            }
-            let createProduct = await Product.create({
-                softoneProduct: softoneProduct._id,
-                name: item.NAME,
-                MTRL: item.MTRL,
-                softoneStatus: true,
-            })
-            if (createProduct) {
-                totalProducts++;
-            }
-
-        }
-        return res.status(200).json({ success: true, result: { totalSoftone, totalProducts } });
-    }
 
     if (action === 'insertproducts') {
         console.log('we are here')
@@ -348,21 +314,19 @@ export default async function handler(req, res) {
     if (action === 'alterProducts') {
         try {
             await connectMongo();
-            let categories = await MtrCategory.find({}, { softOne: {MTRCATEGORY: 1}, categoryName: 1 })
-            let groups = await MtrGroup.find({}, { softOne: {MTRGROUP: 1}, groupName: 1 })
-            let subgroups = await SubMtrGroup.find({}, { softOne: {cccSubgroup2: 1}, subGroupName: 1 })
-            let softoneProducts = await SoftoneProduct.find({}, {MTRCATEGORY: 1, MTRGROUP: 1, CCCSUBGOUP2: 1})
-            for(let item of softoneProducts) {
+            let categories = await MtrCategory.find({}, { softOne: { MTRCATEGORY: 1 }, categoryName: 1 })
+            let groups = await MtrGroup.find({}, { softOne: { MTRGROUP: 1 }, groupName: 1 })
+            let subgroups = await SubMtrGroup.find({}, { softOne: { cccSubgroup2: 1 }, subGroupName: 1 })
+            let softoneProducts = await SoftoneProduct.find({}, { MTRCATEGORY: 1, MTRGROUP: 1, CCCSUBGOUP2: 1 })
+            for (let item of softoneProducts) {
                 let category = categories.find(cat => cat.softOne.MTRCATEGORY === item.MTRCATEGORY)
                 let group = groups.find(gr => gr.softOne.MTRGROUP === item.MTRGROUP)
                 let subgroup = subgroups.find(sub => sub.softOne.cccSubgroup2 === item.CCCSUBGOUP2)
-                
+
                 let update = await SoftoneProduct.findOneAndUpdate(
                     {
-                        $and: [
-                            { MTRL: { $gt: 55000 } },
-                            { _id: item._id }
-                        ]
+                        _id: item._id
+
                     },
                     {
                         $set: {
@@ -376,11 +340,11 @@ export default async function handler(req, res) {
 
             }
             return res.status(400).json({ success: false });
-            
+
         } catch (e) {
             return res.status(400).json({ success: false });
         }
-    
+
     }
 }
 

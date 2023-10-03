@@ -7,29 +7,6 @@ import { Button } from 'primereact/button';
 import * as xlsx from 'xlsx';
 
 
-const readCSV = async (filenameArr) => {
-    try {
-        const response = await fetch(`/uploads/${filename}`);
-        if (!response.ok) throw new Error("Failed to fetch the file.");
-
-        const blob = await response.blob();
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            const binary = event.target.result;
-            const workbook = xlsx.read(binary, { type: 'binary' });
-
-            const sheetNameList = workbook.SheetNames;
-            const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
-        };
-
-        reader.readAsBinaryString(blob);
-    } catch (error) {
-        console.error("Error reading the file:", error);
-    }
-};
-
 
 const Saved = () => {
     const [catalogs, setCatalogs] = useState([])

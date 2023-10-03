@@ -195,17 +195,11 @@ function Product() {
        
     }
 
+ 
     useEffect(() => {
-        // fetch()
-        setFilteredData([])
-    }, [])
-
-    // useEffect(() => {
-    //     if (category === null || group === null || subgroup == null || softoneStatusFilter == null) {
-    //         return;
-    //     }
-    //     fetch()
-    // }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
+      
+        fetch()
+    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
 
     

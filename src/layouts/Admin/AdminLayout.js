@@ -20,7 +20,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			{isSidebarOpen ? <TestSidebar  /> : null}
+			{isSidebarOpen ? <NewSidebar  /> : null}
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar  isSidebarOpen={isSidebarOpen}>
 					<div className='top'>

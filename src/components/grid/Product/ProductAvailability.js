@@ -15,128 +15,59 @@ export const ProductAvailability = ({ data }) => {
        
        
     }
-   
 
     return (
-        <Container >
-            <div  className='content '>
-                <div className='row'>
+   
+        <div className='prod_availability_container' >
+            <div  className='prod_availability_content '>
+                <div className='prod_availability_row'>
                     <CircleDiv />
                     <span>Διαθεσιμα:</span>
-                    <span className='available'>{data?.DIATHESIMA}</span>
+                    <span className='prod_availability_available'>{data?.DIATHESIMA}</span>
                 </div>
 
-                <div className='row update-row'>
+                <div className='prod_availability_row update-row'>
 
                     <span>updated:</span>
-                    <span className='date'>{data?.date}</span>
+                    <span className='prod_availability_date'>{data?.date}</span>
                 </div>
 
 
             </div>
 
-        </Container>
+        </div>
     )
 }
 
 
 export const ProductOrdered = ({data}) => {
     return (
-        <Container>
+        <div className='prod_availability_container'>
         <div >
-            <div className='row'>
-                <div className='circle circle-ordered'></div>
+            <div className='prod_availability_row'>
+                <div className='prod_availability_circle prod_availability_circle-ordered'></div>
                 <span >Σε παραγγελία:</span>
-                <span className='available'>{data?.SEPARAGELIA}</span>
+                <span className='prod_availability_available'>{data?.SEPARAGELIA}</span>
             </div>
     
         </div>
-    </Container>
+    </div>
     )
 }
 export const ProductReserved = ({data}) => {
     return (
-        <Container>
+        <div className='prod_availability_container'>
         <div >
-            <div className='row'>
-                <div className='circle circle-reserved'></div>
-                <span className='block'>Δεσμευμένα:</span>
-                <span className='available'>{data?.DESVMEVMENA}</span>
+            <div className='prod_availability_row'>
+                <div className='prod_availability_circle prod_availability_circle-reserved'></div>
+                <span className='prod_availability_block'>Δεσμευμένα:</span>
+                <span className='prod_availability_available'>{data?.DESVMEVMENA}</span>
             </div>
     
         </div>
-    </Container>
+    </div>
     )
 }
-
-
-const Container = styled.div`
-    display: flex;
-    align-items: center;
-    .row {
-        display: flex;
-        align-items: center;
-    }
-    .block {
-        display: block;
-    }
-
-    .row span {
-        white-space: nowrap;
-    }
-   
-
-    .update-row {
-        font-size: 11px;
-        margin-top: 2px;
-    }
-    .content {
-       margin-right: 15px;
-    }
-
-    .available {
-        margin-left: 4px;
-        font-weight: bold;
-     
-    }
-
-    .circle  {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        margin-right: 4px;
-        margin-top: 3px;
-    }
-
-    .circle-div {
-      
-        background-color: #44f40b;
- 
-    }
-    .circle-ordered{
-   
-        background-color: #e4941b;
-      
-    }
-    .circle-reserved{
-   
-        background-color: #1ecbe1;
-      
-    }
-    
-   
-    .circle-notavailable {
-        background-color: #f40b0b;
-    }
-
-    .date {
-        margin-left: 2px;
-        font-style: italic;
-        color: grey;
-    }
-
-   
-`
 
 
 
