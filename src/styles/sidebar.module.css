@@ -1,0 +1,57 @@
+.container {
+    background-color: #37404C;
+    width: 260px;
+}
+
+.top {
+    height: 70px;
+    background-color: #282E38;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+}
+.mainSidebar {
+    height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    padding-right: 14px;
+}
+.item {
+    background-color:#323a45;
+    border-radius: 5px;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.subItem {
+    background-color:#2a313b;
+    border-radius: 5px;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.expandable {
+    color: white;
+    background-color:#323a45;
+    border-radius: 5px;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 4px 20px;
+    margin-bottom: 5px;
+}

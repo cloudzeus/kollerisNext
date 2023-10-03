@@ -5,11 +5,10 @@ import styled from 'styled-components';
 import { toggleSidebar } from '@/features/userSlice';
 import { Button } from 'primereact/button';
 import ProfileButton from '@/components/NavProfileButton';
-import { Sidebar } from 'primereact/sidebar';
-import NewSidebar from './NewSidebar';
 import BreadCrumbs from './BreadCrumbs';
 import TestSidebar from './TestSidebar';
-
+import SidebarMain from '@/components/Sidebar';
+import { Sidebar } from 'primereact/sidebar';
 const AdminLayout = ({ children }) => {
 	const { isSidebarOpen } = useSelector((store) => store.user)
 	const dispatch = useDispatch()
@@ -20,7 +19,7 @@ const AdminLayout = ({ children }) => {
 
 	return (
 		<Container>
-			{isSidebarOpen ? <NewSidebar  /> : null}
+			{isSidebarOpen ? <SidebarMain  /> : null}
 			<Content isSidebarOpen={isSidebarOpen} >
 				<Navbar  isSidebarOpen={isSidebarOpen}>
 					<div className='top'>
@@ -98,7 +97,7 @@ const Navbar = styled.nav`
   right: 0;
   background-color: #fff;
   z-index: 10;
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 240px)' : '100%'};
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 260px)' : '100%'};
   .navbar-rightdiv {
 	display: flex;
 	align-items: center;
@@ -131,7 +130,7 @@ const MainContent = styled.div`
   padding: 20px;
   margin-top: 110px;
   background-color: ${({ theme }) => theme.palette.background};
-  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 240px)' : '100%'};
+  width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 260px)' : '100%'};
   transition: width 0.3s ease-in-out;
 `;
 

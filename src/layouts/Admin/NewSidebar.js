@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { toggleSidebar } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-
+import styles from '@/styles/Sidebar.module.css'
 const NewSidebar = () => {
     const dispatch = useDispatch()
     const router = useRouter()
@@ -14,17 +14,17 @@ const NewSidebar = () => {
 		dispatch(toggleSidebar())
 	}
     return (
-        <Container>
-            <div className='top'>
+        <div className={styles.container}>
+            <div className={styles.top}>
                 <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
-                <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem' }}></i>
+                <i onClick={() => handleToggleSidebar()} className={`${styles.burgerClose} ${"pi pi-angle-left"}` } style={{ fontSize: '1.5rem' }}></i>
 
             </div>
-            <div className='main'>
+            <div className={styles.main}>
                 <SidebarList />
             </div>
-            <div className='bottom'></div>
-        </Container>
+            <div className={styles.bottom}></div>
+        </div>
     )
 }
 
@@ -84,7 +84,7 @@ const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) =
        
     }
     return (
-        <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
+        <li onClick={handleClick} >
             <div>
                 <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                 <span className='text-lg ml-3'>{title}</span>
@@ -106,7 +106,7 @@ const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
 
     return (
 
-            <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
+            <li onClick={handleClick} className={`${styles.sidebarItem} ${activeTab ? styles.active : null}`}>
                 <div>
                 <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                     <span className='text-lg ml-3'>{title}</span>
@@ -121,7 +121,7 @@ const SidebarSubItem = ({ title, goTo }) => {
 
     return (
 
-            <li onClick={() => router.push(goTo)} className={` sub-item`}>
+            <li onClick={() => router.push(goTo)} className={styles.subItem}>
                     <span className='text-lg ml-3'>{title}</span>
             </li>
       
