@@ -360,7 +360,7 @@ function Product() {
                 setGroupFilter(data.result)
             }
             handleCategories()
-        }, [])
+        }, [category])
 
        
         return (
@@ -387,11 +387,12 @@ function Product() {
                     action: 'findSubGroups',
                     groupID: group?.softOne.MTRGROUP
                 })
+                console.log('data result')
                 setSubGroupsFilter(data.result)
             }
 
             handleCategories()
-        }, [])
+        }, [category, group])
 
         return (
             <div className="flex align-items-center">
@@ -459,6 +460,7 @@ function Product() {
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
+                header={header}
                 first={lazyState.first}
                 lazy
                 totalRecords={totalRecords}
