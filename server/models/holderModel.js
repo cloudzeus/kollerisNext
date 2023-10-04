@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 
 const holderchema = new mongoose.Schema({
+    num: Number,
     clientName: String,
     clientEmail: String,
     clientPhone: String,

@@ -10,14 +10,26 @@ import Input from '../Forms/PrimeInput'
 import { InputText } from 'primereact/inputtext';
 import ClientDetails from './ClientDetails'
 
+function generateOfferNum(length) {
+    const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
+    const min = Math.pow(10, length - 1); // Generates a number like 100000 for length = 6
+    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+    return num;
+}
+
 
 const ΟffersPage = () => {
     const dispatch = useDispatch()
     const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
    
-   
     const finalizeOffer = async () => {
-        let { data } = await axios.post('/api/createOffer', { action: 'finalizedOffer', holders: holder, client: selectedClient, email: offerEmail })
+        let { data } = await axios.post('/api/createOffer', { 
+            action: 'finalizedOffer', 
+            holders: holder, 
+            client: selectedClient, 
+            email: offerEmail, 
+            num: generateOfferNum(6) 
+        })
         dispatch(setPageId(1))
     }
 
@@ -48,7 +60,10 @@ const ΟffersPage = () => {
                 <div className='mt-2'>
                     {holder.length > 0 ? (< MapHolders />) : null}
                 </div>
-                {holder.length > 0 ? (<Button onClick={finalizeOffer} d raised icon="pi pi-angle-right" className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς" />) : null}
+                 <Button 
+                    onClick={finalizeOffer} 
+                    disabled={holder.length === 0 || !offerEmail}
+                    raised icon="pi pi-angle-right" className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς" />
 
             </div>
         </div>

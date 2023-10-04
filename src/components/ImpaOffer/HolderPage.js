@@ -20,13 +20,14 @@ function generateRandomId(length = 8) {
 
 
 
-
 const HolderPage = () => {
     const dispatch = useDispatch();
     const { selectedClient, selectedProducts, holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
     const toast = useRef(null);
 
-
+    useEffect(() => {
+        dispatch(setSelectedProducts([]))
+    }, [])
 
     const onHolderCompletions = async () => {
         dispatch(setHolder({
@@ -102,14 +103,14 @@ const CustomToolbar = ({setShow, show }) => {
     const { selectedImpa, dataSource } = useSelector(state => state.impaoffer)
     const dispatch = useDispatch()
 
-    // const onAllProductsClick = () => {
-    //     dispatch(setShowImpaTable(false))
-    //     dispatch(setDataSource(2))
-    // }
+    const onAllProductsClick = () => {
+        dispatch(setShowImpaTable(false))
+        dispatch(setDataSource(2))
+    }
 
-    // const resetToImpa = () => {
-    //     dispatch(setDataSource(1))
-    // }
+    const resetToImpa = () => {
+        dispatch(setDataSource(1))
+    }
     
     const StartContent = () => {
         return (
@@ -123,8 +124,10 @@ const CustomToolbar = ({setShow, show }) => {
     const EndContent = () => {
         return (
             <div className=''>
-                <Button icon={`pi  ${!show ? "pi-angle-down" : " pi-angle-up"  }`} className='ml-3' severity='secondary' onClick={() => setShow(prev => !prev)} />
-            </div>
+            {dataSource == 1 ? ( <Button icon="pi pi-tag" disabled={!selectedImpa} severity='warning' label="όλα τα Προϊόντα" onClick={onAllProductsClick} />) : null}
+            {dataSource == 2 ? ( <Button icon="pi pi-tag" disabled={!selectedImpa}  label={`Προϊόντα του IMPA: ${selectedImpa?.code }`} onClick={resetToImpa} />) : null}
+            <Button icon={`pi  ${!show ? "pi-angle-down" : " pi-angle-up"  }`} className='ml-3' severity='secondary' onClick={() => setShow(prev => !prev)} />
+        </div>
         )
     }
 

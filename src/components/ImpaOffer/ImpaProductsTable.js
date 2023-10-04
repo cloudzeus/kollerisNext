@@ -80,8 +80,6 @@ const ImpaDataTable = () => {
                     </div>
                     <div className='mt-3 ml-4'>
                         <p>Τα προίόντα που θα προσθέσετε στο holder θα συνδεθούν με αυτόν τον IMPA </p>   
-                        <Button className='mt-3' icon="pi pi-tag" severity='warning' label="όλα τα Προϊόντα" onClick={onAllProductsClick} />
-     
                     </div>
 
                 </div>

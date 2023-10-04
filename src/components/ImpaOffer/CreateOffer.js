@@ -113,6 +113,7 @@ const CustomDataTable = ({ data, setRefetch, loading }) => {
         >
             <Column expander={allowExpansion} style={{ width: '5rem' }} />
             <Column header="Όνομα Πελάτη" field="clientName"></Column>
+            <Column header="Aριθμός Προσφοράς" field="num"></Column>
             <Column header="Status" field="status" body={Status} style={{width: '70px'}} editor={(options) => statusEditor(options)}></Column>
             <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
         </DataTable>

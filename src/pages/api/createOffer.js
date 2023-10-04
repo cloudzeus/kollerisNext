@@ -151,7 +151,7 @@ export default async function handler(req, res) {
         }
     }
     if (action === "finalizedOffer") {
-        const { holders, client, email, id } = req.body;
+        const { holders, client, email, id, num} = req.body;
 
         let body = holders.map((item) => {
             let elements = item.products.map((product) => {
@@ -169,7 +169,7 @@ export default async function handler(req, res) {
             const mailOptions = {
                 from: "johnchiout.dev@gmail.com", // sender address
                 to: email, // list of receivers
-                subject: 'Προσφορά', // Subject line
+                subject: `Προσφορά - NUM: ${num}`, // Subject line
                 html: `${body}` // html body
             };
 
@@ -189,7 +189,8 @@ export default async function handler(req, res) {
                 clientEmail: client.EMAIL || '',
                 clientPhone: client.PHONE01 || '',
                 holders: holders,
-                status: 'pending'
+                status: 'pending',
+                num: num
             })
             console.log(insert)
             await closeMongo();
