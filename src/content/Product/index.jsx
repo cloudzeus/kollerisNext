@@ -196,7 +196,6 @@ function Product() {
 
  
     useEffect(() => {
-      
         fetch()
     }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
@@ -319,6 +318,7 @@ function Product() {
                     action: 'findCategories',
                  
                 })
+                console.log(data.result)
                 setCategoriesFilter(data.result)
             }
 
@@ -355,7 +355,9 @@ function Product() {
                     action: 'findGroups',
                     categoryID: category?.softOne.MTRCATEGORY
                 })
-           
+                console.log('groups')
+                console.log(data.result)
+
                 setGroupFilter(data.result)
             }
             handleCategories()
@@ -456,6 +458,7 @@ function Product() {
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
+                header={header}
                 first={lazyState.first}
                 lazy
                 totalRecords={totalRecords}

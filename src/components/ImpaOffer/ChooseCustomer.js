@@ -7,14 +7,14 @@ import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedClient } from '@/features/impaofferSlice';
-
+import { InputText } from 'primereact/inputtext';
 
 const ChooseCustomer = () => {
     const { selectedClient } = useSelector(state => state.impaoffer)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-
+    const [searchTerm, setSearchTerm] = useState('')
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
@@ -23,12 +23,15 @@ const ChooseCustomer = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch()
 
-    const fetchClients = async () => {
+    console.log('search term')
+    console.log(searchTerm)
+    const fetchClients = async (action) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', {
-            action: 'findClients',
+            action: action,
             skip: lazyState.first,
             limit: lazyState.rows,
+            searchTerm: searchTerm
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
@@ -37,7 +40,12 @@ const ChooseCustomer = () => {
     }
 
     useEffect(() => {
-        fetchClients();
+        fetchClients("searchClients");
+    }, [searchTerm])
+
+
+    useEffect(() => {
+        fetchClients("findClients");
     }, [lazyState.rows, lazyState.first, ])
 
 
@@ -50,10 +58,23 @@ const ChooseCustomer = () => {
         setlazyState(event);
     };
 
+    const SearchClient = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                </span>
+            </div>
+        )
+    }
+
     return (
         <>  
             
-            <CustomToolbar setShowTable={setShowTable} />
+            <div className='w-full flex justify-content-between '>
+                <Button severity='secondary' label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
+            </div>
             {showTable ? (
                 <DataTable
                     paginator
@@ -67,11 +88,13 @@ const ChooseCustomer = () => {
                     selection={selectedClient}
                     onSelectionChange={onSelectionChange}
                     value={data}
-                    className='border-1 border-round-sm	border-50'
+                    className='border-1 border-round-sm	border-50 mt-2'
                     size="small"
+                    filterDisplay="row"
+
                 >
-                    <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="NAME" header="Όνομα Πελάτη"></Column>
+                    <Column selectionMode="single" headerStyle={{width: '30px'}}></Column>
+                    <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient}  header="Όνομα Πελάτη"></Column>
                 </DataTable>
             ) : null}
 
@@ -79,29 +102,5 @@ const ChooseCustomer = () => {
     )
 }
 
-const CustomToolbar = ({ setShowTable }) => {
-    const { selectedClient } = useSelector(state => state.impaoffer)
-    const StartContent = () => {
-        return (
-            <div className='w-full flex justify-content-between '>
-                <Button severity='secondary' label="Επιλογή Πελάτη" onClick={() => setShowTable(prev => !prev)} />
-            </div>
-        )
-    }
-
-    const EndContent = () => {
-        return (
-            <div className='mr-5 w-15rem'>
-                <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ:</p>
-                <p>{selectedClient?.NAME}</p>
-            </div>
-        )
-    }
-
-    return (
-        <Toolbar start={StartContent} end={EndContent} />
-
-    )
-}
 
 export default ChooseCustomer

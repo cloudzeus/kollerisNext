@@ -130,29 +130,6 @@ const ChooseImpa = () => {
 }
 
 
-const CustomToolbar = ({ setState }) => {
-    const { selectedImpa } = useSelector(state => state.impaoffer)
-    const StartContent = () => {
-        return (
-            <div className='w-full flex justify-content-between align-items-center'>
-                <Button severity='secondary' label={`Eπιλογή Impa ${selectedImpa?.code}`} onClick={() => setState(prev => !prev)} />
-            </div>
-        )
-    }
 
-    const EndContent = () => {
-        return (
-            <div className='mr-5 w-15rem'>
-                <p className='font-bold text-lg'>ΣΤΟΙΧΕΙΑ IMPA:</p>
-                <p>{selectedImpa?.englishDescription}</p>
-                <p>{selectedImpa?.code}</p>
-            </div>
-        )
-    }
-
-    return (
-        <Toolbar start={StartContent} end={EndContent} />
-    )
-}
 
 export default ChooseImpa;

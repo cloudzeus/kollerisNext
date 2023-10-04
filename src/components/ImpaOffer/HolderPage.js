@@ -121,8 +121,6 @@ const CustomToolbar = ({setShow, show }) => {
     const EndContent = () => {
         return (
             <div className=''>
-                {dataSource == 1 ? ( <Button icon="pi pi-tag" severity='warning' label="όλα τα Προϊόντα" onClick={onAllProductsClick} />) : null}
-                {dataSource == 2 ? ( <Button icon="pi pi-tag"  label={`Προϊόντα του IMPA: ${selectedImpa?.code }`} onClick={resetToImpa} />) : null}
                 <Button icon={`pi  ${!show ? "pi-angle-down" : " pi-angle-up"  }`} className='ml-3' severity='secondary' onClick={() => setShow(prev => !prev)} />
             </div>
         )

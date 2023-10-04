@@ -9,6 +9,7 @@ const initialState = {
 	showImpaTable: false,
 	holder: [],
 	mtrLines: [],
+	offerEmail: null,
 }
 
 
@@ -61,6 +62,9 @@ const impaofferSlice = createSlice({
 				}
 				return item;
 			});
+		},
+		setOfferEmail: (state, {payload}) => {
+			state.offerEmail = payload;
 		}
 
 
@@ -82,6 +86,7 @@ export const {
 	setShowImpaTable,
 	setHolder,
 	setMtrLines,
+	setOfferEmail
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

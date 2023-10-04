@@ -6,6 +6,7 @@ import SoftoneProduct from "../../../server/models/newProductModel";
 
 
 export default async function handler(req, res) {
+    console.log('availability')
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAvailability`;
     const response = await fetch(URL, {
         method: 'POST',

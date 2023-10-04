@@ -2,12 +2,12 @@
 
 'use client'
 import React, { useState, useEffect } from 'react';
-
+import { Button } from 'primereact/button';
 import axios from 'axios';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedImpa, setSelectedProducts } from '@/features/impaofferSlice';
+import { setSelectedImpa, setSelectedProducts, setDataSource} from '@/features/impaofferSlice';
 
 
 
@@ -16,7 +16,9 @@ const ImpaDataTable = () => {
     const { selectedImpa, selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
     const dispatch = useDispatch()
 
-  
+    const onAllProductsClick = () => {
+        dispatch(setDataSource(2))
+    }
 
  
     const handleFetch = async () => {
@@ -71,12 +73,15 @@ const ImpaDataTable = () => {
                         <div className='ml-3'>
                             <p>Δεν υπάρχουν προϊόντα συσχετισμένα στον κωδικό Impa <span className='font-bold'>{selectedImpa?.code}</span></p>
                             <p>Αλλάξτε πηγή δεδομένων και αναζητείστε όλα τα προϊόντα</p>
+
                         </div>
                         
 
                     </div>
                     <div className='mt-3 ml-4'>
-                        <p>Τα προίόντα που θα προσθέσετε στο holder θα συνδεθούν με αυτόν τον IMPA </p>        
+                        <p>Τα προίόντα που θα προσθέσετε στο holder θα συνδεθούν με αυτόν τον IMPA </p>   
+                        <Button className='mt-3' icon="pi pi-tag" severity='warning' label="όλα τα Προϊόντα" onClick={onAllProductsClick} />
+     
                     </div>
 
                 </div>

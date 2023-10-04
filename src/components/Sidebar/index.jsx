@@ -9,16 +9,20 @@ const SidebarMain = () => {
     const { isSidebarOpen } = useSelector(state => state.user)
 
     return (
-       <>
-        {isSidebarOpen ? ( <div className={styles.container}>
-            <div className={styles.top}>
-            <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
-            </div>
-            <SidebarItems />
-        </div>) : null}
-       </>
+        <>
+            {isSidebarOpen ? (
+                <div className={styles.container}>
+                    <div className={styles.top}>
+                        <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
+                    </div>
+                    <SidebarItems />
+                </div>
+            )
+                : null
+            }
+        </>
     )
 }
 
-export default  SidebarMain;
+export default SidebarMain;
 

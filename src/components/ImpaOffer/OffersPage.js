@@ -4,18 +4,20 @@ import { Button } from 'primereact/button'
 import StepHeader from './StepHeader'
 import ChooseCustomer from './ChooseCustomer'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPageId, setSelectedImpa,  } from '@/features/impaofferSlice'
+import { setPageId, setSelectedImpa, } from '@/features/impaofferSlice'
 import axios from 'axios'
+import Input from '../Forms/PrimeInput'
+import { InputText } from 'primereact/inputtext';
+import ClientDetails from './ClientDetails'
+
 
 const ΟffersPage = () => {
     const dispatch = useDispatch()
-    const { selectedClient, holder } = useSelector(state => state.impaoffer)
-        
-
-    console.log(holder)
+    const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
+   
+   
     const finalizeOffer = async () => {
-        let {data} = await axios.post('/api/createOffer', {action: 'finalizedOffer', holders: holder, client: selectedClient})
-        console.log(data)
+        let { data } = await axios.post('/api/createOffer', { action: 'finalizedOffer', holders: holder, client: selectedClient, email: offerEmail })
         dispatch(setPageId(1))
     }
 
@@ -31,8 +33,13 @@ const ΟffersPage = () => {
             </div>
             <StepHeader text={"Επιλογή Πελάτη"} />
             <ChooseCustomer />
+            {selectedClient ? (
+                            <ClientDetails  selectedClient={selectedClient} />
+
+            ) : null}
+         
             <div className='mt-5'>
-            <StepHeader text={"Δημιουργία Holders"} />
+                <StepHeader text={"Δημιουργία Holders"} />
                 <div className='bg-white mt-3 border-round p-4 flex align-item-center justify-content-between'>
                     <div>
                         <Button icon="pi pi-plus" disabled={!selectedClient} label="Νέο Holder" severity='warning' onClick={onNewHolder} />
@@ -41,8 +48,8 @@ const ΟffersPage = () => {
                 <div className='mt-2'>
                     {holder.length > 0 ? (< MapHolders />) : null}
                 </div>
-                {holder.length > 0 ? ( <Button onClick={finalizeOffer} d  raised icon="pi pi-angle-right"  className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς"/>) : null}
-             
+                {holder.length > 0 ? (<Button onClick={finalizeOffer} d raised icon="pi pi-angle-right" className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς" />) : null}
+
             </div>
         </div>
     )
@@ -52,7 +59,7 @@ const ΟffersPage = () => {
 const MapHolders = () => {
     const { holder } = useSelector(state => state.impaoffer)
     const [showContent, setShowContent] = useState(null)
-  
+
     const dropDownClick = (id) => {
         setShowContent(id)
     }
