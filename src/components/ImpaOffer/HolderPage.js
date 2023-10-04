@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageId, setDataSource, setShowImpaTable, setHolder, setSelectedProducts } from '@/features/impaofferSlice';
 import StepHeader from './StepHeader';
@@ -9,6 +9,7 @@ import ChooseImpa from './ChooseImpa';
 import ImpaDataTable from './ImpaProductsTable';
 import ChosenProducts from './ChosenProducts';
 import ProductsDataTable from './ProductTable';
+import axios from 'axios';
 
 
 function generateRandomId(length = 8) {
@@ -23,26 +24,27 @@ function generateRandomId(length = 8) {
 const HolderPage = () => {
     const dispatch = useDispatch();
     const { selectedClient, selectedProducts, holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
-
-    
-
-    useEffect(() => {
-        dispatch(setSelectedProducts([]))
-    }, [] )
+    const toast = useRef(null);
 
 
-    const onHolderCompletions = () => {
+
+    const onHolderCompletions = async () => {
         dispatch(setHolder({
             id: generateRandomId(),
             impaCode: selectedImpa?.code,
             products: mtrLines
         }))
         dispatch(setPageId(2))
+
+        //This is where we realte the chosen products to the selected impa and we add them to the database
+        let {data} = await axios.post('/api/createOffer', {action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts})
+       
+
     }
 
-   
+
     return (
-        <div className=''>
+        <div >
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => dispatch(setPageId(2))} />
             </div>
@@ -100,14 +102,14 @@ const CustomToolbar = ({setShow, show }) => {
     const { selectedImpa, dataSource } = useSelector(state => state.impaoffer)
     const dispatch = useDispatch()
 
-    const onAllProductsClick = () => {
-        dispatch(setShowImpaTable(false))
-        dispatch(setDataSource(2))
-    }
+    // const onAllProductsClick = () => {
+    //     dispatch(setShowImpaTable(false))
+    //     dispatch(setDataSource(2))
+    // }
 
-    const resetToImpa = () => {
-        dispatch(setDataSource(1))
-    }
+    // const resetToImpa = () => {
+    //     dispatch(setDataSource(1))
+    // }
     
     const StartContent = () => {
         return (

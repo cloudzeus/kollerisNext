@@ -8,148 +8,135 @@ import nodemailer from 'nodemailer';
 
 
 export default async function handler(req, res) {
-    const action = req.body.action 
+    const action = req.body.action
     console.log(action)
-    if(action === 'findImpaBatch') {
-        let {skip, limit} = req.body;
+    if (action === 'findImpaBatch') {
+        let { skip, limit } = req.body;
         console.log('skip', skip, 'limit', limit)
         try {
             await connectMongo();
             let totalRecords;
             totalRecords = await ImpaCodes.countDocuments();
             const impas = await ImpaCodes.find({}).skip(skip).limit(limit);
-            return res.status(200).json({success: true, result: impas, totalRecords})
+            return res.status(200).json({ success: true, result: impas, totalRecords })
         } catch (e) {
             console.log(e)
         }
     }
 
-    if(action === "searchGreekImpa") {
-        let {skip, limit, searchTerm} = req.body;
+    if (action === "searchGreekImpa") {
+        let { skip, limit, searchTerm } = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm.greek, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ greekDescription: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
+        const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm });
+        const impas = await ImpaCodes.find({ greekDescription: regexSearchTerm }).skip(skip).limit(limit);
+        return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
     }
-    if(action === "searchEng") {
-        let {skip, limit, searchTerm} = req.body;
+    if (action === "searchEng") {
+        let { skip, limit, searchTerm } = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm.english, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ englishDescription: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
+        const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm });
+        const impas = await ImpaCodes.find({ englishDescription: regexSearchTerm }).skip(skip).limit(limit);
+        return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
     }
-    if(action === "searchCode") {
-        let {skip, limit, searchTerm} = req.body;
+    if (action === "searchCode") {
+        let { skip, limit, searchTerm } = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm.code, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({code: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ code: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
+        const totalRecords = await ImpaCodes.countDocuments({ code: regexSearchTerm });
+        const impas = await ImpaCodes.find({ code: regexSearchTerm }).skip(skip).limit(limit);
+        return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
     }
 
-    if(action === "findImpaProducts") {
-        let {code } = req.body
+    if (action === "findImpaProducts") {
+        let { code } = req.body
         try {
             await connectMongo();
-            const impas = await ImpaCodes.find({code: code})
-            .populate('products', 'MTRL CODE PRICER _id NAME');
+            const impas = await ImpaCodes.find({ code: code })
+                .populate('products', 'MTRL CODE PRICER _id NAME');
             let products = impas[0].products
-            return res.status(200).json({success: true, result: products})
+            return res.status(200).json({ success: true, result: products })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
-         
+
     }
 
-    if(action === 'findProducts') {
-        const {skip, limit} = req.body;
-        console.log(skip, limit)
+    if (action === 'findProducts') {
+        const { skip, limit } = req.body;
         try {
             await connectMongo();
             const totalRecords = await SoftoneProduct.countDocuments();
             const products = await SoftoneProduct.find({}).skip(skip).limit(limit)
-            .select('MTRL CODE PRICER _id NAME')
-            .populate('impas');
-            return res.status(200).json({success: true, result: products, totalRecords: totalRecords})
+                .select('MTRL CODE PRICER _id NAME')
+                .populate('impas');
+            return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === 'findClients') {
-        const {skip, limit,} = req.body;
-        console.log(skip, limit)
-        console.log('sefsef')
+    if (action === 'findClients') {
+        const { skip, limit, } = req.body;
+      
         try {
             await connectMongo();
             const totalRecords = await Clients.countDocuments();
             const clients = await Clients.find({}).skip(skip).limit(limit);
-            console.log(clients)
-            return res.status(200).json({success: true, result: clients, totalRecords: totalRecords})
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === "searchClients") {
-        const {skip, limit, searchTerm} = req.body;
-        console.log
-        console.log(searchTerm)
+    if (action === "searchClients") {
+        const { skip, limit, searchTerm } = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-        const totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm});
-        const clients = await Clients.find({ NAME: regexSearchTerm}).skip(skip).limit(limit);
+        const totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm });
+        const clients = await Clients.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
         console.log(clients)
-        return res.status(200).json({success: true, result: clients, totalRecords: totalRecords})
-    }
-
-    if(action === "relateProducts") {
-        let { products, impa} = req.body;
-        console.log(products, impa)
-        try {
-            return res.status(200).json({success: true, result: null})
-        } catch (e) {
-            return res.status(500).json({success: false, result: null})
-        }
+        return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
     }
 
    
 
-    if(action === "findHolders") {
-        
+
+
+    if (action === "findHolders") {
+
         try {
             await connectMongo();
             const holders = await Holders.find({});
             console.log(holders)
             // await closeMongo();
-            return res.status(200).json({success: true, result: holders})
+            return res.status(200).json({ success: true, result: holders })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action == "saveNewEmail") {
+    if (action == "saveNewEmail") {
         try {
             await connectMongo();
             const { id, email } = req.body;
             console.log(id, email)
-            let update = await Clients.updateOne({_id: id}, {
+            let update = await Clients.updateOne({ _id: id }, {
                 $set: {
                     EMAIL: email
                 }
-            }, 
-            { upsert: true }
+            },
+                { upsert: true }
             )
             console.log(update)
-            return res.status(200).json({success: true, result: update})
+            return res.status(200).json({ success: true, result: update })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
 
         }
     }
 
 
-    if(action === "finalizedOffer") {
-        const {holders, client, email, id} = req.body;
-     
+    if (action === "finalizedOffer") {
+        const { holders, client, email, id } = req.body;
+
         let body = holders.map((item) => {
             let elements = item.products.map((product) => {
                 return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
@@ -157,21 +144,21 @@ export default async function handler(req, res) {
                 <p>Τιμή: <strong>${product.PRICE}€</strong></p>
                 <p>---------------</p>`;
             }).join('');  // Join array elements into a single string
-              
+
             return `<p>Κωδικός Impa: <strong>${item.impaCode}</strong></p> ${elements}`;
         });
-    
-   
+
+
         try {
             const mailOptions = {
                 from: "johnchiout.dev@gmail.com", // sender address
                 to: email, // list of receivers
                 subject: 'Προσφορά', // Subject line
-                html:  `${body}` // html body
-            };  
+                html: `${body}` // html body
+            };
 
-        
-            
+
+
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     return console.log(error);
@@ -190,31 +177,41 @@ export default async function handler(req, res) {
             })
             console.log(insert)
             await closeMongo();
-            return res.status(200).json({success: true, result: insert })
+            return res.status(200).json({ success: true, result: insert })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
-       
+
 
     }
 
-    if(action == "sendOffer") {
-        const {email, subject, data} = req.body;
-        // const mailOptions = {
-        //     from: `${process.env.NEXT_PUBLIC_NODEMAILER_EMAIL}`, // sender address
-        //     to: email, // list of receivers
-        //     subject: subject, // Subject line
-        //     text: 'Hello world?', // plaintext body
-        //     html: '<b>Hello world?</b>' // html body
-        // };
-        
-        // transporter.sendMail(mailOptions, (error, info) => {
-        //     if (error) {
-        //         return console.log(error);
-        //     }
-        //     console.log('Message sent: %s', info.messageId);
-        // });
+    if (action === "addProductsToImpa") {
+        const { products, impa } = req.body;
+        console.log('PRODUCTS')
+     
+        console.log(products)
+        console.log('impa')
+        console.log(impa)
+        const ids = products.map((item) => item._id)
+        try {
+            await connectMongo();
+            let find = await ImpaCodes.updateOne(
+                { code: impa },
+                { $addToSet: { products: { $each: ids } } }
+
+            )
+    
+            // await closeMongo();
+            console.log('find')
+            console.log(find);
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+            console.log(e)
+            return res.status(500).json({ success: false, result: null })
+        }
     }
+
+  
 }
 
 
