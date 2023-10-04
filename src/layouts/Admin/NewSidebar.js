@@ -62,14 +62,14 @@ const SidebarList = () => {
             ) : null}
             <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
             <SidebarHeader icon={"pi-shopping-cart"} title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
-            {activeTab == 6 ? (
+            {/* {activeTab == 6 ? (
                 <div >
                     <SidebarSubItem title={'ΦΠΑ'} goTo={'/dashboard/info/vat'} />
                     <SidebarSubItem title={'Intrastat'} goTo={'/dashboard/info/intrastat'} />
                     <SidebarSubItem title={'Χώρες'} goTo={'/dashboard/info/countries'} />
                     <SidebarSubItem title={'Νόμισμα'} goTo={'/dashboard/info/currencies'} />
                 </div>
-            ) : null}
+            ) : null} */}
         </ul>
     )
 }
@@ -86,7 +86,6 @@ const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) =
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
             <div>
-                <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                 <span className='text-lg ml-3'>{title}</span>
             </div>
             {dropdown ? (<i className={` pi ${!activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
@@ -107,13 +106,7 @@ const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
     return (
 
             <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                {/* <Link href={goTo} > */}
-                <div>
-                <i className={`pi ${icon}`} style={{ fontSize: '1rem' }}></i>
                     <span className='text-lg ml-3'>{title}</span>
-                </div>
-                  
-                {/* </Link> */}
                     
             </li>
 
@@ -163,7 +156,7 @@ const Container = styled.div`
         margin-top: 20px;
         ul {
             width: 100%;
-            padding: 15px;
+            padding: 10px 20px 0px 10px; 
             margin: 0;
         }
         li {
@@ -184,6 +177,7 @@ const Container = styled.div`
 
         li.sidebar-item {
             padding: 15px;
+            background-color: #2d353f;
         }
 
         li:hover {
@@ -207,10 +201,10 @@ const Container = styled.div`
     }
 
     .sub-item {
-        margin-left: 12px;
         padding: 12px;
         list-style: none;
         position: relative;
+        background-color: #252b33;
        
     }
 

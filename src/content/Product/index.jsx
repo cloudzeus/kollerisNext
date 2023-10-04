@@ -175,7 +175,8 @@ function Product() {
                 groupID: group?.softOne.MTRGROUP,
                 subgroupID: subgroup?.softOne.cccSubgroup2,
                 softoneStatusFilter: softoneStatusFilter
-            })
+            },
+            {timeout: 3000})
             console.log('res result')
             setLoading(false)
             console.log(res.data.result)
@@ -194,8 +195,9 @@ function Product() {
        
     }
 
- 
+   
     useEffect(() => {
+        
         fetch()
     }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter, ])
 
@@ -318,7 +320,6 @@ function Product() {
                     action: 'findCategories',
                  
                 })
-                console.log(data.result)
                 setCategoriesFilter(data.result)
             }
 
@@ -355,9 +356,7 @@ function Product() {
                     action: 'findGroups',
                     categoryID: category?.softOne.MTRCATEGORY
                 })
-                console.log('groups')
-                console.log(data.result)
-
+           
                 setGroupFilter(data.result)
             }
             handleCategories()
@@ -451,14 +450,15 @@ function Product() {
             <div className='bg-white p-3 border-round mb-3 flex'>
             <Link href="/dashboard/offers/impaOffers">
             <Button label="Προσφορά πολλαπλών επιλογών" className='mr-2'  />
+
             </Link>
+
             </div>
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
-                header={header}
                 first={lazyState.first}
                 lazy
                 totalRecords={totalRecords}
@@ -471,6 +471,7 @@ function Product() {
                 rows={lazyState.rows}
                 rowsPerPageOptions={[10, 20 ,50, 100, 200]}
                 value={filteredData}
+                // header={header}
                 showGridlines
                 dataKey="MTRL"
                 filterDisplay="row"
@@ -498,12 +499,12 @@ function Product() {
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
                 {visibleColumns.some(column => column.id === 9) && <Column field="SOFTONESTATUS"    style={{ width: '120px' }}  body={softstatusTemplate} header="Softone Status" filter  filterElement={SoftoneStatusFilter}   ></Column>}
                 {visibleColumns.some(column => column.id === 8) &&  <Column field="updatedFrom" header="updatedFrom"   style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
-             
+                {/* <Column field="softoneProduct.UPDDATE" header="Τελευταία Τροποποίηση Softone" body={Upddate} style={{ width: '80px', textAlign: 'center' }} bodyStyle={{ textAlign: 'center' }} sortable></Column> */}
+                {/* {visibleColumns.some(column => column.id === 11) && <Column field="impas.englishDescription" style={{ width: '400px' }} header="Impas" ></Column> } */}
                 <Column  style={{ width: '40px' }} field="PRICER"  header="Τιμή λιανικής" body={PriceTemplate}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
  : null }
             </DataTable>
-            
             <EditDialog
                 style={dialogStyle}
                 dialog={editDialog}
@@ -654,6 +655,3 @@ const productReservedTemplate = ({ availability }) => {
         <ProductReserved data={availability} />
     )
 }
-
-
-

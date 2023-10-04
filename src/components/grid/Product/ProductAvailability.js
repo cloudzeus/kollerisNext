@@ -10,7 +10,7 @@ export const ProductAvailability = ({ data }) => {
 
     const CircleDiv = () => {
             return (
-                <div className={`circle circle-div ${parseInt(data?.DIATHESIMA) < 0 ? 'circle-notavailable' : null }`}></div>
+                <div className={`prod_availability_circle prod_availability_circle-div ${parseInt(data?.DIATHESIMA) < 0 ? 'circle-notavailable' : null }`}></div>
             )
        
        
