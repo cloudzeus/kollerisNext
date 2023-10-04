@@ -11,32 +11,34 @@ import Countries from "../../../server/models/countriesModel";
 import Currency from "../../../server/models/currencyModel";
 import SoftoneProduct from "../../../server/models/newProductModel";
 import { Product } from "../../../server/models/newProductModel";
+import Supplier from "../../../server/models/suppliersSchema";
 export default async function handler(req, res) {
     let action = req.body.action;
 
-    if (action === "createBrands") {
+
+    if (action === "createSuppliers") {
         try {
-            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/getCustomers`;
             const response = await fetch(URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     username: "Service",
                     password: "Service",
-                    company: 1001,
-                    sodtype: 51,
+                    sodtype: 12,
 
                 })
             });
+        
             let buffer = await translateData(response)
+            console.log(buffer.result)
             await connectMongo();
-
-            let result = await Markes.insertMany(buffer.result)
-            console.log(result)
-            return res.status(200).json({ success: true, result: result });
+            let insert = await Supplier.insertMany(buffer.result)
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
     }
+
+   
     if (action === "createCategories") {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/getMtrCategory`;
         console.log('createCategories')

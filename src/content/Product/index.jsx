@@ -239,7 +239,7 @@ function Product() {
                     </span>
                 </div>
                 <div className="sm:mt-1  lg:mt-0">
-                    <MultiSelect value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" className="" display="chip" />
+                    <MultiSelect className="w-18rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
                 </div>
             </div>
 
