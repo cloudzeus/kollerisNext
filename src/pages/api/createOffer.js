@@ -134,6 +134,22 @@ export default async function handler(req, res) {
     }
 
 
+    if(action === "updateStatus") {
+        const {status, id} = req.body;
+        console.log(id)
+        try {
+            await connectMongo();
+            let update = await Holders.updateOne({_id: id}, {
+                $set: {
+                    status: status
+                }
+            })
+            console.log(update)
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
     if (action === "finalizedOffer") {
         const { holders, client, email, id } = req.body;
 
