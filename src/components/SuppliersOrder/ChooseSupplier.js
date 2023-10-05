@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Button } from 'primereact/button';
@@ -7,8 +6,11 @@ import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
 import { setSelectedSupplier, setInputEmail } from '@/features/supplierOrderSlice';
-import { Toast } from 'primereact/toast';   
+import { Toast } from 'primereact/toast';
+
+
 const ChooseSupplier = () => {
+ 
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
@@ -38,9 +40,6 @@ const ChooseSupplier = () => {
         setLoading(false)
 
     }
-
-    console.log('selected supplier')
-    console.log(selectedSupplier)
 
     useEffect(() => {
         if(searchTerm == '') return;
@@ -75,10 +74,10 @@ const ChooseSupplier = () => {
 
     return (
         <>  
-            
-            <div className='w-full flex justify-content-between '>
-                <Button severity='secondary' label="Επιλογή Προμηθευτή" onClick={() => setShowTable(prev => !prev)} />
-            </div>
+              
+                <div>
+                <Button severity='warning' label="Επιλογή Προμηθευτή" onClick={() => setShowTable(prev => !prev)} />
+                </div>
             {showTable ? (
                 <DataTable
                     value={data}
@@ -115,7 +114,6 @@ const ChooseSupplier = () => {
 
 
 const SupplierDetails = ({ selectedSupplier }) => {
-    const [email, setEmail] = useState('')
     const [editEmail, setEditEmail] = useState(false)
     const toast = useRef(null);
     const {inputEmail} = useSelector(state => state.supplierOrder)
@@ -146,15 +144,16 @@ const SupplierDetails = ({ selectedSupplier }) => {
     }
 
     useEffect(() => {
+        if(!selectedSupplier) return;
         dispatch(setInputEmail(selectedSupplier?.EMAIL))
     }, [selectedSupplier])
 
     return (
         <div className='mt-3 bg-white p-4 border-round'>
-            <Toast ref={toast} />
-            <p className="font-bold mb-3 text-lg">Στοιχεία Πελάτη</p>
+              <Toast ref={toast} />
+            <p className="font-bold mb-3 text-lg">Στοιχεία Προμηθευτή</p>
             <div className="flex flex-column gap-2 mb-4">
-                <label htmlFor="username">Όνομα Πελάτη</label>
+                <label htmlFor="username">Όνομα:</label>
                 <InputText
                     className='opacity-80 w-20rem'
                     disabled={true}
@@ -163,7 +162,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
                     aria-describedby="username-help"
                 />
             </div>
-            <label className='mb-2 block' htmlFor="username">Email Πελάτη</label>
+            <label className='mb-2 block' htmlFor="username">Email: </label>
             <div className="flex gap-2">
                 <InputText
                     disabled={!editEmail}
@@ -192,7 +191,8 @@ const SupplierDetails = ({ selectedSupplier }) => {
                     <Button
                     icon={ "pi pi-times"}
                     severity={"danger"}
-                    onClick={() => setEditEmail(prev => !prev)} />
+                    onClick={() => setEditEmail(prev => !prev)}
+                     />
                     </div>
                    </>
                     

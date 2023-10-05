@@ -6,7 +6,6 @@ const SuppliersOrder = () => {
     const router = useRouter()
     return (
         <AdminLayout>
-        
             <StepHeader  text="Δημιουργία Παραγγελίας σε Προμηθευτή" />
             <Button label="Δημιουργία Νέας Παραγγελίας" onClick={() => router.push('/dashboard/supplierOrder/createOrder')} />
         </AdminLayout>

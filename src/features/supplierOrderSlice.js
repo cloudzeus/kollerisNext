@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     selectedSupplier: null,
-    inputEmail: '',
+	selectedProducts: [],
+	selectedMarkes: null,
+    inputEmail: "",
 }
 
 
@@ -16,8 +18,13 @@ const supplierOrderSlice = createSlice({
 		},
         setInputEmail: (state, {payload}) => {
             state.inputEmail = payload;
-        }
-	
+        },
+		setSelectedProducts: (state, {payload}) => {
+			state.selectedProducts = payload;
+		},
+		setSelectedMarkes: (state, {payload}) => {
+			state.selectedMarkes = payload;
+		}	
 		
 	},
 
@@ -27,6 +34,8 @@ const supplierOrderSlice = createSlice({
 export const {	
 	setSelectedSupplier,  
     setInputEmail, 
+	setSelectedProducts,
+	setSelectedMarkes,
 	
 } = supplierOrderSlice.actions;
 
