@@ -54,7 +54,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleEdit = async (data) => {
         console.log(gridRowData)
         let user = session.user.user.lastName
-        let newLogo = logo[0]
+        let newLogo = logo
         if(logo.length === 0) {
             newLogo = ''
 

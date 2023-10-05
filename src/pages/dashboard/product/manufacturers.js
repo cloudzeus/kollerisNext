@@ -46,7 +46,6 @@ export default function Manufacturers() {
     }
 
 
-    console.log(submitted)
 
     //Refetch on add edit:
     useEffect(() => {
@@ -163,6 +162,7 @@ export default function Manufacturers() {
             <Toast ref={toast} />
             <Toolbar start={leftToolbarTemplate} ></Toolbar>
             <DataTable
+
                 header={header}
                 value={data}
                 paginator

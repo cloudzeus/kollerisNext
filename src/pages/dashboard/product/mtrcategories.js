@@ -71,7 +71,8 @@ export default function Categories() {
     const { data: session } =  useSession()
     let user = session?.user?.user;
 
-
+    console.log('data')
+    console.log(data)
 
     const handleFetch = async () => {
         let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
