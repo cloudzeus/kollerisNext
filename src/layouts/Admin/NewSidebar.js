@@ -11,8 +11,8 @@ const NewSidebar = () => {
     const router = useRouter()
 
     const handleToggleSidebar = () => {
-		dispatch(toggleSidebar())
-	}
+        dispatch(toggleSidebar())
+    }
     return (
         <Container>
             <div className='top'>
@@ -33,9 +33,9 @@ const SidebarList = () => {
     const [activeTab, setActiveTab] = useState(0)
     return (
         <ul>
-            <SidebarItem icon={"pi-home"} title={'Aρχική'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard'} />
+            <SidebarItem  title={'Aρχική'} goTo={'/dashboard'} />
             {/* PRODUCT */}
-            <SidebarHeader icon={"pi-shopping-cart"} title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab}  dropdown />
+            <SidebarHeader  title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
             {activeTab == 2 ? (
                 <div >
                     <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
@@ -46,22 +46,23 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-            <SidebarHeader icon={"pi-shopping-cart"} title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarHeader  title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 7 ? (
                 <div >
                     <SidebarSubItem title={'Upload Κατάλογοι'} goTo={'/dashboard/catalogs'} />
                     <SidebarSubItem title={'Αποθηκευμένοι Κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
-                 
+
                 </div>
             ) : null}
-            {/* <SidebarItem icon={"pi-user"} title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} /> */}
-            <SidebarItem icon={"pi-user"} title={'Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} />
+            <SidebarItem  title={'Προμηθευτές'} />
             {activeTab == 4 ? (
-                    <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
+                <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
 
             ) : null}
-            <SidebarItem icon={"pi-book"} title={'Impas'} id={5} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'/dashboard/info/impas'} />
-            <SidebarHeader icon={"pi-shopping-cart"} title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarItem title={'Impas'} goTo={'/dashboard/info/impas'} />
+            <SidebarHeader title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarItem  title={'Παραγγελία Προμηθευτή'}  goTo={'/dashboard/supplierOrder'} />
+
             {/* {activeTab == 6 ? (
                 <div >
                     <SidebarSubItem title={'ΦΠΑ'} goTo={'/dashboard/info/vat'} />
@@ -75,13 +76,13 @@ const SidebarList = () => {
 }
 
 
-const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) => {
+const SidebarHeader = ({id, setActiveTab, activeTab, title, dropdown }) => {
     const [activeIcon, setActiveIcon] = useState(false)
     const router = useRouter()
     const handleClick = () => {
         setActiveIcon(!activeIcon)
         setActiveTab((prev) => prev == id ? 0 : id)
-       
+
     }
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
@@ -95,20 +96,16 @@ const SidebarHeader = ({ icon, id, setActiveTab, activeTab, title, dropdown }) =
 
 
 
-const SidebarItem = ({ icon, id, setActiveTab, activeTab, title, goTo }) => {
+const SidebarItem = ({title, goTo }) => {
     const router = useRouter()
     const handleClick = () => {
-        setActiveTab((prev) => prev == id ? 0 : id)
         router.push(goTo)
     }
 
-
     return (
-
-            <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
-                    <span className='text-lg ml-3'>{title}</span>
-                    
-            </li>
+        <li onClick={handleClick} className={`sidebar-item`}>
+            <span className='text-lg ml-3'>{title}</span>
+        </li>
 
     )
 }
@@ -116,13 +113,10 @@ const SidebarSubItem = ({ title, goTo }) => {
     const router = useRouter()
 
     return (
+        <li onClick={() => router.push(goTo)} className={` sub-item`}>
+            <span className='text-lg ml-3'>{title}</span>
+        </li>
 
-            <li onClick={() => router.push(goTo)} className={` sub-item`}>
-                  {/* <Link href={goTo}> */}
-                    <span className='text-lg ml-3'>{title}</span>
-                  {/* </Link> */}
-            </li>
-      
 
     )
 }
