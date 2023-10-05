@@ -18,6 +18,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
         const file = event.target.files[0];
         let formData = new FormData();
         formData.append('files', file);
+        console.log(file)
         setLoading(true);
         try {
             const response = await fetch('/api/uploads/saveImageMulter', {

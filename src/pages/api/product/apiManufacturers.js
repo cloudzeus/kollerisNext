@@ -34,16 +34,15 @@ export default async function handler(req, res) {
             if (!addedSoftone.data.success) return res.status(400).json({ success: false, result: null })
             await connectMongo();
             let insert = await Manufacturers.create({
-                softOne: {
-                    MTRMANFCTR: addedSoftone.data.kollerisPim.mtrmanfctr,
-                    CODE: addedSoftone.data.kollerisPim.mtrmanfctr,
-                    NAME: data.NAME,
-                    ISACTIVE: 1,
-                    COMPANY: "1001",
-                },
-                status: true,
-                createdFrom: data.createdFrom
+                MTRMANFCTR: addedSoftone.data.kollerisPim.mtrmanfctr,
+                CODE: addedSoftone.data.kollerisPim.mtrmanfctr,
+                NAME: data.NAME,
+                ISACTIVE: 1,
+                COMPANY: "1001",
+             
             })
+            console.log('inserted')
+            console.log(insert)
             return res.status(200).json({ success: true, result: insert });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -70,12 +69,7 @@ export default async function handler(req, res) {
             if (!updateSoftone.data.success) return res.status(400).json({ success: false, result: null })
             await connectMongo();
 
-            const obj = {
-                softOne: { NAME: NAME },
-                updatedFrom: updatedFrom
-            }
 
-            console.log(obj)
             const updatedManufacturers = await Manufacturers.updateOne(
                 { _id: id },
                 {$set: {

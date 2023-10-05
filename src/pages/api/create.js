@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 
                 })
             });
-        
+
             let buffer = await translateData(response)
             console.log(buffer.result)
             await connectMongo();
@@ -38,7 +38,46 @@ export default async function handler(req, res) {
         }
     }
 
-   
+
+    if (action === "createBrands") {
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/getMtrMark`;
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    sodtype: 12,
+                })
+            });
+
+            let buffer = await translateData(response)
+
+            await connectMongo();
+            for (let item of buffer.result) {
+                let obj = {
+                    minItemsOrder: 0,
+                    minValueOrder: 0,
+                    minYearPurchases: 0,
+                    softOne: {
+                        COMPANY: item.COMPANY,
+                        SODTYPE: item.SODTYPE,
+                        MTRMARK: item.MTRMARK,
+                        CODE: item.CODE,
+                        NAME: item.NAME,
+                        ISACTIVE: item.ISACTIVE,
+                    }
+                }
+                await Markes.create(obj)
+            }
+
+            return res.status(200).json({ success: true, result: insert });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+    }
+
+
     if (action === "createCategories") {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/getMtrCategory`;
         console.log('createCategories')

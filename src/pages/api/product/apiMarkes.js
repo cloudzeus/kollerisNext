@@ -86,7 +86,6 @@ export default async function handler(req, res) {
 			console.log(SOFTONE_MTRMARK)
 
 			const object = {
-				name: data.name,
 				description: data.description,
 				logo: data.logo,
 				videoPromoList: data.videoPromoList,
@@ -108,8 +107,10 @@ export default async function handler(req, res) {
 					NAME: data.name,
 					ISACTIVE: 1
 				},
-				createdFrom: createdFrom,
 				status: true,
+				minValueOrder: data.minValueOrder,
+				minItemsOrder: data.minItemsOrder,
+				minYearPurchases: data.minYearPurchases,
 			}
 			console.log('object');
 			console.log(object);
@@ -210,8 +211,6 @@ export default async function handler(req, res) {
 		
 		let mtrmark = req.body.mtrmark;
 		let body = req.body.data;
-		console.log('update brand body')
-		console.log(body)
 		let id = req.body.id
 
 		if(req.body.data?.name) {
@@ -222,15 +221,44 @@ export default async function handler(req, res) {
 				company: '1001',
 				sodtype: '51',
 				mtrmark: mtrmark,
-				name: body.name
+				name: body.softOne.NAME
 			})
 		}
 		
 		const filter = { _id: id };
-		const update = { $set: body };
 		try {
 			await connectMongo();
-			const result = await Markes.updateOne(filter, update);
+			const result = await Markes.updateOne(
+				{_id: id},
+				{$set: {
+					description: body.description,
+					logo: body.logo[0],
+					videoPromoList: body.videoPromoList,
+					photosPromoList: body.photosPromoList,
+					pimAccess: {
+						pimUrl: body.pimUrl,
+						pimUserName: body.pimUserName,
+						pimPassword: body.pimPassword
+					},
+					webSiteUrl: body.webSiteUrl,
+					officialCatalogueUrl: body.officialCatalogueUrl,
+					facebookUrl: body.facebookUrl,
+					instagramUrl: body.instagramUrl,
+					softOne: {
+						COMPANY: '1001',
+						SODTYPE: '51',
+						MTRMARK: parseInt(body.softOne.MTRMARK),
+						CODE: body.softOne.CODE,
+						NAME: body.softOne.NAME,
+						ISACTIVE: 1
+					},
+					minValueOrder: body.minValueOrder,
+					minItemsOrder: body.minItemsOrder,
+					minYearPurchases: body.minYearPurchases,
+
+				}}
+			);
+			console.log('result')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {

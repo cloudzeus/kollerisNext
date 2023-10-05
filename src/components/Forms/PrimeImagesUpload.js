@@ -18,7 +18,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const [didUpload, setDidUpload] = useState(false)
-  
 
     const handleDeleteImage = async (name) => {
         try {
@@ -50,6 +49,7 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
             if (response.ok) {
                 const { urls } = await response.json();
                 if(urls) {
+                    console.log(urls)
                     if(singleUpload) {
                         setState(urls)
                     } else {
@@ -148,7 +148,7 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
                         <span>
                             { handleFileName(file.name)}
                         </span>
-                        <Tag value={props.formatSize} severity="warning" rounded className="px-3 py-2"  />
+                        <Tag value={props.formatSize} severity="warning" rounded className="px-3 p-3 w-6rem"  />
                     </div>
                     
                 </div>
@@ -189,12 +189,12 @@ return (
         />
          <div className="card flex justify-content-center">
             {didUpload ? (
-                <Message severity="success" text="Eπιτυχής ανέβασμα" />
+                <Message className='w-full' severity="success" text="Eπιτυχής ανέβασμα" />
             ) : (
                 null
             )}
             {totalSize > 0 && !didUpload ? (
-                    <Message severity="warn" text="Πατήστε upload" />
+                    <Message className='w-full' severity="warn" text="Πατήστε upload" />
             ) : null}
         </div>
     </Container >

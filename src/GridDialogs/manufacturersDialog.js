@@ -26,10 +26,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
  
-    //This component has one Image only:
-    const [image, setImage] = useState([])
-    const [logo, setLogo] = useState([])
-    const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -48,8 +44,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
    
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-        console.log(user)
-        console.log(gridRowData)
+       
         const object = {
             action: "update", 
             NAME: data.NAME,
@@ -60,8 +55,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
         try {
             let resp = await axios.post('/api/product/apiManufacturers', object)
+            setSubmitted((prev) => !prev)
             if(!resp.data.success) return showError()
-            setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
                

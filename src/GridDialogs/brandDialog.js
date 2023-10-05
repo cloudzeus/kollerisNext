@@ -18,19 +18,21 @@ import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import AddDeleteImages from '@/components/GalleryListSmall';
 import DialogGallery from '@/components/DialogGallery';
+import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
     const { data: session } = useSession()
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState([])
+  
 
     const toast = useRef(null);
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({defaultValues: gridRowData});
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: gridRowData });
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
-   
-    
-   
+
+
+
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
@@ -55,10 +57,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleEdit = async (data) => {
-      
-      
+
+
         let newImages = []
-        for(let image of images) {
+        for (let image of images) {
             let obj = {
                 name: image,
                 photosPromoUrl: image
@@ -69,20 +71,20 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             ...data,
             videoPromoList: videoList,
             logo: logo,
-            photosPromoList: newImages 
+            photosPromoList: newImages
         }
-      
+
         try {
             let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiMarkes', {action: "update", data: {...object, updatedFrom: user, }, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK})
-            if(!resp.data.success) {
+            let resp = await axios.post('/api/product/apiMarkes', { action: "update", data: { ...object, updatedFrom: user, }, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK })
+            if (!resp.data.success) {
                 return showError(resp.data.softoneError)
             }
             showSuccess()
             setSubmitted(true)
             hideDialog()
-        
-               
+
+
         } catch (e) {
             console.log(e)
         }
@@ -100,7 +102,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         hideDialog()
     }
 
-  
+
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Ακύρωση" icon="pi pi-times" severity="info" outlined onClick={handleClose} />
@@ -122,51 +124,56 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >   
-                   
-                    <SinglePhotoUpload state={logo} setState={setLogo}/>
+                >
+
+                    <SinglePhotoUpload state={logo} setState={setLogo} />
                     <FormTitle>Λεπτομέριες</FormTitle>
                     <Input
                         label={'Όνομα'}
-                        name={'name'}
+                        name={'softOne.NAME'}
                         control={control}
                         required
                     />
-                    
+
                     <TextAreaInput
                         autoResize={true}
                         label={'Περιγραφή'}
                         name={'description'}
                         control={control}
                     />
-                    < Divider />
-                    {/* <FormTitle>Λογότυπο	</FormTitle> */}
                 
-                    {/* <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={true}
-                        id={gridRowData._id}
-                    /> */}
-        
-                    {/* < Divider /> */}
+                    <PrimeInputNumber
+                        label={'Min value order'}
+                        name={'minValueOrder'}
+                        control={control}
+                    />
+                    <PrimeInputNumber
+                        label={'Min value order'}
+                        name={'minValueOrder'}
+                        control={control}
+                    />
+                    <PrimeInputNumber
+                        label={'Min year purchases'}
+                        name={'minYearPurchases'}
+                        control={control}
+                    />
+                    <Input
+                        label={'Min year purchases'}
+                        name={'minYearPurchases'}
+                        control={control}
+                    />
+                    < Divider />
+
                     <FormTitle>Φωτογραφίες</FormTitle>
-                    {/* <AddDeleteImages 
-                        state={images}
-                        setState={setImages}
-                        multiple={true}
-                        id={gridRowData._id}
-                    /> */}
-                      <DialogGallery 
-                        images={images} 
+                    <DialogGallery
+                        images={images}
                         state={images}
                         setState={setImages}
                         url="/api/product/apiMarkes"
                         id={gridRowData._id}
                         user={session?.user?.user?.lastName}
                     />
-                   
+
                     < Divider />
                     <FormTitle>Βίντεο</FormTitle>
                     <AddMoreInput
@@ -272,6 +279,10 @@ const AddDialog = ({
         videoUrl: ''
     }])
 
+    console.log('IMAGES')
+    console.log(images)
+    console.log('LOGO')
+    console.log(logo)
 
     const cancel = () => {
         hideDialog()
@@ -299,7 +310,7 @@ const AddDialog = ({
         console.log('body')
         let createdFrom = session.user.user.lastName
         let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body, createdFrom: createdFrom })
-        if(!res.data.success) return showError(res.data.softoneError)
+        if (!res.data.success) return showError(res.data.softoneError)
         setDisabled(true)
         setSubmitted(true)
         showSuccess()
@@ -326,16 +337,17 @@ const AddDialog = ({
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
-            
+
             <Dialog
+                style={{ width: '40vw' }}
                 visible={dialog}
-                style={{ width: '32rem' }}
-                breakpoints={{ '960px': '75vw', '641px': '90vw' }}
+                // breakpoints={{ '960px': '75vw', '641px': '90vw' }}
                 header="Προσθήκη Μάρκας"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
-                onHide={hideDialog}>
+                onHide={hideDialog}
+            >
                 <FormTitle>Λεπτομέριες</FormTitle>
                 <Input
                     label={'Όνομα'}
@@ -345,19 +357,12 @@ const AddDialog = ({
                     control={control}
                     error={errors.name}
                 />
-              
                 <Input
                     label={'Περιγραφή'}
                     name={'description'}
                     mb={'20px'}
                     control={control}
                 />
-                <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    setState={setLogo}
-                    multiple={false}
-                    mb={'20px'} />
-
 
                 <FormTitle>Βίντεο</FormTitle>
                 <AddMoreInput
@@ -365,11 +370,34 @@ const AddDialog = ({
                     formData={videoList}
                     mb={'20px'}
                 />
+                <FormTitle>Λογότυπο</FormTitle>
+                <PrimeUploads
+                    singleUpload={true}
+                    state={logo}
+                    setState={setLogo}
+                    multiple={false}
+                    mb={'20px'} />
                 <FormTitle>Φωτογραφίες</FormTitle>
                 <PrimeUploads
+                    state={images}
                     setState={setImages}
                     multiple={true}
                     mb={'30px'} />
+                <Input
+                    label={'Min items order'}
+                    name={'minItemsOrder'}
+                    control={control}
+                />
+                <Input
+                    label={'Min value order'}
+                    name={'minValueOrder'}
+                    control={control}
+                />
+                <Input
+                    label={'Min year purchases'}
+                    name={'minYearPurchases'}
+                    control={control}
+                />
                 <FormTitle>Pim Access</FormTitle>
                 <Input
                     label={'Pim URL'}
@@ -407,7 +435,7 @@ const AddDialog = ({
                     name={'instagramUrl'}
                     control={control}
                 />
-               
+
             </Dialog>
         </form>
     )

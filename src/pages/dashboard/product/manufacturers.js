@@ -20,6 +20,7 @@ import GridActions from '@/components/grid/GridActions';
 import { useSession } from 'next-auth/react';
 
 export default function Manufacturers() {
+
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -38,12 +39,14 @@ export default function Manufacturers() {
 
 
     const handleFetch = async () => {
+        setLoading(true)
         let res = await axios.post('/api/product/apiManufacturers', { action: 'findAll' })
         setData(res.data.result)
+        setLoading(false)
     }
 
 
-
+    console.log(submitted)
 
     //Refetch on add edit:
     useEffect(() => {
@@ -158,7 +161,7 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}

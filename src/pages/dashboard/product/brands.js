@@ -188,14 +188,14 @@ export default function TemplateDemo() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <SyncBrand
-                refreshGrid={handleFetch}
-                addToDatabaseURL='/api/product/apiMarkes'
-            />
-        )
-    }
+    // const rightToolbarTemplate = () => {
+    //     return (
+    //         <SyncBrand
+    //             refreshGrid={handleFetch}
+    //             addToDatabaseURL='/api/product/apiMarkes'
+    //         />
+    //     )
+    // }
 
 
     //Edit:
@@ -246,11 +246,12 @@ export default function TemplateDemo() {
         alignItems: 'flex-start',
 
     };
-
+    
+    console.log(data)
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar start={leftToolbarTemplate}></Toolbar>
             <DataTable
                 size="small"
                 header={header}
@@ -273,10 +274,11 @@ export default function TemplateDemo() {
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
-                <Column field="name" header="Ονομα" sortable></Column>
-                {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
+                <Column field="softOne.NAME" header="Ονομα" sortable></Column>
+                <Column field="minItemsOrder"  header="Min items order" sortable></Column>
+                <Column field="minValueOrder"  header="Μin value order" sortable></Column>
+                <Column field="minYearPurchases"  header="Μin year purchases" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                {/* <Column field="status" bodyStyle={{ textAlign: 'center' }} sortable header="Status" style={{ width: '90px' }} body={ActiveTempate}></Column> */}
                 {user?.role === 'admin' ? (
                     <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
