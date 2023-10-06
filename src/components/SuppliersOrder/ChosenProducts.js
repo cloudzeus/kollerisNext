@@ -11,11 +11,23 @@ import axios from 'axios';
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { selectedProducts, isFinalSubmit, mtrLines, inputEmail } = useSelector(state => state.supplierOrder)
+  const { selectedProducts, isFinalSubmit, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
+  console.log(selectedSupplier)
+  useEffect(() => {
+    if(selectedSupplier === null) {
+      router.push('/dashboard/supplierOrder/createOrder')
+    }
+  }, [])
 
   const handleFinalSubmit = async () => {
-     let {data} = await axios.post('/api/createOrder', {action: 'sendOrder', products: mtrLines, email: inputEmail})
-    //  router.push('/dashboard/supplierOrders/createOrder')
+     let {data} = await axios.post('/api/createOrder', {
+      action: 'sendOrder', 
+      products: mtrLines, 
+      email: inputEmail,
+      TRDR: selectedSupplier?.TRDR,
+      NAME: selectedSupplier?.NAME
+    })
+      router.push('/dashboard/supplierOrder')
   }
 
   return (
@@ -50,7 +62,7 @@ const ChosenProducts = () => {
         showGridlines
       >
         <Column field="NAME" header="Όνομα Πελάτη"></Column>
-        <Column field="brandName" header="Όνομα Πελάτη"></Column>
+        <Column field="brandName" header="Όνομα Μάρκας"></Column>
         <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
         <Column style={{ width: '40px' }} body={DeleteTemplate}></Column>
@@ -154,11 +166,14 @@ const Footer = () => {
       quantColor = 'red'
     }
 
-    if(quantity > selectedProducts[0]?.minItems && sum > selectedProducts[0]?.minValue) {
-     dispatch(setIsFinalSubmit(true))
-    } else {
-      dispatch(setIsFinalSubmit(false))
-    }
+    useEffect(() => {
+      if(quantity >= selectedProducts[0]?.minItems && sum >= selectedProducts[0]?.minValue) {
+          dispatch(setIsFinalSubmit(true));
+      } else {
+          dispatch(setIsFinalSubmit(false));
+      }
+  }, [quantity, sum, selectedProducts, dispatch]);
+
   return (
     <>
       <div className='p-1 flex align-items-center'>

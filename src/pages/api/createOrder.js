@@ -4,9 +4,38 @@ import SoftoneProduct, { Product } from "../../../server/models/newProductModel"
 import Markes from "../../../server/models/markesModel";
 import nodemailer from 'nodemailer';
 import { transporter } from "@/utils/nodemailerConfig";
+import SupplierOrders from "../../../server/models/supplierOrders";
+
 export default async function handler(req, res) {
 
     const action = req.body.action;
+
+    if(action === 'findOrders') {
+        try {
+            await connectMongo();
+            let orders = await SupplierOrders.find({}).sort({createdAt: -1})
+            return res.status(200).json({ success: true, result: orders })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+
+    if(action === "updateStatus") {
+        const {status, id} = req.body;
+        try {
+            await connectMongo();
+            let update = await SupplierOrders.updateOne({_id: id}, {
+                $set: {
+                    status: status
+                }
+            })
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+
+
     if(action === 'fetchSuppliers') {
         const {skip, limit} = req.body
         try {
@@ -174,8 +203,10 @@ export default async function handler(req, res) {
     }
 
     if(action === "sendOrder") {
-        const {products, email} = req.body;
-        console.log(products)
+        const {products, email, supplierName, TRDR, NAME} = req.body;
+
+        
+
         let body = products.map((product) => {
             return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
             <p>Ποσότητα: <strong>${product.QUANTITY}</strong></p>
@@ -184,29 +215,63 @@ export default async function handler(req, res) {
             <p>---------------</p>`;
         }).join('');  // Join array elements into a single string
 
-            console.log(body)
-
-
         try {
-            const mailOptions = {
-                from: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL,
-                to: email, 
-                subject: `Προσφορά - NUM:`, 
-                html: `${body}` 
+            await connectMongo();
+            const generateNextCode = async () => {
+                const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
+                console.log(lastDoc)
+                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+                return lastCode + 10;
+
             };
-
-
+            let orderNumber = await generateNextCode();
+            let obj = {
+                supplierName: supplierName,
+                supplierEmail: email,
+                status: "pending",
+                products: products,
+                TRDR: TRDR,
+                NAME: NAME,
+                orderNumber: orderNumber,
+            }
+            console.log(obj)
+            let insert = await SupplierOrders.create(obj)
+            // const mailOptions = {
+            //     from: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL,
+            //     to: 'johnchiout.dev@gmail.com', 
+            //     cc: ['gkozyris@i4ria.com ', 'johnchiout.dev@gmail.com'],
+            //     subject: `Προσφορά - NUM:`, 
+            //     html: `${body}` 
+            // };
         
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    return console.log(error);
+            // transporter.sendMail(mailOptions, (error, info) => {
+            //     if (error) {
+            //         return console.log(error);
+            //     }
+            //     console.log('Message sent: %s', info.messageId);
+            // });
+
+            // console.log(emailRes)
+           
+           
+              const mail = {
+                from: 'info@kolleris.com',
+                to: 'gkozyris@i4ria.com',
+                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com'],
+                subject: ` Παραγγελία NUM: ${orderNumber}`,
+                html: body
+              };
+              
+              // Send the email
+              transporter.sendMail(mail, (err, info) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log('Email sent successfully!');
                 }
-                console.log('Message sent: %s', info.messageId);
-            });
+              });
+            return res.status(200).json({ success: true, result: insert })
 
-
-        //     return res.status(200).json({ success: true })
-        //     // return res.status(200).json({ success: true, result: insert })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }

@@ -104,7 +104,7 @@ const ChooseProducts = () => {
 
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                    <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Πελάτη"></Column>
+                    <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Μάρκας"></Column>
                     <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
                 </DataTable>
                 <div className='mt-3'>
