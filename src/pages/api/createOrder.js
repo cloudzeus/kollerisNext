@@ -9,10 +9,12 @@ export default async function handler(req, res) {
         const {skip, limit} = req.body
         try {
             await connectMongo();
+            let totalRecords = await Supplier.countDocuments({});
             let suppliers = await Supplier.find({}).skip(skip).limit(limit)
-            return res.status(200).json({ success: true, result: suppliers });
+            
+            return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords });
         } catch (e) {
-
+            return res.status(500).json({ success: false, result: null })
         }
     }
     
@@ -43,20 +45,10 @@ export default async function handler(req, res) {
 
     if(action === "fetchProducts") {
         const {skip, limit} = req.body;
-        // let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-        console.log(skip, limit)
 
         try {
             await connectMongo();
-            // if(regexSearchTerm !== '') {
-            //     const totalRecords = await Product.countDocuments({NAME: regexSearchTerm})
-            //     let product = await Product.find({NAME: regexSearchTerm}).skip(skip).limit(limit);
-            //     return res.status(200).json({ success: true, result:product, totalRecords: totalRecords })
-            // }
-            // const totalRecords = await SoftoneProduct.countDocuments({});
-            // console.log(totalRecords)
-            // let product = await SoftoneProduct.find({}).skip(skip).limit(limit);
-            // return res.status(200).json({ success: true, result: product, totalRecords: totalRecords })\
+           
             await connectMongo();
             let totalRecords = await SoftoneProduct.countDocuments({});
             let products = await SoftoneProduct.aggregate([

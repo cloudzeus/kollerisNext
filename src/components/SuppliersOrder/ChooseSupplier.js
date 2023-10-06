@@ -10,7 +10,7 @@ import { Toast } from 'primereact/toast';
 
 
 const ChooseSupplier = () => {
- 
+
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
@@ -24,7 +24,7 @@ const ChooseSupplier = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch()
 
-    const fetch= async (action) => {
+    const fetch = async (action) => {
         console.log('data')
 
         setLoading(true)
@@ -42,7 +42,7 @@ const ChooseSupplier = () => {
     }
 
     useEffect(() => {
-        if(searchTerm == '') return;
+        if (searchTerm == '') return;
         fetch("searchSupplier");
     }, [searchTerm])
 
@@ -50,7 +50,7 @@ const ChooseSupplier = () => {
     useEffect(() => {
         fetch("fetchSuppliers");
     }, [lazyState.rows, lazyState.first,])
- 
+
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedSupplier(e.value))
@@ -72,12 +72,16 @@ const ChooseSupplier = () => {
         )
     }
 
+    const handleChooseSupplier = () => {
+        dispatch(setSelectedSupplier(null))
+        setShowTable(prev => !prev)
+    }
+
     return (
-        <>  
-              
-                <div>
-                <Button severity='warning' label="Επιλογή Προμηθευτή" onClick={() => setShowTable(prev => !prev)} />
-                </div>
+        <>
+            <div className='mb-3'>
+                <Button severity='warning' label="Επιλογή Προμηθευτή" onClick={handleChooseSupplier} />
+            </div>
             {showTable ? (
                 <DataTable
                     value={data}
@@ -96,11 +100,10 @@ const ChooseSupplier = () => {
                     size="small"
                     filterDisplay="row"
                     id={'_id'}
-
                 >
-                    <Column selectionMode="single" headerStyle={{width: '30px'}}></Column>
-                    <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient}  header="Όνομα Πελάτη"></Column>
-                    <Column field="EMAIL"  header="Email"></Column>
+                    <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
+                    <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
+                    <Column field="EMAIL" header="Email"></Column>
                 </DataTable>
             ) : null}
             {selectedSupplier ? (
@@ -116,16 +119,16 @@ const ChooseSupplier = () => {
 const SupplierDetails = ({ selectedSupplier }) => {
     const [editEmail, setEditEmail] = useState(false)
     const toast = useRef(null);
-    const {inputEmail} = useSelector(state => state.supplierOrder)
+    const { inputEmail } = useSelector(state => state.supplierOrder)
     const dispatch = useDispatch();
-   
+
     const showSuccess = () => {
-        toast.current.show({severity:'success', detail:'Eπιτυχής αλλαγή email', life: 3000});
+        toast.current.show({ severity: 'success', detail: 'Eπιτυχής αλλαγή email', life: 3000 });
     }
 
-  
+
     const showWarn = () => {
-        toast.current.show({severity:'warn', summary: 'Warning', detail:'Αποτυχημένη αλλαγή email', life: 3000});
+        toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Αποτυχημένη αλλαγή email', life: 3000 });
     }
 
 
@@ -134,8 +137,8 @@ const SupplierDetails = ({ selectedSupplier }) => {
     }
 
     const onSubmitEmail = async () => {
-        let {data} = await axios.post('/api/createOrder', {action: "saveNewEmail", id: selectedSupplier._id, email: inputEmail})
-        if(data.success) {
+        let { data } = await axios.post('/api/createOrder', { action: "saveNewEmail", id: selectedSupplier._id, email: inputEmail })
+        if (data.success) {
             showSuccess()
             setEditEmail((prev) => !prev)
         } else {
@@ -144,13 +147,13 @@ const SupplierDetails = ({ selectedSupplier }) => {
     }
 
     useEffect(() => {
-        if(!selectedSupplier) return;
-        dispatch(setInputEmail(selectedSupplier?.EMAIL))
+        if (!selectedSupplier) return;
+        dispatch(setInputEmail(selectedSupplier?.EMAIL || ""))
     }, [selectedSupplier])
 
     return (
         <div className='mt-3 bg-white p-4 border-round'>
-              <Toast ref={toast} />
+            <Toast ref={toast} />
             <p className="font-bold mb-3 text-lg">Στοιχεία Προμηθευτή</p>
             <div className="flex flex-column gap-2 mb-4">
                 <label htmlFor="username">Όνομα:</label>
@@ -180,25 +183,25 @@ const SupplierDetails = ({ selectedSupplier }) => {
                         label={"Επεξεργασία"}
                     />
                 ) : (
-                   <>
-                    <div>
-                    <Button
-                    icon={ "pi pi-check"}
-                    severity={"success"}
-                    onClick={onSubmitEmail}
-                    className='mr-2'
-                   />
-                    <Button
-                    icon={ "pi pi-times"}
-                    severity={"danger"}
-                    onClick={() => setEditEmail(prev => !prev)}
-                     />
-                    </div>
-                   </>
-                    
+                    <>
+                        <div>
+                            <Button
+                                icon={"pi pi-check"}
+                                severity={"success"}
+                                onClick={onSubmitEmail}
+                                className='mr-2'
+                            />
+                            <Button
+                                icon={"pi pi-times"}
+                                severity={"danger"}
+                                onClick={() => setEditEmail(prev => !prev)}
+                            />
+                        </div>
+                    </>
+
                 )}
 
-              
+
             </div>
         </div>
     )
