@@ -6,36 +6,27 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
-import { setSelectedProducts, setSearchTerm} from '@/features/supplierOrderSlice';
+import { setSelectedProducts, setSearchTerm, } from '@/features/supplierOrderSlice';
 import { Toast } from 'primereact/toast';
 import FilterMTRMARK from './FilterMTRMARK';
-import { set } from 'mongoose';
-const ChooseProductsWrapper = () => {
-    const { selectedProducts, selectedSupplier } = useSelector(state => state.supplierOrder)
-    return (
-        <>
-            {selectedSupplier ? (
-                <ChooseProducts />
-            ) : null}
-        </>
-    )
-}
+import StepHeader from '../ImpaOffer/StepHeader';
+import { useRouter } from 'next/router';
+
 
 
 const ChooseProducts = () => {
     const dispatch = useDispatch()
-    const { selectedProducts, selectedSupplier, selectedMarkes, searchTerm } = useSelector(state => state.supplierOrder)
+    const router = useRouter()
+    const { selectedProducts, selectedMarkes, searchTerm } = useSelector(state => state.supplierOrder)
     const [totalRecords, setTotalRecords] = useState(0);
-    const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    // const [searchTerm, setSearchTerm] = useState('')
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
         page: 1,
     });
-  
+    
  
     const fetch = async (action) => {
         setLoading(true)
@@ -57,13 +48,9 @@ const ChooseProducts = () => {
         if (!selectedMarkes) {
             fetch('fetchProducts');
         }
-
         if(selectedMarkes) {
-       
             fetch('searchBrand')
-          
         }
-       
     }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm])
 
     useEffect(() => {
@@ -72,7 +59,6 @@ const ChooseProducts = () => {
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))
-        setShowTable(false)
     }
 
     const onPage = (event) => {
@@ -89,20 +75,11 @@ const ChooseProducts = () => {
             </div>
         )
     }
-
-    const Footer = () => {
-        return (
-            <Button label="Συνέχεια" />
-        )
-    }
-
+ 
 
     return (
-        <>
-            <div className='mt-3 mb-2'>
-                <Button severity='warning' label="Επιλογή Προϊόντων" onClick={() => setShowTable(prev => !prev)} />
-            </div>
-            {showTable ? (
+        <>      
+            <StepHeader text="Επιλογή Προϊόντων" />
                 <DataTable
                     value={data}
                     paginator
@@ -116,21 +93,21 @@ const ChooseProducts = () => {
                     selection={selectedProducts}
                     onSelectionChange={onSelectionChange}
                     loading={loading}
-                    className='border-1 border-round-sm	border-50 mt-2'
+                    className='border-1 border-round-sm	border-50 mt-4'
                     size="small"
                     filterDisplay="row"
                     id={'_id'}
-                    footer={Footer}
 
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                     <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
                     <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Πελάτη"></Column>
                 </DataTable>
-            ) : null}
-            {/* {selectedSupplier ? (
-                <SupplierDetails selectedSupplier={selectedSupplier} />
-            ) : null} */}
+                <div className='mt-3'>
+                        <Button  severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
+                        <Button className='ml-2'disabled={selectedProducts.length == 0 ? true : false} severity='success' icon="pi pi-arrow-right" onClick={() => router.push('/dashboard/supplierOrder/chosenProducts')} />
+                    </div>
+          
         </>
     )
 }
@@ -138,4 +115,4 @@ const ChooseProducts = () => {
 
 
 
-export default ChooseProductsWrapper;
+export default  ChooseProducts ;

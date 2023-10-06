@@ -37,7 +37,7 @@ export default function FilterMTRMARK() {
     return (
         <div className="card flex  p-2">
             <Dropdown 
-                disabled={searchTerm == '' ? true : false}
+                disabled={searchTerm !== '' ? true : false}
                 value={selectedMarkes} 
                 onChange={(e) => dispatch(setSelectedMarkes(e.value))} 
                 options={markes} 

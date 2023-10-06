@@ -54,21 +54,25 @@ export default async function handler(req, res) {
             let pipeline = [
                 {
                     $lookup: {
-                        from: "markes",  // Join with the MARKES collection
-                        localField: "MTRMARK",  // Join using the MTRMARK field from SoftoneProduct
-                        foreignField: "softOne.MTRMARK",  // Join using softOne.MTRMARK from MARKES
+                        from: "markes",  
+                        localField: "MTRMARK", 
+                        foreignField: "softOne.MTRMARK",
                         as: "matched_mark"  // Output alias for matched documents from MARKES
                     }
                 },
                 {
-                    $unwind: "$matched_mark"  // Flatten the matched_mark array
+                    $unwind: "$matched_mark"
                 },
                 {
                     $project: {
-                        _id: 0,  // Exclude the _id field from the output
-                        NAME: 1,  // Include NAME from SoftoneProduct
-                        "brandName": "$matched_mark.softOne.NAME",  // Include softOne.NAME from MARKES
-                        "mtrmark": "$matched_mark.softOne.MTRMARK"  // Include softOne.NAME from MARKES
+                        _id: 0, 
+                        NAME: 1,
+                        PRICER: 1,
+                        MTRL: 1,
+                        "brandName": "$matched_mark.softOne.NAME", 
+                        "mtrmark": "$matched_mark.softOne.MTRMARK", 
+                        "minValue": "$matched_mark.minValueOrder",
+                        "minItems": "$matched_mark.minItemsOrder",
                     }
                 },
                 {
@@ -136,7 +140,12 @@ export default async function handler(req, res) {
                     $project: {
                         _id: 0,
                         NAME: 1,
-                        brandName: "$matched_mark.softOne.NAME"
+                        PRICER: 1,
+                        MTRL: 1,
+                        brandName: "$matched_mark.softOne.NAME",
+                        "minValue": "$matched_mark.minValueOrder",
+                        "minItems": "$matched_mark.minItemsOrder",
+                        
                     }
                 },
                 {

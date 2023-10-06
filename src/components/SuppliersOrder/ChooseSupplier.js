@@ -7,11 +7,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
 import { setSelectedSupplier, setInputEmail } from '@/features/supplierOrderSlice';
 import { Toast } from 'primereact/toast';
-
+import { useRouter } from 'next/router';
+import StepHeader from '../ImpaOffer/StepHeader';
 
 const ChooseSupplier = () => {
-
-    const { selectedSupplier } = useSelector(state => state.supplierOrder)
+    const router = useRouter();
+    const { selectedSupplier,  inputEmail } = useSelector(state => state.supplierOrder)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -79,10 +80,7 @@ const ChooseSupplier = () => {
 
     return (
         <>
-            <div className='mb-3'>
-                <Button severity='warning' label="Επιλογή Προμηθευτή" onClick={handleChooseSupplier} />
-            </div>
-            {showTable ? (
+            <StepHeader text="Επιλογή Προμηθεύτή" />
                 <DataTable
                     value={data}
                     paginator
@@ -96,7 +94,7 @@ const ChooseSupplier = () => {
                     selection={selectedSupplier}
                     onSelectionChange={onSelectionChange}
                     loading={loading}
-                    className='border-1 border-round-sm	border-50 mt-2'
+                    className='border-1 border-round-sm	border-50 mt-3'
                     size="small"
                     filterDisplay="row"
                     id={'_id'}
@@ -105,9 +103,15 @@ const ChooseSupplier = () => {
                     <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
                     <Column field="EMAIL" header="Email"></Column>
                 </DataTable>
-            ) : null}
+         
             {selectedSupplier ? (
-                <SupplierDetails selectedSupplier={selectedSupplier} />
+                <>
+                    <SupplierDetails selectedSupplier={selectedSupplier} />
+                    <div className='mt-3'>
+                        <Button label="Eπόμενο" disabled={inputEmail !== '' ? false : true} severity='success' icon="pi pi-arrow-right" onClick={() => router.push('/dashboard/supplierOrder/chooseProducts')} />
+                    </div>
+                </>
+
             ) : null}
         </>
     )
@@ -180,7 +184,6 @@ const SupplierDetails = ({ selectedSupplier }) => {
                         onClick={() => { setEditEmail(prev => !prev) }}
                         icon={"pi pi-pencil"}
                         severity={"primary"}
-                        label={"Επεξεργασία"}
                     />
                 ) : (
                     <>
