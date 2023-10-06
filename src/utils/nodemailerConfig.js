@@ -1,16 +1,17 @@
 
 import nodemailer from 'nodemailer';
-const email = 'johnchiout.dev@gmail.com'
-const pass = 'ypbytdbjwumhepop'
 
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false, 
     auth: {
-        user: email,
-        pass: pass
+        user: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL,
+        pass: process.env.NEXT_PUBLIC_NODEMAILER_PASS
+    },
+    tls: {
+        ciphers: 'SSLv3'
     }
-})
-
-
-export {transporter, email}
+});
+export {transporter}

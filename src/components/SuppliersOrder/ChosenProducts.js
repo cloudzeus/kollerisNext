@@ -11,11 +11,10 @@ import axios from 'axios';
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { selectedProducts, isFinalSubmit, mtrLines } = useSelector(state => state.supplierOrder)
-
+  const { selectedProducts, isFinalSubmit, mtrLines, inputEmail } = useSelector(state => state.supplierOrder)
 
   const handleFinalSubmit = async () => {
-     let {data} = await axios.post('/api/createOrder', {action: 'sendOrder', products: mtrLines})
+     let {data} = await axios.post('/api/createOrder', {action: 'sendOrder', products: mtrLines, email: inputEmail})
     //  router.push('/dashboard/supplierOrders/createOrder')
   }
 
@@ -52,7 +51,6 @@ const ChosenProducts = () => {
       >
         <Column field="NAME" header="Όνομα Πελάτη"></Column>
         <Column field="brandName" header="Όνομα Πελάτη"></Column>
-        {/* <Column field="minItems" header="Ελάχιστα Προϊόντα" body={MinItems} bodyStyle={{ textAlign: 'center' }}></Column> */}
         <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
         <Column style={{ width: '40px' }} body={DeleteTemplate}></Column>
@@ -69,8 +67,7 @@ const ChosenProducts = () => {
 
 
 const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
-  console.log(brandName)
-  console.log(NAME)
+
   const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch();
 

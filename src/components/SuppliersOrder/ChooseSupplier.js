@@ -12,7 +12,7 @@ import StepHeader from '../ImpaOffer/StepHeader';
 
 const ChooseSupplier = () => {
     const router = useRouter();
-    const { selectedSupplier,  inputEmail } = useSelector(state => state.supplierOrder)
+    const { selectedSupplier,  inputEmail,  } = useSelector(state => state.supplierOrder)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -24,7 +24,9 @@ const ChooseSupplier = () => {
     });
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch()
-
+    useEffect(() => {
+       dispatch(setSelectedSupplier(null)) 
+    }, [])
     const fetch = async (action) => {
      
         setLoading(true)
@@ -40,7 +42,9 @@ const ChooseSupplier = () => {
 
     }
 
+  
     useEffect(() => {
+        
         if (searchTerm == '') {
             fetch("fetchSuppliers");
         } else {

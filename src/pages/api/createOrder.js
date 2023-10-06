@@ -3,7 +3,7 @@ import connectMongo from "../../../server/config";
 import SoftoneProduct, { Product } from "../../../server/models/newProductModel";
 import Markes from "../../../server/models/markesModel";
 import nodemailer from 'nodemailer';
-
+import { transporter } from "@/utils/nodemailerConfig";
 export default async function handler(req, res) {
 
     const action = req.body.action;
@@ -189,14 +189,14 @@ export default async function handler(req, res) {
 
         try {
             const mailOptions = {
-                from: "johnchiout.dev@gmail.com",
-                to: "johnchiout.dev@gmail.com", 
+                from: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL,
+                to: email, 
                 subject: `Προσφορά - NUM:`, 
                 html: `${body}` 
             };
 
 
-
+        
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     return console.log(error);
@@ -216,23 +216,3 @@ export default async function handler(req, res) {
 }
 
 
-// const transporter = nodemailer.createTransport({
-//     host: 'smtp.office365.com',
-//     port: 587,
-//     secure: false, // use SSL, you can try with true also
-//     auth: {
-//         user: process.env.OFFICE365_USER,
-//         pass: process.env.OFFICE365_PASSWORD
-//     },
-//     tls: {
-//         ciphers: 'SSLv3'
-//     }
-// });
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: "johnchiout.dev@gmail.com",
-        pass: process.env.NEXT_PUBLIC_NODEMAILER_PASS
-    }
-});

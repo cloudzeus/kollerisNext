@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { setSelectedMarkes, setProductData } from "@/features/supplierOrderSlice";
+import { setSelectedMarkes, setProductData, setSelectedProducts } from "@/features/supplierOrderSlice";
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
 import { useSelector, useDispatch } from 'react-redux';
 export default function FilterMTRMARK() {
-    const {selectedMarkes, searchTerm} = useSelector(state => state.supplierOrder)
+    const {selectedMarkes, searchTerm, selectedProducts} = useSelector(state => state.supplierOrder)
     const [markes, setMarkes] = useState(null)
     const dispatch = useDispatch()
 
+    useEffect(() => {
+        console.log('selected products')
+        console.log(selectedProducts)
+    }, [selectedProducts])
+    useEffect(() => {
+        dispatch(setSelectedProducts([]))
+    }, [selectedMarkes])
     useEffect(() => {
         const fetch = async () => {
             let {data} = await axios.post('/api/createOrder', {
