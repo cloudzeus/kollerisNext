@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { setTotalProductsPrice, setMtrLines } from '@/features/supplierOrderSlice';
+import { setTotalProductsPrice, setMtrLines, setDeleteMtrlLines} from '@/features/supplierOrderSlice';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import StepHeader from '../ImpaOffer/StepHeader';
@@ -12,7 +12,7 @@ const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { selectedProducts, totalProductsPrice, mtrLines, findItem} = useSelector(state => state.supplierOrder)
-
+  
   console.log('find Item')
   console.log(findItem)
 
@@ -60,6 +60,7 @@ const ChosenProducts = () => {
         <Column field="minItems" header="Ελάχιστα Προϊόντα" body={MinItems} bodyStyle={{ textAlign: 'center' }}></Column>
         <Column field="PRICER" header="Τιμή μονάδας"  style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
+        <Column style={{ width: '40px' }} body={DeleteTemplate}></Column>
       </DataTable>
       <div className='mt-3'>
         <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
@@ -69,13 +70,7 @@ const ChosenProducts = () => {
   )
 }
 
-const PriceTemplate = ({ PRICER }) => {
-  return (
-    <div className='flex'>
-      <span className='font-bold'>{PRICER + "€"}</span>
-    </div>
-  )
-}
+
 const MinItems = ({ minItems }) => {
   let temp = minItems == 0 ? "NO LIMIT" : minItems
   return (
@@ -90,13 +85,13 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
   const dispatch = useDispatch();
 
 
-  const increaseQuantity = (quantity) => {
+  const increaseQuantity = () => {
     setQuantity(prev => prev + 1)
   }
 
 
 
-  const decreaseQuantity = (quantity) => {
+  const decreaseQuantity = () => {
     if (quantity === 1) return
     setQuantity(prev => prev - 1)
 
@@ -111,7 +106,7 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
       
       <div className='font-xs flex align-items-center border-1 p-2 border-300 border-round'>
         <div
-          onClick={() => decreaseQuantity(quantity)}
+          onClick={decreaseQuantity}
           className='mr-2 border-1 border-300  flex align-items-center justify-content-center border-round pointer-cursor'
           style={{ width: '25px', height: '25px' }}>
           <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
@@ -120,7 +115,7 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
           <p className='text-lg'>{quantity}</p>
         </div>
         <div
-          onClick={() => increaseQuantity(quantity)}
+          onClick={increaseQuantity}
           className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
           <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
         </div>
@@ -132,6 +127,25 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
   )
 }
 
+const DeleteTemplate = ({MTRL}) => {
+  const dispatch = useDispatch();
 
+  const handleDelete = () => {
+    dispatch(setDeleteMtrlLines(MTRL))
+  }
+  return (
+    <div className='flex'>
+      <i onClick={handleDelete} className="pi pi-trash" style={{ fontSize: '1rem', color: 'red' }}></i>
+    </div>
+  )
+}
+
+const PriceTemplate = ({ PRICER }) => {
+  return (
+    <div className='flex'>
+      <span className='font-bold'>{PRICER + "€"}</span>
+    </div>
+  )
+}
 
 export default ChosenProducts 

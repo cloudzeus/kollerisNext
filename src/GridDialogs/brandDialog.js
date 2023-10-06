@@ -148,8 +148,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                     />
                     <PrimeInputNumber
-                        label={'Min value order'}
-                        name={'minValueOrder'}
+                        label={'Min item order'}
+                        name={'minItemsOrder'}
                         control={control}
                     />
                     <PrimeInputNumber

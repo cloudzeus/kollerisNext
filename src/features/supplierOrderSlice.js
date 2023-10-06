@@ -58,9 +58,11 @@ const supplierOrderSlice = createSlice({
 					TOTAL_PRICE: payload.QUANTITY * parseInt(payload.PRICE)
 				});
 			}
-
-			
 		},
+		setDeleteMtrlLines: (state, {payload}) => {
+			state.mtrLines = state.mtrLines.filter((item) => item.MTRL !== payload);
+			state.selectedProducts = state.selectedProducts.filter((item) => item.MTRL !== payload);
+		}
 		
 	},
 
@@ -75,7 +77,8 @@ export const {
 	setSearchTerm,
 	setTotalProductsPrice,
 	setMtrLines,
-	setQuantity
+	setQuantity,
+	setDeleteMtrlLines
 	
 } = supplierOrderSlice.actions;
 
