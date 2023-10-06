@@ -67,12 +67,16 @@ const ChooseProducts = () => {
 
     const Search = () => {
         return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
-                </span>
-            </div>
+            <>
+                {selectedMarkes ? (
+                     <div className="flex justify-content-start w-20rem ">
+                     <span className="p-input-icon-left w-full">
+                         <i className="pi pi-search " />
+                         <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
+                     </span>
+                 </div>
+                ) : null}
+            </>
         )
     }
  
@@ -100,8 +104,8 @@ const ChooseProducts = () => {
 
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                    <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
                     <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Πελάτη"></Column>
+                    <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
                 </DataTable>
                 <div className='mt-3'>
                         <Button  severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
