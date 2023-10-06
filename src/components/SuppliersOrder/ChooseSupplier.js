@@ -26,8 +26,7 @@ const ChooseSupplier = () => {
     const dispatch = useDispatch()
 
     const fetch = async (action) => {
-        console.log('data')
-
+     
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', {
             action: action,
@@ -35,7 +34,6 @@ const ChooseSupplier = () => {
             limit: lazyState.rows,
             searchTerm: searchTerm
         })
-        console.log(data.result)
         setData(data.result)
         setTotalRecords(data.totalRecords)
         setLoading(false)
@@ -43,15 +41,16 @@ const ChooseSupplier = () => {
     }
 
     useEffect(() => {
-        if (searchTerm == '') return;
-        fetch("searchSupplier");
-    }, [searchTerm])
+        if (searchTerm == '') {
+            fetch("fetchSuppliers");
+        } else {
+            fetch("searchSupplier")
+        }
+        
+    }, [searchTerm, lazyState.rows, lazyState.first,])
 
 
-    useEffect(() => {
-        fetch("fetchSuppliers");
-    }, [lazyState.rows, lazyState.first,])
-
+  
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedSupplier(e.value))
@@ -73,11 +72,7 @@ const ChooseSupplier = () => {
         )
     }
 
-    const handleChooseSupplier = () => {
-        dispatch(setSelectedSupplier(null))
-        setShowTable(prev => !prev)
-    }
-
+  
     return (
         <>
             <StepHeader text="Επιλογή Προμηθεύτή" />
