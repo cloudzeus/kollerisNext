@@ -2,29 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { setTotalProductsPrice, setMtrLines, setDeleteMtrlLines} from '@/features/supplierOrderSlice';
+import { setTotalProductsPrice, setMtrLines, setDeleteMtrlLines } from '@/features/supplierOrderSlice';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import StepHeader from '../ImpaOffer/StepHeader';
 
-
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { selectedProducts, totalProductsPrice, mtrLines, findItem} = useSelector(state => state.supplierOrder)
-  
-  console.log('find Item')
-  console.log(findItem)
+  const { selectedProducts, totalProductsPrice, mtrLines, } = useSelector(state => state.supplierOrder)
 
-  const Footer = () => {
-    let sum = mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0)
-    return (
-      <div className='p-3'>
-        <span>Σύνολο Τιμής:</span>
-        <span className='ml-2 font-bold'>{`${sum}€`}</span>
-      </div>
-    )
-  }
+  console.log(selectedProducts)
+
+  
 
   useEffect(() => {
     console.log('mtrlines')
@@ -42,6 +32,10 @@ const ChosenProducts = () => {
           <span>Ελάχιστο Ποσό Παραγγελίας:</span>
           <span className='ml-2 font-bold'>{selectedProducts[0]?.minValue}</span>
         </div>
+        <div className='mt-2'>
+          <span>Ελάχιστος Αριθμός Προϊόντων:</span>
+          <span className='ml-2 font-bold'>{selectedProducts[0]?.minItems}</span>
+        </div>
       </div>
       <DataTable
         value={selectedProducts}
@@ -57,8 +51,8 @@ const ChosenProducts = () => {
       >
         <Column field="NAME" header="Όνομα Πελάτη"></Column>
         <Column field="brandName" header="Όνομα Πελάτη"></Column>
-        <Column field="minItems" header="Ελάχιστα Προϊόντα" body={MinItems} bodyStyle={{ textAlign: 'center' }}></Column>
-        <Column field="PRICER" header="Τιμή μονάδας"  style={{ width: '120px' }} body={PriceTemplate}></Column>
+        {/* <Column field="minItems" header="Ελάχιστα Προϊόντα" body={MinItems} bodyStyle={{ textAlign: 'center' }}></Column> */}
+        <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
         <Column style={{ width: '40px' }} body={DeleteTemplate}></Column>
       </DataTable>
@@ -71,14 +65,7 @@ const ChosenProducts = () => {
 }
 
 
-const MinItems = ({ minItems }) => {
-  let temp = minItems == 0 ? "NO LIMIT" : minItems
-  return (
-    <div className='flex'>
-      <span>{temp}</span>
-    </div>
-  )
-}
+
 
 const CalculateTemplate = ({ PRICER, MTRL }) => {
   const [quantity, setQuantity] = useState(1)
@@ -103,7 +90,7 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
 
   return (
     <div className='flex p-2'>
-      
+
       <div className='font-xs flex align-items-center border-1 p-2 border-300 border-round'>
         <div
           onClick={decreaseQuantity}
@@ -127,7 +114,7 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
   )
 }
 
-const DeleteTemplate = ({MTRL}) => {
+const DeleteTemplate = ({ MTRL }) => {
   const dispatch = useDispatch();
 
   const handleDelete = () => {
@@ -145,6 +132,47 @@ const PriceTemplate = ({ PRICER }) => {
     <div className='flex'>
       <span className='font-bold'>{PRICER + "€"}</span>
     </div>
+  )
+}
+
+
+const Footer = () => {
+  const { selectedProducts, mtrLines } = useSelector(state => state.supplierOrder)
+
+    let sum = mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0)
+    let quantity = mtrLines.map(item => item.QUANTITY).reduce((prev, next) => prev + next, 0)
+      let icon, quantIcon = 'pi pi-check'
+      let color, quantColor = 'green'
+    if(sum < selectedProducts[0]?.minValue) {
+      icon = 'pi pi-times'
+      color = 'red'
+    }
+
+    if(quantity < selectedProducts[0]?.minItems) {
+      quantIcon = 'pi pi-times'
+      quantColor = 'red'
+    }
+  return (
+    <>
+      <div className='p-1 flex align-items-center'>
+      <div className='flex align-items-center justify-content-center border-1 border-round mr-2 border-300' style={{width: '25px', height: '25px'}}>
+        <i className={icon} style={{ fontSize: '1rem', color: color }}></i>
+      </div>
+      <div>
+      <span>Σύνολο Τιμής:</span>
+      <span className='ml-2 font-bold'>{`${sum}€`}</span>
+      </div>
+    </div>
+      <div className='p-1 flex align-items-center'>
+      <div className='flex align-items-center justify-content-center border-1 border-round mr-2 border-300' style={{width: '25px', height: '25px'}}>
+        <i className={quantIcon} style={{ fontSize: '1rem', color:quantColor }}></i>
+      </div>
+      <div>
+      <span>Σύνολο Προϊόντων:</span>
+      <span className='ml-2 font-bold'>{quantity}</span>
+      </div>
+    </div>
+    </>
   )
 }
 
