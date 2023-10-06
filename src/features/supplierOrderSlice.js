@@ -12,6 +12,7 @@ const initialState = {
 	mtrLines: [],
 	findItem: null,
 	quantity: 0,
+	isFinalSubmit: false,
 }
 
 
@@ -62,6 +63,9 @@ const supplierOrderSlice = createSlice({
 		setDeleteMtrlLines: (state, {payload}) => {
 			state.mtrLines = state.mtrLines.filter((item) => item.MTRL !== payload);
 			state.selectedProducts = state.selectedProducts.filter((item) => item.MTRL !== payload);
+		},
+		setIsFinalSubmit: (state, {payload}) => {
+			state.isFinalSubmit = payload;
 		}
 		
 	},
@@ -78,7 +82,8 @@ export const {
 	setTotalProductsPrice,
 	setMtrLines,
 	setQuantity,
-	setDeleteMtrlLines
+	setDeleteMtrlLines,
+	setIsFinalSubmit
 	
 } = supplierOrderSlice.actions;
 

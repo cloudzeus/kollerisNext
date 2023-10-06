@@ -2,27 +2,27 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { setTotalProductsPrice, setMtrLines, setDeleteMtrlLines } from '@/features/supplierOrderSlice';
+import { setTotalProductsPrice, setMtrLines, setDeleteMtrlLines, setIsFinalSubmit} from '@/features/supplierOrderSlice';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import StepHeader from '../ImpaOffer/StepHeader';
-
+import OrderDetails from './OrderDetails';
+import axios from 'axios';
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { selectedProducts, totalProductsPrice, mtrLines, } = useSelector(state => state.supplierOrder)
+  const { selectedProducts, isFinalSubmit, mtrLines } = useSelector(state => state.supplierOrder)
 
-  console.log(selectedProducts)
 
-  
+  const handleFinalSubmit = async () => {
+     let {data} = await axios.post('/api/createOrder', {action: 'sendOrder', products: mtrLines})
+    //  router.push('/dashboard/supplierOrders/createOrder')
+  }
 
-  useEffect(() => {
-    console.log('mtrlines')
-    console.log(mtrLines)
-  }, [mtrLines])
   return (
     <div className=''>
       <StepHeader text="Aποστολή Προσφοράς" />
+      <OrderDetails />
       <div className='mt-3 p-3 bg-white border-round mb-3'>
         <div>
           <span>Μάρκα:</span>
@@ -37,6 +37,7 @@ const ChosenProducts = () => {
           <span className='ml-2 font-bold'>{selectedProducts[0]?.minItems}</span>
         </div>
       </div>
+
       <DataTable
         value={selectedProducts}
         paginator
@@ -58,7 +59,7 @@ const ChosenProducts = () => {
       </DataTable>
       <div className='mt-3'>
         <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        <Button className='ml-2' disabled={!selectedProducts} severity='success' icon="pi pi-arrow-right" onClick={() => router.push('/dashboard/supplierOrder/chosenProducts')} />
+        <Button className='ml-2' label="Αποστολή" disabled={!isFinalSubmit}  onClick={handleFinalSubmit} />
       </div>
     </div>
   )
@@ -67,7 +68,9 @@ const ChosenProducts = () => {
 
 
 
-const CalculateTemplate = ({ PRICER, MTRL }) => {
+const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
+  console.log(brandName)
+  console.log(NAME)
   const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch();
 
@@ -85,7 +88,7 @@ const CalculateTemplate = ({ PRICER, MTRL }) => {
   }
 
   useEffect(() => {
-    dispatch(setMtrLines({ MTRL: MTRL, QUANTITY: quantity, PRICE: PRICER }))
+    dispatch(setMtrLines({ MTRL: MTRL, QUANTITY: quantity, PRICE: PRICER, NAME: NAME }))
   }, [quantity])
 
   return (
@@ -138,19 +141,26 @@ const PriceTemplate = ({ PRICER }) => {
 
 const Footer = () => {
   const { selectedProducts, mtrLines } = useSelector(state => state.supplierOrder)
-
+  const dispatch = useDispatch();
     let sum = mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0)
     let quantity = mtrLines.map(item => item.QUANTITY).reduce((prev, next) => prev + next, 0)
-      let icon, quantIcon = 'pi pi-check'
-      let color, quantColor = 'green'
+    let icon = 'pi pi-check', quantIcon = 'pi pi-check';
+    let color = 'green', quantColor = 'green';
     if(sum < selectedProducts[0]?.minValue) {
       icon = 'pi pi-times'
       color = 'red'
+
     }
 
     if(quantity < selectedProducts[0]?.minItems) {
       quantIcon = 'pi pi-times'
       quantColor = 'red'
+    }
+
+    if(quantity > selectedProducts[0]?.minItems && sum > selectedProducts[0]?.minValue) {
+     dispatch(setIsFinalSubmit(true))
+    } else {
+      dispatch(setIsFinalSubmit(false))
     }
   return (
     <>
