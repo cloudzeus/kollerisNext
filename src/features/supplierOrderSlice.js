@@ -5,6 +5,7 @@ const initialState = {
 	selectedProducts: [],
 	selectedMarkes: null,
     inputEmail: "",
+	searchTerm: '',
 }
 
 
@@ -24,7 +25,12 @@ const supplierOrderSlice = createSlice({
 		},
 		setSelectedMarkes: (state, {payload}) => {
 			state.selectedMarkes = payload;
-		}	
+		},
+		
+		setSearchTerm: (state, {payload}) => {
+			state.searchTerm = payload;
+		}
+
 		
 	},
 
@@ -36,6 +42,7 @@ export const {
     setInputEmail, 
 	setSelectedProducts,
 	setSelectedMarkes,
+	setSearchTerm
 	
 } = supplierOrderSlice.actions;
 

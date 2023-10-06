@@ -44,14 +44,14 @@ export default async function handler(req, res) {
     }
 
     if(action === "fetchProducts") {
-        const {skip, limit} = req.body;
-
+        const {skip, limit, searchTerm} = req.body;
+        console.log('FETCH PRODUCTS')
         try {
             await connectMongo();
-           
-            await connectMongo();
-            let totalRecords = await SoftoneProduct.countDocuments({});
-            let products = await SoftoneProduct.aggregate([
+            let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+            console.log(regexSearchTerm)
+            let totalRecords;
+            let pipeline = [
                 {
                     $lookup: {
                         from: "markes",  // Join with the MARKES collection
@@ -77,8 +77,19 @@ export default async function handler(req, res) {
                 {
                     $limit: limit // Limit the result to 10 documents
                 }
-            ])
-            console.log(products)
+            ]
+           
+
+            if (searchTerm ) {
+                totalRecords = await SoftoneProduct.countDocuments({NAME: regexSearchTerm});
+                pipeline.unshift({
+                    $match: { NAME: regexSearchTerm }
+                });
+            } else {
+                totalRecords = await SoftoneProduct.countDocuments({});
+            }
+             
+            let products = await SoftoneProduct.aggregate(pipeline)
             return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -86,6 +97,7 @@ export default async function handler(req, res) {
     }
 
     if(action === 'fetchMarkes') {
+        console.log('fetch markes')
         try {
             await connectMongo();
             let markes = await Markes.find({}).select({"softOne.NAME": 1, "softOne.MTRMARK": 1, _id: 0})
@@ -96,22 +108,25 @@ export default async function handler(req, res) {
     }
 
     if(action == "searchBrand") {
-        const {skip, limit, mtrmark} = req.body;
-        console.log('mtrmark')
+        console.log('search brand')
+
+        const {skip, limit, mtrmark, searchTerm} = req.body;
         try {
             await connectMongo();
-            let products = SoftoneProduct.aggregate([
+            let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+
+            let pipeline = [
                 {
                     $match: {
-                        MTRMARK: mtrmark  // Filtering documents by MTRMARK
+                        MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
                     }
                 },
                 {
                     $lookup: {
-                        from: "MARKES",
-                        localField: "MTRMARK",
-                        foreignField: "softOne.MTRMARK",
-                        as: "matched_mark"
+                        from: "markes",  // Join with the MARKES collection
+                        localField: "MTRMARK",  // Join using the MTRMARK field from SoftoneProduct
+                        foreignField: "softOne.MTRMARK",  // Join using softOne.MTRMARK from MARKES
+                        as: "matched_mark"  // Output alias for matched documents from MARKES
                     }
                 },
                 {
@@ -130,10 +145,18 @@ export default async function handler(req, res) {
                 {
                     $limit:limit
                 }
-            ])
-            console.log('sefsefef')
-            console.log(products)
-            return res.status(200).json({ success: true, result: products })
+            ]
+
+            if (searchTerm ) {
+                pipeline.unshift({
+                    $match: { NAME: regexSearchTerm }
+                });
+            }
+
+            let totalRecords = await SoftoneProduct.countDocuments({MTRMARK: parseInt(mtrmark)})
+            let products = await SoftoneProduct.aggregate(pipeline)
+            console.log(JSON.stringify(products))
+            return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }

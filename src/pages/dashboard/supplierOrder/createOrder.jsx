@@ -6,7 +6,7 @@ const CreateOrder = () => {
   return (
     <AdminLayout>
             <ChooseSupplier /> 
-            {/* <ChooseProducts /> */}
+            <ChooseProducts />
     </AdminLayout>
   )
 }

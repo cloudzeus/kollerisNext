@@ -1,14 +1,15 @@
 'use client'
-import React, {useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
-import { setSelectedProducts } from '@/features/supplierOrderSlice';
+import { setSelectedProducts, setSearchTerm} from '@/features/supplierOrderSlice';
 import { Toast } from 'primereact/toast';
 import FilterMTRMARK from './FilterMTRMARK';
+import { set } from 'mongoose';
 const ChooseProductsWrapper = () => {
     const { selectedProducts, selectedSupplier } = useSelector(state => state.supplierOrder)
     return (
@@ -22,24 +23,21 @@ const ChooseProductsWrapper = () => {
 
 
 const ChooseProducts = () => {
-    const { selectedProducts, selectedSupplier, selectedMarkes } = useSelector(state => state.supplierOrder)
+    const dispatch = useDispatch()
+    const { selectedProducts, selectedSupplier, selectedMarkes, searchTerm } = useSelector(state => state.supplierOrder)
+    const [totalRecords, setTotalRecords] = useState(0);
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [searchTerm, setSearchTerm] = useState('')
-    const [brandSearch, setBrandSearch] = useState('')
+    // const [searchTerm, setSearchTerm] = useState('')
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
         page: 1,
     });
-    console.log('selectedMarkes')
-    console.log(selectedMarkes)
-    const [totalRecords, setTotalRecords] = useState(0);
-    const dispatch = useDispatch()
-
-    const fetch= async (action) => {
-        console.log('data')
+  
+ 
+    const fetch = async (action) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', {
             action: action,
@@ -48,27 +46,29 @@ const ChooseProducts = () => {
             searchTerm: searchTerm,
             mtrmark: selectedMarkes?.softOne?.MTRMARK
         })
-        console.log(data.result)
         setData(data.result)
         setTotalRecords(data.totalRecords)
         setLoading(false)
 
     }
 
-
+ 
     useEffect(() => {
-        
-        if(brandSearch === '' && !selectedMarkes) {
+        if (!selectedMarkes) {
             fetch('fetchProducts');
         }
 
         if(selectedMarkes) {
+       
             fetch('searchBrand')
+          
         }
-    
-    }, [brandSearch, lazyState.rows, lazyState.first])
-  
-  
+       
+    }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm])
+
+    useEffect(() => {
+        setlazyState(prev => ({...prev, first: 0}))
+    }, [selectedMarkes])
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))
@@ -79,12 +79,12 @@ const ChooseProducts = () => {
         setlazyState(event);
     };
 
-    const Search= () => {
+    const Search = () => {
         return (
             <div className="flex justify-content-start w-20rem ">
                 <span className="p-input-icon-left w-full">
                     <i className="pi pi-search " />
-                    <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => setSearchTerm(e.target.value)} />
+                    <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
                 </span>
             </div>
         )
@@ -92,16 +92,16 @@ const ChooseProducts = () => {
 
     const Footer = () => {
         return (
-            <Button label="Συνέχεια"/>
+            <Button label="Συνέχεια" />
         )
     }
-   
+
 
     return (
-        <>      
-                <div className='mt-3 mb-2'>
+        <>
+            <div className='mt-3 mb-2'>
                 <Button severity='warning' label="Επιλογή Προϊόντων" onClick={() => setShowTable(prev => !prev)} />
-                </div>
+            </div>
             {showTable ? (
                 <DataTable
                     value={data}
@@ -123,9 +123,9 @@ const ChooseProducts = () => {
                     footer={Footer}
 
                 >
-                    <Column selectionMode="multiple" headerStyle={{width: '30px'}}></Column>
-                    <Column field="NAME"  filter showFilterMenu={false}  filterElement={Search}  header="Όνομα Πελάτη"></Column>
-                    <Column field="brandName"  filter showFilterMenu={false}  filterElement={FilterMTRMARK }  header="Όνομα Πελάτη"></Column>
+                    <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
+                    <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
+                    <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Πελάτη"></Column>
                 </DataTable>
             ) : null}
             {/* {selectedSupplier ? (
@@ -138,4 +138,4 @@ const ChooseProducts = () => {
 
 
 
-export default  ChooseProductsWrapper;
+export default ChooseProductsWrapper;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { setSelectedMarkes } from "@/features/supplierOrderSlice";
+import { setSelectedMarkes, setProductData } from "@/features/supplierOrderSlice";
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
 import { useSelector, useDispatch } from 'react-redux';
 export default function FilterMTRMARK() {
-    const {selectedMarkes} = useSelector(state => state.supplierOrder)
+    const {selectedMarkes, searchTerm} = useSelector(state => state.supplierOrder)
     const [markes, setMarkes] = useState(null)
     const dispatch = useDispatch()
 
@@ -14,6 +14,7 @@ export default function FilterMTRMARK() {
                 action: 'fetchMarkes',
             })
             setMarkes(data.result)
+        
             console.log(data.result)
         }
         fetch();
@@ -35,8 +36,18 @@ export default function FilterMTRMARK() {
 
     return (
         <div className="card flex  p-2">
-            <Dropdown value={selectedMarkes} onChange={(e) => dispatch(setSelectedMarkes(e.value))} options={markes} optionLabel="softOne.NAME" placeholder="Επιλογή Μάρκας" 
-                filter valueTemplate={selectedTemplate } className="w-full md:w-14rem" />
+            <Dropdown 
+                disabled={searchTerm == '' ? true : false}
+                value={selectedMarkes} 
+                onChange={(e) => dispatch(setSelectedMarkes(e.value))} 
+                options={markes} 
+                optionLabel="softOne.NAME" 
+                placeholder="Επιλογή Μάρκας" 
+                filter 
+                valueTemplate={selectedTemplate } 
+                className="w-full md:w-14rem" 
+                showClear={true}
+            />
         </div>    
     )
 }
