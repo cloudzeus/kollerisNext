@@ -132,36 +132,3 @@ export default async function handler(req, res) {
 
 
 
-async function checkAvailability() {
-    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/mtrlInventory`;
-    const response = await fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            username: "Service",
-            password: "Service",
-        })
-    });
-    let buffer = await translateData(response)
-    console.log(buffer)
-    let products = await Product.find({}).select('MTRL')
-
-    const now = new Date();
-    const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
-        for (let item of buffer.result) {
-            let product = await Product.updateOne({
-                MTRL: item.MTRL
-            }, {
-                $set: {
-                    availability: {
-                        DIATHESIMA: item.AVAILABLE,
-                        SEPARAGELIA: item.ORDERED,
-                        DESVMEVMENA: item.RESERVED,
-                        date: formattedDateTime.toString()
-                    }
-                }
-
-            })
-           
-        }
-        
-}

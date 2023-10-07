@@ -59,7 +59,7 @@ const ChosenProducts = () => {
         className='border-1 border-round-sm	border-50'
         size="small"
         id={'_id'}
-        footer={Footer}
+        // footer={Footer}
         showGridlines
       >
         <Column field="NAME" header="Όνομα Πελάτη"></Column>
@@ -101,11 +101,7 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
     dispatch(setMtrLines({ MTRL: MTRL, QUANTITY: quantity, PRICE: PRICER, NAME: NAME }))
   }, [quantity])
 
-  
-   function multiply(a, b, decimalPlaces = 2) {
-    const scaleFactor = Math.pow(10, decimalPlaces);
-    return (a * scaleFactor * (b * scaleFactor)) / (scaleFactor * scaleFactor);
-}
+
   let total = quantity * parseFloat(PRICER)
   return (
     <div className='flex p-2'>
