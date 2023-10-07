@@ -9,6 +9,7 @@ export default async function handler(req, res) {
     try {
         await connectMongo();
         for (let item of data) {
+            console.log(item)
             let update = await SoftoneProduct.updateOne({ MTRL: item.MTRL }, {
                 $set: {
                     availability: {
@@ -19,11 +20,12 @@ export default async function handler(req, res) {
                     }
                 }
             })
+            console.log(update)
             updateResults.push({
                 MTRL: item.MTRL,
-                updated: update.nModified > 0 
+                updated: update.modifiedCount > 0 
             });
-    
+            console.log(updateResults)
         }
         return res.status(200).json({ success: true, result: updateResults  })
     } catch (e) {
