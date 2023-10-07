@@ -1,11 +1,11 @@
-import { connect } from "mongoose";
+import format from "date-fns/format";
+import connectMongo from "../../../server/config";
 import SoftoneProduct from "../../../server/models/newProductModel";
 export default async function handler(req, res) {
     let data = req.body;
     const now = new Date();
     const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
     let updateResults = [];
-
     try {
         await connectMongo();
         for (let item of data) {
