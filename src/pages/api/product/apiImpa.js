@@ -25,7 +25,27 @@ export default async function handler(req, res) {
         }
         
     }
+    if(action === 'createImpa') {
+        const {data} = req.body;
+        try {
+            await connectMongo();
+            const impa = await ImpaCodes.create(data);
+            return res.status(200).json({success: true, result: impa})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
 
+    if(action === 'deleteOne') {
+        const {id} = req.body;
+        try {
+            await connectMongo();
+            const impa = await ImpaCodes.deleteOne({_id: id});
+            return res.status(200).json({success: true, result: impa})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
     if(action === 'findAllWithProducts') {
         const {skip, limit} = req.body;
         console.log('find all impas with products')

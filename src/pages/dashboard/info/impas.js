@@ -1,7 +1,7 @@
 
 'use client'
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useState, useRef } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from "primereact/button";
@@ -12,7 +12,7 @@ import { EditDialog, AddDialog } from "@/GridDialogs/impaDialog";
 import { Toolbar } from "primereact/toolbar";
 import { setGridRowData } from "@/features/grid/gridSlice";
 import { InputText } from "primereact/inputtext";
-
+import { Toast } from "primereact/toast";
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -25,6 +25,7 @@ const dialogStyle = {
 const Impas = () => {
     const [data, setData] = useState([]);
     const dispatch = useDispatch();
+    const toast = useRef(null);
     const [searchTerm, setSearchTerm] = useState({
         code: '',
         english: '',
@@ -41,7 +42,13 @@ const Impas = () => {
         first: 0,
         rows: 10,
     });
-  
+    const showSuccess = (detail) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: detail, life: 4000 });
+    }
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 5000 });
+    }
+
 
     const allowExpansion = (rowData) => {
         return rowData
@@ -134,7 +141,7 @@ const Impas = () => {
 
     const ActionBodyTemplate = (rowData) => {
         return (
-            <Actions onEdit={() => onEdit(rowData)} onDelete={onDelete} />
+            <Actions onEdit={() => onEdit(rowData)} onDelete={() => onDelete(rowData)} />
         )
     }
 
@@ -144,12 +151,17 @@ const Impas = () => {
         dispatch(setGridRowData(rowData))
 
     }
-    const onDelete = () => {
-        console.log('delete')
+    const onDelete = async ({_id}) => {
+        let {data} = await axios.post('/api/product/apiImpa', {action: 'deleteOne', id: _id})
+
+        setSubmitted(true)
+        if(!data.success) showError('Αποτυχία Διαγραφής')
+        showSuccess('Επιτυχής Διαγραφή')
     }
 
     return (
         <AdminLayout>
+            <Toast ref={toast} />
             <StepHeader text="Κωδικοί Impas" />
             <Toolbar start={LeftToolbarTemplate} ></Toolbar>
             <DataTable

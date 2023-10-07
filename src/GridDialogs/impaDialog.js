@@ -16,8 +16,9 @@ import { useSession } from "next-auth/react"
 
 
 const addSchema = yup.object().shape({
-    // subGroupName: yup.string().required('Συμπληρώστε το όνομα'),
-    NAME: yup.string().required('To όνομα είναι υποχρεωτικό'),
+    code: yup.string().required('O κωδικός είναι υποχρεωτικός'),
+    greekDescription: yup.string().required('Υπορχρεωτική Περιγραφή'),
+    englishDescription: yup.string().required('Υπορχρεωτική αγγλική Περιγραφή'),
 });
 
 
@@ -120,7 +121,6 @@ const AddDialog = ({
     setSubmitted
 }) => {
 
-
     const {
         control,
         formState: { errors },
@@ -129,37 +129,24 @@ const AddDialog = ({
     } = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
-            NAME: '',
+            code: '',
+            englishDescription: '',
+            greekDescription: '',
         }
     });
-    const { data: session } = useSession()
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-   
-   
    
     const cancel = () => {
         hideDialog()
         reset()
     }
 
-   
-  
-
-
     const handleAdd = async (data) => {
-     
-        let user = session.user.user.lastName
-        const body ={
-            ...data,
-            createdFrom: user
-        }
-        console.log('body: ' + JSON.stringify(body))
-
-        let res = await axios.post('/api/product/apiManufacturers', { action: 'create', data: body })
+        console.log(data)
+        let res = await axios.post('/api/product/apiImpa', { action: 'createImpa', data: data })
         console.log(res.data)
         if(!res.data.success) return showError(res.data.error)
-        // let parent = res.data.parent
         setDisabled(true)
         setSubmitted(true)
         showSuccess('Επιτυχής εισαγωγή στην βάση')
@@ -197,11 +184,25 @@ const AddDialog = ({
                 onHide={hideDialog}>
                 <FormTitle>Λεπτομέριες</FormTitle>
                 <Input
-                    label={'Όνομα Kατασκευαστή'}
-                    name={'NAME'}
+                    label={'Impa code'}
+                    name={'code'}
                     control={control}
                     required
-                    error={errors.NAME}
+                    error={errors.code}
+                />
+                <Input
+                    label={'Ελληνική Περιγραφή'}
+                    name={'greekDescription'}
+                    control={control}
+                    required
+                    error={errors.greekDescription}
+                />
+                <Input
+                    label={'Αγγλική Περιγραφή'}
+                    name={'englishDescription'}
+                    control={control}
+                    required
+                    error={errors.englishDescription}
                 />
             </Dialog>
         </form>
