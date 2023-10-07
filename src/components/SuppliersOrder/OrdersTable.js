@@ -96,7 +96,6 @@ const OrdersTable = () => {
 
 
 const RowExpansionGrid = ({ products }) => {
-    console.log(products)
 
     return (
         <div className="p-2">

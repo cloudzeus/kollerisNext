@@ -1,7 +1,31 @@
+import { connect } from "mongoose";
+import SoftoneProduct from "../../../server/models/newProductModel";
 export default async function handler(req, res) {
     let data = req.body;
+    const now = new Date();
+    const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
+    let updateResults = [];
+
     try {
-        return res.status(200).json({ success: true, result: data, message: "My milkshake brings all the boys to the yard And they're like, it's better than yours Damn right, it's better than yours I can teach you, but I have to charge My milkshake brings all the boys to the yard And they're like, it's better than yours Damn right, it's better than yours I can teach you, but I have to charge" })
+        await connectMongo();
+        for (let item of data) {
+            let update = await SoftoneProduct.updateOne({ MTRL: item.MTRL }, {
+                $set: {
+                    availability: {
+                        DIATHESIMA: item.DIATHESIMA,
+                        SEPARAGELIA: item.SEPARAGELIA,
+                        DESVMEVMENA: item.DESVMEVMENA,
+                        date: formattedDateTime.toString()
+                    }
+                }
+            })
+            updateResults.push({
+                MTRL: item.MTRL,
+                updated: update.nModified > 0 
+            });
+    
+        }
+        return res.status(200).json({ success: true, result: updateResults  })
     } catch (e) {
         return res.status(500).json({ success: false, result: null })
     }

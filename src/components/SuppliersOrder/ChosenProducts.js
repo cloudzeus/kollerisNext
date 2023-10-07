@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import StepHeader from '../ImpaOffer/StepHeader';
 import OrderDetails from './OrderDetails';
 import axios from 'axios';
+import { set } from 'mongoose';
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -100,6 +101,12 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
     dispatch(setMtrLines({ MTRL: MTRL, QUANTITY: quantity, PRICE: PRICER, NAME: NAME }))
   }, [quantity])
 
+  
+   function multiply(a, b, decimalPlaces = 2) {
+    const scaleFactor = Math.pow(10, decimalPlaces);
+    return (a * scaleFactor * (b * scaleFactor)) / (scaleFactor * scaleFactor);
+}
+  let total = quantity * parseFloat(PRICER)
   return (
     <div className='flex p-2'>
 
@@ -120,7 +127,7 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
         </div>
       </div>
       <div className='flex align-items-center'>
-        <span className='font-bold ml-3'>{`${quantity * parseInt(PRICER)}€`}</span>
+        <span className='font-bold ml-3'>{total}</span>
       </div>
     </div>
   )
@@ -150,21 +157,39 @@ const PriceTemplate = ({ PRICER }) => {
 
 const Footer = () => {
   const { selectedProducts, mtrLines } = useSelector(state => state.supplierOrder)
+  const [sum, setSum] = useState(0)
+  const [color, setColor] = useState({
+    color: 'red',
+    quantColor: 'red'
+  })
+  const [icon, setIcon] = useState({
+    icon: 'pi pi-times',
+    quantIcon: 'pi pi-times'
+  })
+  const [quantity, setQuantity] = useState(0)
   const dispatch = useDispatch();
-    let sum = mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0)
-    let quantity = mtrLines.map(item => item.QUANTITY).reduce((prev, next) => prev + next, 0)
-    let icon = 'pi pi-check', quantIcon = 'pi pi-check';
-    let color = 'green', quantColor = 'green';
-    if(sum < selectedProducts[0]?.minValue) {
-      icon = 'pi pi-times'
-      color = 'red'
+    
 
+    useEffect(() => {
+      let sum = mtrLines.map(item => item.TOTAL_PRICE)
+      console.log('sum')
+      console.log(sum)
+      setSum(mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0))
+      setQuantity(mtrLines.map(item => item.QUANTITY).reduce((prev, next) => prev + next, 0))
+    }, [sum, mtrLines, selectedProducts])
+
+    useEffect(() => {
+    if(sum < selectedProducts[0]?.minValue) {
+      setIcon(prev => ({...prev, icon: 'pi pi-times'}))
+      setColor(prev => ({...prev, color: 'red'}))
     }
 
     if(quantity < selectedProducts[0]?.minItems) {
-      quantIcon = 'pi pi-times'
-      quantColor = 'red'
+      setIcon(prev => ({...prev, quantIcon: 'pi pi-times'}))
+      setColor(prev => ({...prev, quantColor: 'red'}))
     }
+    }, [mtrLines, selectedProducts])
+ 
 
     useEffect(() => {
       if(quantity >= selectedProducts[0]?.minItems && sum >= selectedProducts[0]?.minValue) {
@@ -178,7 +203,7 @@ const Footer = () => {
     <>
       <div className='p-1 flex align-items-center'>
       <div className='flex align-items-center justify-content-center border-1 border-round mr-2 border-300' style={{width: '25px', height: '25px'}}>
-        <i className={icon} style={{ fontSize: '1rem', color: color }}></i>
+        <i className={icon.icon} style={{ fontSize: '1rem', color: color.color }}></i>
       </div>
       <div>
       <span>Σύνολο Τιμής:</span>
@@ -187,7 +212,7 @@ const Footer = () => {
     </div>
       <div className='p-1 flex align-items-center'>
       <div className='flex align-items-center justify-content-center border-1 border-round mr-2 border-300' style={{width: '25px', height: '25px'}}>
-        <i className={quantIcon} style={{ fontSize: '1rem', color:quantColor }}></i>
+        <i className={icon.quantIcon} style={{ fontSize: '1rem', color: color.quantColor }}></i>
       </div>
       <div>
       <span>Σύνολο Προϊόντων:</span>

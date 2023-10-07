@@ -256,7 +256,7 @@ export default async function handler(req, res) {
            
               const mail = {
                 from: 'info@kolleris.com',
-                to: 'gkozyris@i4ria.com',
+                to: email,
                 cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com'],
                 subject: ` Παραγγελία NUM: ${orderNumber}`,
                 html: body

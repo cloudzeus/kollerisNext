@@ -84,7 +84,8 @@ const ChooseProducts = () => {
     return (
         <>      
             <StepHeader text="Επιλογή Προϊόντων" />
-                <DataTable
+            <FilterMTRMARK />
+            {selectedMarkes ? ( <DataTable
                     value={data}
                     paginator
                     rows={lazyState.rows}
@@ -96,7 +97,6 @@ const ChooseProducts = () => {
                     selectionMode={'checkbox'}
                     selection={selectedProducts}
                     onSelectionChange={onSelectionChange}
-                    loading={loading}
                     className='border-1 border-round-sm	border-50 mt-4'
                     size="small"
                     filterDisplay="row"
@@ -104,9 +104,10 @@ const ChooseProducts = () => {
 
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                    <Column field="brandName" filter showFilterMenu={false} filterElement={FilterMTRMARK} header="Όνομα Μάρκας"></Column>
+                    <Column field="brandName"  header="Όνομα Μάρκας"></Column>
                     <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Όνομα Πελάτη"></Column>
-                </DataTable>
+                </DataTable>) : null}
+               
                 <div className='mt-3'>
                         <Button  severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
                         <Button className='ml-2'disabled={selectedProducts.length == 0 ? true : false} severity='success' icon="pi pi-arrow-right" onClick={() => router.push('/dashboard/supplierOrder/chosenProducts')} />

@@ -45,18 +45,21 @@ const supplierOrderSlice = createSlice({
 			state.quantity = payload;
 		},
 		setMtrLines: (state, {payload}) => {
-			console.log('PAYLOAD')
-			console.log(payload)
+			
+			const calc = payload.QUANTITY * parseFloat(payload.PRICE);
+			const roundedUp = Math.ceil(calc);
+
 			const existingItem = state.mtrLines.find((item) => item.MTRL === payload.MTRL);
 			if(existingItem) {
 				state.mtrLines = state.mtrLines.map((item) => {
-					return item.MTRL === payload.MTRL ? { ...item, QUANTITY: payload.QUANTITY, TOTAL_PRICE: payload.QUANTITY * parseInt(payload.PRICE) } : item
+					return item.MTRL === payload.MTRL ? { ...item, QUANTITY: payload.QUANTITY, TOTAL_PRICE: roundedUp} : item
 				}
 				)
 			} else {
+				
 				state.mtrLines.push({
 					...payload,
-					TOTAL_PRICE: payload.QUANTITY * parseInt(payload.PRICE)
+					TOTAL_PRICE: roundedUp
 				});
 			}
 		},
