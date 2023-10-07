@@ -247,7 +247,6 @@ export default function TemplateDemo() {
 
     };
     
-    console.log(data)
     return (
         <AdminLayout >
             <Toast ref={toast} />

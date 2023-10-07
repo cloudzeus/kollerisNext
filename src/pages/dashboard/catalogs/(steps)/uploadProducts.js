@@ -84,9 +84,8 @@ const UploadProducts = () => {
             </UploadBtn>
 
             <h2 className='mb-3 mt-4'>Επιλογή Κλειδιού Τιμής:</h2>
-{/* 
-            {gridData ? (
 
+            {gridData ? (
                 <DataTable
                     loading={loading}
                     selectionMode={'radiobutton'}
@@ -100,14 +99,13 @@ const UploadProducts = () => {
                     <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
                     <Column header="Κλειδιά" field="value" body={template} />
                 </DataTable>)
-                : null} */}
+                : null}
             <div>
                 <Button
                 severity="success"
                 label="STEP 2"
                     disabled={onSelectKey === null ? true : false}
                     icon="pi pi-arrow-right" className='mb-2 mt-3 bg-success ' onClick={() => {
-                        //GO TO CalculatePrice
                         dispatch(setCurrentPage(2))
                     }} />
             </div>

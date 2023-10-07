@@ -34,7 +34,7 @@ const ChooseImpa = () => {
         if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') {
             setLoading(true)
         }
-        const res = await axios.post('/api/createOffer', {
+        const res = await axios.post('/api/product/apiImpa', {
             action: action,
             skip: lazyState.first,
             limit: lazyState.rows,
@@ -51,7 +51,7 @@ const ChooseImpa = () => {
         if (searchTerm.greek) handleFetch('searchGreekImpa');
         if (searchTerm.english) handleFetch('searchEng');
         if (searchTerm.code) handleFetch('searchCode');
-        if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') handleFetch('findImpaBatch')
+        if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') handleFetch('findAll')
     }, [searchTerm, lazyState.rows, lazyState.first,])
 
 

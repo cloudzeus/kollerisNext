@@ -142,7 +142,9 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
                         alt={file.name} 
                         role="presentation" 
                         src={file.objectURL} 
-                        fill={true} />
+                        fill={true} 
+                        sizes="80px"
+                        />
                     </ImageContainer>
                     <div className="details">
                         <span>

@@ -1,61 +1,74 @@
 
 'use client'
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from "primereact/button";
 import axios from "axios";
-import * as XLSX from 'xlsx';
+import { useDispatch } from "react-redux";
+import StepHeader from "@/components/StepHeader";
+import { EditDialog, AddDialog } from "@/GridDialogs/impaDialog";
+import { Toolbar } from "primereact/toolbar";
+import { setGridRowData } from "@/features/grid/gridSlice";
+import { InputText } from "primereact/inputtext";
+
+const dialogStyle = {
+    marginTop: '10vh', // Adjust the top margin as needed
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+
+};
+
+
 const Impas = () => {
     const [data, setData] = useState([]);
-    const [showData, setShowData] = useState([]);
-    console.log(data)
+    const dispatch = useDispatch();
+    const [searchTerm, setSearchTerm] = useState({
+        code: '',
+        english: '',
+        greek: '',
+    })
+    const [editData, setEditData] = useState(null)
+    const [editDialog, setEditDialog] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [expandedRows, setExpandedRows] = useState(null);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [lazyState, setlazyState] = useState({
+        first: 0,
+        rows: 10,
+    });
+  
 
     const allowExpansion = (rowData) => {
         return rowData
-
     };
 
-    const handleFileUpload = (e) => {
-        const reader = new FileReader();
-        reader.readAsBinaryString(e.target.files[0]);
-        reader.onload = (e) => {
-            const data = e.target.result;
-            const workbook = XLSX.read(data, { type: "binary" });
-            console.log(workbook)
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            const parsedData = XLSX.utils.sheet_to_json(sheet);
-            setData(parsedData);
-        }
+    const handleFetch = async (action) => {
+        if(action === "findAllWithProducts") setLoading(true)
+        const {data} = await axios.post('/api/product/apiImpa', {
+            action: action,
+            skip: lazyState.first,
+            limit: lazyState.rows,
+            searchTerm: searchTerm
+        })
+        setData(data.result)
+        setTotalRecords(data.totalRecords)
+        if(action === "findAllWithProducts") setLoading(false)
     }
-
-
-    const handleAddImpas = async () => {
-        const chunkSize = 100;
-        let arrayOfChunks = [];
-
-        for (let i = 0; i < data.length; i += chunkSize) {
-            let slice = data.slice(i, i + chunkSize);
-            arrayOfChunks = slice
-
-            await axios.post('/api/product/apiImpa', { action: 'insert', data: arrayOfChunks })
-        }
-
-    }
-
-
-    const handleFetch = async () => {
-        const res = await axios.post('/api/product/apiImpa', { action: 'findAll' })
-        setShowData(res.data.data)
-    }
-
-
     useEffect(() => {
-        handleFetch()
-    }, [])
+        if (searchTerm.greek) handleFetch('searchGreekImpa');
+        if (searchTerm.english) handleFetch('searchEng');
+        if (searchTerm.code) handleFetch('searchCode');
+        if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') {
+       
+            handleFetch('findAllWithProducts')
+        }
+    }, [searchTerm, lazyState.rows, lazyState.first, submitted])
+
 
     const rowExpansionTemplate = (props) => {
         return (
@@ -63,34 +76,121 @@ const Impas = () => {
         )
     }
 
+    const onPage = (event) => {
+        setlazyState(event);
+    };
+
+    const openNew = () => {
+        setSubmitted(false);
+        setAddDialog(true);
+    };
+
+
+    const hideDialog = () => {
+        setEditDialog(false);
+        setAddDialog(false);
+    };
+
+    const searchGreekName = () => {
+        return (
+            <div className="flex justify-content-start ">
+                <span className="p-input-icon-left w-5">
+                    <i className="pi pi-search" />
+                    <InputText value={searchTerm.greek} onChange={(e) => setSearchTerm((prev) => ({ ...prev, greek: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
+
+    const searchEngName = () => {
+        return (
+            <div className="flex justify-content-start ">
+                <span className="p-input-icon-left w-5">
+                    <i className="pi pi-search" />
+                    <InputText value={searchTerm.english} onChange={(e) => setSearchTerm((prev) => ({ ...prev, english: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
+    const searchCode = () => {
+        return (
+            <div className="flex justify-content-start ">
+                <span className="p-input-icon-left w-5">
+                    <i className="pi pi-search" />
+                    <InputText value={searchTerm.code} onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
+
+
+    const LeftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
+
+    const ActionBodyTemplate = (rowData) => {
+        return (
+            <Actions onEdit={() => onEdit(rowData)} onDelete={onDelete} />
+        )
+    }
+
+    const onEdit = (rowData) => {
+        setSubmitted(false);
+        setEditDialog(true);
+        dispatch(setGridRowData(rowData))
+
+    }
+    const onDelete = () => {
+        console.log('delete')
+    }
+
     return (
         <AdminLayout>
+            <StepHeader text="Κωδικοί Impas" />
+            <Toolbar start={LeftToolbarTemplate} ></Toolbar>
             <DataTable
-                loading={showData.length == 0 ? true : false}
+                key={'code'}
+                value={data}
+                first={lazyState.first}
+                rows = {lazyState.rows}
+                onPage={onPage}
+                lazy
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={rowExpansionTemplate}
-                paginator rows={10} rowsPerPageOptions={[20, 50, 100, 200]}
-                value={showData}
-                tableStyle={{ minWidth: '50rem' }}>
+                paginator 
+                totalRecords={totalRecords}
+                loading={loading}
+                rowsPerPageOptions={[20, 50, 100, 200]}
+                filterDisplay="row"
+                tableStyle={{ minWidth: '50rem' }}
+                >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="code" header="code"></Column>
-                <Column field="englishDescription" header="Code"></Column>
-                <Column field="greekDescription" header="Code"></Column>
+                <Column field="code" header="code" filter filterElement={searchCode} showFilterMenu={false}></Column>
+                <Column field="englishDescription" header="Αγγλική Περιγραφή" filter filterElement={searchEngName} showFilterMenu={false}></Column>
+                <Column field="greekDescription" header="Ελληνική Περιγραφή"  filter filterElement={searchGreekName} showFilterMenu={false}></Column>
                 <Column field="unit" header="Unit"></Column>
+                <Column style={{width: '100px'}} body={ActionBodyTemplate}></Column>
             </DataTable>
-            {/* <input type="file" onChange={handleFileUpload} />
-            {data ? ( 
-            <DataTable 
-                paginator rows={5} rowsPerPageOptions={[20, 50, 100, 200]}
-                value={data} 
-                tableStyle={{ minWidth: '50rem' }}>
-                <Column field="Code" header="Code"></Column>
-                <Column field="English Description" header="Code"></Column>
-                <Column field="Ελληνική Περιγραφή" header="Code"></Column>
-                <Column field="Unit" header="Unit"></Column>
-            </DataTable> ): null}
-            < Button label="add impas database" onClick={handleAddImpas}/> */}
+            <EditDialog
+                style={dialogStyle}
+                data={editData}
+                setData={setEditData}
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
+            <AddDialog
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
         </AdminLayout>
     )
 }
@@ -108,4 +208,18 @@ const ExpandedDataTable = ({ products }) => {
         </div>
     )
 }
+
+
+
+
+
+const Actions = ({onEdit, onDelete}) => {
+    return (
+        <div>
+            <i className="pi pi-pencil text-primary mr-3 cursor-pointer" onClick={onEdit}></i>
+            <i className="pi pi-trash text-red-400 cursor-pointer" onClick={onDelete}></i>
+        </div>
+    )
+}
+
 export default Impas;

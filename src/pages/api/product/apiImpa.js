@@ -1,7 +1,6 @@
 import { ImpaCodes } from "../../../../server/models/impaSchema"
 import SoftoneProduct, { Product } from "../../../../server/models/newProductModel"
 import connectMongo from "../../../../server/config"
-import { array } from "yup"
 export default async function handler(req, res) {
     const action = req.body.action 
     if(action === 'insert') {
@@ -15,8 +14,7 @@ export default async function handler(req, res) {
                 unit: item.Unit
             })
         }
-        console.log('new array')
-        console.log(newArray)
+       
         try {
             await connectMongo();
             const impas = await ImpaCodes.insertMany(newArray)
@@ -28,14 +26,18 @@ export default async function handler(req, res) {
         
     }
 
-    if(action === 'findAll') {
+    if(action === 'findAllWithProducts') {
+        const {skip, limit} = req.body;
+        console.log('find all impas with products')
         try {
             await connectMongo();
-            const impas = await ImpaCodes.find({}).populate('products', "NAME");
-            console.log(impas[0])
-            res.status(200).json({success: true, data: impas})
+            const totalRecords = await ImpaCodes.countDocuments();
+            console.log(totalRecords)
+            const impas = await ImpaCodes.find({}).skip(skip).limit(limit).populate('products', 'NAME');
+          
+            return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
         } catch (e) {
-            console.log(e)
+            return res.status(500).json({success: false, result: null})
         }
     }
     if(action === 'find') {
@@ -49,20 +51,104 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === 'findImpaBatch') {
+    if(action === 'findAll') {
         let {skip, limit} = req.body;
-        console.log('skip', skip, 'limit', limit)
         try {
             await connectMongo();
-            let totalRecords;
-            totalRecords = await ImpaCodes.countDocuments();
+            let totalRecords = await ImpaCodes.countDocuments();
             const impas = await ImpaCodes.find({}).skip(skip).limit(limit);
-            return res.status(200).json({success: true, result: impas, totalRecords})
+            return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
         } catch (e) {
-            console.log(e)
+            return res.status(500).json({success: false, result: null})
         }
     }
 
+    if (action === "searchGreekImpa") {
+
+        let { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp("^" + searchTerm.greek, 'i');
+            const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm });
+            const impas = await ImpaCodes.find({ greekDescription: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+      
+    }
+    if (action === "searchEng") {
+        let { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp("^" + searchTerm.english, 'i');
+            const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm });
+            const impas = await ImpaCodes.find({ englishDescription: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
+        }catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+        
+    }
+    if (action === "searchCode") {
+        let { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp("^" + searchTerm.code, 'i');
+            const totalRecords = await ImpaCodes.countDocuments({ code: regexSearchTerm });
+            const impas = await ImpaCodes.find({ code: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: impas, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+     
+    }
+
+
+    if(action === "findImpaProducts") {
+        let {code } = req.body
+        try {
+            await connectMongo();
+            const impas = await ImpaCodes.find({code: code}).populate('products');
+            let products = impas[0].products
+            return res.status(200).json({success: true, result: products})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+         
+    }
+
+    if(action === 'findProducts') {
+        let {skip, limit} = req.body;
+        console.log('I AM ON apiImpa, yes yes')
+        try {
+            await connectMongo();
+            const products = await SoftoneProduct.find({}).skip(skip).limit(limit);
+            return res.status(200).json({success: true, result: products})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
+    if(action === "updateImpa") {
+        console.log('yes update')
+        const {data, id} = req.body;
+        try {
+            await connectMongo();
+            let update = await ImpaCodes.updateOne({_id: id}, {
+                $set: {
+                    code: data.code, 
+                    englishDescription: data.englishDescription, 
+                    greekDescription: data.greekDescription,
+                    updatedFrom: data.user,
+                }})
+            return res.status(200).json({success: true, result: update})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
+    //Action that happens in product basket:
     if(action === 'correlateImpa') {
         let {dataToUpdate, id} = req.body
      
@@ -99,51 +185,4 @@ export default async function handler(req, res) {
           return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
         }
     }
-
-    if(action === "searchGreekImpa") {
-        let {skip, limit, searchTerm} = req.body;
-        let regexSearchTerm = new RegExp("^" + searchTerm.greek, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({ greekDescription: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ greekDescription: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
-    }
-    if(action === "searchEng") {
-        let {skip, limit, searchTerm} = req.body;
-        let regexSearchTerm = new RegExp("^" + searchTerm.english, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({ englishDescription: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ englishDescription: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
-    }
-    if(action === "searchCode") {
-        let {skip, limit, searchTerm} = req.body;
-        let regexSearchTerm = new RegExp("^" + searchTerm.code, 'i');
-        const totalRecords = await ImpaCodes.countDocuments({code: regexSearchTerm});
-        const impas  = await ImpaCodes.find({ code: regexSearchTerm}).skip(skip).limit(limit);
-        return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
-    }
-
-    if(action === "findImpaProducts") {
-        let {code } = req.body
-        try {
-            await connectMongo();
-            const impas = await ImpaCodes.find({code: code}).populate('products');
-            let products = impas[0].products
-            return res.status(200).json({success: true, result: products})
-        } catch (e) {
-            return res.status(500).json({success: false, result: null})
-        }
-         
-    }
-
-    if(action === 'findProducts') {
-        let {skip, limit} = req.body;
-        try {
-            await connectMongo();
-            const products = await SoftoneProduct.find({}).skip(skip).limit(limit);
-            return res.status(200).json({success: true, result: products})
-        } catch (e) {
-            return res.status(500).json({success: false, result: null})
-        }
-    }
-
 }

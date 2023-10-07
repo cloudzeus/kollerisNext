@@ -30,6 +30,8 @@ const GallerySmall = ({ label, images }) => {
 
 
 const Gallery = ({images, label}) => {
+    console.log('gallery images');
+    console.log(images);
     const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const handleImageSelect = (image) => {

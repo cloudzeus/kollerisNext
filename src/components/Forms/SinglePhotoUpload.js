@@ -30,7 +30,8 @@ const SinglePhotoUpload = ({  state, setState }) => {
             if (response.ok) {
                 const { urls } = await response.json();
                 if(urls) {
-                    setState(urls[0])
+                    console.log(urls)
+                    setState(urls)
                     setLoading(false);
                 }
             }
@@ -57,7 +58,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                             ) : (
                                 <Image
-                                src={`/uploads/${state}`}
+                                src={`public/uploads/${state}`}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"

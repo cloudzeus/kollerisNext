@@ -16,7 +16,7 @@ const PageContainer = () => {
             {currentPage == 1 ? (
                 <UploadProducts />
             ) : null}
-            {/* {currentPage == 2 ? (
+            {currentPage == 2 ? (
                 <StepCalcPrice /> 
             ): null}
           
@@ -29,7 +29,7 @@ const PageContainer = () => {
            
             {currentPage == 5 ? (
                 <StepshowData/> 
-            ): null} */}
+            ): null}
            
         </AdminLayout>
     )

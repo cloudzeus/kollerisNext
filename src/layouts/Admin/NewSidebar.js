@@ -16,7 +16,7 @@ const NewSidebar = () => {
     return (
         <Container>
             <div className='top'>
-                <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" />
+                {/* <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" /> */}
                 <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem' }}></i>
 
             </div>
