@@ -20,6 +20,7 @@ import TranslateInput from '@/components/Forms/TranslateInpit';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
+    const [tranlateBtn, setTranslateBtn] = useState(false)
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     //This component has one Image only:
@@ -31,6 +32,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             fr: '',
         }
     )
+
+    useEffect(() => {
+
+    }, [gridRowData])
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -39,10 +44,23 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleGerman = async (value) => {
         setDescriptions({ ...descriptions, de: value })
     }
+    const handleEnglish = async (value) => {
+        setDescriptions({ ...descriptions, en: value })
+    }
+   
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
+        setDescriptions(prev => {
+            return {
+                de: gridRowData?.descriptions?.de,
+                en: gridRowData?.descriptions?.en,
+                es: gridRowData?.descriptions?.es,
+                fr: gridRowData?.descriptions?.fr,
+
+            }
+        })
     }, [gridRowData, reset]);
 
 
@@ -51,15 +69,18 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-        console.log(data)
-     
+
 
         try {
             let resp = await axios.post('/api/product/apiProduct', {
                 action: "update",
-                data: data,
+                data: {
+                    ...data,
+                    descriptions: descriptions,
+
+                },
             })
-            if (!resp.data.success) return showError()
+            if (!resp.data.success) showError()
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
@@ -187,38 +208,25 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                     />
                     <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                    <TranslateInput 
-                       label={'Περιγραφή Γερμανική'}
-                       name={'descriptions.de'}
-                       control={control}
-                       state={descriptions.de}
-                       setState={handleGerman}
-                       targetLang="GE"
-                    />
-                    <TranslateInput 
-                       label={'Περιγραφή Aγγλική'}
-                       name={'descriptions.en'}
-                       control={control}
-                       state={descriptions.en}
-                       setState={handleGerman}
-                       targetLang="EN"
-                    />
-                    <TranslateInput 
-                       label={'Περιγραφή Ισπανική'}
-                       name={'descriptions.es'}
-                       control={control}
-                       state={descriptions.es}
-                       setState={handleGerman}
-                       targetLang="ES"
-                    />
-                    <TranslateInput 
-                       label={'Περιγραφή Γαλλική'}
-                       name={'descriptions.fr'}
-                       control={control}
-                       state={descriptions.fr}
-                       setState={handleGerman}
-                       targetLang="FR"
-                    />
+                    <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
+                    {tranlateBtn ? (
+                        <>
+                            <TranslateInput
+                                label={'Περιγραφή Γερμανική'}
+                                state={descriptions.de}
+                                handleState={handleGerman}
+                                targetLang="GE"
+                            />
+                            <TranslateInput
+                                label={'Περιγραφή Aγγλική'}
+                                state={descriptions.en}
+                                handleState={handleEnglish}
+                                targetLang="en-GB"
+                            />
+
+
+                        </>
+                    ) : null}
                 </Dialog>
             </form>
         </Container>
@@ -238,8 +246,9 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
         group: null,
         subgroup: null,
     })
- 
-    const {control,formState: { errors }, handleSubmit, reset} = useForm({
+
+
+    const { control, formState: { errors }, handleSubmit, reset } = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
             name: '',
@@ -252,7 +261,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             facebookUrl: '',
             instagramUrl: '',
         }
-});
+    });
 
 
     const toast = useRef(null);
@@ -266,7 +275,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             fr: '',
         }
     )
-   
+
     const handleGerman = async (value) => {
         setDescriptions({ ...descriptions, de: value })
     }
@@ -293,7 +302,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleAdd = (data) => {
         console.log('add')
         console.log(data)
-        let obj ={
+        let obj = {
             categoryID: selectState.category?.softOne?.MTRCATEGORY,
             categoryName: selectState.category?.categoryName,
             groupID: selectState.group?.softOne?.MTRGROUP,
@@ -302,6 +311,8 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             subGroupName: selectState.subgroup?.subGroupName,
         }
         console.log(obj)
+        hideDialog()
+        reset();
     }
     const productDialogFooter = (
         <React.Fragment>
@@ -311,10 +322,10 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     );
 
 
-  
-    
-    
-    
+
+
+
+
 
     return (
         < Container>
@@ -330,21 +341,21 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >   
-                   <Categories 
-                   state={selectState.category} 
-                   setState={setSelectState}
+                >
+                    <Categories
+                        state={selectState.category}
+                        setState={setSelectState}
                     />
-                   <Groups 
-                   state={selectState.group} 
-                   setState={setSelectState} 
-                   id={selectState.category?.softOne?.MTRCATEGORY} 
-                   />
-                   <SubGroups 
-                   state={selectState.subgroup} 
-                   setState={setSelectState} 
-                   id={selectState.group?.softOne?.MTRGROUP} 
-                   />
+                    <Groups
+                        state={selectState.group}
+                        setState={setSelectState}
+                        id={selectState.category?.softOne?.MTRCATEGORY}
+                    />
+                    <SubGroups
+                        state={selectState.subgroup}
+                        setState={setSelectState}
+                        id={selectState.group?.softOne?.MTRGROUP}
+                    />
                     <Input
                         label={"Όνομα"}
                         name={'NAME'}
@@ -426,37 +437,37 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                     />
                     <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                    <TranslateInput 
-                       label={'Περιγραφή Γερμανική'}
-                       name={'descriptions.de'}
-                       control={control}
-                       state={descriptions.de}
-                       setState={handleGerman}
-                       targetLang="GE"
+                    <TranslateInput
+                        label={'Περιγραφή Γερμανική'}
+                        name={'descriptions.de'}
+                        control={control}
+                        state={descriptions.de}
+                        setState={handleGerman}
+                        targetLang="GE"
                     />
-                    <TranslateInput 
-                       label={'Περιγραφή Aγγλική'}
-                       name={'descriptions.en'}
-                       control={control}
-                       state={descriptions.en}
-                       setState={handleGerman}
-                       targetLang="EN"
+                    <TranslateInput
+                        label={'Περιγραφή Aγγλική'}
+                        name={'descriptions.en'}
+                        control={control}
+                        state={descriptions.en}
+                        setState={handleGerman}
+                        targetLang="EN"
                     />
-                    <TranslateInput 
-                       label={'Περιγραφή Ισπανική'}
-                       name={'descriptions.es'}
-                       control={control}
-                       state={descriptions.es}
-                       setState={handleGerman}
-                       targetLang="ES"
+                    <TranslateInput
+                        label={'Περιγραφή Ισπανική'}
+                        name={'descriptions.es'}
+                        control={control}
+                        state={descriptions.es}
+                        setState={handleGerman}
+                        targetLang="ES"
                     />
-                    <TranslateInput 
-                       label={'Περιγραφή Γαλλική'}
-                       name={'descriptions.fr'}
-                       control={control}
-                       state={descriptions.fr}
-                       setState={handleGerman}
-                       targetLang="FR"
+                    <TranslateInput
+                        label={'Περιγραφή Γαλλική'}
+                        name={'descriptions.fr'}
+                        control={control}
+                        state={descriptions.fr}
+                        setState={handleGerman}
+                        targetLang="FR"
                     />
                 </Dialog>
             </form>
@@ -468,10 +479,10 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
-const Categories = ({state, setState}) => {
+const Categories = ({ state, setState }) => {
     const [options, setOptions] = useState([])
     const handleFetch = async () => {
-        let { data } = await axios.post('/api/product/apiProductFilters', {action: 'findCategories'})
+        let { data } = await axios.post('/api/product/apiProductFilters', { action: 'findCategories' })
         setOptions(data.result)
     }
     useEffect(() => {
@@ -482,23 +493,23 @@ const Categories = ({state, setState}) => {
 
     return (
         <div className="card mb-3">
-        <span className='mb-2 block'>Επιλογή Ομάδας</span>
-        <div className='flex align-items-center'>
-            <Dropdown  value={state} onChange={(e) => setState((prev) => ({...prev, category: e.value}) )} options={options} optionLabel="categoryName" 
-                placeholder="Κατηγορία" className="w-full" />
-        </div>
-       
+            <span className='mb-2 block'>Επιλογή Ομάδας</span>
+            <div className='flex align-items-center'>
+                <Dropdown value={state} onChange={(e) => setState((prev) => ({ ...prev, category: e.value }))} options={options} optionLabel="categoryName"
+                    placeholder="Κατηγορία" className="w-full" />
+            </div>
 
-    </div>
+
+        </div>
     )
 }
 
 
 
 
-const Groups = ({state, setState, id}) => {
+const Groups = ({ state, setState, id }) => {
     const [groupOptions, setGroupOptions] = useState([])
- 
+
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
             action: 'findGroups',
@@ -512,13 +523,13 @@ const Groups = ({state, setState, id}) => {
 
     return (
         <div className="card mb-3">
-        <span className='mb-2 block'>Επιλογή Ομάδας</span>
-        <Dropdown  value={state} onChange={(e) => setState((prev) => ({...prev, group: e.value}) )} options={groupOptions} optionLabel="groupName" 
-            placeholder="Κατηγορία" className="w-full" />
-    </div>
+            <span className='mb-2 block'>Επιλογή Ομάδας</span>
+            <Dropdown value={state} onChange={(e) => setState((prev) => ({ ...prev, group: e.value }))} options={groupOptions} optionLabel="groupName"
+                placeholder="Κατηγορία" className="w-full" />
+        </div>
     )
 }
-const SubGroups = ({state, setState, id}) => {
+const SubGroups = ({ state, setState, id }) => {
     const [subgroupOptions, setsubGroupOptions] = useState([])
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
@@ -533,10 +544,10 @@ const SubGroups = ({state, setState, id}) => {
 
     return (
         <div className="card mb-3">
-        <span className='mb-2 block'>Επιλογή Υποομάδας</span>
-        <Dropdown  value={state} onChange={(e) => setState(prev => ({...prev, subgroup: e.value}))} options={subgroupOptions} optionLabel="subGroupName" 
-            placeholder="Κατηγορία" className="w-full" />
-    </div>
+            <span className='mb-2 block'>Επιλογή Υποομάδας</span>
+            <Dropdown value={state} onChange={(e) => setState(prev => ({ ...prev, subgroup: e.value }))} options={subgroupOptions} optionLabel="subGroupName"
+                placeholder="Κατηγορία" className="w-full" />
+        </div>
     )
 }
 

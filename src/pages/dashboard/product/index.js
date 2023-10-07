@@ -160,7 +160,6 @@ function Product() {
 
     const fetch = async () => {
         setLoading(true)
-        console.log('res result 2')
         try {
             let res = await axios.post('/api/product/apiProductFilters', {
                 action: 'filterCategories',
@@ -287,6 +286,7 @@ function Product() {
 
     const hideDialog = () => {
         setEditDialog(false);
+        setAddDialog(false)
         setClassDialog(false)
     };
     const onSelection = (e) => {
@@ -380,12 +380,14 @@ function Product() {
 
         )
     };
+
+
     const SubGroupsRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
-                    action: 'findSubGroups',
-                    groupID: group?.softOne.MTRGROUP
+                    action: 'findGroups',
+                    categoryID: category?.softOne.MTRCATEGORY
                 })
                 console.log('data result')
                 setSubGroupsFilter(data.result)
@@ -473,7 +475,6 @@ function Product() {
                 rows={lazyState.rows}
                 rowsPerPageOptions={[10, 20 ,50, 100, 200]}
                 value={filteredData}
-                // header={header}
                 showGridlines
                 dataKey="MTRL"
                 filterDisplay="row"
@@ -490,9 +491,6 @@ function Product() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
                 <Column field="NAME" style={{ width: '400px' }} header="Όνομα" ></Column>
-             
-                
-            
                 {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter  filterElement={CategoriesRowFilterTemplate}    showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
@@ -532,17 +530,6 @@ function Product() {
 }
 
 
-const Upddate = ({ softoneProduct: { UPDDATE } }) => {
-    return (
-        <div className='flex align-items-center'>
-
-            <i className="text-primary-700 pi pi-calendar text-sm mr-1"></i>
-
-            <p className='text-600'>{UPDDATE[0].split(' ')[0]}</p>
-        </div>
-    )
-}
-
 
 const PriceTemplate = ({ PRICER }) => {
     return (
@@ -565,25 +552,25 @@ const ExpansionDetails = ({ data }) => {
                 <label>
                     Γερμανική Περιγραφή
                 </label>
-                <InputTextarea autoResize disabled value={data.descriptions.de} />
+                <InputTextarea autoResize disabled value={data.descriptions?.de} />
             </div>
             <div className="disabled-card">
                 <label>
                     Αγγλική Περιγραφή
                 </label>
-                <InputTextarea autoResize disabled value={data.descriptions.de} />
+                <InputTextarea autoResize disabled value={data.descriptions?.en} />
             </div>
             <div className="disabled-card">
                 <label>
                     Γαλλική Περιγραφή
                 </label>
-                <InputTextarea autoResize disabled value={data.descriptions.de} />
+                <InputTextarea autoResize disabled value={data.descriptions?.sp} />
             </div>
             <div className="disabled-card">
                 <label>
                     Ισπανική Περιγραφή
                 </label>
-                <InputTextarea autoResize disabled value={data.descriptions.de} />
+                <InputTextarea autoResize disabled value={data.descriptions?.fr} />
             </div>
             
             <div className="disabled-card">

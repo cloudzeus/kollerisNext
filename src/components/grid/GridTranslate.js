@@ -1,5 +1,5 @@
 
-import React, {  useState, useRef } from "react";
+import React, {  useState, useRef, useEffect } from "react";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
@@ -15,11 +15,18 @@ import { Toast } from "primereact/toast";
 
 
 export default function TranslateField({ value, translations, url, id, fieldName, index}) {
+  
     const [visible, setVisible] = useState(false);
-    const [data, setData] = useState(translations)
+    const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const toast = useRef(null);
 
+
+    useEffect(() => {
+        if(translations && translations.length > 0) {
+            setData(translations)
+        }
+    }, [])
     const onsubmit = async () => {
         console.log(data)
         let res = await axios.post(url, { action: 'translate', data:data, id: id, index: index, fieldName: fieldName})
@@ -27,12 +34,7 @@ export default function TranslateField({ value, translations, url, id, fieldName
         showSuccess(res.data.message)
     }
 
-    const onManualDataChange = (e) => {
-        let _data = [...data];
-        _data[0].translation = e.target.value;
-        setData(_data);
-    }
-
+ 
     const onRowEditComplete = (e) => {
     
         let _data = [...data];
@@ -44,6 +46,8 @@ export default function TranslateField({ value, translations, url, id, fieldName
     };
 
     const textEditor = (options) => {
+        console.log('options')
+        console.log(options)
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
 

@@ -11,7 +11,6 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/ca
 import { Product } from "../../../../server/models/newProductModel";
 import { ProductAttributes } from "../../../../server/models/attributesModel";
 import Offer from "@/components/grid/Product/Offer";
-import { id } from "date-fns/locale";
 
 
 
@@ -27,8 +26,6 @@ export default async function handler(req, res) {
 
 
     if (action === 'findSoftoneProducts') {
-
-
 
         await connectMongo();
         let count = await Product.countDocuments()
@@ -148,9 +145,6 @@ export default async function handler(req, res) {
         });
 
         const responseJSON = await response.json();
-        // // console.log(responseJSON)
-
-        // setInterval(availabilityInterval, 1500);
 
         return res.status(200).json({ success: true, result: fetchProducts, count: count });
 
@@ -159,8 +153,41 @@ export default async function handler(req, res) {
     if (action === 'update') {
         let { data } = req.body;
         console.log(data)
-
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
+        let obj = {
+            MTRL: data.MTRL,
+            NAME: data.NAME,
+            CODE: data.CODE,
+            CODE1: data.CODE1,
+            CODE2: data.CODE2,
+            ISACTIVE: data.ISACTIVE,
+            MTRCATEGORY: data.MTRCATEGORY.toString(),
+            MTRGROUP: data.MTRGROUP.toString(),
+            CCCSUBGOUP2: data.CCCSUBGOUP2.toString(),
+            MTRMARK: data.MTRMARK.toString(),
+            MTRMANFCTR: data.MTRMANFCTR,
+            VAT: data.VAT,
+            COUNTRY:data.MTRMANFCTR,
+            WIDTH: data.WIDTH,
+            HEIGHT: data.HEIGHT,
+            LENGTH: data.LENGTH,
+            GWEIGHT: data.GWEIGHT,
+            VOLUME: data.VOLUME,
+            STOCK: data.STOCK,
+            PRICER: data.PRICER,
+            PRICER01: data.PRICE01 || "0",
+            PRICER02: data.PRICE02 || "0",
+            PRICER03: data.PRICE03 || "0",
+            PRICER04: data.PRICE04 || "0",
+            PRICER05: data.PRICER05 || "0",
+            PRICEW01: data.PRICEW01 || "0",
+            PRICEW02: data.PRICEW02 || "0",
+            PRICEW03: data.PRICEW03 || "0",
+            PRICEW04: data.PRICEW04 || "0",
+            PRICEW05: data.PRICEW05 || "0",
+            PRICEW: data.PRICEW,
+           
+        }
         const response = await fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -170,50 +197,21 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-        if(responseJSON.error) return res.status(400).json({ success: false, result: null });
+        if(responseJSON.error !== 'No Errors') {
+            return res.status(400).json({ success: false, result: null });
+        }
         let updateSoftoneProduct = await SoftoneProduct.updateOne({ NAME: data.NAME }, {
             $set: {
                 ...data
             }
         })
         
-        let updateDescriptions = await Descriptions.updateOne({ _id: data?.descriptions?._id }, {
-            $set: {
-                en: data?.descriptions?.en,
-                es: data?.descriptions?.es,
-                de: data?.descriptions?.de,
-                fr: data?.descriptions?.fr,
-            }
-        })
-        console.log(updateDescriptions)
-        return res.status(200).json({ success: true, result: updateSoftoneProduct });
+        
+        return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
     }
-    if (action === "translate") {
-        let data = req.body.data;
-        let { id, fieldName, index } = req.body
-
-        try {
-            await connectMongo();
-            const updated = await Product.updateOne(
-                { _id: id },
-                {
-                    $set: {
-                        localized: {
-                            fieldName: fieldName,
-                            translations: data
-                        }
-                    }
-                }
-            );
-            return res.status(200).json({ success: true, result: updated });
-        } catch (e) {
-            return res.status(400).json({ success: false, result: null });
-        }
-    }
+   
     if (action === 'search') {
-
-
         let query = req.body.query;
         await connectMongo();
         // Construct a case-insensitive regex pattern for the search query
