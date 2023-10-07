@@ -3,6 +3,7 @@ import connectMongo from "../../../server/config";
 import SoftoneProduct from "../../../server/models/newProductModel";
 export default async function handler(req, res) {
     let data = req.body;
+    console.log(data)
     const now = new Date();
     const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
     try {
@@ -17,11 +18,12 @@ export default async function handler(req, res) {
                     }
                 }
             })
-           
+            
              let updateResult = {
-                MTRL: item.MTRL,
+                MTRL: data.MTRL,
                 updated: update.modifiedCount > 0 
             };
+            console.log(updateResult)
             return res.status(200).json({ success: true, result: updateResult  })
       
     } catch (e) {
