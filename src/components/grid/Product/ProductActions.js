@@ -30,6 +30,7 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
           Τροποποίηση
         </Button>
         <Button
+          onClick={() => onAdd(rowData)}
           text
           className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1"
         >

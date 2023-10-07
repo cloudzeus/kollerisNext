@@ -104,6 +104,8 @@ export default async function handler(req, res) {
     }
     if (action === 'findGroups') {
         let {categoryID} = req.body;
+        console.log('categoryID')
+        console.log(categoryID)
         await connectMongo();
         let response = await MtrGroup.find({'softOne.MTRCATEGORY' : categoryID}, {softOne: 1, groupName: 1, _id: 0})
        
@@ -116,9 +118,11 @@ export default async function handler(req, res) {
     if (action === 'findSubGroups') {
         let {groupID} = req.body;
         await connectMongo();
-        
+        console.log('id')
+        console.log(groupID)
         let response = await SubMtrGroup.find({'softOne.MTRGROUP' : groupID}, {softOne: 1, subGroupName: 1, _id: 0})
-    
+        console.log('response')
+        console.log(response)
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {

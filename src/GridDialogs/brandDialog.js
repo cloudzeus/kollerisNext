@@ -25,8 +25,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session } = useSession()
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState()
-    console.log('logo')
-    console.log(logo)
+   
     const toast = useRef(null);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: gridRowData });
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)

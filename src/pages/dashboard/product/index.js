@@ -14,7 +14,7 @@ import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import TranslateField from '@/components/grid/GridTranslate';
 import ProductActions from '@/components/grid/Product/ProductActions';
-import { EditDialog } from '@/GridDialogs/ProductDialog';
+import { EditDialog, AddDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
 import GridPriceTemplate from '@/components/grid/GridPriceTemplate';
 import ProductToolbar from '@/components/grid/Product/ProductToolbar';
@@ -24,7 +24,6 @@ import { Dropdown } from 'primereact/dropdown'
 import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
 import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
-import { set } from 'mongoose';
 import { Button } from 'primereact/button';
 import Link from 'next/link';
 
@@ -135,6 +134,7 @@ function Product() {
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
     const [triggerUpdate, setTriggerUpdate] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
+    const [addDialog, setAddDialog] = useState(false);
 
 
     // const [selectedProducts, setSelectedProducts] = useState(null);
@@ -249,13 +249,18 @@ function Product() {
         setSearchTerm(value)
     };
 
-
+    const addProduct = async (product) => {
+        setSubmitted(false);
+        setAddDialog(true)
+        // dispatch(setGridRowData(product))
+    }
     const AddToCartTemplate = (rowData) => {
       
         return (
             <ProductActions
                 rowData={rowData}
                 onEdit={editProduct}
+                onAdd={addProduct}
                 onEditClass={editClass}
             />
         )
@@ -509,6 +514,12 @@ function Product() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
 
+            />
+               <AddDialog
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
             />
             <ClassificationDialog
                 dialog={classDialog}

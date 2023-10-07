@@ -8,8 +8,6 @@ const ChosenProducts = () => {
     const { selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
     const [length, setLength] = useState(selectedProducts.length)
 
-  
-
 
     useEffect(() => {
         setLength(selectedProducts.length)
