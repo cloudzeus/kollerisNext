@@ -564,7 +564,7 @@ const ExpansionDetails = ({ data }) => {
                 <label>
                     Γαλλική Περιγραφή
                 </label>
-                <InputTextarea autoResize disabled value={data.descriptions?.sp} />
+                <InputTextarea autoResize disabled value={data.descriptions?.es} />
             </div>
             <div className="disabled-card">
                 <label>

@@ -47,6 +47,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleEnglish = async (value) => {
         setDescriptions({ ...descriptions, en: value })
     }
+    const handleSpanish = async (value) => {
+        setDescriptions({ ...descriptions, es: value })
+    }
    
 
     useEffect(() => {
@@ -222,6 +225,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                                 state={descriptions.en}
                                 handleState={handleEnglish}
                                 targetLang="en-GB"
+                            />
+                            <TranslateInput
+                                label={'Περιγραφή Iσπανική'}
+                                state={descriptions.es}
+                                handleState={handleSpanish}
+                                targetLang="es"
                             />
 
 
