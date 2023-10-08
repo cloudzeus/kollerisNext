@@ -47,7 +47,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
             <div className='flex flex-start justify-content-between align-content-center relative	'>
 
                 <div className='relative' >
-                    <ImageContainer onClick={() => setVisible(true)}>
+                    <ImageContainer onClick={() => fileInputRef.current.click()}>
                         
                         {state.length === 0 ? (
                              <i className="pi pi-image " style={{ fontSize: '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
@@ -58,7 +58,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                             ) : (
                                 <Image
-                                src={`public/uploads/${state}`}
+                                src={`/uploads/${state}`}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"
@@ -103,10 +103,10 @@ const ImageContainer = styled.div`
     height: 100px;
     border-radius: 50%;
     border: 2px solid #ececec;
-    object-fit: contain;
+    object-fit: cover;
     overflow: hidden;
     img {
-        object-fit: contain;
+        object-fit: cover;
         object-position: center;
     }
     &.selected {

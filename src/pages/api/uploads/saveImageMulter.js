@@ -47,7 +47,8 @@ export default async function handler(req, res) {
           console.log(file)
           // const timestamp = Date.now();
           const randomId = generateRandomId(6);
-          const newFileName = `${randomId}-${file.originalname}`;
+          // const newFileName = `${randomId}-${file.originalname}`;
+          const newFileName = `${file.originalname}`;
           // const newFileName = `${timestamp}-${file.originalname}`;
           fs.renameSync(file.path, path.join('public/uploads/', newFileName));
           const publicURL = `${newFileName}`;
@@ -72,6 +73,3 @@ export default async function handler(req, res) {
       res.status(statusCode).json({ error: message });
     });
 }
-
-
-
