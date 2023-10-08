@@ -58,7 +58,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                             ) : (
                                 <Image
-                                src={`/uploads/${state}`}
+                                src={`public/uploads/${state}`}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"
