@@ -9,7 +9,6 @@ import SupplierOrders from "../../../server/models/supplierOrders";
 export default async function handler(req, res) {
 
     const action = req.body.action;
-
     if(action === 'findOrders') {
         const {skip, limit} = req.body;
         try {
@@ -205,16 +204,13 @@ export default async function handler(req, res) {
     if(action === "sendOrder") {
         const {products, email, supplierName, TRDR, NAME} = req.body;
 
-        
-        console.log('-----------------------------------------------')
-        console.log('-----------------------------------------------')
         let body = products.map((product) => {
             return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-            <p>Ποσότητα: <strong>${product.QUANTITY}</strong></p>
+            <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
             <p>Τιμή: <strong>${product.PRICE}€</strong></p>
             <p>Σύνολο Τιμής: <strong>${product.TOTAL_PRICE}€</strong></p>
             <p>---------------</p>`;
-        }).join('');  // Join array elements into a single string
+        }).join(''); 
 
         try {
 
@@ -224,12 +220,9 @@ export default async function handler(req, res) {
                 const QTY1 = parseInt(item.QTY1);
                 return { MTRL, QTY1 };
             });
-            console.log(mtrlArr)
 
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
-            console.log('PURDOC')
-            console.log(PURDOC)
-          
+        
             await connectMongo();
             const generateNextCode = async () => {
                 const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
@@ -238,8 +231,7 @@ export default async function handler(req, res) {
 
             };
             let orderNumber = await generateNextCode();
-            console.log('ORDER NUMBER ')
-            console.log(orderNumber)
+           
             let obj = {
                 supplierName: supplierName,
                 supplierEmail: email,
@@ -251,8 +243,6 @@ export default async function handler(req, res) {
                 orderNumber: orderNumber,
             }
             let insert = await SupplierOrders.create(obj)
-            console.log('INSERT')
-            console.log(insert)
             const mail = {
                 from: 'info@kolleris.com',
                 to: email,
@@ -280,8 +270,6 @@ export default async function handler(req, res) {
 
 const getPurdoc = async (data, TRDR) => {
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getPurDoc`;
-    console.log(TRDR)
-    console.log(data)
     const response = await fetch(URL, {
         method: 'POST',
         body: JSON.stringify({
