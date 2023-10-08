@@ -13,7 +13,7 @@ export default function Home() {
                 router.push('/auth/signin');
             }
             if (session.status === "authenticated") {
-                router.push('/dashboard');
+                router.push('/dashboard/product');
             }
         }, [session, router])
     return (

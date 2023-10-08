@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useRef, useContext, lazy } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -26,7 +27,7 @@ import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
 import Link from 'next/link';
-
+import { useRouter } from 'next/router';
 
 
 const dialogStyle = {
@@ -113,7 +114,7 @@ export default function ProductLayout() {
 
 function Product() {
     const toast = useRef(null);
-    //Context:
+    const router = useRouter();
     const { data: session } =  useSession()
     let user = session?.user?.user;
     const{selectedProducts, setSelectedProducts, submitted, setSubmitted} = useContext( ProductQuantityContext)
@@ -450,13 +451,7 @@ function Product() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <div className='bg-white p-3 border-round mb-3 flex'>
-            <Link href="/dashboard/offers/impaOffers">
-            <Button label="Προσφορά πολλαπλών επιλογών" className='mr-2'  />
-
-            </Link>
-
-            </div>
+            <Button label="Προσφορά πολλαπλών επιλογών"  severity='secondary' className='mb-3 mt-2' onClick={() => router.push("/dashboard/offers/impaOffers")}  />
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}

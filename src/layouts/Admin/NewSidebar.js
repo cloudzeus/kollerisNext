@@ -33,10 +33,10 @@ const SidebarList = () => {
     const [activeTab, setActiveTab] = useState(0)
     return (
         <ul>
-            <SidebarItem  title={'Aρχική'} goTo={'/dashboard'} />
+            {/* <SidebarItem  title={'Aρχική'} goTo={'/dashboard'} /> */}
             {/* PRODUCT */}
-            <SidebarHeader  title={'Προϊόντα'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
-            {activeTab == 2 ? (
+            <SidebarHeader  title={'Προϊόντα'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
+            {activeTab == 1 ? (
                 <div >
                     <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
                     <SidebarSubItem title={'Μάρκες'} goTo={'/dashboard/product/brands'} />
@@ -46,31 +46,29 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-            <SidebarHeader  title={'Τιμοκατάλογοι'} id={7} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
-            {activeTab == 7 ? (
+            <SidebarHeader  title={'Τιμοκατάλογοι'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {activeTab == 2 ? (
                 <div >
                     <SidebarSubItem title={'Upload Κατάλογοι'} goTo={'/dashboard/catalogs'} />
                     <SidebarSubItem title={'Αποθηκευμένοι Κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
 
                 </div>
             ) : null}
-            <SidebarItem  title={'Προμηθευτές'} />
+              <SidebarHeader  title={'Προμηθευτές'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {activeTab == 3 ? (
+                <div >
+                    <SidebarSubItem title={'Παραγγελία'} goTo={'/dashboard/supplierOrder'} />
+
+                </div>
+            ) : null}
             {activeTab == 4 ? (
                 <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
 
             ) : null}
-            <SidebarItem title={'Impas'} goTo={'/dashboard/info/impas'} />
-            <SidebarHeader title={'Βοηθ. Πίνακες'} id={6} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
-            <SidebarItem  title={'Παραγγελία Προμηθευτή'}  goTo={'/dashboard/supplierOrder'} />
+            <SidebarItem title={'Χρήστες'} goTo={'/dashboard/users'} />
+            <SidebarItem title={'Πελάτες'} goTo={'/dashboard/clients'} />
 
-            {/* {activeTab == 6 ? (
-                <div >
-                    <SidebarSubItem title={'ΦΠΑ'} goTo={'/dashboard/info/vat'} />
-                    <SidebarSubItem title={'Intrastat'} goTo={'/dashboard/info/intrastat'} />
-                    <SidebarSubItem title={'Χώρες'} goTo={'/dashboard/info/countries'} />
-                    <SidebarSubItem title={'Νόμισμα'} goTo={'/dashboard/info/currencies'} />
-                </div>
-            ) : null} */}
+          
         </ul>
     )
 }
