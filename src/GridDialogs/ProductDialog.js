@@ -23,7 +23,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const [tranlateBtn, setTranslateBtn] = useState(false)
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
-    //This component has one Image only:
+    const [selectState, setSelectState] = useState({
+        category: null,
+        group: null,
+        subgroup: null,
+    })
     const [descriptions, setDescriptions] = useState(
         {
             de: '',
@@ -32,10 +36,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             fr: '',
         }
     )
-
-    useEffect(() => {
-
-    }, [gridRowData])
+        console.log('select state')
+        console.log(selectState)
+   
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -54,6 +57,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
+      
         reset({ ...gridRowData });
         setDescriptions(prev => {
             return {
@@ -63,6 +67,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 fr: gridRowData?.descriptions?.fr,
 
             }
+        })
+        setSelectState({
+            category: {categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}},
+            group: {groupName: gridRowData?.GROUP_NAME , softOne: {MTRGROUP: gridRowData?.MTRGROUP}},
+            subgroup: {subGroupName: gridRowData?.SUBGROUP_NAME , softOne: {cccSubgroup2: gridRowData?.CCCSUBGOUP2}},
         })
     }, [gridRowData, reset]);
 
@@ -127,7 +136,21 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >
+                >   
+                 <Categories
+                        state={selectState.category}
+                        setState={setSelectState}
+                    />
+                    <Groups
+                        state={selectState.group}
+                        setState={setSelectState}
+                        id={selectState.category?.softOne?.MTRCATEGORY}
+                    />
+                    <SubGroups
+                        state={selectState.subgroup}
+                        setState={setSelectState}
+                        id={selectState.group?.softOne?.MTRGROUP}
+                    />
                     <FormTitle>Λεπτομέριες</FormTitle>
                     <Input
                         label={"Όνομα"}
@@ -250,6 +273,8 @@ const addSchema = yup.object().shape({
 
 
 const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
+    const [translateBtn, setTranslateBtn] = useState(false)
+    const [showInputs, setShowInputs] = useState(false)
     const [selectState, setSelectState] = useState({
         category: null,
         group: null,
@@ -260,22 +285,31 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { control, formState: { errors }, handleSubmit, reset } = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
-            name: '',
-            description: '',
-            pimUrl: '',
-            pimUserName: '',
-            pimPassword: '',
-            webSiteUrl: '',
-            officialCatalogueUrl: '',
-            facebookUrl: '',
-            instagramUrl: '',
+           descriptions: {
+                de: '',
+                en: '',
+                es: '',
+                fr: '',
+           },
+           NAME: '',
+            DESCRIPTION: '',
+            CODE: '',
+            CODE1: '',
+            CODE2: '',
+            VAT: '',
+            PRICER: '',
+            PRICER01: '',
+            PRICER02: '',
+            PRICER03: '',
+            PRICER04: '',
+            PRICEW: '',
+            PRICE05: '',
         }
     });
 
 
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
-    //This component has one Image only:
     const [descriptions, setDescriptions] = useState(
         {
             de: '',
@@ -285,16 +319,17 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
         }
     )
 
-    const handleGerman = async (value) => {
-        setDescriptions({ ...descriptions, de: value })
-    }
+  
 
     useEffect(() => {
-        reset({ ...gridRowData });
-    }, [gridRowData, reset]);
+        reset();
+    }, [reset]);
 
 
-
+    useEffect(() => {
+        if(selectState.category && selectState.group ) setShowInputs(true)
+        else setShowInputs(false)
+    }, [selectState])
 
     const showSuccess = (message) => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
@@ -308,18 +343,26 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
         hideDialog()
     }
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
         console.log('add')
         console.log(data)
         let obj = {
-            categoryID: selectState.category?.softOne?.MTRCATEGORY,
-            categoryName: selectState.category?.categoryName,
-            groupID: selectState.group?.softOne?.MTRGROUP,
-            groupName: selectState.group?.groupName,
-            subgroupID: selectState.subgroup?.softOne?.cccSubgroup2,
-            subGroupName: selectState.subgroup?.subGroupName,
+            MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
+            CATEGORY_NAME: selectState.category?.categoryName,
+            MTRGROUP: selectState.group?.softOne?.MTRGROUP,
+            GROUP_NAME: selectState.group?.groupName,
+            CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2,
+            SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+            descriptions: descriptions,
         }
         console.log(obj)
+        let res = await axios.post('/api/product/apiProduct', {
+            action: 'create',
+            data: {
+                ...data,
+                ...obj,
+            }
+        })
         hideDialog()
         reset();
     }
@@ -332,9 +375,18 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
+    const handleGerman = async (value) => {
+        setDescriptions({ ...descriptions, de: value })
+    }
+    const handleEnglish = async (value) => {
+        setDescriptions({ ...descriptions, en: value })
+    }
+    const handleSpanish = async (value) => {
+        setDescriptions({ ...descriptions, es: value })
+    }
+   
 
-
-
+  
 
     return (
         < Container>
@@ -365,7 +417,10 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
                     />
-                    <Input
+                     <div>
+                  {showInputs ? (
+                        <div>
+                                 <Input
                         label={"Όνομα"}
                         name={'NAME'}
                         control={control}
@@ -446,38 +501,35 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                     />
                     <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                    <TranslateInput
-                        label={'Περιγραφή Γερμανική'}
-                        name={'descriptions.de'}
-                        control={control}
-                        state={descriptions.de}
-                        setState={handleGerman}
-                        targetLang="GE"
-                    />
-                    <TranslateInput
-                        label={'Περιγραφή Aγγλική'}
-                        name={'descriptions.en'}
-                        control={control}
-                        state={descriptions.en}
-                        setState={handleGerman}
-                        targetLang="EN"
-                    />
-                    <TranslateInput
-                        label={'Περιγραφή Ισπανική'}
-                        name={'descriptions.es'}
-                        control={control}
-                        state={descriptions.es}
-                        setState={handleGerman}
-                        targetLang="ES"
-                    />
-                    <TranslateInput
-                        label={'Περιγραφή Γαλλική'}
-                        name={'descriptions.fr'}
-                        control={control}
-                        state={descriptions.fr}
-                        setState={handleGerman}
-                        targetLang="FR"
-                    />
+                    <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
+                    {translateBtn ? (
+                        <>
+                            <TranslateInput
+                                label={'Περιγραφή Γερμανική'}
+                                state={descriptions.de}
+                                handleState={handleGerman}
+                                targetLang="GE"
+                            />
+                            <TranslateInput
+                                label={'Περιγραφή Aγγλική'}
+                                state={descriptions.en}
+                                handleState={handleEnglish}
+                                targetLang="en-GB"
+                            />
+                            <TranslateInput
+                                label={'Περιγραφή Iσπανική'}
+                                state={descriptions.es}
+                                handleState={handleSpanish}
+                                targetLang="es"
+                            />
+
+
+                        </>
+                    ) : null}
+                        </div>
+                    ) : null}
+            </div>
+               
                 </Dialog>
             </form>
         </Container>
@@ -499,7 +551,6 @@ const Categories = ({ state, setState }) => {
     }, [])
 
 
-
     return (
         <div className="card mb-3">
             <span className='mb-2 block'>Επιλογή Ομάδας</span>
@@ -518,7 +569,8 @@ const Categories = ({ state, setState }) => {
 
 const Groups = ({ state, setState, id }) => {
     const [groupOptions, setGroupOptions] = useState([])
-
+    console.log('group state')
+    console.log(state)
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
             action: 'findGroups',
@@ -545,6 +597,8 @@ const SubGroups = ({ state, setState, id }) => {
             action: 'findSubGroups',
             groupID: id
         })
+        console.log('subgroup STATE')
+        console.log(state)
         setsubGroupOptions(data.result)
     }
     useEffect(() => {

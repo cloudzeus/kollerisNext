@@ -95,7 +95,7 @@ export default async function handler(req, res) {
 
     if (action === 'findCategories') {
         await connectMongo();
-        let response = await MtrCategory.find({})
+        let response = await MtrCategory.find({}, {"softOne.MTRCATEGORY":  1, categoryName: 1, _id: 0})
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
         console.log('categoryID')
         console.log(categoryID)
         await connectMongo();
-        let response = await MtrGroup.find({'softOne.MTRCATEGORY' : categoryID}, {softOne: 1, groupName: 1, _id: 0})
+        let response = await MtrGroup.find({'softOne.MTRCATEGORY' : categoryID}, {"softOne.MTRGROUP": 1, groupName: 1, _id: 0})
        
         try {
             return res.status(200).json({ success: true, result: response })
@@ -120,7 +120,7 @@ export default async function handler(req, res) {
         await connectMongo();
         console.log('id')
         console.log(groupID)
-        let response = await SubMtrGroup.find({'softOne.MTRGROUP' : groupID}, {softOne: 1, subGroupName: 1, _id: 0})
+        let response = await SubMtrGroup.find({'softOne.MTRGROUP' : groupID}, {"softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0})
         console.log('response')
         console.log(response)
         try {
