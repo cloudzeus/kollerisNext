@@ -27,9 +27,17 @@ export default async function handler(req, res) {
     if(action === "create") {
         const {data} = req.body;
         console.log(data)
+        let MTRL = null;
+        let SOFTONESTATUS = false
+        if(MTRL) {
+            SOFTONESTATUS = true;
+        }
         try {
             await connectMongo();
-            let product = await SoftoneProduct.create(data);
+            let product = await SoftoneProduct.create({
+                ...data,
+                SOFTONESTATUS: SOFTONESTATUS,
+            });
             console.log('product')
             console.log(product)
             return res.status(200).json({ success: true, result: product });
@@ -37,137 +45,10 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null });
         }
     }
-    // if (action === 'findSoftoneProducts') {
-
-    //     await connectMongo();
-    //     let count = await Product.countDocuments()
-
-
-    //     let pipeline = [
-    //         {
-    //             $lookup: {
-    //                 from: "softoneproducts",
-    //                 localField: "softoneProduct",
-    //                 foreignField: "_id",
-    //                 as: "softoneProduct"
-    //             },
-
-    //         },
-
-    //         {
-    //             $lookup: {
-    //                 from: 'mtrcategories',
-    //                 localField: 'softoneProduct.MTRCATEGORY',
-    //                 foreignField: 'softOne.MTRCATEGORY',
-    //                 as: 'mtrcategory'
-    //             }
-    //         },
-    //         {
-    //             $lookup: {
-    //                 from: 'manufacturers',
-    //                 localField: 'softoneProduct.MTRMANFCTR',
-    //                 foreignField: 'softOne.MTRMANFCTR',
-    //                 as: 'manufacturers'
-    //             }
-    //         },
-
-    //         {
-    //             $lookup: {
-    //                 from: "mtrgroups",
-    //                 localField: "softoneProduct.MTRGROUP",
-    //                 foreignField: "softOne.MTRGROUP",
-    //                 as: "mtrgroups"
-    //             }
-    //         },
-
-    //         {
-    //             $lookup: {
-    //                 from: "markes",
-    //                 localField: "softoneProduct.MTRMARK",
-    //                 foreignField: "softOne.MTRMARK",
-    //                 as: "mrtmark"
-    //             }
-    //         },
-
-    //         {
-    //             $lookup: {
-    //                 from: "submtrgroups",
-    //                 localField: "softoneProduct.CCCSUBGOUP2",
-    //                 foreignField: "softOne.cccSubgroup2",
-    //                 as: "mtrsubgroup"
-    //             }
-    //         },
-
-    //         {
-    //             $project: {
-    //                 _id: 1,
-    //                 MTRL: '$softoneProduct.MTRL',
-    //                 MTRGROUP: '$softoneProduct.MTRGROUP',
-    //                 MTRCATEGORY: '$softoneProduct.MTRCATEGORY',
-    //                 CCCSUBGOUP2: '$softoneProduct.CCCSUBGOUP2',
-    //                 CODE: '$softoneProduct.CODE',
-    //                 CODE1: '$softoneProduct.CODE1',
-    //                 CODE2: '$softoneProduct.CODE2',
-    //                 UPDDATE: '$softoneProduct.UPDDATE',
-    //                 INTRASTAT: '$softoneProduct.INTRASTAT',
-    //                 VAT: '$softoneProduct.VAT',
-    //                 PRICER: '$softoneProduct.PRICER',
-    //                 PRICEW: '$softoneProduct.PRICEW',
-    //                 PRICER01: '$softoneProduct.PRICER01',
-    //                 PRICER02: '$softoneProduct.PRICER02',
-    //                 PRICER03: '$softoneProduct.PRICER03',
-    //                 PRICER04: '$softoneProduct.PRICER04',
-    //                 PRICER05: '$softoneProduct.PRICER05',
-    //                 PRICEW01: '$softoneProduct.PRICEW01',
-    //                 PRICEW02: '$softoneProduct.PRICEW02',
-    //                 PRICEW03: '$softoneProduct.PRICEW03',
-    //                 PRICEW04: '$softoneProduct.PRICEW04',
-    //                 PRICEW05: '$softoneProduct.PRICEW05',
-    //                 ISACTIVE: '$softoneProduct.ISACTIVE',
-    //                 UPDDATE: '$softoneProduct.UPDDATE',
-    //                 mrtmark: '$mrtmark.name',
-    //                 mrtmanufact: '$manufacturers.softOne.NAME',
-    //                 MTRMANFCTR: '$manufacturers.softOne.MTRMANFCTR',
-    //                 name: 1,
-    //                 description: 1,
-    //                 availability: 1,
-    //                 localized: 1,
-    //                 updatedFrom: 1,
-    //                 updatedAt: 1,
-    //                 categoryName: '$mtrcategory.categoryName',
-    //                 mtrgroups: "$mtrgroups.groupName",
-    //                 mtrsubgroup: "$mtrsubgroup.subGroupName",
-    //             }
-    //         }
-    //         ,
-
-
-    //     ]
-
-
-
-    //     let fetchProducts = await Product.aggregate(pipeline)
-    //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAvailability`;
-    //     const response = await fetch(URL, {
-    //         method: 'POST',
-    //         body: JSON.stringify({
-    //             username: "Service",
-    //             password: "Service",
-    //         })
-    //     });
-
-    //     const responseJSON = await response.json();
-
-    //     return res.status(200).json({ success: true, result: fetchProducts, count: count });
-
-    // }
 
     if (action === 'update') {
         let { data } = req.body;
-        console.log('----------------------------------------')
-        console.log('----------------------------------------')
-        console.log('update data')
-        console.log(data)
+        
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
             MTRL: data.MTRL,
@@ -212,8 +93,7 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-        console.log('response from softone')
-        console.log(responseJSON)
+
         if(responseJSON.error !== 'No Errors') {
             return res.status(400).json({ success: false, result: null });
         }
@@ -248,7 +128,6 @@ export default async function handler(req, res) {
                descriptions: data.descriptions,
             }
         })
-        console.log(updateSoftoneProduct)
         
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
