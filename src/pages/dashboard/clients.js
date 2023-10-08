@@ -18,26 +18,36 @@ import StepHeader from '@/components/StepHeader';
 export default function Clients() {
 
     const [submitted, setSubmitted] = useState(false);
+    const [totalRecords, setTotalRecords] = useState(0)
+    const [searchTerm, setSearchTerm] = useState('')
     const [data, setData] = useState([])
-    const [syncData, setSyncData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-
+    const [lazyState, setlazyState] = useState({
+        first: 0,
+        rows: 10,
+        page: 1,
     });
-
+  
+   
+    const onPage = (event) => {
+        setlazyState(event);
+    };
 
 
     const handleFetch = async () => {
-        console.log('fetching')
         setLoading(true)
         try {
-            let resp = await axios.post('/api/clients/apiClients', { action: 'findAll' })
-            console.log(resp.data.result)
-            setData(resp.data.result)
-            setSyncData(resp.data.missing)
+            let {data} = await axios.post('/api/clients/apiClients', { 
+                action: 'search',
+                skip: lazyState.first,
+                limit: lazyState.rows,
+                searchTerm: searchTerm
+            })
+            console.log(data)
+            setData(data.result)
+            setTotalRecords(data.totalRecords)
             setLoading(false)
 
         } catch (error) {
@@ -50,7 +60,7 @@ export default function Clients() {
     useEffect(() => {
         handleFetch();
 
-    }, []);
+    }, [lazyState.rows, lazyState.first, searchTerm]);
 
     useEffect(() => {
         console.log('submitted: ' + submitted)
@@ -59,58 +69,56 @@ export default function Clients() {
 
 
 
-    //TEMPLATES
 
     const renderHeader = () => {
-        const value = filters['global'] ? filters['global'].value : '';
 
         return (
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" value={value || ''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
+                <InputText type="search" value={''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
             </span>
         );
     };
     const header = renderHeader();
 
-   
-
-
-   
-
-    const rightToolbarTemplate = () => {
+    const SearchClient = () => {
         return (
-            <Sync data={syncData} setSubmitted={setSubmitted}/>
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                </span>
+            </div>
         )
     }
+
 
 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <StepHeader text="Πελάτες" />
-            {/* <Toolbar  end={rightToolbarTemplate} /> */}
             <DataTable
+                lazy
+                totalRecords={totalRecords}
+                first={lazyState.first}
+                onPage={onPage}
+                rows={lazyState.rows}
                 size="small"
-                header={header}
                 value={data}
                 paginator
-                rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 dataKey="_id"
-                filters={filters}
                 paginatorRight={true}
                 loading={loading}
+                filterDisplay="row"
             >
-                <Column field="TRDR" header="TRDR" sortable></Column>
-                <Column field="NAME" header="Ονομα" sortable></Column>
+                <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient} header="Ονομα" sortable></Column>
                 <Column field="AFM" header="ΑΦΜ" sortable></Column>
                 <Column field="ADDRESS" header="Διεύθυνση" sortable></Column>
                 <Column field="PHONE01" header="Τηλέφωνο" sortable></Column>
                 <Column field="ZIP" header="Ταχ.Κώδικας" sortable></Column>
                 <Column field="BALANCE" header="Υπόλοιπο" sortable></Column>
-                {/* <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '180px' }} filterMenuStyle={{ width: '5rem' }}></Column> */}
-
             </DataTable>
             {/* <EditDialog
                 style={dialogStyle}
@@ -120,8 +128,8 @@ export default function Clients() {
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-            /> */}
-            {/* <AddDialog
+            />
+            <AddDialog
                 dialog={addDialog}
                 setDialog={setAddDialog}
                 hideDialog={hideDialog}

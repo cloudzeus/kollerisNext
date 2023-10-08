@@ -23,8 +23,7 @@ const ChooseCustomer = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch()
 
-    console.log('search term')
-    console.log(searchTerm)
+
     const fetchClients = async (action) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', {

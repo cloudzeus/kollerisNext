@@ -34,15 +34,7 @@ const OurDatabaseKeys = [
         key: 'CODE2',
         value: 'Κωδικός ----'
     },
-    {
-        key: 'PRICER',
-        value: 'Tιμή Λιανικής'
-    },
    
-    {
-        key: 'PRICER',
-        value: 'Tιμή Χονδρικής'
-    },
     {
         key: 'COUNTRY',
         value: 'Χώρα'

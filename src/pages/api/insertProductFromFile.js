@@ -29,7 +29,6 @@ export default async function handler(req, res) {
             LENGTH: data["ΠΛΑΤΟΣ"] || '',
 
         }
-        console.log(productData)
         const product = await SoftoneProduct.findOneAndUpdate(
             { NAME: productData.NAME }, // filter: search for product by name
             productData, 

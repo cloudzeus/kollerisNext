@@ -14,7 +14,7 @@ const Offer = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [lazyState, setlazyState] = useState({
         first: 0,
-        rows: 4,
+        rows: 15,
       
 
     });
@@ -81,7 +81,7 @@ const Offer = () => {
             {!selectedClient ? (
                 <DataTable
                     value={filteredData}
-                    rows={4}
+                    rows={lazyState.rows}
                     paginator
                     lazy
                     rowsPerPageOptions={[4, 8, 20, 50, 100, 200]}
@@ -94,8 +94,8 @@ const Offer = () => {
                     header={header}
                 >
                     <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="TRDR" header="Προϊόν"></Column>
-                    <Column field="NAME" header="Προϊόν"></Column>
+                    <Column field="TRDR" header="TRDR"></Column>
+                    <Column field="NAME" header="Όνομα Πελάτη"></Column>
                 </DataTable>
             ) : (
                 <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient}  />
