@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react'
 import styled from 'styled-components';
 import Image from 'next/image';
 import { ProgressSpinner } from 'primereact/progressspinner';
-
+import axios from 'axios';
 import { Toast } from 'primereact/toast';
 
 
@@ -35,12 +35,15 @@ const SinglePhotoUpload = ({  state, setState }) => {
                     setLoading(false);
                 }
             }
+            let {data} = axios.get('/src/_assets/facom1.jpg')
+            console.log('data')
+            console.log(data)
+
         } catch (error) {
             console.log(error)
         }
     }
-    console.log('image')
-    console.log(state)
+   
   
     return (
         <>
@@ -59,7 +62,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                             ) : (
                                 <Image
-                                src={`${process.env.NEXTAUTH_URL}/_assets/${state}`}
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/src/_assets/${state}`}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"
