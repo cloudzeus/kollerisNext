@@ -89,6 +89,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 data: {
                     ...data,
                     descriptions: descriptions,
+                    ...selectState
 
                 },
             })

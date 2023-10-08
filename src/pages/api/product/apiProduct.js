@@ -164,6 +164,9 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
+        console.log('----------------------------------------')
+        console.log('----------------------------------------')
+        console.log('update data')
         console.log(data)
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
@@ -173,9 +176,9 @@ export default async function handler(req, res) {
             CODE1: data.CODE1,
             CODE2: data.CODE2,
             ISACTIVE: data.ISACTIVE,
-            MTRCATEGORY: data.MTRCATEGORY.toString(),
-            MTRGROUP: data.MTRGROUP.toString(),
-            CCCSUBGOUP2: data.CCCSUBGOUP2.toString(),
+            MTRCATEGORY: data.category.softOne.MTRCATEGORY,
+            MTRGROUP: data.group.softOne.MTRGROUP,
+            CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2,
             MTRMARK: data.MTRMARK.toString(),
             MTRMANFCTR: data.MTRMANFCTR,
             VAT: data.VAT,
@@ -209,15 +212,43 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
+        console.log('response from softone')
+        console.log(responseJSON)
         if(responseJSON.error !== 'No Errors') {
             return res.status(400).json({ success: false, result: null });
         }
-        let updateSoftoneProduct = await SoftoneProduct.updateOne({ NAME: data.NAME }, {
+        let updateSoftoneProduct = await SoftoneProduct.updateOne({ MTRL: data.MTRL }, {
             $set: {
-                ...data
+               NAME: data.NAME,
+                CODE: data.CODE,
+                CODE1: data.CODE1,
+                CODE2: data.CODE2,
+                MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
+                MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
+                CCCSUBGOUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
+                MTRMANFCTR: data.MTRMANFCTR.toString(),
+                VAT: data.VAT,
+                COUNTRY: data.COUNTRY,
+                INTRASTAT: data.INTRASTAT,
+                WIDTH: data.WIDTH,
+                HEIGHT: data.HEIGHT,
+                LENGTH: data.LENGTH,
+                GWEIGHT: data.GWEIGHT,
+                VOLUME: data.VOLUME,
+                STOCK: data.STOCK,
+                PRICER: data.PRICER,
+                PRICEW: data.PRICEW,
+                PRICER02: data.PRICE02 || "0",
+                PRICER05: data.PRICER05,
+               CATEGORY_NAME: data.category.categoryName,
+               DESCRIPTION: data.DESCRIPTION,
+               GROUP_NAME: data.category.groupName,
+               SUBGROUP_NAME: data.category.subGroupName,
+               SOFTONESTATUS: true,
+               descriptions: data.descriptions,
             }
         })
-        
+        console.log(updateSoftoneProduct)
         
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
@@ -338,56 +369,7 @@ export default async function handler(req, res) {
     }
 
 
-    if (action === 'filterCategories') {
-        let categoryID = 11;
-        await connectMongo();
-
-        let result = await Product.aggregate([
-            {
-                $lookup: {
-                    from: "softoneproducts",
-                    localField: "softoneProduct",
-                    foreignField: "_id",
-                    as: "softoneProduct"
-                },
-            },
-            {
-                $match: {
-                    "softoneProduct.MTRCATEGORY": 11
-                }
-            },
-            {
-                $lookup: {
-                    from: 'mtrcategories',
-                    localField: 'softoneProduct.MTRCATEGORY',
-                    foreignField: 'softOne.MTRCATEGORY',
-                    as: 'mtrcategory'
-                }
-            },
-
-            {
-                $unwind: "$mtrcategory"
-            },
-            {
-                $project: {
-                    "softoneProduct": 1,
-                    "mtrcategory.categoryName": 1,
-                }
-            }
-
-
-        ])
-
-
-
-
-
-
-
-
-        return res.status(200).json({ success: true, result: result });
-    }
-
+   
     if (action === 'warehouse') {
         const { exportWarehouse, importWarehouse, diathesimotita } = req.body;
         const now = new Date();
