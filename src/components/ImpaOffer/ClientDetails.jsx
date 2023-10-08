@@ -14,7 +14,7 @@ const ClientDetails = ({ selectedClient }) => {
     const toast = useRef(null);
     const {offerEmail} = useSelector(state => state.impaoffer)
     const dispatch = useDispatch();
-
+    console.log(selectedClient)
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});
     }
@@ -31,6 +31,7 @@ const ClientDetails = ({ selectedClient }) => {
 
     const onSubmitEmail = async () => {
         let {data} = await axios.post('/api/createOffer', {action: "saveNewEmail", id: selectedClient._id, email: offerEmail})
+        setEditEmail((prev) => !prev)
         if(data.success) {
             showSuccess()
         } else {
@@ -39,7 +40,8 @@ const ClientDetails = ({ selectedClient }) => {
     }
 
     useEffect(() => {
-        setEmail(selectedClient?.EMAIL)
+        if(!selectedClient) return;
+        dispatch(setOfferEmail(selectedClient?.EMAIL))
     }, [selectedClient])
 
     return (
@@ -66,19 +68,31 @@ const ClientDetails = ({ selectedClient }) => {
                     id="username"
                     aria-describedby="username-help"
                 />
-                {!editEmail ? (
+                 {!editEmail ? (
                     <Button
                         onClick={() => { setEditEmail(prev => !prev) }}
                         icon={"pi pi-pencil"}
                         severity={"primary"}
                     />
                 ) : (
-                    <Button
-                    icon={!editEmail ? "pi pi-pencil" : "pi pi-check"}
-                    severity={"success"}
-                    onClick={onSubmitEmail}
-                />
+                    <>
+                        <div>
+                            <Button
+                                icon={"pi pi-check"}
+                                severity={"success"}
+                                onClick={onSubmitEmail}
+                                className='mr-2'
+                            />
+                            <Button
+                                icon={"pi pi-times"}
+                                severity={"danger"}
+                                onClick={() => setEditEmail(prev => !prev)}
+                            />
+                        </div>
+                    </>
+
                 )}
+
 
               
             </div>

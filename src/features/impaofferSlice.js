@@ -9,7 +9,7 @@ const initialState = {
 	showImpaTable: false,
 	holder: [],
 	mtrLines: [],
-	offerEmail: null,
+	offerEmail: '',
 }
 
 
@@ -23,13 +23,15 @@ const impaofferSlice = createSlice({
 		},
 		setSelectedProducts: (state, {payload}) => {
 			state.selectedProducts = payload;
-		
+			console.log('payload')
+			console.log(payload)
 			const updateMTRLINES = payload.map(item => {
 				return {
 					NAME: item.NAME,
 					QUANTITY: 1,
 					PRICE: parseInt(item.PRICER),
 					MTRL: item.MTRL,
+					TOTAL_PRICE: parseInt(item.PRICER)
 				}
 			})
 			state.mtrLines = updateMTRLINES;

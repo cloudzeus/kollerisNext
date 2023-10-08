@@ -122,6 +122,8 @@ const MapHolders = () => {
 
 
 const MapProducts = ({ products }) => {
+    console.log('map products')
+    console.log(products) 
     return (
         <div>
             {products && products.map((item, index) => {

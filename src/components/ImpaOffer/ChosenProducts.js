@@ -7,7 +7,7 @@ import { deleteSelectedProduct, setMtrLines } from '@/features/impaofferSlice';
 const ChosenProducts = () => {
     const { selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
     const [length, setLength] = useState(selectedProducts.length)
-
+    console.log(mtrLines)
 
     useEffect(() => {
         setLength(selectedProducts.length)
@@ -39,18 +39,18 @@ const CalculateTemplate = (item) => {
 
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity }))
-    }, [])
+    }, [quantity])
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
-        dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity + 1 }))
+        // dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity + 1 }))
     }
 
-
+    
 
     const decreaseQuantity = () => {
         if (quantity === 1) return
         setQuantity(prev => prev - 1)
-        dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity - 1 }))
+        // dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity - 1 }))
 
     }
 
