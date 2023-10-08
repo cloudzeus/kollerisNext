@@ -40,13 +40,12 @@ export default function Categories() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-    //Set the toggled columns
-
 
     const handleFetch = async () => {
+        setLoading(true);
         let res = await axios.post('/api/product/apiGroup', { action: 'findAll' })
         setData(res.data.result)
-
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -57,7 +56,6 @@ export default function Categories() {
 
     //Refetch on add edit:
     useEffect(() => {
-        console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
     }, [submitted])
 
@@ -67,7 +65,6 @@ export default function Categories() {
 
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
-
         return (
             <>
                 <span className="p-input-icon-left">
@@ -84,7 +81,6 @@ export default function Categories() {
         let _filters = { ...filters };
 
         _filters['global'].value = value;
-
         setFilters(_filters);
     };
 
@@ -106,24 +102,10 @@ export default function Categories() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <>
-                {/* <SyncBrand 
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            /> */}
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
+   
 
 
-    //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -142,14 +124,12 @@ export default function Categories() {
     };
 
     const onDelete = async (id) => {
-
         let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
         if (!res.data.success) return showError()
         handleFetch()
         showSuccess()
     }
 
-    // CUSTOM TEMPLATES FOR COLUMNS
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.groupIcon} />
      }
@@ -203,7 +183,7 @@ export default function Categories() {
         <AdminLayout >
             <Toast ref={toast} />
             <StepHeader text="Oμάδες" />
-            <Toolbar  left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar  start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}
