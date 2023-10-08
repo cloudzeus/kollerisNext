@@ -58,7 +58,8 @@ const UploadProducts = () => {
             array.push({
                 key: key,
                 value: gridData[0][key],
-                text: gridData[3][key],
+                text: gridData[0][key],
+                text2: gridData[2][key],
 
             })
         }
@@ -116,11 +117,12 @@ const UploadProducts = () => {
 
 
 
-const template = ({ value, text }) => {
+const template = ({ value, text, text2 }) => {
     return (
         <div>
             <p className='font-bold text-lg'> {value}</p>
             <p className='text-sm '>sample text: {text}</p>
+            <p className='text-sm '>sample text: {text2}</p>
 
         </div>
     )

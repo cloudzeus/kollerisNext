@@ -23,8 +23,7 @@ const impaofferSlice = createSlice({
 		},
 		setSelectedProducts: (state, {payload}) => {
 			state.selectedProducts = payload;
-			console.log('payload')
-			console.log(payload)
+			
 			const updateMTRLINES = payload.map(item => {
 				return {
 					NAME: item.NAME,
