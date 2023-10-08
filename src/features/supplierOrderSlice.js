@@ -47,8 +47,12 @@ const supplierOrderSlice = createSlice({
 		},
 		setMtrLines: (state, {payload}) => {
 			
-			const calc = payload.QTY1 * parseFloat(payload.PRICE);
-			const roundedUp = Math.ceil(calc);
+			function calculateAndRound(a, b) {
+				const result = a * b;
+				return Math.round(result * 100) / 100;
+			}
+			const roundedUp = calculateAndRound(payload.QTY1, parseFloat(payload.PRICE));
+			
 
 			const existingItem = state.mtrLines.find((item) => item.MTRL === payload.MTRL);
 			if(existingItem) {

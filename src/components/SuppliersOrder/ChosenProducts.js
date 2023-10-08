@@ -123,7 +123,7 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
         </div>
       </div>
       <div className='flex align-items-center'>
-        <span className='font-bold ml-3'>{total}</span>
+        <span className='font-bold ml-3'>{total.toFixed(2)}</span>
       </div>
     </div>
   )
@@ -167,7 +167,11 @@ const Footer = () => {
 
 
     useEffect(() => {
-      setSum(mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0))
+      let sumA = mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0)
+      function calculateAndRound(a) {
+				return Math.round(a * 100) / 100;
+			}
+      setSum(calculateAndRound(sumA))
       setQuantity(mtrLines.map(item => item.QTY1).reduce((prev, next) => prev + next, 0))
     }, [sum, mtrLines, selectedProducts])
 
@@ -200,7 +204,7 @@ const Footer = () => {
       </div>
       <div>
       <span>Σύνολο Τιμής:</span>
-      <span className='ml-2 font-bold'>{`${sum}€`}</span>
+      <span className='ml-2 font-bold'>{`${sum.toFixed(2)}€`}</span>
       </div>
     </div>
       <div className='p-1 flex align-items-center'>
