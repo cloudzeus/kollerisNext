@@ -8,6 +8,7 @@ import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import StepHeader from '../ImpaOffer/StepHeader';
+import { set } from 'mongoose';
 
 const OrdersTable = () => {
     const [data, setData] = useState([])
@@ -15,22 +16,28 @@ const OrdersTable = () => {
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
     const [statuses] = useState(['pending', 'done', 'rejected']);
-    const [status, setStatus] = useState(null);
-
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [lazyState, setlazyState] = useState({
+        first: 0,
+        rows: 5,
+        page: 1,
+    });
+  
     const allowExpansion = (rowData) => {
         return rowData
     };
 
     const handleFetch = async () => {
         setLoading(true)
-        let { data } = await axios.post('/api/createOrder', { action: 'findOrders' })
+        let { data } = await axios.post('/api/createOrder', { action: 'findOrders', skip: lazyState.first, limit: lazyState.rows })
         setData(data.result)
+        setTotalRecords(data.totalRecords)
         setLoading(false)
     }
 
     useEffect(() => {
         handleFetch();
-    }, [refetch])
+    }, [refetch, lazyState.rows, lazyState.first])
     const statusEditor = (options) => {
         return (
             <Dropdown
@@ -60,6 +67,10 @@ const OrdersTable = () => {
         }
     };
 
+    const onPage = (event) => {
+        setlazyState(event);
+    };
+
     const RowExpansionTemplate = ({ products }) => {
         return <RowExpansionGrid products={products} />
     }
@@ -74,6 +85,13 @@ const OrdersTable = () => {
         <div className='mt-6'>
             <StepHeader text="Παραγγελίες σε προμηθευτές" />
             <DataTable
+                lazy
+                rows={lazyState.rows}
+                paginator
+                totalRecords={totalRecords}
+                onPage={onPage}
+                first={lazyState.first}
+
                 loading={loading}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}

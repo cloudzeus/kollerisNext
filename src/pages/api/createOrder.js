@@ -11,10 +11,12 @@ export default async function handler(req, res) {
     const action = req.body.action;
 
     if(action === 'findOrders') {
+        const {skip, limit} = req.body;
         try {
             await connectMongo();
-            let orders = await SupplierOrders.find({}).sort({createdAt: -1})
-            return res.status(200).json({ success: true, result: orders })
+            let totalRecords = await SupplierOrders.countDocuments({});
+            let orders = await SupplierOrders.find({}).sort({createdAt: -1}).skip(skip).limit(limit)
+            return res.status(200).json({ success: true, result: orders, totalRecords: totalRecords })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
