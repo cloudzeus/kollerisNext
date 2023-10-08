@@ -18,6 +18,7 @@ import GridIconTemplate from '@/components/grid/gridIconTemplate';
 import { useSession } from 'next-auth/react';
 import GridOverlay from '@/components/grid/GridOverlay';
 import GridActions from '@/components/grid/GridActions';
+import StepHeader from '@/components/StepHeader';
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -153,6 +154,7 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <StepHeader text="Χρήστες" />
             {role === 'admin' ?  <Toolbar  left={leftToolbarTemplate} ></Toolbar> : null }
             <DataTable
                 header={header}

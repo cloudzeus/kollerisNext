@@ -19,6 +19,7 @@ import GridActions from '@/components/grid/GridActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
 import { useSession } from 'next-auth/react';
+import StepHeader from '@/components/StepHeader';
 
 
 
@@ -235,6 +236,7 @@ export default function Categories() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <StepHeader text="Κατηγορίες" />
             <Toolbar left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable
 

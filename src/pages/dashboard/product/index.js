@@ -28,6 +28,7 @@ import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import StepHeader from '@/components/StepHeader';
 
 
 const dialogStyle = {
@@ -451,6 +452,9 @@ function Product() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <div>
+                <StepHeader text="Προϊόντα" />
+            </div>
             <Button label="Προσφορά πολλαπλών επιλογών"  severity='secondary' className='mb-3 mt-2' onClick={() => router.push("/dashboard/offers/impaOffers")}  />
             <ProductToolbar
                 setSubmitted={setSubmitted}

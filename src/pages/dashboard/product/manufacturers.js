@@ -18,6 +18,7 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import SyncManufacturers from '@/GridSync/SyncManufacturers';
 import GridActions from '@/components/grid/GridActions';
 import { useSession } from 'next-auth/react';
+import StepHeader from '@/components/StepHeader';
 
 export default function Manufacturers() {
 
@@ -91,19 +92,7 @@ export default function Manufacturers() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <>
-                <SyncManufacturers
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiManufacturers'
-                /> 
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
-
+ 
 
     //Edit:
     const editProduct = async (product) => {
@@ -160,9 +149,9 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <StepHeader text="Κατασκευαστές" />
             <Toolbar start={leftToolbarTemplate} ></Toolbar>
             <DataTable
-
                 header={header}
                 value={data}
                 paginator

@@ -117,7 +117,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header="Διόρθωση Προϊόντος"
+                    header="Διόρθωση Mάρκας"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}

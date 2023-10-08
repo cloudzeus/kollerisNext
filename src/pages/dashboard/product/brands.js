@@ -25,6 +25,7 @@ import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import GridTranslate from '@/components/grid/GridTranslate';
 import GridActions from '@/components/grid/GridActions';
 import { useSession } from 'next-auth/react';
+import StepHeader from '@/components/StepHeader';
 
 
 export default function TemplateDemo() {
@@ -250,6 +251,9 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
+            <div>
+                <StepHeader text="Μάρκες" />
+            </div>
             <Toolbar start={leftToolbarTemplate}></Toolbar>
             <DataTable
                 size="small"

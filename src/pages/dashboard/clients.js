@@ -13,6 +13,7 @@ import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import { Badge } from 'primereact/badge';
 import { OverlayPanel } from 'primereact/overlaypanel';
+import StepHeader from '@/components/StepHeader';
 
 export default function Clients() {
 
@@ -87,7 +88,8 @@ export default function Clients() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar  end={rightToolbarTemplate} />
+            <StepHeader text="Πελάτες" />
+            {/* <Toolbar  end={rightToolbarTemplate} /> */}
             <DataTable
                 size="small"
                 header={header}

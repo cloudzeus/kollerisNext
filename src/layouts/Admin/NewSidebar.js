@@ -67,6 +67,7 @@ const SidebarList = () => {
             ) : null}
             <SidebarItem title={'Χρήστες'} goTo={'/dashboard/users'} />
             <SidebarItem title={'Πελάτες'} goTo={'/dashboard/clients'} />
+            <SidebarItem title={'Impas'} goTo={'/dashboard/info/impas'} />
 
           
         </ul>
