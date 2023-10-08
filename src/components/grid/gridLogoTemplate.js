@@ -1,35 +1,52 @@
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
-const GridLogoTemplate = ({logo}) => {
+const GridLogoTemplate = ({ logo }) => {
     const op = useRef(null);
+
+    // useEffect(() => {
+    //     const loadDynamicImage = async () => {
+    //         const fallback = require('../../_assets/imagenotfound.jpg');
+    //         setSrc(fallback);
+    //         try {
+    //             const dynamicSrc = require(`../../_assets/${logo}`);
+    //             if (dynamicSrc) {
+
+    //             }
+    //         } catch (error) {
+    //             setSrc(fallback);
+    //         }
+    //     };
+    //     loadDynamicImage();
+    // }, [logo]);
+
     return (
         <ImageDiv >
             {logo ? (
-               <>
-                 <div  onClick={(e) => op.current.toggle(e)}>
-                      <Image
-                src={`/uploads/${logo}`}
-                alt={logo}
-                fill={true}
+                <>
+                    <div onClick={(e) => op.current.toggle(e)}>
+                        <Image
+                            src={src}
+                            alt={logo}
+                            fill={true}
 
-            />
-            </div>
-            <OverlayImage op={op} logo={logo}/>
-               </>
-              
+                        />
+                    </div>
+                    <OverlayImage op={op} logo={logo} />
+                </>
+
             ) : (
                 <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
             )}
-            
+
         </ImageDiv>
 
     )
 }
 
-const OverlayImage = ({logo, op}) => {
+const OverlayImage = ({ logo, op }) => {
     return (
         <OverlayPanel ref={op}>
             <LargeImage>

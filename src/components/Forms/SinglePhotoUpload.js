@@ -7,18 +7,16 @@ import axios from 'axios';
 import { Toast } from 'primereact/toast';
 
 
-
-
 const SinglePhotoUpload = ({  state, setState }) => {
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
 
+    
     const onUpload = async (event) => {
         const file = event.target.files[0];
         let formData = new FormData();
         formData.append('files', file);
-        console.log(file)
         setLoading(true);
         try {
             const response = await fetch('/api/uploads/saveImageMulter', {
@@ -30,15 +28,12 @@ const SinglePhotoUpload = ({  state, setState }) => {
             if (response.ok) {
                 const { urls } = await response.json();
                 if(urls) {
-                    console.log(urls)
+                  
                     setState(urls)
                     setLoading(false);
                 }
             }
-            let {data} = axios.get('/src/_assets/facom1.jpg')
-            console.log('data')
-            console.log(data)
-
+           
         } catch (error) {
             console.log(error)
         }
@@ -49,7 +44,6 @@ const SinglePhotoUpload = ({  state, setState }) => {
         <>
             <Toast ref={toast}></Toast>
             <div className='flex flex-start justify-content-between align-content-center relative	'>
-
                 <div className='relative' >
                     <ImageContainer onClick={() => fileInputRef.current.click()}>
                         
@@ -59,10 +53,9 @@ const SinglePhotoUpload = ({  state, setState }) => {
                             <>
                             {loading ? (
                                <ProgressSpinner style={{width: '50px', height: '50px'}} strokeWidth="2"  animationDuration=".5s" />
-
                             ) : (
                                 <Image
-                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/src/_assets/${state}`}
+                                src={'/uploads/' + state}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"
