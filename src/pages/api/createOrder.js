@@ -143,7 +143,6 @@ export default async function handler(req, res) {
     }
 
     if(action == "searchBrand") {
-        console.log('search brand')
 
         const {skip, limit, mtrmark, searchTerm} = req.body;
         try {
@@ -195,7 +194,6 @@ export default async function handler(req, res) {
 
             let totalRecords = await SoftoneProduct.countDocuments({MTRMARK: parseInt(mtrmark)})
             let products = await SoftoneProduct.aggregate(pipeline)
-            console.log(JSON.stringify(products))
             return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -206,7 +204,8 @@ export default async function handler(req, res) {
         const {products, email, supplierName, TRDR, NAME} = req.body;
 
         
-
+        console.log('-----------------------------------------------')
+        console.log('-----------------------------------------------')
         let body = products.map((product) => {
             return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
             <p>Ποσότητα: <strong>${product.QUANTITY}</strong></p>
@@ -217,42 +216,57 @@ export default async function handler(req, res) {
 
         try {
 
-            console.log(products)
-            // await connectMongo();
-            // const generateNextCode = async () => {
-            //     const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
-            //     const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-            //     return lastCode + 10;
+      
+            const mtrlArr = products.map(item => {
+                const MTRL = parseInt(item.MTRL);
+                const QTY1 = parseInt(item.QTY1);
+                return { MTRL, QTY1 };
+            });
+            console.log(mtrlArr)
 
-            // };
-            // let orderNumber = await generateNextCode();
-            // let obj = {
-            //     supplierName: supplierName,
-            //     supplierEmail: email,
-            //     status: "pending",
-            //     products: products,
-            //     TRDR: TRDR,
-            //     NAME: NAME,
-            //     orderNumber: orderNumber,
-            // }
-            // let insert = await SupplierOrders.create(obj)
-           
-            // const mail = {
-            //     from: 'info@kolleris.com',
-            //     to: email,
-            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-            //     subject: ` Παραγγελία NUM: ${orderNumber}`,
-            //     html: body
-            //   };
+            const PURDOC = await getPurdoc(mtrlArr, TRDR)
+            console.log('PURDOC')
+            console.log(PURDOC)
+          
+            await connectMongo();
+            const generateNextCode = async () => {
+                const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
+                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+                return lastCode + 10;
+
+            };
+            let orderNumber = await generateNextCode();
+            console.log('ORDER NUMBER ')
+            console.log(orderNumber)
+            let obj = {
+                supplierName: supplierName,
+                supplierEmail: email,
+                status: "pending",
+                products: products,
+                TRDR: TRDR,
+                NAME: NAME,
+                PURDOCNUM: PURDOC,
+                orderNumber: orderNumber,
+            }
+            let insert = await SupplierOrders.create(obj)
+            console.log('INSERT')
+            console.log(insert)
+            const mail = {
+                from: 'info@kolleris.com',
+                to: email,
+                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+                subject: ` Παραγγελία NUM: ${orderNumber}`,
+                html: body
+              };
               
-            //   transporter.sendMail(mail, (err, info) => {
-            //     if (err) {
-            //       console.log(err);
-            //     } else {
-            //       console.log('Email sent successfully!');
-            //     }
-            //   });
-            // return res.status(200).json({ success: true, result: insert })
+              transporter.sendMail(mail, (err, info) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log('Email sent successfully!');
+                }
+              });
+            return res.status(200).json({ success: true, result: insert })
 
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -262,4 +276,21 @@ export default async function handler(req, res) {
 
 }
 
-
+const getPurdoc = async (data, TRDR) => {
+    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getPurDoc`;
+    console.log(TRDR)
+    console.log(data)
+    const response = await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            username: "Service",
+            password: "Service",
+            COMPANY: "1001",
+            SERIES: 2021,
+            TRDR: TRDR,
+            MTRLINES: data
+        })
+    });
+    let resJson = await response.json();
+    return resJson.PURDOCNUM;
+}

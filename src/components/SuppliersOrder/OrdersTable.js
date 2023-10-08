@@ -84,6 +84,7 @@ const OrdersTable = () => {
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Αρ. παραγγελίας" field="orderNumber"></Column>
+                <Column header="PURDOCNUM" field="PURDOCNUM"></Column>
                 <Column header="Όνομα προμηθευτή" field="NAME"></Column>
                 <Column header="email" body={EmailTemplate} field="supplierEmail"></Column>
                 <Column header="Ημερομηνία Προσφοράς" body={DateTemplate} field="createdAt"></Column>
