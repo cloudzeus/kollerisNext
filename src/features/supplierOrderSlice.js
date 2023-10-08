@@ -13,6 +13,7 @@ const initialState = {
 	findItem: null,
 	quantity: 0,
 	isFinalSubmit: false,
+	mtrProducts: [],
 }
 
 
@@ -46,13 +47,13 @@ const supplierOrderSlice = createSlice({
 		},
 		setMtrLines: (state, {payload}) => {
 			
-			const calc = payload.QUANTITY * parseFloat(payload.PRICE);
+			const calc = payload.QTY1 * parseFloat(payload.PRICE);
 			const roundedUp = Math.ceil(calc);
 
 			const existingItem = state.mtrLines.find((item) => item.MTRL === payload.MTRL);
 			if(existingItem) {
 				state.mtrLines = state.mtrLines.map((item) => {
-					return item.MTRL === payload.MTRL ? { ...item, QUANTITY: payload.QUANTITY, TOTAL_PRICE: roundedUp} : item
+					return item.MTRL === payload.MTRL ? { ...item,  QTY1: payload.QTY1, TOTAL_PRICE: roundedUp} : item
 				}
 				)
 			} else {

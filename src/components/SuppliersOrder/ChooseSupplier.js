@@ -13,6 +13,7 @@ import StepHeader from '../ImpaOffer/StepHeader';
 const ChooseSupplier = () => {
     const router = useRouter();
     const { selectedSupplier,  inputEmail,  } = useSelector(state => state.supplierOrder)
+    console.log(selectedSupplier)
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)

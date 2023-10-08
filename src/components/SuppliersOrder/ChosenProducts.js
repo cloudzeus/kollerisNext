@@ -59,7 +59,7 @@ const ChosenProducts = () => {
         className='border-1 border-round-sm	border-50'
         size="small"
         id={'_id'}
-        // footer={Footer}
+        footer={Footer}
         showGridlines
       >
         <Column field="NAME" header="Όνομα Πελάτη"></Column>
@@ -98,7 +98,7 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
   }
 
   useEffect(() => {
-    dispatch(setMtrLines({ MTRL: MTRL, QUANTITY: quantity, PRICE: PRICER, NAME: NAME }))
+    dispatch(setMtrLines({ MTRL: MTRL, QTY1: quantity, PRICE: PRICER, NAME: NAME }))
   }, [quantity])
 
 
@@ -164,27 +164,24 @@ const Footer = () => {
   })
   const [quantity, setQuantity] = useState(0)
   const dispatch = useDispatch();
-    
+
 
     useEffect(() => {
-      let sum = mtrLines.map(item => item.TOTAL_PRICE)
-      console.log('sum')
-      console.log(sum)
       setSum(mtrLines.map(item => item.TOTAL_PRICE).reduce((prev, next) => prev + next, 0))
-      setQuantity(mtrLines.map(item => item.QUANTITY).reduce((prev, next) => prev + next, 0))
+      setQuantity(mtrLines.map(item => item.QTY1).reduce((prev, next) => prev + next, 0))
     }, [sum, mtrLines, selectedProducts])
 
     useEffect(() => {
-    if(sum < selectedProducts[0]?.minValue) {
-      setIcon(prev => ({...prev, icon: 'pi pi-times'}))
-      setColor(prev => ({...prev, color: 'red'}))
+    if(sum >= selectedProducts[0]?.minValue) {
+      setIcon(prev => ({...prev, icon: 'pi pi-check'}))
+      setColor(prev => ({...prev, color: 'green'}))
     }
 
-    if(quantity < selectedProducts[0]?.minItems) {
-      setIcon(prev => ({...prev, quantIcon: 'pi pi-times'}))
-      setColor(prev => ({...prev, quantColor: 'red'}))
+    if(quantity >= selectedProducts[0]?.minItems) {
+      setIcon(prev => ({...prev, quantIcon: 'pi pi-check'}))
+      setColor(prev => ({...prev, quantColor: 'green'}))
     }
-    }, [mtrLines, selectedProducts])
+    }, [ selectedProducts, sum, quantity])
  
 
     useEffect(() => {

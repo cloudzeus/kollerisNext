@@ -216,61 +216,43 @@ export default async function handler(req, res) {
         }).join('');  // Join array elements into a single string
 
         try {
-            await connectMongo();
-            const generateNextCode = async () => {
-                const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
-                console.log(lastDoc)
-                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-                return lastCode + 10;
 
-            };
-            let orderNumber = await generateNextCode();
-            let obj = {
-                supplierName: supplierName,
-                supplierEmail: email,
-                status: "pending",
-                products: products,
-                TRDR: TRDR,
-                NAME: NAME,
-                orderNumber: orderNumber,
-            }
-            console.log(obj)
-            let insert = await SupplierOrders.create(obj)
-            // const mailOptions = {
-            //     from: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL,
-            //     to: 'johnchiout.dev@gmail.com', 
-            //     cc: ['gkozyris@i4ria.com ', 'johnchiout.dev@gmail.com'],
-            //     subject: `Προσφορά - NUM:`, 
-            //     html: `${body}` 
+            console.log(products)
+            // await connectMongo();
+            // const generateNextCode = async () => {
+            //     const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
+            //     const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+            //     return lastCode + 10;
+
             // };
-        
-            // transporter.sendMail(mailOptions, (error, info) => {
-            //     if (error) {
-            //         return console.log(error);
-            //     }
-            //     console.log('Message sent: %s', info.messageId);
-            // });
-
-            // console.log(emailRes)
+            // let orderNumber = await generateNextCode();
+            // let obj = {
+            //     supplierName: supplierName,
+            //     supplierEmail: email,
+            //     status: "pending",
+            //     products: products,
+            //     TRDR: TRDR,
+            //     NAME: NAME,
+            //     orderNumber: orderNumber,
+            // }
+            // let insert = await SupplierOrders.create(obj)
            
-           
-              const mail = {
-                from: 'info@kolleris.com',
-                to: email,
-                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com'],
-                subject: ` Παραγγελία NUM: ${orderNumber}`,
-                html: body
-              };
+            // const mail = {
+            //     from: 'info@kolleris.com',
+            //     to: email,
+            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+            //     subject: ` Παραγγελία NUM: ${orderNumber}`,
+            //     html: body
+            //   };
               
-              // Send the email
-              transporter.sendMail(mail, (err, info) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log('Email sent successfully!');
-                }
-              });
-            return res.status(200).json({ success: true, result: insert })
+            //   transporter.sendMail(mail, (err, info) => {
+            //     if (err) {
+            //       console.log(err);
+            //     } else {
+            //       console.log('Email sent successfully!');
+            //     }
+            //   });
+            // return res.status(200).json({ success: true, result: insert })
 
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

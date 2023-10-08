@@ -13,13 +13,14 @@ const supplierOrderSchema = new mongoose.Schema({
     NAME: String,
     supplierEmail: String,
     status: String,
+    PURDOCNUM: String,
     products: [
         {
             _id: String,
             MTRL: String,
             PRICE: String,
             NAME: String,
-            QUANTITY: Number,
+            QTY1: Number,
             TOTAL_PRICE: Number
 
         }
