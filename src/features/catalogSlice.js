@@ -20,7 +20,8 @@ const initialState = {
 		PRICER: 1,
 		PRICEW: 1,
 		PRICER05: 1,
-	}
+	},
+	returnProducts: [],
 }
 
 
@@ -72,8 +73,14 @@ const catalogSlice = createSlice({
 			state.selectedPriceKey = payload;
 		},
 		setPricesMultiplier: (state, {payload}) => {
+			function calculateAndRound(a, b) {
+				const result = a * b;
+				return Math.round(result * 100) / 100;
+			}
+		
 			switch (payload.type) {
 				case "PRICER":
+					const roundedUp = calculateAndRound(payload.QTY1, parseFloat(payload.value));
 					state.pricesMultiplier.PRICER = payload.value;
 					state.prices.PRICER = payload.value * state.prices.PRICER;
 				  break;
@@ -87,6 +94,9 @@ const catalogSlice = createSlice({
 				  break;
 				default:
 			}  
+		},
+		setReturnedProducts: (state, {payload}) => {
+			 state.returnProducts.push(payload);
 		}
 		
 	},
@@ -104,7 +114,8 @@ export const {
 	setAttribute, 
 	setSelectedPriceKey,
 	setPricesMultiplier,
-	setNewData
+	setNewData,
+	setReturnedProducts
 } = catalogSlice.actions;
 
 export default catalogSlice.reducer;

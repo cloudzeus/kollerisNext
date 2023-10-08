@@ -47,10 +47,7 @@ const OurDatabaseKeys = [
         key: 'COUNTRY',
         value: 'Χώρα'
     },
-    {
-        key: 'COUNTRY',
-        value: 'Χώρα'
-    },
+  
     {
         key: 'WIDTH',
         value: 'Μήκος'
@@ -190,7 +187,6 @@ const SelectTemplate = ({ value, text, key }) => {
 
     const handleInputChange = (e) => {
         setdValue(e.target.value)
-        console.log(e.target.value)
         let object = {
             ogKey: key,
             name: value,

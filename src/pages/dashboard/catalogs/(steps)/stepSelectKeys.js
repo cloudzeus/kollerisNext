@@ -7,6 +7,7 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGridData, setHeaders, setSelectedHeaders, setCurrentPage } from '@/features/catalogSlice';
 import axios from 'axios';
+import StepHeader from '@/components/StepHeader';
 
 const StepsSelectKey1 = () => {
     const {  headers } = useSelector((state) => state.catalog)
@@ -26,7 +27,10 @@ const StepsSelectKey1 = () => {
     }, [dispatch])
 
     return (
-        <>
+        <> 
+            <div>
+                <StepHeader text="Επιλογή Υπόλοιπων Κλειδιών" />
+            </div>
             <DataTable
                 value={headers}
                 selectionMode={'checkbox'}
@@ -57,11 +61,12 @@ const StepsSelectKey1 = () => {
     )
 }
 
-const template = ({ value, text }) => {
+const template = ({ value, text, text2 }) => {
     return (
         <div>
             <p className='font-bold text-lg'> {value}</p>
             <p className='text-sm '>sample text: {text}</p>
+            <p className='text-sm '>sample text: {text2}</p>
 
         </div>
     )

@@ -1,59 +1,49 @@
 
 import { connect } from "mongoose";
 import connectMongo from "../../../server/config";
-import { Product, Descriptions } from "../../../server/models/newProductModel";
 import SoftoneProduct from "../../../server/models/newProductModel";
 export default async function handler(req, res) {
     const { data } = req.body;
     try {
         await connectMongo();
-        console.log(data)
-        for (const item of data) {
-        
-    
-            let description = await Descriptions.create({
-                es: item["ΙΣΠΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || '',
-                en: item["ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || '',
-                de: item["ΓΕΡΜΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || '',
-                fr: item["ΓΑΛΛΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || '',
-            })
-         
+        let productData = {
+            DESCRIPTION: data?.description || '',
+            descriptions: {
+                en: data['ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ'] || '',
+                de: data['ΓΕΡΜΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ'] || '',
+                es: data['ΙΣΠΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ'] || '',
+            },
+            NAME: data?.name || '',
+            ATTRIBUTES: data?.attributes || [],
+            SOFTONESTATUS: false,
+            COUNTRY: data?.COUNTRY || '',
+            VAT: data?.VAT || '',
+            CODE: data?.CODE || '',
+            CODE1: data?.CODE1 || '',
+            CODE2: data?.CODE2 || '',
+            PRICER: data?.PRICER,
+            PRICEW: data?.PRICEW,
+            PRICER05: data?.PRICER05,
+            WIDTH: data?.WIDTH || '',
+            HEIGHT: data?.HEIGHT || '',
+            LENGTH: data["ΠΛΑΤΟΣ"] || '',
 
-
-            let update = {
-                $set: {
-                    descriptions: description._id,
-                    NAME: item.name || '',
-                    CODE: item.CODE || '',
-                    SOFTONESTATUS: false,
-                    COUNTRY: item.COUNTRY || '',
-                    VAT: item.VAT || '',
-                    // DESCRIPTION: item["ΚΥΡΙΑ ΠΕΡΙΓΡΑΦΗ"] || item["ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || item["ΓΕΡΜΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ"] || '',
-                    ATTRIBUTES: item.attributes || '',
-                }
-            }
-            console.log(update)
-
-
-            let softoneProduct = await SoftoneProduct.findOneAndUpdate(
-                { NAME: item.name || '' },
-                update,
-                { upsert: true, new: true }
-            )
-            console.log(softoneProduct)
         }
-
-
-        
-
-
-
-
-
+        console.log(productData)
+        const product = await SoftoneProduct.findOneAndUpdate(
+            { NAME: productData.NAME }, // filter: search for product by name
+            productData, 
+            {
+              new: true, // return the new product data
+              upsert: true, // insert the data if it doesn't exist
+              setDefaultsOnInsert: true // apply schema defaults if we're inserting
+            }
+          );
+            console.log(product)
+        return res.status(200).json({success: true, result: product,  message: "Επιτυχής εισαγωγή στην βάση" });
       
-        return res.status(200).json({ message: "Επιτυχής εισαγωγή στην βάση" })
     } catch (e) {
-        return res.status(500).json({ error: "Αποτυχία εισαγωγής στην βάση" });
+        return res.status(500).json({success: false, error: "Αποτυχία εισαγωγής στην βάση" });
     }
 
 }

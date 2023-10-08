@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setGridData, setHeaders, setCurrentPage, setSelectedPriceKey } from '@/features/catalogSlice';
 import axios from 'axios';
 import styled from 'styled-components';
+import StepHeader from '@/components/StepHeader';
 
 const UploadProducts = () => {
     const { gridData, headers, } = useSelector((state) => state.catalog)
@@ -78,13 +79,15 @@ const UploadProducts = () => {
 
     return (
         <>
-           <h2 className='mb-3 mt-4'>Ανεβάστε Αρχείο:</h2>
+           <StepHeader text="Aνεβάστε Αρχείο"/>
             <UploadBtn>
                 <input className='hide' ref={fileInputRef} type="file" onChange={handleFileUpload} />
                 <Button onClick={() => fileInputRef.current.click()} label="Upload" icon="pi pi-plus"></Button>
             </UploadBtn>
-
-            <h2 className='mb-3 mt-4'>Επιλογή Κλειδιού Τιμής:</h2>
+            <div className='mt-5 mb-2'>
+                <StepHeader text="Επιλογή Κλειδιού Τιμής:"/>
+            </div>
+         
 
             {gridData ? (
                 <DataTable

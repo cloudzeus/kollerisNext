@@ -3,11 +3,12 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentPage } from '@/features/catalogSlice';
+import { setCurrentPage, setReturnedProducts } from '@/features/catalogSlice';
 import axios from 'axios';
+import StepHeader from '@/components/StepHeader';
 
 const StepshowData = () => {
-  const {  gridData, attributes, mongoKeys, newData } = useSelector((state) => state.catalog)
+  const {  gridData, attributes, mongoKeys, newData, returnedProducts } = useSelector((state) => state.catalog)
   const [showData, setShowData] = useState([])
 
 
@@ -58,22 +59,23 @@ const StepshowData = () => {
       return uniqueKeys;
     }
     const result = extractKeys(_newData[0]);
-    console.log(result)
     setDynamicColumns(result)
 
 
   }, [gridData, attributes, mongoKeys, newData])
 
   const handleSubmit = async () => {
-    console.log(showData)
-    // let {data } = await axios.post('/api/product/apiProduct', {data: showData, action: 'importCSVProducts'})
-    let {data} = await axios.post('/api/insertProductFromFile', {data: showData, action: 'importCSVProducts'})
+      console.log(showData)
+      for(let i = 0; i < showData.length; i++) {
+        let {data} = await axios.post('/api/insertProductFromFile', {data: showData[i], action: 'importCSVProducts'})
+      }
 
   }
 
 
   return (
     <div>
+      <StepHeader text="Τελική μορφή Αρχείου" />
       <DataTable
         key={Math.random()}
         showGridlines
@@ -83,6 +85,9 @@ const StepshowData = () => {
         tableStyle={{ minWidth: '50rem' }}>
         {dynamicColumns.map(key => {
           if(key === 'attributes') null;
+          if(key === "PRICER05") {
+            return <Column key={key} field={key} header={"PRICER05 /Τιμή Scroutz"} />
+          }
           return <Column key={key} field={key} header={key} />
         })}
       </DataTable>

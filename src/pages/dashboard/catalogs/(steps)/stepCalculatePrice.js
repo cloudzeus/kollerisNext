@@ -14,6 +14,7 @@ import {
   setNewData
 } from '@/features/catalogSlice';
 import { InputText } from "primereact/inputtext";
+import StepHeader from '@/components/StepHeader';
 
 // ------------------- STEP 2 -------------------
 
@@ -22,9 +23,7 @@ import { InputText } from "primereact/inputtext";
 const StepCalcPrice = () => {
   const { selectedPriceKey, pricesMultiplier, gridData, newData } = useSelector((state) => state.catalog)
   const dispatch = useDispatch();
-  console.log(gridData)
-  // console.log(gridData)
-  console.log(newData)
+
 
   useEffect(() => {
     const _newData = gridData.map((item) => {
@@ -52,8 +51,9 @@ const StepCalcPrice = () => {
 
   return (
     <div>
-      <h2 className='mb-3 mt-4'>Υπολογισμός Τιμών:</h2>
-
+      <div className='mb-2 mt-2'>
+        <StepHeader text="Υπολογισμός Τιμών"/>
+      </div>
       <StepCalculatePrice />
       {newData ? (
         <DataTable
@@ -71,7 +71,6 @@ const StepCalcPrice = () => {
       <div className='mt-3'>
         <Button label="STEP 1" severity="success" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(1))} />
         <Button label="STEP 3" severity="success" icon="pi pi-arrow-right" className='ml-2' onClick={() => {
-          //GO TO stepSelectKeys
           dispatch(setCurrentPage(3))
         }} />
       </div>
@@ -85,7 +84,7 @@ const StepCalcPrice = () => {
 
 
 const StepCalculatePrice = () => {
-  const { selectedHeaders, prices, gridData, pricesMultiplier } = useSelector((state) => state.catalog)
+  const {  pricesMultiplier } = useSelector((state) => state.catalog)
 
   const dispatch = useDispatch();
 
