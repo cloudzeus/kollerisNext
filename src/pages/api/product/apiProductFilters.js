@@ -6,7 +6,7 @@ import mongoose, { connect, mongo } from "mongoose";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
-import SoftoneProduct, { Product } from "../../../../server/models/newProductModel";
+import SoftoneProduct from "../../../../server/models/newProductModel";
 
 
 export const config = {

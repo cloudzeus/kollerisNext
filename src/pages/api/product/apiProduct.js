@@ -4,7 +4,7 @@ import axios from "axios";
 import format from "date-fns/format";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
-import SoftoneProduct, { Descriptions } from "../../../../server/models/newProductModel"
+import SoftoneProduct from "../../../../server/models/newProductModel"
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 
 
