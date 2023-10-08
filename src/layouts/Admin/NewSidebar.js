@@ -47,6 +47,7 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
+            <SidebarItem title={'Create Offer'} goTo={'/dashboard/offers/impaOffers'} />
             <SidebarHeader  title={'Τιμοκατάλογοι'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 2 ? (
                 <div >
