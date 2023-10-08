@@ -22,7 +22,7 @@ function generateRandomId(length) {
 
 
 // Set up the multer middleware to handle file uploads
-const upload = multer({ dest: 'public/uploads/' });
+const upload = multer({ dest: 'src/_assets' });
 
 export const config = {
   api: {
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
           // const newFileName = `${randomId}-${file.originalname}`;
           const newFileName = `${file.originalname}`;
           // const newFileName = `${timestamp}-${file.originalname}`;
-          fs.renameSync(file.path, path.join('public/uploads/', newFileName));
+          fs.renameSync(file.path, path.join('src/_assets', newFileName));
           const publicURL = `${newFileName}`;
           uploadedURLs.push(publicURL);
         }

@@ -2,8 +2,9 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ['next.mbmv.io'],
+    domains: ['next.mbmv.io', 'localhost'],
   },
+ 
 }
 
 module.exports = {

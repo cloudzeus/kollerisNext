@@ -85,7 +85,7 @@ const DialogGallery = ({ images, url, id, user, state, setState}) => {
                               return (
                                   <AvatarImages key={image}>
                                       <Image
-                                          src={`/uploads/${image}`}
+                                           src={`${process.env.NEXT_PUBLIC_BASE_URL}/src/_assets/${image}`}
                                           alt="Large"
                                           fill={true}
                                           sizes="50px"
@@ -110,7 +110,7 @@ const DialogGallery = ({ images, url, id, user, state, setState}) => {
                             return (
                                 <ImageContainer key={index} onClick={() => handleSelected(image)} className={selectedImages.includes(image) ? "selected" : null} >
                                     <Image
-                                        src={`/uploads/${image}`}
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/src/_assets/${image}`}
                                         alt="Large"
                                         fill={true}
                                         sizes="220px"

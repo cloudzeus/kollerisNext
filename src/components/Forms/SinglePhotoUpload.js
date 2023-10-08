@@ -39,7 +39,8 @@ const SinglePhotoUpload = ({  state, setState }) => {
             console.log(error)
         }
     }
-
+    console.log('image')
+    console.log(state)
   
     return (
         <>
@@ -58,7 +59,7 @@ const SinglePhotoUpload = ({  state, setState }) => {
 
                             ) : (
                                 <Image
-                                src={`/uploads/${state}`}
+                                src={`${process.env.NEXTAUTH_URL}/_assets/${state}`}
                                 alt="logo"
                                 fill={true}
                                 sizes="50px"
