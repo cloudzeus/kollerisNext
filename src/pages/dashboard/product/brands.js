@@ -9,26 +9,21 @@ import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
-import Gallery from '@/components/Gallery';
 import { useDispatch } from 'react-redux';
-import { TabView, TabPanel } from 'primereact/tabview';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ActionDiv } from '@/componentsStyles/grid';
-import DeletePopup from '@/components/deletePopup';
-import { DisabledDisplay } from '@/componentsStyles/grid';
-import { InputTextarea } from 'primereact/inputtextarea';
-import UrlInput from '@/components/Forms/PrimeUrlInput';
+
 import { Toast } from 'primereact/toast';
-import SyncBrand from '@/GridSync/SyncBrand';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-import GridTranslate from '@/components/grid/GridTranslate';
-import GridActions from '@/components/grid/GridActions';
+
 import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';
-
-
+import GridExpansionTemplate from '@/components/markes/GridExpansionTemplate';
+import MarkesActions from '@/components/markes/MarkesActions';
+import { setSelectedMarkes } from '@/features/supplierOrderSlice';
+import { useRouter } from 'next/router';
 export default function TemplateDemo() {
+    const router = useRouter();
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -110,74 +105,8 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
-        console.log(data)
-        let newArray = []
-        for (let image of data.photosPromoList) {
-            newArray.push(image.photosPromoUrl)
-        }
-
         return (
-            <  >
-                <div className="card p-20">
-                    <TabView>
-                        <TabPanel header="Φωτογραφίες">
-                            <Gallery images={newArray} />
-                        </TabPanel>
-                        <TabPanel header="Βίντεο">
-                            < DisabledDisplay  >
-                                {data?.videoPromoList?.map((video, index) => {
-                                    return (
-                                        <UrlInput
-                                            key={index}
-                                            label={video.name}
-                                            value={video.videoUrl}
-                                        />
-                                    )
-                                })}
-                            </ DisabledDisplay  >
-
-
-                        </TabPanel>
-                        <TabPanel header="Λεπτομέριες">
-
-                            < DisabledDisplay  >
-                                <div className="disabled-card">
-                                    <label>
-                                        Περιγραφή
-                                    </label>
-                                    <InputTextarea autoResize disabled value={data.description} />
-                                </div>
-                                <div className="disabled-card">
-                                    <label>
-                                        Pim Username
-                                    </label>
-                                    <InputText disabled value={data?.pimAccess?.pimUserName} />
-                                </div>
-                                <UrlInput
-                                    label={'URL Iστοσελίδας'}
-                                    value={data.webSiteUrl}
-                                />
-                                <UrlInput
-                                    label={'URL Ιnstagram'}
-                                    value={data.instagramUrl}
-                                />
-                                <UrlInput
-                                    label={'URL Facebook'}
-                                    value={data.facebookUrl}
-                                />
-                                <UrlInput
-                                    label={'URL Pim'}
-                                    value={data?.pimAccess?.pimUrl}
-                                />
-
-
-                            </DisabledDisplay>
-
-                        </TabPanel>
-
-                    </TabView>
-                </div>
-            </ >
+            < GridExpansionTemplate data={data} />
         );
     };
 
@@ -188,16 +117,6 @@ export default function TemplateDemo() {
             </div>
         );
     };
-
-    // const rightToolbarTemplate = () => {
-    //     return (
-    //         <SyncBrand
-    //             refreshGrid={handleFetch}
-    //             addToDatabaseURL='/api/product/apiMarkes'
-    //         />
-    //     )
-    // }
-
 
     //Edit:
     const editProduct = async (product) => {
@@ -218,18 +137,24 @@ export default function TemplateDemo() {
         setAddDialog(false);
     };
 
-    const onDelete = async (id) => {
+   
 
-        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
-        if (!res.data.success) return showError()
-        handleFetch()
-        showSuccess()
+    const onOrder = async (rowData) => {
+        let mtrmark = rowData?.softOne?.MTRMARK
+        dispatch(setSelectedMarkes({
+            NAME: rowData?.softOne?.NAME,
+            mtrmark: mtrmark,
+            minItemsOrder: rowData?.minItemsOrder,
+            minValueOrder: rowData?.minValueOrder,
+
+        }))
+        router.push('/dashboard/supplierOrder/supplier')
     }
-
+           
     // CUSTOM TEMPLATES FOR COLUMNS
     const actionBodyTemplate = (rowData) => {
         return (
-            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+            <MarkesActions  onEdit={editProduct} onOrder={onOrder} rowData={rowData} />
         )
     }
 
@@ -310,22 +235,15 @@ export default function TemplateDemo() {
 
 
 
-
-
-
-const ActiveTempate = ({ status }) => {
+const ActionTemplate = () => {
     return (
         <div>
-            {status ? (
-                <Tag severity="success" value=" active "></Tag>
-            ) : (
-                <Tag severity="danger" value="deleted" ></Tag>
-            )}
 
         </div>
     )
-
 }
+
+
 
 
 
@@ -337,18 +255,6 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
             icon="pi pi-user"
             color="#fff"
             backgroundColor='var(--yellow-500)'
-        />
-
-    )
-}
-const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={createdFrom}
-            at={createdAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--green-400)'
         />
 
     )

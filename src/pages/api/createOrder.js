@@ -5,6 +5,8 @@ import Markes from "../../../server/models/markesModel";
 import nodemailer from 'nodemailer';
 import { transporter } from "@/utils/nodemailerConfig";
 import SupplierOrders from "../../../server/models/supplierOrders";
+import PendingOrders from "../../../server/models/pendingOrders";
+
 
 export default async function handler(req, res) {
 
@@ -201,6 +203,42 @@ export default async function handler(req, res) {
         }
     }
 
+
+    if(action === "createBucket") {
+
+        const {products, email, supplierName, TRDR, NAME, MTRMARK, minItems, minValue} = req.body;
+
+        try {
+            await connectMongo();
+            const generateNextCode = async () => {
+                const lastDoc = await PendingOrders.find().sort({orderNumber: -1}).limit(1).exec();
+                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+                return lastCode + 10;
+
+            };
+            let orderNumber = await generateNextCode();
+            let obj = {
+                supplierName: supplierName,
+                supplierEmail: email,
+                status: "pending",
+                products: products,
+                TRDR: TRDR,
+                NAME: NAME,
+                MTRMARK: MTRMARK,
+                minItems: minItems,
+                minValue: minValue,
+                orderNumber: orderNumber,
+            }
+            let insert = await PendingOrders.create(obj)
+        
+            return res.status(200).json({ success: true, result: insert })
+
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+        
+    }
+
     if(action === "sendOrder") {
         const {products, email, supplierName, TRDR, NAME} = req.body;
 
@@ -264,6 +302,22 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }
         
+    }
+
+    if(action === 'findPending') {
+        const {mtrmark} = req.body;
+        console.log(mtrmark)
+        try {
+            await connectMongo();
+            const orders = await PendingOrders.find({}).sort({createdAt: -1})
+            const minvalues = await Markes.findOne({"softOne.MTRMARK": parseInt(mtrmark)}).select({minValueOrder: 1, minItemsOrder: 1, _id: 0})
+            let minValue = minvalues.minValueOrder;
+            let minItems = minvalues.minItemsOrder;
+            console.log(result)
+            return res.status(200).json({ success: true, result: orders, minValues: minValue, minItems: minItems })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
     }
 
 }

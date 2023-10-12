@@ -27,7 +27,8 @@ const ChooseProducts = () => {
         page: 1,
     });
     
- 
+    
+    console.log(selectedMarkes)
     const fetch = async (action) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', {
@@ -35,7 +36,8 @@ const ChooseProducts = () => {
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm,
-            mtrmark: selectedMarkes?.softOne?.MTRMARK
+            mtrmark: selectedMarkes?.mtrmark,
+        
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
@@ -84,7 +86,7 @@ const ChooseProducts = () => {
     return (
         <>      
             <StepHeader text="Επιλογή Προϊόντων" />
-            <FilterMTRMARK />
+            {/* <FilterMTRMARK /> */}
             {selectedMarkes ? ( <DataTable
                     value={data}
                     paginator

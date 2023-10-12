@@ -12,7 +12,7 @@ import { set } from 'mongoose';
 const ChosenProducts = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { selectedProducts, isFinalSubmit, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
+  const { selectedProducts, isFinalSubmit, mtrLines, inputEmail, selectedSupplier, selectedMarkes } = useSelector(state => state.supplierOrder)
   console.log(selectedSupplier)
   useEffect(() => {
     if(selectedSupplier === null) {
@@ -22,34 +22,24 @@ const ChosenProducts = () => {
 
   const handleFinalSubmit = async () => {
      let {data} = await axios.post('/api/createOrder', {
-      action: 'sendOrder', 
+      action: 'createBucket', 
       products: mtrLines, 
       email: inputEmail,
       TRDR: selectedSupplier?.TRDR,
-      NAME: selectedSupplier?.NAME
+      NAME: selectedSupplier?.NAME,
+      MTRMARK: selectedMarkes.mtrmark,
+      minItems: selectedMarkes.minItemsOrder,
+      minValue: selectedMarkes.minValueOrder
     })
-      router.push('/dashboard/supplierOrder')
+    console.log(data)
+      // router.push('/dashboard/supplierOrder')
   }
 
   return (
     <div className=''>
       <StepHeader text="Aποστολή Προσφοράς" />
       <OrderDetails />
-      <div className='mt-3 p-3 bg-white border-round mb-3'>
-        <div>
-          <span>Μάρκα:</span>
-          <span className='ml-2 font-bold'>{selectedProducts[0]?.brandName}</span>
-        </div>
-        <div className='mt-2'>
-          <span>Ελάχιστο Ποσό Παραγγελίας:</span>
-          <span className='ml-2 font-bold'>{selectedProducts[0]?.minValue}</span>
-        </div>
-        <div className='mt-2'>
-          <span>Ελάχιστος Αριθμός Προϊόντων:</span>
-          <span className='ml-2 font-bold'>{selectedProducts[0]?.minItems}</span>
-        </div>
-      </div>
-
+     
       <DataTable
         value={selectedProducts}
         paginator
@@ -62,7 +52,7 @@ const ChosenProducts = () => {
         footer={Footer}
         showGridlines
       >
-        <Column field="NAME" header="Όνομα Πελάτη"></Column>
+        <Column field="NAME" header="Προϊόν"></Column>
         <Column field="brandName" header="Όνομα Μάρκας"></Column>
         <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
@@ -70,7 +60,7 @@ const ChosenProducts = () => {
       </DataTable>
       <div className='mt-3'>
         <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        <Button className='ml-2' label="Αποστολή" disabled={!isFinalSubmit}  onClick={handleFinalSubmit} />
+        <Button className='ml-2' label="Ολοκλήρωση" disabled={!isFinalSubmit}  onClick={handleFinalSubmit} />
       </div>
     </div>
   )
