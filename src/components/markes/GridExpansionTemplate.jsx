@@ -10,11 +10,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
-import { Dropdown } from 'primereact/dropdown';
-import { Tag } from 'primereact/tag';
+
 import StepHeader from '../ImpaOffer/StepHeader';
 import { useRouter } from 'next/router';
-import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes } from '@/features/supplierOrderSlice';
+import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
+import { ProgressBar } from 'primereact/progressbar';
 
 
 const GridExpansionTemplate = ({ data }) => {
@@ -100,7 +100,6 @@ const OrdersTable = ({ mtrmark, rowData }) => {
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-    const [statuses] = useState(['pending', 'done', 'rejected']);
     const [minValues, setMinvalues] = useState({
         minValue: 0,
         minItem: 0,
@@ -116,7 +115,7 @@ const OrdersTable = ({ mtrmark, rowData }) => {
         setData(data.result)
         dispatch(setSelectedSupplier({
             NAME: data.result[0]?.NAME,
-            supplierEmail: data.result[0]?.supplierEmail, 
+            supplierEmail: data.result[0]?.supplierEmail,
         }))
 
         dispatch(setSelectedMarkes({
@@ -136,60 +135,52 @@ const OrdersTable = ({ mtrmark, rowData }) => {
     useEffect(() => {
         handleFetch();
     }, [refetch])
- 
-    
-    const getSeverity = (value) => {
-        switch (value) {
-            case 'pending':
-                return 'success';
 
-            case 'done':
-                return 'warning';
 
-            case 'rejected':
-                return 'danger';
 
-            default:
-                return null;
-        }
-    };
 
 
     const RowExpansionTemplate = ({ products, NAME, supplierEmail }) => {
         return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail} />
     }
 
-    const onRowEditComplete = async (e) => {
-        // let { newData, index } = e;
-        // console.log(newData, index)
-        // let { data } = await axios.post('/api/createOrder', { action: 'updateStatus', status: newData.status, id: newData._id })
-        // setRefetch(prev => !prev)
-    };
 
     const PriceTemplate = ({ products }) => {
 
         let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
+        if (price >= minValues.minValue) {
+            dispatch(setOrderReady(true))
+        }
+
 
         return (
-            <div>
-                <span>{`${price} / ${minValues.minValue} €`}</span>
+            <div className="card p-2">
+                <span className='text-xs font-bold'>{`${price} / ${minValues.minValue} €`}</span>
+       
             </div>
+
+        )
+    }
+    const CompletionTemplate = ({ products }) => {
+
+        let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
+        if (price >= minValues.minValue) {
+            dispatch(setOrderReady(true))
+        }
+        let value = (price / minValues.minValue) * 100 > 100 ? 100 : (price / minValues.minValue) * 100
+
+
+        return (
+            <div className="flex align-items-center justify-content-center">
+                <ProgressBar value={value} style={{fontSize: '9px' , height: '20px', borderRadius: '30px', width: '100px'}}  ></ProgressBar>
+            </div>
+
         )
     }
     return (
         <div className='mt-4 mb-5'>
             <StepHeader text="Παραγγελίες σε προμηθευτές" />
-            {/* <div className='bg-white p-4 borer-round'>
-                <p className='font-bold'>Ελάχιστη παραγγελία</p>
-                <div className='flex'>
-                    <p className='mr-2'>Ποσό</p>
-                    <p className='font-bold'>{minValues.minValue}</p>
-                </div>
-                <div className='flex'>
-                    <p className='mr-2'>Ποσότητα</p>
-                    <p className='font-bold'>{minValues.minItems}</p>
-                </div>
-            </div> */}
+
             <DataTable
                 loading={loading}
                 expandedRows={expandedRows}
@@ -197,42 +188,49 @@ const OrdersTable = ({ mtrmark, rowData }) => {
                 rowExpansionTemplate={RowExpansionTemplate}
                 value={data}
                 editMode="row"
-                onRowEditComplete={onRowEditComplete}
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
                 <Column header="Όνομα προμηθευτή" field="NAME"></Column>
-                <Column header="Συν.Τιμή" field="TOTAL_PRICE" body={PriceTemplate}></Column>
-                {/* <Column header="email" body={EmailTemplate} field="supplierEmail"></Column> */}
-                {/* <Column header="Ημερομηνία Προσφοράς" body={DateTemplate} field="createdAt"></Column> */}
-                {/* <Column header="Status" field="status" body={Status} style={{ width: '70px' }} editor={(options) => statusEditor(options)}></Column> */}
-                <Column body={ActionsTemplate} style={{ width: "200px" }}></Column>
+                <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }} body={CompletionTemplate}></Column>
+                <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} body={PriceTemplate}></Column>
+                <Column header="Aποστολή" body={ActionsTemplate} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
         </div>
     )
 }
 
-const ActionsTemplate = ({ data }) => {
+const ActionsTemplate = ({MTRMARK}) => {
+    const { orderReady, mtrLines, selectedSupplier } = useSelector(state => state.supplierOrder)
 
+    console.log(MTRMARK)
+    const submitOrder = async () => {
+        console.log(selectedSupplier)
+        console.log('submit')
+        let { data } = await axios.post('/api/createOrder', { 
+            action: 'submitOrder', 
+            products: mtrLines,
+            mtrmark: MTRMARK,
+        })
+    }
     return (
         <div className=''>
 
-            <Button size="small" disabled={true} icon="pi pi-angle-right" label="Αποστολή" className="p-button-sm p-button-success mr-2" />
+            <Button onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
         </div>
     )
 }
 
 const RowExpansionGrid = ({ products, NAME, supplierEmail }) => {
     const router = useRouter();
-    const {selectedSupplier} = useSelector(state => state.supplierOrder)
-    console.log(selectedSupplier)
+    const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const onClick = () => {
         router.push('/dashboard/supplierOrder/addMore')
     }
 
     const Footer = () => {
         let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
-        let items = products.length
+        let items = products.map(product => product.QTY1).reduce((a, b) => a + b, 0)
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
                 <div>
@@ -275,7 +273,7 @@ const RowExpansionGrid = ({ products, NAME, supplierEmail }) => {
 const TotalTemplate = ({ TOTAL_PRICE }) => {
     return (
         <div>
-            <span className='font-bold'>{TOTAL_PRICE}</span>
+            <span className='font-bold'>{TOTAL_PRICE.toFixed(2) + "€"}</span>
         </div>
     )
 }

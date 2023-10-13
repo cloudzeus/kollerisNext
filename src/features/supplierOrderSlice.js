@@ -11,10 +11,8 @@ const initialState = {
 	emailProducts: [],
 	totalProductsPrice: 0,
 	mtrLines: [],
-	findItem: null,
 	quantity: 0,
-	isFinalSubmit: false,
-	mtrProducts: [],
+	orderReady: false,
 	brandHasActiveOrder: false,
 }
 
@@ -77,10 +75,11 @@ const supplierOrderSlice = createSlice({
 			})
 			
 		},
-		
-		
 		setBrandHasActiveOrder: (state, {payload}) => {
 			state.brandHasActiveOrder = payload;
+		},
+		setOrderReady: (state, {payload}) => {
+			state.orderReady = payload		
 		}
 
 		
@@ -98,7 +97,8 @@ export const {
 	setTotalProductsPrice,
 	setMtrLines,
 	setQuantity,
-	updateMtrlines
+	updateMtrlines,
+	setOrderReady
 	
 } = supplierOrderSlice.actions;
 

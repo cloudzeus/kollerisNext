@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer';
 import { transporter } from "@/utils/nodemailerConfig";
 import SupplierOrders from "../../../server/models/supplierOrders";
 import PendingOrders from "../../../server/models/pendingOrders";
-
+import CompletedOrders from "../../../server/models/completedOrdes";
 
 export default async function handler(req, res) {
 
@@ -250,51 +250,20 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let find = await PendingOrders.findOne({MTRMARK: MTRMARK})
+            //find products in the database with this MTRMARK
             let dbproducts = find?.products;
-            
-            // let shouldUpdate =   dbproducts.map((dbproduct) => {
-            //     let newQuantity;
-            //     let newTotal
-            //    products.map(product => {
-            //         if(product.MTRL == dbproduct.MTRL) {
-            //             newQuantity = product.QTY1 + dbproduct.QTY1;
-            //             newTotal = parseFloat(product.TOTAL_PRICE) + parseFloat(dbproduct.TOTAL_PRICE);
-                       
-            //         }
-            //     })
-            //     return {
-            //         MTRL: dbproduct.MTRL,
-            //         QTY1: newQuantity,
-            //         TOTAL_PRICE: newTotal,
-            //     }
-            // })
-
-         
-            // for(let item of shouldUpdate) {
-            //     await PendingOrders.updateOne(
-            //         {
-            //             MTRMARK: MTRMARK, 
-            //             'products.MTRL': item.MTRL
-            //         }, {
-            //         $set: {
-            //             'products.$.QTY1': item.QTY1,
-            //             'products.$.TOTAL_PRICE': item.TOTAL_PRICE,
-            //         }
-            //     })
-            // }
-
-
+            //loop through the products that are sent from the client
+            // find those that already exist in the holder and update the quanityt and prices
+            // push those that do not exist
             for(let item of products) {
-                for(let itemDB of dbproducts) {
-                    if(item.MTRL == itemDB.MTRL) {
-                        await updateDB(item, itemDB)
-                    } else {
-                       await  pushToDB(item)
-                    } 
-                    
-                } 
+                let itemDB = dbproducts.find(dbItem => dbItem.MTRL === item.MTRL);
+                if(itemDB) {
+                    await updateDB(item, itemDB);
+                } else {
+                    await pushToDB(item);
+                }
             }
-
+            
             async function updateDB(item, itemDB) {
                 let newQuantity = item.QTY1 + itemDB.QTY1;
                 let newTotal = parseFloat(item.TOTAL_PRICE) + parseFloat(itemDB.TOTAL_PRICE);
@@ -322,7 +291,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true })
       
         } catch (e) {
-
+            return res.status(500).json({ success: false})
         }
        
 
@@ -332,7 +301,10 @@ export default async function handler(req, res) {
     }
     if(action === "sendOrder") {
         const {products, email, supplierName, TRDR, NAME} = req.body;
-
+        console.log('products')
+        console.log(products)
+        console.log(supplierName)
+        console.log(TRDR)
         let body = products.map((product) => {
             return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
             <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
@@ -350,45 +322,84 @@ export default async function handler(req, res) {
                 return { MTRL, QTY1 };
             });
 
-            const PURDOC = await getPurdoc(mtrlArr, TRDR)
+            console.log('mtrlarray')
+            console.log(mtrlArr)
+
+
+            // const PURDOC = await getPurdoc(mtrlArr, TRDR)
         
-            await connectMongo();
-            const generateNextCode = async () => {
-                const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
-                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-                return lastCode + 10;
+            // await connectMongo();
+            // const generateNextCode = async () => {
+            //     const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
+            //     const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+            //     return lastCode + 10;
 
-            };
-            let orderNumber = await generateNextCode();
+            // };
+            // let orderNumber = await generateNextCode();
            
-            let obj = {
-                supplierName: supplierName,
-                supplierEmail: email,
-                status: "pending",
-                products: products,
-                TRDR: TRDR,
-                NAME: NAME,
-                PURDOCNUM: PURDOC,
-                orderNumber: orderNumber,
-            }
-            let insert = await SupplierOrders.create(obj)
-            const mail = {
-                from: 'info@kolleris.com',
-                to: email,
-                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-                subject: ` Παραγγελία NUM: ${orderNumber}`,
-                html: body
-              };
+            // let obj = {
+            //     supplierName: supplierName,
+            //     supplierEmail: email,
+            //     status: "pending",
+            //     products: products,
+            //     TRDR: TRDR,
+            //     NAME: NAME,
+            //     PURDOCNUM: PURDOC,
+            //     orderNumber: orderNumber,
+            // }
+            // let insert = await CompletedOrders.create(obj)
+            // const mail = {
+            //     from: 'info@kolleris.com',
+            //     to: email,
+            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+            //     subject: ` Παραγγελία NUM: ${orderNumber}`,
+            //     html: body
+            //   };
               
-              transporter.sendMail(mail, (err, info) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log('Email sent successfully!');
-                }
-              });
-            return res.status(200).json({ success: true, result: insert })
+            //   transporter.sendMail(mail, (err, info) => {
+            //     if (err) {
+            //       console.log(err);
+            //     } else {
+            //       console.log('Email sent successfully!');
+            //     }
+            //   });
+            // return res.status(200).json({ success: true, result: insert })
 
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+        
+    }
+
+    if(action === "submitOrder") {
+        const {mtrmark} = req.body; 
+        try {
+            let find = await PendingOrders.findOne({MTRMARK: mtrmark});
+
+            const products = find?.products;
+            const email = find?.supplierEmail;
+            const TRDR = find?.TRDR;
+            const mtrlArr = products.map(item => {
+                const MTRL = parseInt(item.MTRL);
+                const QTY1 = parseInt(item.QTY1);
+                return { MTRL, QTY1 };
+            });
+    
+            const PURDOC = await getPurdoc(mtrlArr, TRDR)
+             let obj = {
+                    supplierName: find?.NAME,
+                    supplierEmail: email,
+                    status: "pending",
+                    products: products,
+                    TRDR: TRDR,
+                    PURDOCNUM: PURDOC,
+                    orderNumber:find?.orderNumber,
+                }
+            let create = await CompletedOrders.create(obj);
+
+            // const template = emailTemplate(products);
+            
+            return res.status(200).json({ success: true, result: create, emailSent: template})
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
@@ -443,4 +454,36 @@ const getPurdoc = async (data, TRDR) => {
     });
     let resJson = await response.json();
     return resJson.PURDOCNUM;
+}
+
+
+const emailTemplate = (product, orderNumber, email) => {
+    let body = products.map((product) => {
+        return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
+        <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
+        <p>Τιμή: <strong>${product.PRICE}€</strong></p>
+        <p>Σύνολο Τιμής: <strong>${product.TOTAL_PRICE}€</strong></p>
+        <p>---------------</p>`;
+    }).join('');
+        let emailSent;
+     const mail = {
+                from: 'info@kolleris.com',
+                to: email,
+                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+                subject: ` Παραγγελία NUM: ${orderNumber}`,
+                html: body
+              };
+              
+              transporter.sendMail(mail, (err, info) => {
+                if (err) {
+                  console.log(err);
+                  emailSent = false
+                    
+                } else {
+                    console.log('Email sent successfully!');
+                    emailSent = true
+                }
+              });
+            return emailSent;
+       
 }

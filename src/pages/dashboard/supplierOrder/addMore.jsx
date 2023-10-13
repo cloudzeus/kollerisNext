@@ -33,14 +33,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
   }, [])
 
 
-  useEffect(() => {
-    console.log('mtrLines')
-    console.log(mtrLines)
-  }, [mtrLines])
-  useEffect(() => {
-    console.log('selectedProducts')
-    console.log(selectedProducts)
-  }, [selectedProducts])
+
 
   const fetch = async (action) => {
     setLoading(true)
@@ -98,8 +91,8 @@ const ChooseProducts = ({ hideBackBtn }) => {
       action: 'updateBucket',
       products: mtrLines,
       MTRMARK: selectedMarkes.mtrmark,
-    
     })
+    router.push('/dashboard/product/brands')
   }
   return (
     <AdminLayout>
