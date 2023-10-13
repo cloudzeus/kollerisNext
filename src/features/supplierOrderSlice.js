@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 const initialState = {
     selectedSupplier: null,
 	selectedProducts: [],
@@ -14,6 +15,7 @@ const initialState = {
 	quantity: 0,
 	isFinalSubmit: false,
 	mtrProducts: [],
+	brandHasActiveOrder: false,
 }
 
 
@@ -46,35 +48,41 @@ const supplierOrderSlice = createSlice({
 			state.quantity = payload;
 		},
 		setMtrLines: (state, {payload}) => {
-			
 			function calculateAndRound(a, b) {
 				const result = a * b;
 				return Math.round(result * 100) / 100;
 			}
-			const roundedUp = calculateAndRound(payload.QTY1, parseFloat(payload.PRICE));
-			
-
-			const existingItem = state.mtrLines.find((item) => item.MTRL === payload.MTRL);
-			if(existingItem) {
-				state.mtrLines = state.mtrLines.map((item) => {
-					return item.MTRL === payload.MTRL ? { ...item,  QTY1: payload.QTY1, TOTAL_PRICE: roundedUp} : item
+			state.mtrLines = payload.map(item => {
+				return {
+					MTRL: item.MTRL,
+					NAME: item.NAME,
+					QTY1: 1,
+					PRICE: parseFloat(item.PRICER),
+					TOTAL_PRICE: parseFloat(item.PRICER),
 				}
-				)
-			} else {
-				
-				state.mtrLines.push({
-					...payload,
-					TOTAL_PRICE: roundedUp
-				});
+			});
+
+		},
+		updateMtrlines: (state, {payload}) => {
+			function calculateAndRound(a, b) {
+				const result = a * b;
+				return Math.round(result * 100) / 100;
 			}
+			state.mtrLines = state.mtrLines.map(item => {
+				if(item.MTRL === payload.MTRL) {
+					return { ...item, QTY1: payload.QTY1, TOTAL_PRICE: calculateAndRound( payload.QTY1, parseFloat(item.PRICE)) };
+
+				}
+				return item
+			})
+			
 		},
-		setDeleteMtrlLines: (state, {payload}) => {
-			state.mtrLines = state.mtrLines.filter((item) => item.MTRL !== payload);
-			state.selectedProducts = state.selectedProducts.filter((item) => item.MTRL !== payload);
-		},
-		setIsFinalSubmit: (state, {payload}) => {
-			state.isFinalSubmit = payload;
+		
+		
+		setBrandHasActiveOrder: (state, {payload}) => {
+			state.brandHasActiveOrder = payload;
 		}
+
 		
 	},
 
@@ -90,8 +98,7 @@ export const {
 	setTotalProductsPrice,
 	setMtrLines,
 	setQuantity,
-	setDeleteMtrlLines,
-	setIsFinalSubmit
+	updateMtrlines
 	
 } = supplierOrderSlice.actions;
 

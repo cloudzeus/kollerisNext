@@ -55,6 +55,7 @@ const ChooseSupplier = () => {
   
 
     const onSelectionChange = (e) => {
+       
         dispatch(setSelectedSupplier(e.value))
         setShowTable(false)
     }

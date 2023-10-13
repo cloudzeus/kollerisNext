@@ -9,7 +9,7 @@ import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/brandDialog';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
 
 import { Toast } from 'primereact/toast';
@@ -23,7 +23,7 @@ import MarkesActions from '@/components/markes/MarkesActions';
 import { setSelectedMarkes } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
 export default function TemplateDemo() {
-    const router = useRouter();
+   
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -141,6 +141,13 @@ export default function TemplateDemo() {
 
     const onOrder = async (rowData) => {
         let mtrmark = rowData?.softOne?.MTRMARK
+        let {data} = await axios.post('/api/createOrder', {action: 'findOnePending', mtrmark: mtrmark})
+        // has one active order. There will always be a max of one active order.
+        if(data.result !== 0) {
+            showError('Υπάρχει ήδη ενεργή παραγγελία για αυτή τη μάρκα')
+            return;
+        }
+        
         dispatch(setSelectedMarkes({
             NAME: rowData?.softOne?.NAME,
             mtrmark: mtrmark,
@@ -161,8 +168,8 @@ export default function TemplateDemo() {
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
     }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
     }
 
     const dialogStyle = {

@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     }
 
     if(action === "fetchProducts") {
-        const {skip, limit, searchTerm} = req.body;
+        const {skip, limit, searchTerm, mtrmark} = req.body;
         console.log('FETCH PRODUCTS')
         try {
             await connectMongo();
@@ -86,6 +86,11 @@ export default async function handler(req, res) {
             console.log(regexSearchTerm)
             let totalRecords;
             let pipeline = [
+                {
+                    $match: {
+                        MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
+                    }
+                },
                 {
                     $lookup: {
                         from: "markes",  
@@ -145,63 +150,63 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action == "searchBrand") {
+    // if(action == "searchBrand") {
 
-        const {skip, limit, mtrmark, searchTerm} = req.body;
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+    //     const {skip, limit, mtrmark, searchTerm} = req.body;
+    //     try {
+    //         await connectMongo();
+    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
 
-            let pipeline = [
-                {
-                    $match: {
-                        MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "markes",  // Join with the MARKES collection
-                        localField: "MTRMARK",  // Join using the MTRMARK field from SoftoneProduct
-                        foreignField: "softOne.MTRMARK",  // Join using softOne.MTRMARK from MARKES
-                        as: "matched_mark"  // Output alias for matched documents from MARKES
-                    }
-                },
-                {
-                    $unwind: "$matched_mark"
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        NAME: 1,
-                        PRICER: 1,
-                        MTRL: 1,
-                        brandName: "$matched_mark.softOne.NAME",
-                        "minValue": "$matched_mark.minValueOrder",
-                        "minItems": "$matched_mark.minItemsOrder",
+    //         let pipeline = [
+    //             {
+    //                 $match: {
+    //                     MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
+    //                 }
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: "markes",  // Join with the MARKES collection
+    //                     localField: "MTRMARK",  // Join using the MTRMARK field from SoftoneProduct
+    //                     foreignField: "softOne.MTRMARK",  // Join using softOne.MTRMARK from MARKES
+    //                     as: "matched_mark"  // Output alias for matched documents from MARKES
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: "$matched_mark"
+    //             },
+    //             {
+    //                 $project: {
+    //                     _id: 0,
+    //                     NAME: 1,
+    //                     PRICER: 1,
+    //                     MTRL: 1,
+    //                     brandName: "$matched_mark.softOne.NAME",
+    //                     "minValue": "$matched_mark.minValueOrder",
+    //                     "minItems": "$matched_mark.minItemsOrder",
                         
-                    }
-                },
-                {
-                    $skip: skip
-                },
-                {
-                    $limit:limit
-                }
-            ]
+    //                 }
+    //             },
+    //             {
+    //                 $skip: skip
+    //             },
+    //             {
+    //                 $limit:limit
+    //             }
+    //         ]
 
-            if (searchTerm ) {
-                pipeline.unshift({
-                    $match: { NAME: regexSearchTerm }
-                });
-            }
+    //         if (searchTerm ) {
+    //             pipeline.unshift({
+    //                 $match: { NAME: regexSearchTerm }
+    //             });
+    //         }
 
-            let totalRecords = await SoftoneProduct.countDocuments({MTRMARK: parseInt(mtrmark)})
-            let products = await SoftoneProduct.aggregate(pipeline)
-            return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+    //         let totalRecords = await SoftoneProduct.countDocuments({MTRMARK: parseInt(mtrmark)})
+    //         let products = await SoftoneProduct.aggregate(pipeline)
+    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
+    // }
 
 
     if(action === "createBucket") {
@@ -238,7 +243,93 @@ export default async function handler(req, res) {
         }
         
     }
+    
+    if(action === 'updateBucket') {
+        const {products, MTRMARK} = req.body;
+    
+        try {
+            await connectMongo();
+            let find = await PendingOrders.findOne({MTRMARK: MTRMARK})
+            let dbproducts = find?.products;
+            
+            // let shouldUpdate =   dbproducts.map((dbproduct) => {
+            //     let newQuantity;
+            //     let newTotal
+            //    products.map(product => {
+            //         if(product.MTRL == dbproduct.MTRL) {
+            //             newQuantity = product.QTY1 + dbproduct.QTY1;
+            //             newTotal = parseFloat(product.TOTAL_PRICE) + parseFloat(dbproduct.TOTAL_PRICE);
+                       
+            //         }
+            //     })
+            //     return {
+            //         MTRL: dbproduct.MTRL,
+            //         QTY1: newQuantity,
+            //         TOTAL_PRICE: newTotal,
+            //     }
+            // })
 
+         
+            // for(let item of shouldUpdate) {
+            //     await PendingOrders.updateOne(
+            //         {
+            //             MTRMARK: MTRMARK, 
+            //             'products.MTRL': item.MTRL
+            //         }, {
+            //         $set: {
+            //             'products.$.QTY1': item.QTY1,
+            //             'products.$.TOTAL_PRICE': item.TOTAL_PRICE,
+            //         }
+            //     })
+            // }
+
+
+            for(let item of products) {
+                for(let itemDB of dbproducts) {
+                    if(item.MTRL == itemDB.MTRL) {
+                        await updateDB(item, itemDB)
+                    } else {
+                       await  pushToDB(item)
+                    } 
+                    
+                } 
+            }
+
+            async function updateDB(item, itemDB) {
+                let newQuantity = item.QTY1 + itemDB.QTY1;
+                let newTotal = parseFloat(item.TOTAL_PRICE) + parseFloat(itemDB.TOTAL_PRICE);
+                await PendingOrders.updateOne(
+                    {
+                        MTRMARK: MTRMARK, 
+                        'products.MTRL': item.MTRL
+                    }, {
+                    $set: {
+                        'products.$.QTY1':  newQuantity,
+                        'products.$.TOTAL_PRICE': newTotal,
+                    }
+                })
+            }
+            async function pushToDB(item) {
+                await PendingOrders.updateOne(
+                    {MTRMARK: MTRMARK}, 
+                    {
+                        $push: {
+                        products: item
+                    }})
+            }
+
+
+            return res.status(200).json({ success: true })
+      
+        } catch (e) {
+
+        }
+       
+
+
+     
+
+    }
     if(action === "sendOrder") {
         const {products, email, supplierName, TRDR, NAME} = req.body;
 
@@ -310,17 +401,32 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const orders = await PendingOrders.find({}).sort({createdAt: -1})
-            const minvalues = await Markes.findOne({"softOne.MTRMARK": parseInt(mtrmark)}).select({minValueOrder: 1, minItemsOrder: 1, _id: 0})
+            const minvalues = await Markes.findOne({"softOne.MTRMARK":mtrmark}).select({minValueOrder: 1, minItemsOrder: 1, _id: 0})
             let minValue = minvalues.minValueOrder;
-            let minItems = minvalues.minItemsOrder;
-            console.log(result)
-            return res.status(200).json({ success: true, result: orders, minValues: minValue, minItems: minItems })
+            let minItem = minvalues.minItemsOrder;
+            return res.status(200).json({ success: true, result: orders, minValue: minValue, minItem: minItem })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
     }
+    if(action === "findOnePending") {
+        const {mtrmark} = req.body;
+        console.log(mtrmark)
+        try {
+            await connectMongo();
+            const orders = await PendingOrders.countDocuments({MTRMARK: mtrmark});
+            console.log(orders)
+            return res.status(200).json({ success: true, result: orders })
+
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+
+    }
 
 }
+
+
 
 const getPurdoc = async (data, TRDR) => {
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getPurDoc`;
