@@ -105,6 +105,8 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
+        console.log('row expansion data')
+        console.log(data)
         return (
             < GridExpansionTemplate data={data} />
         );

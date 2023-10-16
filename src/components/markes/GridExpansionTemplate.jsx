@@ -18,6 +18,7 @@ import { ProgressBar } from 'primereact/progressbar';
 
 
 const GridExpansionTemplate = ({ data }) => {
+    
     let mtrmark = data?.softOne.MTRMARK
     let newArray = []
     for (let image of data.photosPromoList) {
@@ -92,9 +93,9 @@ const GridExpansionTemplate = ({ data }) => {
 
 
 const OrdersTable = ({ mtrmark, rowData }) => {
-    console.log('rowData')
-    console.log(rowData)
-
+  
+    console.log('should be 1006')
+    console.log(mtrmark)
     const [data, setData] = useState([])
     const dispatch = useDispatch()
     const [refetch, setRefetch] = useState(false)
@@ -113,6 +114,7 @@ const OrdersTable = ({ mtrmark, rowData }) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', { action: 'findPending', mtrmark: mtrmark })
         setData(data.result)
+        console.log('does 1006 have data?')
         dispatch(setSelectedSupplier({
             NAME: data.result[0]?.NAME,
             supplierEmail: data.result[0]?.supplierEmail,
@@ -203,10 +205,8 @@ const OrdersTable = ({ mtrmark, rowData }) => {
 const ActionsTemplate = ({MTRMARK}) => {
     const { orderReady, mtrLines, selectedSupplier } = useSelector(state => state.supplierOrder)
 
-    console.log(MTRMARK)
     const submitOrder = async () => {
-        console.log(selectedSupplier)
-        console.log('submit')
+        
         let { data } = await axios.post('/api/createOrder', { 
             action: 'submitOrder', 
             products: mtrLines,

@@ -278,10 +278,6 @@ const AddDialog = ({
         videoUrl: ''
     }])
 
-    console.log('IMAGES')
-    console.log(images)
-    console.log('LOGO')
-    console.log(logo)
 
     const cancel = () => {
         hideDialog()
@@ -290,7 +286,6 @@ const AddDialog = ({
 
 
     const handleAdd = async (data) => {
-        console.log('data')
         setDisabled(false)
         let dataImages = []
         for (let i of images) {
