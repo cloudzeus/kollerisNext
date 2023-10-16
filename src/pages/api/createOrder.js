@@ -8,6 +8,7 @@ import SupplierOrders from "../../../server/models/supplierOrders";
 import PendingOrders from "../../../server/models/pendingOrders";
 import CompletedOrders from "../../../server/models/completedOrdes";
 
+
 export default async function handler(req, res) {
 
     const action = req.body.action;
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
         const { status, id } = req.body;
         try {
             await connectMongo();
-            let update = await SupplierOrders.updateOne({ _id: id }, {
+            let update = await CompletedOrders.updateOne({ _id: id }, {
                 $set: {
                     status: status
                 }
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
         let { skip, limit, searchTerm } = req.body;
         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
         const totalRecords = await Supplier.countDocuments({ NAME: regexSearchTerm })
-        let suppliers = await Supplier.find({ NAME: regexSearchTerm }).skip(skip).limit(limit).select({ NAME: 1, EMAIL: 1, _id: 1 })
+        let suppliers = await Supplier.find({ NAME: regexSearchTerm }).skip(skip).limit(limit).select({ NAME: 1, EMAIL: 1, TRDR: 1, _id: 1 })
         return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords })
     }
 
@@ -83,7 +84,6 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-            console.log(regexSearchTerm)
             let totalRecords;
             let pipeline = [
                 {
@@ -150,64 +150,7 @@ export default async function handler(req, res) {
         }
     }
 
-    // if(action == "searchBrand") {
-
-    //     const {skip, limit, mtrmark, searchTerm} = req.body;
-    //     try {
-    //         await connectMongo();
-    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-
-    //         let pipeline = [
-    //             {
-    //                 $match: {
-    //                     MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
-    //                 }
-    //             },
-    //             {
-    //                 $lookup: {
-    //                     from: "markes",  // Join with the MARKES collection
-    //                     localField: "MTRMARK",  // Join using the MTRMARK field from SoftoneProduct
-    //                     foreignField: "softOne.MTRMARK",  // Join using softOne.MTRMARK from MARKES
-    //                     as: "matched_mark"  // Output alias for matched documents from MARKES
-    //                 }
-    //             },
-    //             {
-    //                 $unwind: "$matched_mark"
-    //             },
-    //             {
-    //                 $project: {
-    //                     _id: 0,
-    //                     NAME: 1,
-    //                     PRICER: 1,
-    //                     MTRL: 1,
-    //                     brandName: "$matched_mark.softOne.NAME",
-    //                     "minValue": "$matched_mark.minValueOrder",
-    //                     "minItems": "$matched_mark.minItemsOrder",
-
-    //                 }
-    //             },
-    //             {
-    //                 $skip: skip
-    //             },
-    //             {
-    //                 $limit:limit
-    //             }
-    //         ]
-
-    //         if (searchTerm ) {
-    //             pipeline.unshift({
-    //                 $match: { NAME: regexSearchTerm }
-    //             });
-    //         }
-
-    //         let totalRecords = await SoftoneProduct.countDocuments({MTRMARK: parseInt(mtrmark)})
-    //         let products = await SoftoneProduct.aggregate(pipeline)
-    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-    // }
-
+   
 
     if (action === "createBucket") {
 
@@ -216,7 +159,7 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const generateNextCode = async () => {
-                const lastDoc = await PendingOrders.find().sort({ orderNumber: -1 }).limit(1).exec();
+                const lastDoc = await CompletedOrders.find().sort({ orderNumber: -1 }).limit(1).exec();
                 const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
                 return lastCode + 10;
 
@@ -300,77 +243,7 @@ export default async function handler(req, res) {
 
 
     }
-    if (action === "sendOrder") {
-        const { products, email, supplierName, TRDR, NAME } = req.body;
-        console.log('products')
-        console.log(products)
-        console.log(supplierName)
-        console.log(TRDR)
-        let body = products.map((product) => {
-            return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-            <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
-            <p>Τιμή: <strong>${product.PRICE}€</strong></p>
-            <p>Σύνολο Τιμής: <strong>${product.TOTAL_PRICE}€</strong></p>
-            <p>---------------</p>`;
-        }).join('');
-
-        try {
-
-
-            const mtrlArr = products.map(item => {
-                const MTRL = parseInt(item.MTRL);
-                const QTY1 = parseInt(item.QTY1);
-                return { MTRL, QTY1 };
-            });
-
-            console.log('mtrlarray')
-            console.log(mtrlArr)
-
-
-            // const PURDOC = await getPurdoc(mtrlArr, TRDR)
-
-            // await connectMongo();
-            // const generateNextCode = async () => {
-            //     const lastDoc = await SupplierOrders.find().sort({orderNumber: -1}).limit(1).exec();
-            //     const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-            //     return lastCode + 10;
-
-            // };
-            // let orderNumber = await generateNextCode();
-
-            // let obj = {
-            //     supplierName: supplierName,
-            //     supplierEmail: email,
-            //     status: "pending",
-            //     products: products,
-            //     TRDR: TRDR,
-            //     NAME: NAME,
-            //     PURDOCNUM: PURDOC,
-            //     orderNumber: orderNumber,
-            // }
-            // let insert = await CompletedOrders.create(obj)
-            // const mail = {
-            //     from: 'info@kolleris.com',
-            //     to: email,
-            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-            //     subject: ` Παραγγελία NUM: ${orderNumber}`,
-            //     html: body
-            //   };
-
-            //   transporter.sendMail(mail, (err, info) => {
-            //     if (err) {
-            //       console.log(err);
-            //     } else {
-            //       console.log('Email sent successfully!');
-            //     }
-            //   });
-            // return res.status(200).json({ success: true, result: insert })
-
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-
-    }
+   
 
 
     if (action === 'findPending') {
@@ -401,6 +274,19 @@ export default async function handler(req, res) {
         }
 
     }
+
+    if(action === "findCompleted") {
+        const { mtrmark } = req.body;
+        console.log(mtrmark)
+        try {
+            await connectMongo();
+            let complete = await CompletedOrders.find({MTRMARK: mtrmark}).sort({ createdAt: -1 })
+            console.log(complete)
+            return res.status(200).json({ success: true, result: complete })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
     if (action === "submitOrder") {
         const { mtrmark } = req.body;
         try {
@@ -410,13 +296,18 @@ export default async function handler(req, res) {
             const email = find?.supplierEmail;
             const orderNumber = find?.orderNumber;
             const TRDR = find?.TRDR;
+            console.log(TRDR)
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
                 const QTY1 = parseInt(item.QTY1);
                 return { MTRL, QTY1 };
             });
-
+            console.log( mtrlArr)
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
+            console.log(PURDOC)
+            if(!PURDOC) {
+                return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
+            }
             let obj = {
                 supplierName: find?.NAME,
                 supplierEmail: email,
@@ -425,17 +316,17 @@ export default async function handler(req, res) {
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
                 orderNumber: orderNumber,
+                MTRMARK: parseInt(mtrmark),
             }
             let create = await CompletedOrders.create(obj);
 
             const template = await emailTemplate(products, orderNumber, email);
             console.log(template)
-            if([PURDOC]) {
+            if(PURDOC) {
                let deletePending = await PendingOrders.deleteOne({ MTRMARK: mtrmark });
                console.log(deletePending)
 
             }
-            // if(PURDOC && template) {}
             return res.status(200).json({ success: true, result: create, emailSent: template })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

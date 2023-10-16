@@ -23,7 +23,7 @@ import MarkesActions from '@/components/markes/MarkesActions';
 import { setSelectedMarkes } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
 export default function TemplateDemo() {
-   
+    const router = useRouter()
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -105,10 +105,9 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
-        console.log('row expansion data')
-        console.log(data)
+      
         return (
-            < GridExpansionTemplate data={data} />
+            < GridExpansionTemplate data={data} setSubmitted={setSubmitted}/>
         );
     };
 
@@ -244,13 +243,6 @@ export default function TemplateDemo() {
 
 
 
-const ActionTemplate = () => {
-    return (
-        <div>
-
-        </div>
-    )
-}
 
 
 

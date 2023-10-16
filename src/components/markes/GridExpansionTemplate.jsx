@@ -15,9 +15,9 @@ import StepHeader from '../ImpaOffer/StepHeader';
 import { useRouter } from 'next/router';
 import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
 import { ProgressBar } from 'primereact/progressbar';
+import CompletedOrder from './CompletedOrder';
 
-
-const GridExpansionTemplate = ({ data }) => {
+const GridExpansionTemplate = ({ data, setSubmitted }) => {
     
     let mtrmark = data?.softOne.MTRMARK
     let newArray = []
@@ -30,7 +30,10 @@ const GridExpansionTemplate = ({ data }) => {
             <div className="card p-20">
                 <TabView>
                     <TabPanel header="Παραγγελίες">
-                        <OrdersTable mtrmark={mtrmark} rowData={data} />
+                        <OrdersTable mtrmark={mtrmark} rowData={data} setSubmitted={setSubmitted} />
+                    </TabPanel>
+                    <TabPanel header="Ολοκληρ. Παραγγελίες">
+                        <CompletedOrder mtrmark={mtrmark} rowData={data} />
                     </TabPanel>
                     <TabPanel header="Φωτογραφίες">
                         <Gallery images={newArray} />
@@ -92,10 +95,9 @@ const GridExpansionTemplate = ({ data }) => {
 
 
 
-const OrdersTable = ({ mtrmark, rowData }) => {
+const OrdersTable = ({ mtrmark, rowData}) => {
   
-    console.log('should be 1006')
-    console.log(mtrmark)
+   
     const [data, setData] = useState([])
     const dispatch = useDispatch()
     const [refetch, setRefetch] = useState(false)
@@ -114,7 +116,6 @@ const OrdersTable = ({ mtrmark, rowData }) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', { action: 'findPending', mtrmark: mtrmark })
         setData(data.result)
-        console.log('does 1006 have data?')
         dispatch(setSelectedSupplier({
             NAME: data.result[0]?.NAME,
             supplierEmail: data.result[0]?.supplierEmail,
@@ -157,7 +158,7 @@ const OrdersTable = ({ mtrmark, rowData }) => {
 
         return (
             <div className="card p-2">
-                <span className='text-xs font-bold'>{`${price} / ${minValues.minValue} €`}</span>
+                <span className='text-xs font-bold'>{`${price.toFixed(2)} / ${minValues.minValue} €`}</span>
        
             </div>
 
@@ -170,14 +171,17 @@ const OrdersTable = ({ mtrmark, rowData }) => {
             dispatch(setOrderReady(true))
         }
         let value = (price / minValues.minValue) * 100 > 100 ? 100 : (price / minValues.minValue) * 100
-
+        let toFixed = value.toFixed(2)
 
         return (
             <div className="flex align-items-center justify-content-center">
-                <ProgressBar value={value} style={{fontSize: '9px' , height: '20px', borderRadius: '30px', width: '100px'}}  ></ProgressBar>
+                <ProgressBar value={toFixed} style={{fontSize: '9px' , height: '20px', borderRadius: '30px', width: '100px'}}  ></ProgressBar>
             </div>
 
         )
+    }
+    const Actions = ({MTRMARK}) => {
+        return <ActionsTemplate MTRMARK={MTRMARK} setRefetch={setRefetch} />
     }
     return (
         <div className='mt-4 mb-5'>
@@ -196,14 +200,14 @@ const OrdersTable = ({ mtrmark, rowData }) => {
                 <Column header="Όνομα προμηθευτή" field="NAME"></Column>
                 <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }} body={CompletionTemplate}></Column>
                 <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} body={PriceTemplate}></Column>
-                <Column header="Aποστολή" body={ActionsTemplate} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
+                <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
         </div>
     )
 }
 
-const ActionsTemplate = ({MTRMARK}) => {
-    const { orderReady, mtrLines, selectedSupplier } = useSelector(state => state.supplierOrder)
+const ActionsTemplate = ({MTRMARK, setRefetch}) => {
+    const { orderReady, mtrLines } = useSelector(state => state.supplierOrder)
 
     const submitOrder = async () => {
         
@@ -212,6 +216,8 @@ const ActionsTemplate = ({MTRMARK}) => {
             products: mtrLines,
             mtrmark: MTRMARK,
         })
+        setRefetch(prev => !prev)
+      
     }
     return (
         <div className=''>
@@ -243,7 +249,7 @@ const RowExpansionGrid = ({ products, NAME, supplierEmail }) => {
                     </div>
                     <div className='mr-3'>
                         <span className='text-500 mr-1'>{`TOTAL PRICE:`}</span>
-                        <span>{` ${price} €`}</span>
+                        <span>{` ${price.toFixed(2)} €`}</span>
                     </div>
                 </div>
 

@@ -13,7 +13,7 @@ import { setTotalProductsPrice, setMtrLines, updateMtrlines } from '@/features/s
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { set } from 'mongoose';
 
-const ChooseProducts = ({ hideBackBtn }) => {
+const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { selectedProducts, selectedMarkes, searchTerm, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
@@ -27,6 +27,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
   });
 
   useEffect(() => {
+      
       if(!selectedMarkes) {
         router.push('/dashboard/product/brands')
       }
@@ -36,6 +37,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
 
 
   const fetch = async (action) => {
+    dispatch(setSelectedProducts([]))
     setLoading(true)
     let { data } = await axios.post('/api/createOrder', {
       action: 'fetchProducts',
@@ -53,7 +55,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
   }
 
   useEffect(() => {
-    setSelectedProducts([])
+   
     fetch();
   }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm])
 
@@ -92,6 +94,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
       products: mtrLines,
       MTRMARK: selectedMarkes.mtrmark,
     })
+    dispatch(setSelectedProducts([]))
     router.push('/dashboard/product/brands')
   }
   return (
@@ -122,9 +125,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
       </DataTable>
       <div className='mt-3'>
-        {!hideBackBtn ? (
-          <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        ) : null}
+        <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
         <Button className='ml-2' label="Ολοκλήρωση" onClick={handleFinalSubmit} />
 
       </div>
