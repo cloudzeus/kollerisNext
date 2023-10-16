@@ -11,7 +11,6 @@ import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
 import { setTotalProductsPrice, setMtrLines, updateMtrlines } from '@/features/supplierOrderSlice';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { set } from 'mongoose';
 
 const ChooseProducts = ({ hideBackBtn }) => {
   const dispatch = useDispatch()
