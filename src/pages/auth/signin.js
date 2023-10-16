@@ -54,7 +54,7 @@ const LoginForm = () => {
         console.log('next auth credentials response: ' + JSON.stringify(res))
         if (res.ok == true && res.status == 200 && res.error == null) {
             setLoading(false);
-            router.push('/dashboard')
+            router.push('/dashboard/product')
             dispatch(fetchUser({ username: data.email, password: data.password }))
             toast.success('Επιτυχής σύνδεση');
         } else {
