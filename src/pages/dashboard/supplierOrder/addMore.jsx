@@ -11,56 +11,65 @@ import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
 import { setTotalProductsPrice, setMtrLines, updateMtrlines } from '@/features/supplierOrderSlice';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { set } from 'mongoose';
+import { CategoriesRowFilterTemplate, GroupRowFilterTemplate, SubGroupsRowFilterTemplate } from '@/components/grid/Product/GridConfig';
+import { setLazyState } from '@/features/productsSlice';
 
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
+  const { category, group, subgroup, lazyState } = useSelector(state => state.products)
   const { selectedProducts, selectedMarkes, searchTerm, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const [totalRecords, setTotalRecords] = useState(0);
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [lazyState, setlazyState] = useState({
-    first: 0,
-    rows: 10,
-    page: 1,
-  });
 
-  useEffect(() => {
-      
-      if(!selectedMarkes) {
-        router.push('/dashboard/product/brands')
-      }
-  }, [])
+
+  // useEffect(() => {
+
+  //   if (!selectedMarkes) {
+  //     router.push('/dashboard/product/brands')
+  //   }
+  // }, [])
 
 
 
 
-  const fetch = async (action) => {
-    dispatch(setSelectedProducts([]))
+  const fetch = async () => {
     setLoading(true)
-    let { data } = await axios.post('/api/createOrder', {
-      action: 'fetchProducts',
-      skip: lazyState.first,
-      limit: lazyState.rows,
-      searchTerm: searchTerm,
-      mtrmark: selectedMarkes?.mtrmark,
-
-    })
-
-    setData(data.result)
-    setTotalRecords(data.totalRecords)
-    setLoading(false)
+    try {
+      let res = await axios.post('/api/product/apiProductFilters', {
+        action: 'filterCategories2',
+        searchTerm: searchTerm,
+        skip: lazyState.first,
+        limit: lazyState.rows,
+        categoryID: category?.softOne.MTRCATEGORY,
+        groupID: group?.softOne.MTRGROUP,
+        subgroupID: subgroup?.softOne.cccSubgroup2,
+        mtrmark: selectedMarkes?.mtrmark,
+      },
+      )
+      console.log(data.result)
+      setLoading(false)
+      setData(res.data.result);
+      setTotalRecords(prev => {
+        if (prev === res.data.totalRecords) {
+          return prev;
+        } else {
+          return res.data.totalRecords
+        }
+      })
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+    }
 
   }
-
   useEffect(() => {
-   
     fetch();
-  }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm])
+  }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm, category, group, subgroup])
 
   useEffect(() => {
-    setlazyState(prev => ({ ...prev, first: 0 }))
+    dispatch(setLazyState({ ...lazyState, first: 0 }))
 
   }, [selectedMarkes])
 
@@ -70,7 +79,7 @@ const ChooseProducts = () => {
   }
 
   const onPage = (event) => {
-    setlazyState(event);
+    dispatch(setLazyState({ ...lazyState, first: event.first, rows: event.rows }))
   };
 
 
@@ -95,7 +104,7 @@ const ChooseProducts = () => {
       MTRMARK: selectedMarkes.mtrmark,
     })
     dispatch(setSelectedProducts([]))
-    router.push('/dashboard/product/brands')
+    router.push('/dashboard/supplierOrder/summary')
   }
   return (
     <AdminLayout>
@@ -121,12 +130,14 @@ const ChooseProducts = () => {
         <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
         <Column field="brandName" header="Όνομα Μάρκας"></Column>
         <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Προϊόν"></Column>
-        <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
-        <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
+        <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
+        <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
+        {/* <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column> */}
+
       </DataTable>
       <div className='mt-3'>
         <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        <Button className='ml-2' label="Ολοκλήρωση" onClick={handleFinalSubmit} />
+        <Button className='ml-2' icon="pi pi-arrow-right" severity='success' onClick={handleFinalSubmit} />
 
       </div>
 
@@ -136,76 +147,6 @@ const ChooseProducts = () => {
 
 
 
-const CalculateTemplate = ({ PRICER, MTRL}) => {
-  const [quantity, setQuantity] = useState(1)
-  const dispatch = useDispatch();
-  const {selectedProducts, mtrLines} = useSelector(state => state.supplierOrder)
-  
-  
-  
-  const increaseQuantity = () => {
-    setQuantity(prev => prev + 1)
-  }
-
-
-  
-
-  const decreaseQuantity = () => {
-    if (quantity === 1) return
-    setQuantity(prev => prev - 1)
-
-  }
-
-  useEffect(() => {
-      if(quantity == 1) return;
-      if(mtrLines === 0) return;
-      let find = mtrLines.find(el => el.MTRL === MTRL)
-      if(find) {
-        dispatch(updateMtrlines({
-          MTRL: find?.MTRL,
-          QTY1: quantity,
-        }))
-      }
-     
-  }, [quantity])
-
-  
-  
-  let total = quantity * parseFloat(PRICER)
-  return (
-    <div className='flex p-2'>
-
-      <div className='font-xs flex align-items-center border-1 p-2 border-300 border-round'>
-        <div
-          onClick={ decreaseQuantity}
-          className='mr-2 border-1 border-300  flex align-items-center justify-content-center border-round pointer-cursor'
-          style={{ width: '25px', height: '25px' }}>
-          <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
-        </div>
-        <div className='w-2rem flex align-items-center justify-content-center'>
-          <p className='text-lg'>{quantity}</p>
-        </div>
-        <div
-          onClick={ increaseQuantity}
-          className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
-          <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
-        </div>
-      </div>
-      <div className='flex align-items-center'>
-        <span className='font-bold ml-3'>{total.toFixed(2) + "€"}</span>
-      </div>
-    </div>
-  )
-}
-
-
-const PriceTemplate = ({ PRICER }) => {
-  return (
-    <div className='flex'>
-      <span className='font-bold'>{PRICER + "€"}</span>
-    </div>
-  )
-}
 
 
 export default ChooseProducts;

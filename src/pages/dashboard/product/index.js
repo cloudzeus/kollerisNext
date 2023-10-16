@@ -120,13 +120,18 @@ function Product() {
     let user = session?.user?.user;
     const{selectedProducts, setSelectedProducts, submitted, setSubmitted} = useContext( ProductQuantityContext)
     const [categroriesFilter, setCategoriesFilter] = useState(null);
+    // const [filters, setFilters] = useState({
+    //     categories: null,
+    //     groups: null,
+    //     subgroups: null,
+    //     markes: null
+    // })
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
     const [groupFilter, setGroupFilter] = useState(null);
     const [softoneStatusFilter, setSoftoneStatusFilter] = useState(null);
     const [category, setCategory] = useState(null)
     const [group, setGroup] = useState(null)
     const [subgroup, setSubGroup] = useState(null)
-    const [softOneStatus, setSoftoneStatus]  = useState(null)
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false)
@@ -253,7 +258,6 @@ function Product() {
     const addProduct = async (product) => {
         setSubmitted(false);
         setAddDialog(true)
-        // dispatch(setGridRowData(product))
     }
     const AddToCartTemplate = (rowData) => {
       
@@ -296,6 +300,12 @@ function Product() {
     }
 
 
+    const onFilterMarkChange = (e) => {
+        setMark(e.value)
+        setlazyState({ ...lazyState, first: 0 })
+    }
+
+
 
     const onFilterCategoryChange = (e) => {
         setCategory(e.value)
@@ -304,12 +314,7 @@ function Product() {
         setlazyState({ ...lazyState, first: 0 })
     }
 
-    const onFilterGroupChange = (e) => {
-        setGroup(e.value)
-        setSubGroup(null)
-        setlazyState({ ...lazyState, first: 0 })
-
-    }
+   
     const onFilterSubGroupChange = (e) => {
         setSubGroup(e.value)
         setlazyState({ ...lazyState, first: 0 })
@@ -352,6 +357,12 @@ function Product() {
     
     
     const GroupRowFilterTemplate = (options) => {
+        const onFilterGroupChange = (e) => {
+            setGroup(e.value)
+            setSubGroup(null)
+            setlazyState({ ...lazyState, first: 0 })
+        }
+
         useEffect(() => {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
@@ -384,6 +395,34 @@ function Product() {
     };
 
 
+    const MtrmarkFilterTemplate = (options) => {
+        useEffect(() => {
+            const handleCategories = async () => {
+                let { data } = await axios.post('/api/product/apiProductFilters', {
+                    action: 'findBrands',
+                })
+            }
+
+            handleCategories()
+        }, [category, group])
+
+        return (
+            <div className="flex align-items-center">
+                <Dropdown
+                    size="small"
+                    disabled={!group ? true : false}
+                    value={subgroup}
+                    options={subGroupsFilter}
+                    onChange={onFilterSubGroupChange}
+                    optionLabel="subGroupName"
+                    placeholder="Φίλτρο Υποομάδας"
+                    className="p-column-filter grid-filter"
+                    style={{ minWidth: '14rem', fontSize: '12px' }}
+                />
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSubGroup(null)} ></i>
+            </div>
+        )
+    };
     const SubGroupsRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
@@ -479,8 +518,6 @@ function Product() {
                 filterDisplay="row"
                 loading={loading}
                 removableSort
-                filters={filters}
-                onFilter={(e) => setFilters(e.filters)}
                 editMode="row"
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
@@ -489,7 +526,7 @@ function Product() {
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                <Column field="NAME" style={{ width: '400px' }} header="Όνομα" ></Column>
+                <Column field="NAME" style={{ minWidth: '400px' }} header="Όνομα" ></Column>
                 {visibleColumns.some(column => column.id === 5) && <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter  filterElement={CategoriesRowFilterTemplate}    showFilterMenu={false}></Column>}
                 {visibleColumns.some(column => column.id === 6) && <Column field="GROUP_NAME" showFilterMenu={false} filter  filterElement={GroupRowFilterTemplate}  header="Ομάδα" ></Column>}
                 {visibleColumns.some(column => column.id === 7) && <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>}
