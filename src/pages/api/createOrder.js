@@ -378,6 +378,7 @@ export default async function handler(req, res) {
 
             const products = find?.products;
             const email = find?.supplierEmail;
+            const orderNumber = find?.orderNumber;
             const TRDR = find?.TRDR;
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
@@ -393,11 +394,11 @@ export default async function handler(req, res) {
                     products: products,
                     TRDR: TRDR,
                     PURDOCNUM: PURDOC,
-                    orderNumber:find?.orderNumber,
+                    orderNumber:orderNumber,
                 }
             let create = await CompletedOrders.create(obj);
-
-            // const template = emailTemplate(products);
+            
+            const template = emailTemplate(products, orderNumber, email);
             
             return res.status(200).json({ success: true, result: create, emailSent: template})
         } catch (e) {
@@ -457,7 +458,7 @@ const getPurdoc = async (data, TRDR) => {
 }
 
 
-const emailTemplate = (product, orderNumber, email) => {
+const emailTemplate = (products, orderNumber, email) => {
     let body = products.map((product) => {
         return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
         <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
