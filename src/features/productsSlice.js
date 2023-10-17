@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
+    loading: false,
     filters: {
         category: null,
         group: null,
@@ -53,8 +54,10 @@ const productsSlice = createSlice({
         },
         setLazyState: (state, {payload}) => {
             state.lazyState = payload;
+        },
+        setFiltersLoading: (state, {payload}) => {
+            state.loading = payload
         }
-      
 		
 	},
 
@@ -67,6 +70,7 @@ export const {
     setGroup,
     setSubgroup,
     setLazyState,
+    setFiltersLoading,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -34,6 +34,7 @@ const softoneProduct = new mongoose.Schema({
         type: Number,
         default: 0
     },
+  
     VAT: String,
     COUNTRY: String,
     INTRASTAT: String,
@@ -71,7 +72,8 @@ const softoneProduct = new mongoose.Schema({
         fr: String,
         es: String,
         gr: String,
-    }
+    },
+    MTRMARK_NAME: String,
 },
 
 {

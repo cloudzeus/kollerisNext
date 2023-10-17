@@ -17,11 +17,10 @@ import { setLazyState } from '@/features/productsSlice';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { category, group, subgroup, lazyState } = useSelector(state => state.products)
+  const { category, group, subgroup, lazyState, loading } = useSelector(state => state.products)
   const { selectedProducts, selectedMarkes, searchTerm, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const [totalRecords, setTotalRecords] = useState(0);
   const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
 
 
   // useEffect(() => {
@@ -35,7 +34,6 @@ const ChooseProducts = () => {
 
 
   const fetch = async () => {
-    setLoading(true)
     try {
       let res = await axios.post('/api/product/apiProductFilters', {
         action: 'filterCategories2',
@@ -49,7 +47,6 @@ const ChooseProducts = () => {
       },
       )
       console.log(data.result)
-      setLoading(false)
       setData(res.data.result);
       setTotalRecords(prev => {
         if (prev === res.data.totalRecords) {
@@ -60,7 +57,6 @@ const ChooseProducts = () => {
       })
     } catch (e) {
       console.log(e)
-      setLoading(false)
     }
 
   }
@@ -112,6 +108,7 @@ const ChooseProducts = () => {
       <DataTable
         value={data}
         paginator
+        loading={loading}
         rows={lazyState.rows}
         rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
         first={lazyState.first}
@@ -132,7 +129,7 @@ const ChooseProducts = () => {
         <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Προϊόν"></Column>
         <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
         <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
-        {/* <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column> */}
+        <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false}   filterElement={SubGroupsRowFilterTemplate}></Column>
 
       </DataTable>
       <div className='mt-3'>

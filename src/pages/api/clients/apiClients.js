@@ -26,7 +26,6 @@ export default async function handler(req, res) {
     
     }
 
-
     //Used on the clients page, and i think on the offers page.
     if(action === 'search') {
         let {searchTerm, skip, limit} = req.body;
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
             let totalRecords;
             if(searchTerm === '') {
                 totalRecords = await Clients.countDocuments({})
-               
                 clients = await Clients.find({})
                 .skip(skip)
                 .limit(limit);
@@ -79,5 +77,68 @@ export default async function handler(req, res) {
         let responseJSON = await response.json();
         console.log(responseJSON)
         return res.status(200).json({ success: true, result: responseJSON })
+    }
+
+    //USE IN THE GLOBAL CUSTOMERS TABLE WHERE YOU SELECT A CUSTOMER:
+    if(action === "fetchAll") {
+        console.log('fetch all')
+        const {skip, limit} = req.body;
+        try {
+            await connectMongo();
+            const totalRecords = await Clients.countDocuments({});
+            const clients = await Clients.find({}).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+    if(action === "searchName") {
+        const { skip, limit, searchTerm, key} = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp(searchTerm, 'i');
+            const totalRecords = await Clients.countDocuments({ ["NAME"]: regexSearchTerm });
+            const clients = await Clients.find({ "NAME": regexSearchTerm }).skip(skip).limit(limit);
+            console.log(clients)
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+    if(action === "searchAFM") {
+        const { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp(searchTerm, 'i');
+            const totalRecords = await Clients.countDocuments({ AFM: regexSearchTerm });
+            const clients = await Clients.find({ AFM: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+    if(action === "searchAddress") {
+        const { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp(searchTerm, 'i');
+            const totalRecords = await Clients.countDocuments({ ADDRESS: regexSearchTerm });
+            const clients = await Clients.find({ ADDRESS: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+    if(action === "searchPhone") {
+        const { skip, limit, searchTerm } = req.body;
+        try {
+            await connectMongo();
+            let regexSearchTerm = new RegExp(searchTerm, 'i');
+            const totalRecords = await Clients.countDocuments({ PHONE01: regexSearchTerm });
+            const clients = await Clients.find({ PHONE01: regexSearchTerm }).skip(skip).limit(limit);
+            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
     }
 }

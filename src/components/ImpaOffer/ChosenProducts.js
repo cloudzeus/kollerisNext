@@ -7,14 +7,13 @@ import { deleteSelectedProduct, setMtrLines } from '@/features/impaofferSlice';
 const ChosenProducts = () => {
     const { selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
     const [length, setLength] = useState(selectedProducts.length)
-    console.log(mtrLines)
 
     useEffect(() => {
         setLength(selectedProducts.length)
     }, [selectedProducts])
 
 
-
+    console.log(selectedProducts)
     return (
         <DataTable
             paginator

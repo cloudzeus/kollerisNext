@@ -5,35 +5,36 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import { setCategory, setGroup, setSubgroup, setFilters, setLazyState } from "@/features/productsSlice";
+import { setCategory, setGroup, setSubgroup, setFilters, setLazyState, setFiltersLoading } from "@/features/productsSlice";
 export const CategoriesRowFilterTemplate = (options) => {
-    const {filters, category, group, subgroup, lazyState} = useSelector(store => store.products)
+    const {filters, category, group, subgroup, lazyState, loading} = useSelector(store => store.products)
   
   
 
     useEffect(() => {
-        console.log('category')
-        console.log(category)
+     
     }, [category])
     const dispatch = useDispatch()
     const onFilterCategoryChange = (e) => {
-        console.log(e.value)
         dispatch(setCategory(e.value))
         dispatch(setGroup(null))
         dispatch(setSubgroup(null))
         // setlazyState({ ...lazyState, first: 0 })
     }
     useEffect(() => {
+        dispatch(setFiltersLoading(true))
         const handleCategories = async () => {
+            
             let { data } = await axios.post('/api/product/apiProductFilters', {
                 action: 'findCategories',
              
             })
-   
             dispatch(setFilters({action: 'category', value: data.result}))
         }
-
-        handleCategories()
+        dispatch(setFiltersLoading(false))
+        if(category?.softOne.MTRCATEGORY) {
+            handleCategories()
+        }
     }, [])
 
     const onDelete = () => {
@@ -72,12 +73,14 @@ export const GroupRowFilterTemplate = (options) => {
     
     useEffect(() => {
         const handleCategories = async () => {
+            dispatch(setFiltersLoading(true))
+
             let { data } = await axios.post('/api/product/apiProductFilters', {
                 action: 'findGroups',
-                categoryID: category
+                categoryID: category?.softOne.MTRCATEGORY
             })
-          
-            // dispatch(setFilters({...filters, group: data.result}))
+            dispatch(setFilters({action: 'group', value: data.result}))
+            dispatch(setFiltersLoading(false))
         }
         handleCategories()
     }, [category])
@@ -112,12 +115,16 @@ export const SubGroupsRowFilterTemplate = (options) => {
     }
     
     useEffect(() => {
+        dispatch(setFiltersLoading(true))
         const handleCategories = async () => {
             let { data } = await axios.post('/api/product/apiProductFilters', {
                 action: 'findSubGroups',
-                groupID: group
+                groupID: group?.softOne.MTRGROUP
             })
-            // dispatch(setFilters({...filters, subgroup: data.result}))
+            dispatch(setFilters({action: 'subgroup', value: data.result}))
+            dispatch(setLazyState({ ...lazyState, first: 0 }))
+            dispatch(setFiltersLoading(false))
+
         }
 
         handleCategories()

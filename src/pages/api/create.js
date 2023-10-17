@@ -387,5 +387,36 @@ export default async function handler(req, res) {
         }
 
     }
+
+
+    if(action === "productBrands") {
+        try {
+            await connectMongo();
+            let group = await SoftoneProduct.find({}, {MTRMARK: 1, _id: 1, NAME: 1})
+     
+            for(let item of group) {
+                // console.log(item)
+                let groupName = await Markes.findOne(
+                    { "softOne.MTRMARK": item.MTRMARK },
+                    { "softOne.NAME": 1, _id: 0 }
+                  );
+            
+                let updateField = groupName?.softOne.NAME
+                console.log(item)
+                if(updateField)  {
+                    let updated = await SoftoneProduct.findOneAndUpdate(
+                        { _id: item._id },
+                        { $set: { MTRMARK_NAME: groupName.softOne.NAME } }
+                      );
+                      console.log('updated')
+                      console.log(updated);
+                }
+            }
+            return res.status(200).json({ success: true });
+
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
 }
 

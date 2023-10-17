@@ -97,13 +97,12 @@ export default async function handler(req, res) {
 
         const { groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter, mtrmark } = req.body;
         try {
-            console.log(categoryID, mtrmark)
-            console.log(groupID)
+            console.log(categoryID, groupID, subgroupID)
             await connectMongo();
             // Execute the aggregation pipeline
-          
+            let totalRecords;
             let pipeline = [
-                
+
                 {
                     $lookup: {
                         from: "markes",
@@ -138,29 +137,35 @@ export default async function handler(req, res) {
                 }
             ]
 
-            if(categoryID){
+            if (categoryID) {
+                totalRecords = await SoftoneProduct.countDocuments({MTRCATEGORY: categoryID})
                 pipeline.unshift({
                     $match: {
                         MTRCATEGORY: categoryID
                     }
-                })   
+                })
             }
-            if(groupID) {
+            if (groupID) {
+                totalRecords = await SoftoneProduct.countDocuments({ MTRGROUP: groupID})
                 pipeline.unshift({
                     $match: {
                         MTRGROUP: groupID
                     }
-                })   
+                })
             }
-            if(subgroupID) {
+            if (subgroupID) {
+                totalRecords = await SoftoneProduct.countDocuments({ CCCSUBGOUP2: subgroupID})
+
                 pipeline.unshift({
                     $match: {
                         CCCSUBGOUP2: subgroupID
                     }
-                })   
+                })
             }
-                const find = await SoftoneProduct.aggregate(pipeline);
-                return res.status(200).json({ success: true, result: find });
+
+            totalRecords = await SoftoneProduct.countDocuments()
+            const find = await SoftoneProduct.aggregate(pipeline);
+            return res.status(200).json({ success: true, result: find, totalRecords: totalRecords });
         } catch (e) {
 
         }
@@ -171,7 +176,7 @@ export default async function handler(req, res) {
 
 
     if (action === 'findCategories') {
-        
+
         try {
             await connectMongo();
             let response = await MtrCategory.find({}, { "softOne.MTRCATEGORY": 1, categoryName: 1, _id: 0 })
@@ -182,6 +187,7 @@ export default async function handler(req, res) {
     }
     if (action === 'findGroups') {
         let { categoryID } = req.body;
+        if(!categoryID) return res.status(200).json({ success: false, result: null})
         console.log('categoryID')
         console.log(categoryID)
         await connectMongo();
@@ -195,7 +201,7 @@ export default async function handler(req, res) {
     }
     if (action === 'findSubGroups') {
         let { groupID } = req.body;
-       
+
         try {
             await connectMongo();
             console.log('id')
