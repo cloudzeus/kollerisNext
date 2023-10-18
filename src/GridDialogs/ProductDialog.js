@@ -36,8 +36,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             fr: '',
         }
     )
-        console.log('select state')
-        console.log(selectState)
+       
    
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
@@ -345,8 +344,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }
 
     const handleAdd = async (data) => {
-        console.log('add')
-        console.log(data)
+        
         let obj = {
             MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
             CATEGORY_NAME: selectState.category?.categoryName,
@@ -570,8 +568,7 @@ const Categories = ({ state, setState }) => {
 
 const Groups = ({ state, setState, id }) => {
     const [groupOptions, setGroupOptions] = useState([])
-    console.log('group state')
-    console.log(state)
+
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
             action: 'findGroups',
@@ -598,8 +595,7 @@ const SubGroups = ({ state, setState, id }) => {
             action: 'findSubGroups',
             groupID: id
         })
-        console.log('subgroup STATE')
-        console.log(state)
+       
         setsubGroupOptions(data.result)
     }
     useEffect(() => {

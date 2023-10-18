@@ -23,12 +23,14 @@ import {
 
 const ProductSearchGrid = () => {
     const dispatch = useDispatch()
-    const router = useRouter()
     const { filters, category, group, subgroup, lazyState, loading, searchTerm, sort, selectedProducts } = useSelector(store => store.products)
     const { selectedMarkes, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
     const [totalRecords, setTotalRecords] = useState(0);
     const [data, setData] = useState([])
 
+    useEffect(() => {
+        dispatch(setSelectedProducts([]))
+    }, [])
     const fetch = async () => {
         if (!searchTerm) {
             dispatch(setLoading(true))
@@ -90,20 +92,20 @@ const ProductSearchGrid = () => {
         const onSort = () => {
 
             dispatch(setSort())
-            
+
         }
         return (
-                <div className="flex align-items-center justify-content-start w-20rem ">
-                    <div className="p-input-icon-left w-full">
-                        <i className="pi pi-search" />
-                        <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
-                    </div>
-                    <div className='ml-3'>
-                        {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>): null}
-                        {sort === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>): null}
-                        {sort === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>): null}
-                    </div>
+            <div className="flex align-items-center justify-content-start w-20rem ">
+                <div className="p-input-icon-left w-full">
+                    <i className="pi pi-search" />
+                    <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
                 </div>
+                <div className='ml-3'>
+                    {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+                    {sort === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+                    {sort === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+                </div>
+            </div>
         )
     }
 
@@ -265,7 +267,7 @@ const ProductSearchGrid = () => {
         >
             <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
             <Column field="MTRMARK_NAME" header="Όνομα Μάρκας" showFilterMenu={false} filterElement={MarkesFilterTemplate}></Column>
-            <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Προϊόν"></Column>
+            <Column field="NAME" filter showFilterMenu={false} filterElement={Search} body={NameTemplate} header="Προϊόν"></Column>
             <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
             <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
             <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
@@ -276,7 +278,19 @@ const ProductSearchGrid = () => {
 }
 
 
-
+const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
+   
+    console.log(NAME, SOFTONESTATUS)
+    return (
+        <div>
+            <p className='font-bold'>{NAME}</p>
+            <div className='flex align-items-center'>
+                <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                <p>softone</p>
+            </div>
+        </div>
+    )
+}
 
 
 export default ProductSearchGrid;

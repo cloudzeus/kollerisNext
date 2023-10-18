@@ -1,15 +1,16 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import StepHeader from '@/components/StepHeader'
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid'
-import SelectedProducts from '@/components/grid/SelectedProducts'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
 import { setHolder } from '@/features/impaofferSlice'
 import { useRouter } from 'next/router'
+import SelectedProducts from '@/components/grid/SelectedProducts'
+import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton'
 function generateRandomId(length = 8) {
     return Math.random().toString(36).substr(2, length);
 }
@@ -39,6 +40,7 @@ const PlainHolder = () => {
 const Continue = ({value}) => {
     const { selectedProducts, mtrLines } = useSelector(state => state.products)
     const router = useRouter();
+   
     const dispatch = useDispatch();
     const onHolderCompletions = async () => {
 
@@ -63,8 +65,9 @@ const Continue = ({value}) => {
 
             </div>
             <div className='mt-4 mb-5'>
-                {selectedProducts.length !== 0 ? (<Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
-                ) : null}
+                <SoftoneStatusButton  onClick={onHolderCompletions} products={selectedProducts}/>
+                {/* {selectedProducts.length !== 0 ? (<Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
+                ) : null} */}
             </div>
         </>
     )

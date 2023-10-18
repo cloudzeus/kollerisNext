@@ -6,9 +6,13 @@ import { useEffect } from 'react'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { ProductQuantityContext } from '@/_context/ProductGridContext'
+import CustomersGrid from '../clientGrid'
+import { useDispatch, useSelector } from 'react-redux'
+import { setSelectedClient } from '@/features/impaofferSlice'
 const Offer = () => {
     const [loading, setLoading] = useState(false)
-    const [data, setData] = useState([])
+    const dispatch = useDispatch();
+    const { selectedClient } = useSelector(state => state.impaoffer)
     const [filteredData, setFilteredData] = useState([])
     const [totalRecords, setTotalRecords] = useState(0)
     const [searchTerm, setSearchTerm] = useState('')
@@ -18,15 +22,11 @@ const Offer = () => {
       
 
     });
-    const [selectedClient, setSelectedClient] = useState(null)
-
-
     const [rowClick, setRowClick] = useState(true);
 
- 
 
     const onSelection = (e) => {
-        setSelectedClient(e.value)
+        dispatch(setSelectedClient(e.value))
     }
 
     const onPage = (event) => {
@@ -79,24 +79,7 @@ const Offer = () => {
 
             </div>
             {!selectedClient ? (
-                <DataTable
-                    value={filteredData}
-                    rows={lazyState.rows}
-                    paginator
-                    lazy
-                    rowsPerPageOptions={[4, 8, 20, 50, 100, 200]}
-                    selectionMode={rowClick ? null : 'radiobutton'}
-                    selection={selectedClient}
-                    onSelectionChange={onSelection}
-                    first={lazyState.first} totalRecords={totalRecords}
-                    loading={loading}
-                    onPage={onPage}
-                    header={header}
-                >
-                    <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="TRDR" header="TRDR"></Column>
-                    <Column field="NAME" header="Όνομα Πελάτη"></Column>
-                </DataTable>
+                <CustomersGrid />
             ) : (
                 <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient}  />
             )}
@@ -105,10 +88,12 @@ const Offer = () => {
 }
 
 
-const AfterClientSelection = ({ selectedClient, setSelectedClient }) => {
+const AfterClientSelection = () => {
+    const dispatch = useDispatch();
     const {selectedProducts} = useContext(ProductQuantityContext)
     const { mtrlines } = useContext(ProductQuantityContext);
     const [saldoc, setSaldoc] = useState(null)
+    const { selectedClient } = useSelector(state => state.impaoffer)
 
     const CalculateBasket = () => {
         let total = 0
@@ -121,19 +106,20 @@ const AfterClientSelection = ({ selectedClient, setSelectedClient }) => {
     }
 
     const sendOffer = async () => {
-        const obj = {
-            TRDR: parseInt(selectedClient.TRDR),
-            MTRLINES: mtrlines,
-        }
+        console.log(selectedClient)
+        // const obj = {
+        //     TRDR: parseInt(selectedClient.TRDR),
+        //     MTRLINES: mtrlines,
+        // }
 
-        let { data } = await axios.post('/api/clients/apiClients', { action: 'sendOffer', data: obj })
-        setSaldoc(data.result)
+        // let { data } = await axios.post('/api/clients/apiClients', { action: 'sendOffer', data: obj })
+        // setSaldoc(data.result)
     }
 
 
     return (
         <div>
-            <Button label="Eπίλεξε Πελάτη" severity="warning" onClick={() => setSelectedClient(null)} />
+            <Button label="Eπίλεξε Πελάτη" severity="warning" onClick={() => dispatch(setSelectedClient(null))} />
             <div className='surface-100 p-4 mt-3 mb-2 border-round'>
                 <p className='text-lg font-bold '>Λεπτομέριες Πελάτη</p>
                 <div className='mt-3'>

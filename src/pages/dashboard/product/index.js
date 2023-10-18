@@ -120,12 +120,6 @@ function Product() {
     let user = session?.user?.user;
     const{selectedProducts, setSelectedProducts, submitted, setSubmitted} = useContext( ProductQuantityContext)
     const [categroriesFilter, setCategoriesFilter] = useState(null);
-    // const [filters, setFilters] = useState({
-    //     categories: null,
-    //     groups: null,
-    //     subgroups: null,
-    //     markes: null
-    // })
     const [subGroupsFilter, setSubGroupsFilter] = useState(null);
     const [groupFilter, setGroupFilter] = useState(null);
     const [softoneStatusFilter, setSoftoneStatusFilter] = useState(null);
@@ -144,12 +138,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
 
 
-    // const [selectedProducts, setSelectedProducts] = useState(null);
-    const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        representative: { value: null, matchMode: FilterMatchMode.IN },
-
-    });
+   
     const [searchTerm, setSearchTerm] = useState('')
     const [totalRecords, setTotalRecords] = useState(0);
     const [lazyState, setlazyState] = useState({
@@ -180,7 +169,6 @@ function Product() {
             },
            )
             setLoading(false)
-            console.log(res.data.result)
             setFilteredData(res.data.result);
             setTotalRecords(prev => {
                 if (prev === res.data.totalRecords) {
@@ -300,10 +288,6 @@ function Product() {
     }
 
 
-    const onFilterMarkChange = (e) => {
-        setMark(e.value)
-        setlazyState({ ...lazyState, first: 0 })
-    }
 
 
 
@@ -395,34 +379,7 @@ function Product() {
     };
 
 
-    const MtrmarkFilterTemplate = (options) => {
-        useEffect(() => {
-            const handleCategories = async () => {
-                let { data } = await axios.post('/api/product/apiProductFilters', {
-                    action: 'findBrands',
-                })
-            }
-
-            handleCategories()
-        }, [category, group])
-
-        return (
-            <div className="flex align-items-center">
-                <Dropdown
-                    size="small"
-                    disabled={!group ? true : false}
-                    value={subgroup}
-                    options={subGroupsFilter}
-                    onChange={onFilterSubGroupChange}
-                    optionLabel="subGroupName"
-                    placeholder="Φίλτρο Υποομάδας"
-                    className="p-column-filter grid-filter"
-                    style={{ minWidth: '14rem', fontSize: '12px' }}
-                />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  setSubGroup(null)} ></i>
-            </div>
-        )
-    };
+    
     const SubGroupsRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
@@ -430,7 +387,6 @@ function Product() {
                     action: 'findGroups',
                     categoryID: category?.softOne.MTRCATEGORY
                 })
-                console.log('data result')
                 setSubGroupsFilter(data.result)
             }
 
@@ -494,7 +450,11 @@ function Product() {
             <div>
                 <StepHeader text="Προϊόντα" />
             </div>
-            <Button label="Προσφορά πολλαπλών επιλογών"  severity='secondary' className='mb-3 mt-2' onClick={() => router.push("/dashboard/multi-offer")}  />
+            <div className='flex flex-column'>
+                <Button label="Προσφορές πολλαπλών επιλογών"  severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")}  />
+                <Button label="Προσφορές σε πελάτη"  severity='warning' className='mb-3 mt-1 w-20rem' onClick={() => router.push("/dashboard/offer")}  />
+            </div>
+            
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}

@@ -36,7 +36,7 @@ const Page = () => {
     return (
         <AdminLayout>
             <div>
-                <Button icon="pi pi-plus" label="Δημιουργία Προσφοράς" severity='warning' onClick={nextPage} />
+                <Button icon="pi pi-plus" label="Δημιουργία Προσφοράς Πολλ. Επιλ" severity='warning' onClick={nextPage} />
             </div>
             <div className='mt-4 ml-1'>
                 <StepHeader text={"Προσφορές Πολλαπλών σημείων σε πελάτες"} />

@@ -14,14 +14,13 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import { Badge } from 'primereact/badge';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import StepHeader from '@/components/StepHeader';
-
+import { useRouter } from 'next/router';
 export default function Clients() {
-
+    const router = useRouter();
     const [submitted, setSubmitted] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0)
     const [searchTerm, setSearchTerm] = useState('')
     const [data, setData] = useState([])
-    const dispatch = useDispatch();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
     const [lazyState, setlazyState] = useState({
@@ -91,7 +90,13 @@ export default function Clients() {
             </div>
         )
     }
-
+    const OffersDetails = () => {
+        return (
+            <div>
+                <i className="pi pi-chevron-right p-2" onClick={() => router.push('/dashboard/clients/single-client-offers')}></i>
+            </div>
+        )
+    }
 
 
     return (
@@ -112,13 +117,15 @@ export default function Clients() {
                 paginatorRight={true}
                 loading={loading}
                 filterDisplay="row"
+                showGridlines
             >
+                <Column header="Προσφορές" bodyStyle={{textAlign: 'center'}} body={OffersDetails} style={{width: '60px'}}></Column>
                 <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient} header="Ονομα" sortable></Column>
                 <Column field="AFM" header="ΑΦΜ" sortable></Column>
                 <Column field="ADDRESS" header="Διεύθυνση" sortable></Column>
                 <Column field="PHONE01" header="Τηλέφωνο" sortable></Column>
                 <Column field="ZIP" header="Ταχ.Κώδικας" sortable></Column>
-                <Column field="BALANCE" header="Υπόλοιπο" sortable></Column>
+                <Column field="Δείτε τις Προσφορές" header="Δείτε τις Προσφορές" ></Column>
             </DataTable>
             {/* <EditDialog
                 style={dialogStyle}
@@ -139,6 +146,8 @@ export default function Clients() {
         </AdminLayout >
     );
 }
+
+
 
 
 

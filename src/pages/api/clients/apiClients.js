@@ -63,19 +63,20 @@ export default async function handler(req, res) {
 
     if(action === 'sendOffer') {
         let {data } = req.body;
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-                SERIES: 7001,
-                COMPANY:1001,
-                ...data
-            })
-        });
-        let responseJSON = await response.json();
-        console.log(responseJSON)
+        console.log(data)
+        // let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
+        // const response = await fetch(URL, {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         username: "Service",
+        //         password: "Service",
+        //         SERIES: 7001,
+        //         COMPANY:1001,
+        //         ...data
+        //     })
+        // });
+        // let responseJSON = await response.json();
+        // console.log(responseJSON)
         return res.status(200).json({ success: true, result: responseJSON })
     }
 

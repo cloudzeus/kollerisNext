@@ -4,35 +4,43 @@ import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataTable } from 'primereact/datatable';
 import { setMtrLines, deleteSelectedProduct } from '@/features/productsSlice';
-const SelectedProducts = () => {
-    const {selectedProducts, mtrLines} = useSelector(state => state.products)
-    const [length, setLength] = useState(selectedProducts.length)
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
+
+
+const SelectedProducts = () => {
+    const { selectedProducts, mtrLines } = useSelector(state => state.products)
+    const [length, setLength] = useState(selectedProducts.length)
     useEffect(() => {
         setLength(selectedProducts.length)
     }, [selectedProducts])
-   
+
+  
+    
+
     return (
-        <DataTable
-            paginator
-            rows={5}
-            totalRecords={length}
-            rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
-            value={selectedProducts}
-            className='border-1 border-round-sm	border-50'
-            size="small"
-        >
-            <Column header="Προσφορά" body={itemTemplate}></Column>
-            <Column header="Προσφορά" style={{ width: '70px' }} body={CalculateTemplate}></Column>
-            <Column style={{ width: '30px' }} body={RemoveTemplate}></Column>
-        </DataTable>
+        <>
+            <DataTable
+                paginator
+                rows={5}
+                totalRecords={length}
+                rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
+                value={selectedProducts}
+                className='border-1 border-round-sm	border-50'
+                size="small"
+            >
+                <Column header="Προσφορά" body={itemTemplate}></Column>
+                <Column header="Προσφορά" style={{ width: '70px' }} body={CalculateTemplate}></Column>
+                <Column style={{ width: '30px' }} body={RemoveTemplate}></Column>
+            </DataTable>
+        </>
     )
 }
 
 const CalculateTemplate = (item) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
-   
+
 
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: item.MTRL, QTY1: quantity }))
@@ -42,7 +50,7 @@ const CalculateTemplate = (item) => {
         // dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity + 1 }))
     }
 
-    
+
 
     const decreaseQuantity = () => {
         if (quantity === 1) return

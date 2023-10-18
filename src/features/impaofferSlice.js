@@ -10,6 +10,8 @@ const initialState = {
 	holder: [],
 	mtrLines: [],
 	offerEmail: '',
+	//used in clients page, to set a single client name, and find the offers that correspond to him
+	singleClientName: '',
 }
 
 
@@ -58,7 +60,8 @@ export const {
 	setDataSource,
 	setShowImpaTable,
 	setHolder,
-	setOfferEmail
+	setOfferEmail,
+	setSingleClientName
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;
