@@ -80,6 +80,18 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "findHolderProducts") {
+        const {documentID, holderID} = req.body;
+        try {
+            await connectMongo();
+            const holder = await Holders.findOne({_id: documentID, 'holders._id': holderID},   { holders: {products: 1}})
+            console.log(holder)
+            return res.status(200).json({ success: true, result: holder })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+
     if (action == "saveNewEmail") {
         try {
             await connectMongo();
@@ -117,9 +129,32 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }
     }
+
+    
+    if (action === "addOfferDatabase") {
+        const { holders, client, email, id, num} = req.body;
+        console.log(JSON.stringify(holders))
+        try {
+            await connectMongo();
+            let insert = await Holders.create({
+                clientName: client.NAME,
+                clientEmail: client.EMAIL || '',
+                clientPhone: client.PHONE01 || '',
+                holders: holders,
+                status: 'pending',
+                num: num
+            })
+            console.log(insert)
+            return res.status(200).json({ success: true, result: insert })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+
+
+    }
     if (action === "finalizedOffer") {
         const { holders, client, email, id, num} = req.body;
-
+        console.log(JSON.stringify(holders))
         let body = holders.map((item) => {
             let elements = item.products.map((product) => {
                 return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
@@ -133,21 +168,21 @@ export default async function handler(req, res) {
 
         try {
 
-            const mail = {
-                from: 'info@kolleris.com',
-                to: email,
-                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-                subject:`Προσφορά - NUM: ${num}`,
-                html: `${body}`
-              };
+            // const mail = {
+            //     from: 'info@kolleris.com',
+            //     to: email,
+            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+            //     subject:`Προσφορά - NUM: ${num}`,
+            //     html: `${body}`
+            //   };
               
-              transporter.sendMail(mail, (err, info) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log('Email sent successfully!');
-                }
-              });
+            //   transporter.sendMail(mail, (err, info) => {
+            //     if (err) {
+            //       console.log(err);
+            //     } else {
+            //       console.log('Email sent successfully!');
+            //     }
+            //   });
             await connectMongo();
             let insert = await Holders.create({
                 clientName: client.NAME,
@@ -193,7 +228,26 @@ export default async function handler(req, res) {
         }
     }
 
-  
+    if(action === "removeHolderItems") {
+        const {mtrl, documentID, holderID} = req.body;
+        console.log(holderID)
+        console.log(documentID)
+        try {
+            await connectMongo();
+            let removeItem = await Holders.findOneAndUpdate(
+                { _id: documentID, 'holders._id': holderID }, 
+                {
+                    $pull: {
+                      'holders.$.products': { MTRL: mtrl.toString() } 
+                    }
+                  }
+                )
+            console.log(removeItem)
+            return res.status(200).json({ success: true, result: removeItem })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }   
+    }
 }
 
 

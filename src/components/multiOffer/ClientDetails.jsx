@@ -6,6 +6,7 @@ import axios from 'axios'
 import { Toast } from 'primereact/toast';
 import { setOfferEmail } from '@/features/impaofferSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import StepHeader from '../StepHeader'
 
 
 const ClientDetails = () => {
@@ -48,10 +49,10 @@ const ClientDetails = () => {
         <>
             {selectedClient ? (
                   <div className='mt-3 bg-white p-4 border-round'>
+                    <StepHeader text="Eπιλογή Πελάτη" />
                   <Toast ref={toast} />
-                  <p className="font-bold mb-3 text-lg">Στοιχεία Πελάτη</p>
                   <div className="flex flex-column gap-2 mb-4">
-                      <label htmlFor="username">Όνομα Πελάτη</label>
+                      <label htmlFor="username">Στοιχεία Πελάτη</label>
                       <InputText
                           className='opacity-80 w-20rem'
                           disabled={true}

@@ -12,8 +12,7 @@ const holderchema = new mongoose.Schema({
     status: String,
     holders: [
         {
-            id: String,
-            impaCode: String,
+            name: String,
             products: [
                 {
                     _id: String,
@@ -22,7 +21,6 @@ const holderchema = new mongoose.Schema({
                     NAME: String,
                     QTY1: Number,
                     TOTAL_PRICE: Number
-
                 }
             ],
         }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from 'primereact/button'
 import StepHeader from '@/components/StepHeader'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,25 +18,31 @@ function generateOfferNum(length) {
 
 
 const ΟffersPage = () => {
-    const dispatch = useDispatch()
     const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
     const router = useRouter()
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', { 
-            action: 'finalizedOffer', 
+            action: 'addOfferDatabase', 
             holders: holder, 
             client: selectedClient, 
             email: offerEmail, 
             num: generateOfferNum(6) 
         })
-        dispatch(setPageId(1))
+        router.push('/dashboard/multi-offer')
     }
+    
+    useEffect(() => {
+        if(!selectedClient) {
+            router.push('/dashboard/multi-offer')
+        }
+    }, [])
 
     const createImpaHolder = () => {
        router.push('/dashboard/multi-offer/create-impa-holder')
     }
 
     const createHolder = () => {
+        router.push('/dashboard/multi-offer/plain-holder')
 
     }
     return (
@@ -60,7 +66,7 @@ const ΟffersPage = () => {
                 {holder.length > 0 ? (
                     <Button 
                     onClick={finalizeOffer} 
-                    disabled={holder.length === 0 || !offerEmail}
+                    disabled={holder.length === 0}
                     raised icon="pi pi-angle-right" className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς" />
                 ) : null}
                  
@@ -74,7 +80,7 @@ const ΟffersPage = () => {
 const MapHolders = () => {
     const { holder } = useSelector(state => state.impaoffer)
     const [showContent, setShowContent] = useState(null)
-
+    console.log(holder)
     const dropDownClick = (id) => {
         setShowContent(id)
     }
@@ -82,7 +88,7 @@ const MapHolders = () => {
         <div className='mb-2'>
             {holder && holder.map((item, index) => (
                 <div key={index} className='bg-white mb-2 border-round'>
-                    <div className='top flex justify-content-between p-4'>
+                    <div className='top flex align-items-center justify-content-between p-4'>
                         <div className='flex' >
                             <div className='mr-3 border-right-1 pr-3 border-400'>
                                 {(showContent == item?.id) ? (
@@ -92,12 +98,14 @@ const MapHolders = () => {
                                 )}
 
                             </div>
-
-                            <p>IMPA CODE:</p>
-                            <p className='font-bold ml-2'>{item?.impaCode}</p>
+                            <div>
+                                
+                            <p className='block size-xs'>Όνομα holder:</p>
+                            <p className='font-bold mt-1'>{item?.name}</p>
+                            </div>
                         </div>
                         <div>
-                            <div className='flex'>
+                            <div className='flex align-items-center'>
                                 <p>Σύνολο Προϊόντων:</p>
                                 <p className='font-bold ml-2 pr-3'>{item?.products?.length}</p>
                                 <div className='ml-2 pl-4 border-left-1 border-400'>
@@ -122,8 +130,7 @@ const MapHolders = () => {
 
 
 const MapProducts = ({ products }) => {
-    console.log('map products')
-    console.log(products) 
+   
     return (
         <div>
             {products && products.map((item, index) => {
@@ -136,7 +143,7 @@ const MapProducts = ({ products }) => {
                             <div className='flex '>
                                 <div className='flex mr-5 '>
                                     <p>QNT:</p>
-                                    <p className='ml-1 font-bold'>{item.QUANTITY}</p>
+                                    <p className='ml-1 font-bold'>{item.QTY1}</p>
                                 </div>
                                 <div className='flex'>
                                     <p>PRICE:</p>

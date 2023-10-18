@@ -7,13 +7,15 @@ import axios from 'axios';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedImpa, setSelectedProducts, setDataSource} from '@/features/impaofferSlice';
+import { setSelectedImpa,setDataSource} from '@/features/impaofferSlice';
+import { setSelectedProducts } from '@/features/productsSlice';
 
 
 
 const ImpaDataTable = () => {
     const [data, setData] = useState([])
-    const { selectedImpa, selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
+    const { selectedImpa} = useSelector(state => state.impaoffer)
+    const {selectedProducts} = useSelector(state => state.products)
     const dispatch = useDispatch()
 
     const onAllProductsClick = () => {
