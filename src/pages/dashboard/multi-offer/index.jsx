@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button } from 'primereact/button'
 import StepHeader from '@/components/StepHeader';
 import { setPageId, setHolder } from '@/features/impaofferSlice'
@@ -11,7 +11,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { CSVLink, CSVDownload } from "react-csv";
+import CSVExport from '@/components/exportCSV/multiOffer';
 const Page = () => {
     const router = useRouter();
     const [data, setData] = useState([])
@@ -119,6 +121,27 @@ const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
         )
     }
 
+    const PrintActions = ({holders, clientEmail, num, clientName  }) => {
+        const op = useRef(null);
+      
+        console.log( clientEmail, num, clientName )
+        console.log(holders)
+        const _newData= [
+            {clientName: clientName, clientEmail: clientEmail, num: num, holders: holders}
+        ]
+
+        return (
+            <div className='flex justify-content-center'>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <CSVExport holders={holders} email={clientEmail} name={clientName}/>
+                </OverlayPanel>
+            </div>
+    
+    
+        )
+    }
+
     return (
         <DataTable
             loading={loading}
@@ -135,9 +158,11 @@ const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
             <Column header="Εmail" body={ClientDetails} field="clientName"></Column>
             <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
             <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
-            <Column header="Εκτύπωση CSV / PDF" headerStyle={{ width: '160px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
-            <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}    bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
+        
             <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+            <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}    bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
+
+            <Column  headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
 
 
         </DataTable>
@@ -256,16 +281,7 @@ const Status = ({ status }) => {
 }
 
 
-const PrintActions = () => {
-    return (
-        <div className='flex justify-content-center'>
-            <Button  icon="pi pi-download" severity="warning" />
-            <Button  className='ml-2' icon="pi pi-download" severity="danger" />
-        </div>
 
-
-    )
-}
 
 
 

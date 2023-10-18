@@ -42,10 +42,7 @@ const ImpaHolder = () => {
             products: mtrLines
         }))
 
-
-        //OPEN IT AGAIN 
-        // let {data} = await axios.post('/api/createOffer', {action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts})
-        //navigate back to create holder, where the array of created holders appear
+        await axios.post('/api/createOffer', {action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts})
         router.push('/dashboard/multi-offer/create-holder')
     }
 
