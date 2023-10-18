@@ -17,7 +17,6 @@ const Page = () => {
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch()
     const handleFetch = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', { action: 'findHolders' })
@@ -40,7 +39,13 @@ const Page = () => {
             <div className='mt-4 ml-1'>
                 <StepHeader text={"Προσφορές Πολλαπλών σημείων σε πελάτες"} />
                 {data ? (
-                    <CustomDataTable data={data} refetch={refetch} loading={loading} setRefetch={setRefetch} />
+                    <CustomDataTable 
+                        data={data} 
+                        refetch={refetch} 
+                        loading={loading} 
+                        setRefetch={setRefetch} 
+                        setLoading={setLoading}
+                        />
                 ) : (
                     <div className='p-4 bg-white border-round'>
                         <p>Δεν υπάρχουν προσφορές</p>
@@ -52,7 +57,7 @@ const Page = () => {
 }
 
 
-const CustomDataTable = ({ data, setRefetch, loading }) => {
+const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [status, setStatus] = useState(null);
@@ -64,9 +69,6 @@ const CustomDataTable = ({ data, setRefetch, loading }) => {
 
     const getSeverity = (value) => {
         switch (value) {
-            case 'pending':
-                return 'success';
-
             case 'done':
                 return 'warning';
 
@@ -102,6 +104,21 @@ const CustomDataTable = ({ data, setRefetch, loading }) => {
         setRefetch(prev => !prev)
     };
 
+    const Actions = ({holders,clientEmail,num, _id}) => {
+        const onSendOffer = async () => {
+            setLoading(true)
+            let {data} = await axios.post('/api/createOffer', {action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id})
+            console.log(data.emailSent)
+            setRefetch(prev => !prev)
+            setLoading(false)
+        }
+        return (
+            <div className='flex justify-content-center'>
+                <Button  icon="pi pi-envelope" onClick={onSendOffer}/>
+            </div>
+        )
+    }
+
     return (
         <DataTable
             loading={loading}
@@ -129,8 +146,7 @@ const CustomDataTable = ({ data, setRefetch, loading }) => {
 
 const RowExpansionGrid = ({ holders, documentID }) => {
     const [expandedRows, setExpandedRows] = useState(null);
-    console.log('document id')
-    console.log(documentID)
+ 
     const allowExpansion = (rowData) => {
         return rowData
     };
@@ -172,7 +188,7 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
         }
         fetch();
     }, [refetch])
-    
+
     const onRemove = (MTRL) => {
         setLoading(true)
         let { data } = axios.post('/api/createOffer', { action: 'removeHolderItems', mtrl:MTRL, documentID: documentID, holderID: holderID })
@@ -214,7 +230,6 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
                 <Column header="Τιμή"  body={Price} field="PRICE"></Column>
                 <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1"></Column>
                 <Column header="Σύνολο Τιμής"  body={TotalPrice} field="TOTAL_PRICE"></Column>
-            
                 <Column body={RemoveItem} header="Αφαίρεση" bodyStyle={{textAlign: 'center'}} style={{width: '100px'}}></Column>
                 {/* <Column header="Σύνολο Προϊόντων" body={TotalProducts}></Column> */}
             </DataTable>
@@ -225,14 +240,15 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
 
 const Status = ({ status }) => {
     let color;
-    if (status === 'pending') color = "bg-green-500"
+    if (status === 'created') color = "bg-green-500"
+    if (status === 'sent') color = "bg-blue-500"
     if (status === 'done') color = "bg-orange-500"
     if (status === 'rejected') color = "bg-red-500"
 
     return (
         <div className='flex align-items-center '>
 
-            <span className={`mt-1 ${color} border-circle`} style={{ width: '5px', height: '5px' }}>
+            <span className={`mt-1 ${color} border-circle`} style={{ width: '7px', height: '7px' }}>
             </span >
             <span className='ml-2 text-600'>{status.toUpperCase()}</span>
         </div>
@@ -251,13 +267,7 @@ const PrintActions = () => {
     )
 }
 
-const Actions = () => {
-    return (
-        <div className='flex justify-content-center'>
-            <Button  icon="pi pi-envelope" />
-        </div>
-    )
-}
+
 
 const ClientDetails = ({clientName, clientEmail, clientPhone}) => {
     return (

@@ -141,7 +141,7 @@ export default async function handler(req, res) {
                 clientEmail: client.EMAIL || '',
                 clientPhone: client.PHONE01 || '',
                 holders: holders,
-                status: 'pending',
+                status: 'created',
                 num: num
             })
             console.log(insert)
@@ -152,17 +152,16 @@ export default async function handler(req, res) {
 
 
     }
-    if (action === "finalizedOffer") {
+    if (action === "sendOfferEmail") {
         const { holders, client, email, id, num} = req.body;
-        console.log(JSON.stringify(holders))
         let body = holders.map((item) => {
             let elements = item.products.map((product) => {
                 return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-                <p>Ποσότητα: <strong>${product.QUANTITY}</strong></p>
+                <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
                 <p>Τιμή: <strong>${product.PRICE}€</strong></p>
                 <p>---------------</p>`;
             }).join('');  // Join array elements into a single string
-            return `<p>Κωδικός Impa: <strong>${item.impaCode}</strong></p> ${elements}`;
+            return `<p>Κωδικός Impa: <strong>${item.name}</strong></p> ${elements}`;
         });
 
 
@@ -175,28 +174,41 @@ export default async function handler(req, res) {
             //     subject:`Προσφορά - NUM: ${num}`,
             //     html: `${body}`
             //   };
+            const mail = {
+                from: 'info@kolleris.com',
+                to: email,
+                cc: ['johnchiout.dev@gmail.com' ],
+                subject:`Προσφορά - NUM: ${num}`,
+                html: `${body}`
+              };
               
-            //   transporter.sendMail(mail, (err, info) => {
-            //     if (err) {
-            //       console.log(err);
-            //     } else {
-            //       console.log('Email sent successfully!');
-            //     }
-            //   });
+              function sendEmail(mail) {
+                return new Promise((resolve, reject) => {
+                  transporter.sendMail(mail, (err, info) => {
+                    if (err) {
+                      console.log(err);
+                      resolve(false); // Resolve with false if there's an error
+                    } else {
+                      console.log('Email sent successfully!');
+                      resolve(true); // Resolve with true if the email is sent successfully
+                    }
+                  });
+                });
+              }
+
+              let send = await sendEmail(mail);
+              console.log(send);
             await connectMongo();
-            let insert = await Holders.create({
-                clientName: client.NAME,
-                clientEmail: client.EMAIL || '',
-                clientPhone: client.PHONE01 || '',
-                holders: holders,
-                status: 'pending',
-                num: num
+            let update = await Holders.updateOne({ _id: id }, {
+                $set: {
+                    status: "sent"
+                }
             })
-            console.log(insert)
-            console.log(insert)
-            return res.status(200).json({ success: true, result: insert })
+            console.log(update)
+            let modified = update.modifiedCount
+            return res.status(200).json({ success: true, result: modified, send: send })
         } catch (e) {
-            return res.status(500).json({ success: false, result: null })
+            return res.status(500).json({ success: false, result: null,  })
         }
 
 
