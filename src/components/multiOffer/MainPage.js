@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import CreateHolder from '@/components/ImpaOffer/HolderPage';
-import OffersPage from '@/components/ImpaOffer/OffersPage';
+import CreateHolder from '@/components/multiOffer/HolderPage';
+import OffersPage from '@/components/multiOffer/OffersPage';
 import CreateOffer from './CreateOffer';
 
 

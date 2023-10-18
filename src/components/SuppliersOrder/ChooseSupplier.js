@@ -8,7 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { setSelectedSupplier, setInputEmail } from '@/features/supplierOrderSlice';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
-import StepHeader from '../ImpaOffer/StepHeader';
+import StepHeader from '../multiOffer/StepHeader';
 
 const ChooseSupplier = () => {
     const router = useRouter();

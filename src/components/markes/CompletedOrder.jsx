@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown'
-import StepHeader from '../ImpaOffer/StepHeader';
+import StepHeader from '../multiOffer/StepHeader';
 import { Tag } from 'primereact/tag'
 
 

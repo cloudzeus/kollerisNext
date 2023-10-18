@@ -5,14 +5,14 @@ import { setPageId, setDataSource, setShowImpaTable, setHolder, setSelectedProdu
 import StepHeader from '@/components/StepHeader';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
-import ChooseImpa from '@/components/ImpaOffer/ChooseImpa';
-import ImpaDataTable from '@/components/ImpaOffer/ImpaProductsTable';
-import ChosenProducts from '@/components/ImpaOffer/ChosenProducts';
-import ProductsDataTable from '@/components/ImpaOffer/ProductTable';
+import ChooseImpa from '@/components/multiOffer/ChooseImpa';
+import ImpaDataTable from '@/components/multiOffer/ImpaProductsTable';
+import ChosenProducts from '@/components/multiOffer/ChosenProducts';
+import ProductsDataTable from '@/components/multiOffer/ProductTable';
 import axios from 'axios';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-
+import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 function generateRandomId(length = 8) {
     return Math.random().toString(36).substr(2, length);
 }
@@ -46,8 +46,7 @@ const ImpaHolder = () => {
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => dispatch(setPageId(2))} />
             </div>
-            {/* <StepHeader text={"Δημιουργία Holder"} />
-            <p>{selectedClient?.NAME}</p> */}
+          
             <PickListComp />
             <div className='mt-4 mb-5'>
             <Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
@@ -73,7 +72,7 @@ const PickListComp = () => {
 
                     {(!showImpaTable && selectedImpa) ? (
                         <div>
-                            {(dataSource == 2 && show) ? (<ProductsDataTable />) : null}
+                            {(dataSource == 2 && show) ? (<ProductSearchGrid />) : null}
                             {(dataSource == 1 && show )  ? (<ImpaDataTable />) : null}
                     </div>
                     ) : null}

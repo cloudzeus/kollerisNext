@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
+    selectedProducts: [],
+    mtrLines: [],
     loading: false,
+    sort: 0,
+    searchTerm: '',
     filters: {
         category: null,
         group: null,
@@ -42,23 +46,52 @@ const productsSlice = createSlice({
             }
 		},
         setCategory: (state, {payload}) => { 
-            console.log('payload')
-            console.log(payload)
             state.category = payload;
+            state.group = null;
+            state.subgroup = null;
+            state.searchTerm = '';
+            state.lazyState.first = 0;
         },
         setGroup: (state, {payload}) => {
             state.group = payload;
+            state.subgroup = null;
+            state.lazyState.first = 0;
         },
         setSubgroup: (state, {payload}) => {
             state.subgroup = payload;
+            state.lazyState.first = 0;
         },
         setLazyState: (state, {payload}) => {
             state.lazyState = payload;
         },
-        setFiltersLoading: (state, {payload}) => {
+        setLoading: (state, {payload}) => {
             state.loading = payload
+        },
+        resetSelectedFilters: (state) => {
+            state.category = null;
+            state.group = null;
+            state.subgroup = null;
+        },
+        setSearchTerm: (state, {payload}) => {
+            state.searchTerm = payload;
+            state.category = null;
+            state.group = null;
+            state.subgroup = null;
+        },
+        setSort: (state) => {
+            if(state.sort == 0) {
+                state.sort = 1;
+                return;
+            };
+            if(state.sort == 1) {
+                state.sort = -1;
+                return;
+            };
+            if(state.sort == -1) {
+                state.sort = 0;
+                return;
+            };
         }
-		
 	},
 
 })
@@ -70,7 +103,10 @@ export const {
     setGroup,
     setSubgroup,
     setLazyState,
-    setFiltersLoading,
+    setLoading,
+    resetSelectedFilters,
+    setSearchTerm,
+    setSort,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

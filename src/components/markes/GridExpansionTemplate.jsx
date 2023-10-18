@@ -11,7 +11,7 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
 
-import StepHeader from '../ImpaOffer/StepHeader';
+import StepHeader from '../multiOffer/StepHeader';
 import { useRouter } from 'next/router';
 import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
 import { ProgressBar } from 'primereact/progressbar';

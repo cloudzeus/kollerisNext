@@ -5,8 +5,8 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import MainPage from '@/components/ImpaOffer/MainPage';
-import HolderPage from '@/components/ImpaOffer/HolderPage';
+import MainPage from '@/components/multiOffer/MainPage';
+import HolderPage from '@/components/multiOffer/HolderPage';
 
 
 

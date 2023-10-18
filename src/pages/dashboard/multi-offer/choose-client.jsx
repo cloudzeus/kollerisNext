@@ -3,7 +3,7 @@
 import CustomersGrid from '@/components/grid/clientGrid';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { Button } from 'primereact/button';
-import ClientDetails from '@/components/ImpaOffer/ClientDetails';
+import ClientDetails from '@/components/multiOffer/ClientDetails';
 import { useRouter } from 'next/router';
 const ChooseCustomer = () => {
     const router = useRouter();

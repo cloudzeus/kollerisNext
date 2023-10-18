@@ -10,16 +10,11 @@ export const CategoriesRowFilterTemplate = (options) => {
     const {filters, category, group, subgroup, lazyState, loading} = useSelector(store => store.products)
   
   
-
-    useEffect(() => {
-     
-    }, [category])
     const dispatch = useDispatch()
     const onFilterCategoryChange = (e) => {
         dispatch(setCategory(e.value))
         dispatch(setGroup(null))
         dispatch(setSubgroup(null))
-        // setlazyState({ ...lazyState, first: 0 })
     }
     useEffect(() => {
         dispatch(setFiltersLoading(true))
