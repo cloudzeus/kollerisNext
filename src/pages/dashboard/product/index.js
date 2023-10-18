@@ -494,7 +494,7 @@ function Product() {
             <div>
                 <StepHeader text="Προϊόντα" />
             </div>
-            <Button label="Προσφορά πολλαπλών επιλογών"  severity='secondary' className='mb-3 mt-2' onClick={() => router.push("/dashboard/offers/impaOffers")}  />
+            <Button label="Προσφορά πολλαπλών επιλογών"  severity='secondary' className='mb-3 mt-2' onClick={() => router.push("/dashboard/multi-offer")}  />
             <ProductToolbar
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}

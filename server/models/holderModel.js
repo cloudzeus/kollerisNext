@@ -20,7 +20,7 @@ const holderchema = new mongoose.Schema({
                     MTRL: String,
                     PRICE: String,
                     NAME: String,
-                    QUANTITY: Number,
+                    QTY1: Number,
                     TOTAL_PRICE: Number
 
                 }

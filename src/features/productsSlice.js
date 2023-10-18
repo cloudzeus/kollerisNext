@@ -29,6 +29,32 @@ const productsSlice = createSlice({
 	name: 'products',
 	initialState,
 	reducers: {
+        setSelectedProducts: (state, {payload}) => {
+			state.selectedProducts = payload;
+			
+			const updateMTRLINES = payload.map(item => {
+				return {
+					NAME: item.NAME,
+					QTY1: 1,
+					PRICE: parseInt(item.PRICER),
+					MTRL: item.MTRL,
+					TOTAL_PRICE: parseInt(item.PRICER)
+				}
+			})
+			state.mtrLines = updateMTRLINES;
+
+		},
+        deleteSelectedProduct: (state, {payload}) => {
+			state.selectedProducts = state.selectedProducts.filter(product => product._id !== payload);
+		},
+		setMtrLines: (state, {payload}) => {
+			state.mtrLines = state.mtrLines.map(item => {
+				if (item.MTRL === payload.MTRL) {
+					return { ...item, QTY1: payload.QTY1, TOTAL_PRICE: payload.QTY1 * parseInt(item.PRICE) };
+				}
+				return item;
+			});
+		},
 		setFilters: (state, {payload}) => {
             switch(payload.action) {
                 case "category": 
@@ -79,6 +105,10 @@ const productsSlice = createSlice({
             state.subgroup = null;
         },
         setSort: (state) => {
+            state.searchTerm = '';
+            state.category = null;
+            state.group = null;
+            state.subgroup = null;
             if(state.sort == 0) {
                 state.sort = 1;
                 return;
@@ -91,7 +121,8 @@ const productsSlice = createSlice({
                 state.sort = 0;
                 return;
             };
-        }
+        },
+
 	},
 
 })
@@ -107,6 +138,9 @@ export const {
     resetSelectedFilters,
     setSearchTerm,
     setSort,
+    setSelectedProducts,
+    setMtrLines,
+    deleteSelectedProduct,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -5,9 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
-import { setSelectedProducts } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
-import { setMtrLines } from '@/features/supplierOrderSlice';
 import { Dropdown } from "primereact/dropdown";
 import {
     setCategory,
@@ -19,18 +17,18 @@ import {
     resetSelectedFilters,
     setSearchTerm,
     setSort,
+    setSelectedProducts
 } from "@/features/productsSlice";
 
 
 const ProductSearchGrid = () => {
     const dispatch = useDispatch()
     const router = useRouter()
-    const { filters, category, group, subgroup, lazyState, loading, searchTerm, sort } = useSelector(store => store.products)
-    const { selectedProducts, selectedMarkes, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
+    const { filters, category, group, subgroup, lazyState, loading, searchTerm, sort, selectedProducts } = useSelector(store => store.products)
+    const { selectedMarkes, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
     const [totalRecords, setTotalRecords] = useState(0);
     const [data, setData] = useState([])
-    console.log('sort')
-    console.log(sort)
+
     const fetch = async () => {
         if (!searchTerm) {
             dispatch(setLoading(true))
@@ -68,7 +66,6 @@ const ProductSearchGrid = () => {
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedProducts(e.value))
-        dispatch(setMtrLines(e.value))
     }
 
     const onPage = (event) => {

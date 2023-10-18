@@ -7,12 +7,11 @@ import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 import ChooseImpa from '@/components/multiOffer/ChooseImpa';
 import ImpaDataTable from '@/components/multiOffer/ImpaProductsTable';
-import ChosenProducts from '@/components/multiOffer/ChosenProducts';
-import ProductsDataTable from '@/components/multiOffer/ProductTable';
 import axios from 'axios';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
+import SelectedProducts from '@/components/grid/SelectedProducts';
 function generateRandomId(length = 8) {
     return Math.random().toString(36).substr(2, length);
 }
@@ -20,7 +19,9 @@ function generateRandomId(length = 8) {
 
 const ImpaHolder = () => {
     const dispatch = useDispatch();
-    const { selectedClient, selectedProducts, holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
+    const {selectedProducts} = useSelector(state => state.products)
+    
+    const { selectedClient,holder, selectedImpa, mtrLines } = useSelector(state => state.impaoffer)
     const toast = useRef(null);
     const router = useRouter();
     useEffect(() => {
@@ -59,7 +60,8 @@ const ImpaHolder = () => {
 
 
 const PickListComp = () => {
-    const { selectedProducts, selectedImpa, dataSource, showImpaTable } = useSelector(state => state.impaoffer)
+    const {selectedImpa, dataSource, showImpaTable } = useSelector(state => state.impaoffer)
+    const {selectedProducts} = useSelector(state => state.products)
     const [show, setShow] = useState(true)
 
 
@@ -84,7 +86,7 @@ const PickListComp = () => {
                 {selectedProducts.length > 0 ? (
                     <div>
                         <StepHeader text={`Συνολο Προϊόντων για Impa ${selectedImpa?.code}:`} />
-                        <ChosenProducts />
+                        <SelectedProducts  />
                     </div>
                 ) : null}
 

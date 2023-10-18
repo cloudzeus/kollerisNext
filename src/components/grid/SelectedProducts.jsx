@@ -3,17 +3,15 @@ import React, { useState, useEffect, use } from 'react';
 import { Column } from 'primereact/column';
 import { useSelector, useDispatch } from 'react-redux';
 import { DataTable } from 'primereact/datatable';
-import { deleteSelectedProduct, setMtrLines } from '@/features/impaofferSlice';
-const ChosenProducts = () => {
-    const { selectedProducts, mtrLines } = useSelector(state => state.impaoffer)
+import { setMtrLines, deleteSelectedProduct } from '@/features/productsSlice';
+const SelectedProducts = () => {
+    const {selectedProducts, mtrLines} = useSelector(state => state.products)
     const [length, setLength] = useState(selectedProducts.length)
 
     useEffect(() => {
         setLength(selectedProducts.length)
     }, [selectedProducts])
-
-
-    console.log(selectedProducts)
+   
     return (
         <DataTable
             paginator
@@ -37,7 +35,7 @@ const CalculateTemplate = (item) => {
    
 
     useEffect(() => {
-        dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity }))
+        dispatch(setMtrLines({ MTRL: item.MTRL, QTY1: quantity }))
     }, [quantity])
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
@@ -104,4 +102,4 @@ const itemTemplate = (item) => {
     );
 };
 
-export default ChosenProducts;
+export default SelectedProducts;
