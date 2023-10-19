@@ -12,9 +12,8 @@ const pendingOrderSchema = new mongoose.Schema({
     minItems: Number,
     minValue: Number,
     supplierName: String,
-    TRDR: String,
-    NAME: String,
     supplierEmail: String,
+    TRDR: String,
     status: String,
     products: [
         {

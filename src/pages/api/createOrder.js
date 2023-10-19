@@ -157,8 +157,8 @@ export default async function handler(req, res) {
 
     if (action === "createBucket") {
 
-        const { products, email, supplierName, TRDR, NAME, MTRMARK, minItems, minValue } = req.body;
-
+        const { products, email, TRDR, NAME, MTRMARK, minItems, minValue } = req.body;
+       
         try {
             await connectMongo();
             const generateNextCode = async () => {
@@ -168,20 +168,21 @@ export default async function handler(req, res) {
 
             };
             let orderNumber = await generateNextCode();
+            console.log(orderNumber )
             let obj = {
-                supplierName: supplierName,
+                supplierName: NAME,
                 supplierEmail: email,
                 status: "pending",
                 products: products,
                 TRDR: TRDR,
-                NAME: NAME,
                 MTRMARK: MTRMARK,
                 minItems: minItems,
                 minValue: minValue,
                 orderNumber: orderNumber,
             }
+            console.log(obj)
             let insert = await PendingOrders.create(obj)
-
+            console.log(insert)
             return res.status(200).json({ success: true, result: insert })
 
         } catch (e) {
@@ -192,6 +193,7 @@ export default async function handler(req, res) {
 
     if (action === 'updateBucket') {
         const { products, MTRMARK } = req.body;
+        console.log(MTRMARK)
 
         try {
             await connectMongo();

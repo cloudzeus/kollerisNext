@@ -100,6 +100,7 @@ const OrdersTable = ({ mtrmark, rowData}) => {
    
     const [data, setData] = useState([])
     const dispatch = useDispatch()
+    const router = useRouter();
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
@@ -143,8 +144,8 @@ const OrdersTable = ({ mtrmark, rowData}) => {
 
 
 
-    const RowExpansionTemplate = ({ products, NAME, supplierEmail }) => {
-        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail} />
+    const RowExpansionTemplate = ({ products, NAME, supplierEmail, MTRMARK }) => {
+        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail}  MTRMARK={MTRMARK}/>
     }
 
 
@@ -186,8 +187,8 @@ const OrdersTable = ({ mtrmark, rowData}) => {
     return (
         <div className='mt-4 mb-5'>
             <StepHeader text="Παραγγελίες σε προμηθευτές" />
-
-            <DataTable
+            {data.length > 0 ? (
+                <DataTable
                 loading={loading}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -202,6 +203,10 @@ const OrdersTable = ({ mtrmark, rowData}) => {
                 <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} body={PriceTemplate}></Column>
                 <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
+            ) : (
+                <Button label="Νέα Παραγγελία" severity='secondary' onClick={() => router.push('/dashboard/supplierOrder/supplier')}/>
+            )}
+            
         </div>
     )
 }
@@ -227,10 +232,14 @@ const ActionsTemplate = ({MTRMARK, setRefetch}) => {
     )
 }
 
-const RowExpansionGrid = ({ products, NAME, supplierEmail }) => {
+const RowExpansionGrid = ({ products, MTRMARK}) => {
     const router = useRouter();
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
-    const onClick = () => {
+
+
+    const onAddMore = () => {
+        console.log(MTRMARK)
+        setSelectedMarkes(MTRMARK)
         router.push('/dashboard/supplierOrder/addMore')
     }
 
@@ -240,7 +249,7 @@ const RowExpansionGrid = ({ products, NAME, supplierEmail }) => {
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
                 <div>
-                    <Button size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onClick} />
+                    <Button size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onAddMore } />
                 </div>
                 <div className='flex'>
                     <div className='mr-3'>

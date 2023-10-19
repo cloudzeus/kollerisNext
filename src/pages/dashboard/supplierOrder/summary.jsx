@@ -16,7 +16,7 @@ import { set } from 'mongoose';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { selectedProducts } = useSelector(state => state.supplierOrder)
+  const { selectedProducts, selectedMarkes } = useSelector(state => state.supplierOrder)
   const [totalRecords, setTotalRecords] = useState(0);
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -43,12 +43,9 @@ const ChooseProducts = () => {
       action: 'fetchProducts',
       skip: lazyState.first,
       limit: lazyState.rows,
-      searchTerm: searchTerm,
       mtrmark: selectedMarkes?.mtrmark,
 
     })
-    console.log('result')
-    console.log(data.result)
     setData(data.result)
     setTotalRecords(data.totalRecords)
     setLoading(false)
@@ -58,7 +55,7 @@ const ChooseProducts = () => {
   useEffect(() => {
    
     fetch();
-  }, [selectedMarkes, lazyState.rows, lazyState.first, searchTerm])
+  }, [selectedMarkes, lazyState.rows, lazyState.first])
 
   useEffect(() => {
     setlazyState(prev => ({ ...prev, first: 0 }))
@@ -76,18 +73,18 @@ const ChooseProducts = () => {
 
 
 
-  const Search = () => {
-    return (
-      <>
-        <div className="flex justify-content-start w-20rem ">
-          <span className="p-input-icon-left w-full">
-            <i className="pi pi-search " />
-            <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
-          </span>
-        </div>
-      </>
-    )
-  }
+  // const Search = () => {
+  //   return (
+  //     <>
+  //       <div className="flex justify-content-start w-20rem ">
+  //         <span className="p-input-icon-left w-full">
+  //           <i className="pi pi-search " />
+  //           <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
+  //         </span>
+  //       </div>
+  //     </>
+  //   )
+  // }
 
   const handleFinalSubmit = async () => {
     let { data } = await axios.post('/api/createOrder', {
@@ -121,7 +118,7 @@ const ChooseProducts = () => {
       >
         <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
         <Column field="brandName" header="Όνομα Μάρκας"></Column>
-        <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Προϊόν"></Column>
+        {/* <Column field="NAME" filter showFilterMenu={false} filterElement={Search} header="Προϊόν"></Column> */}
         <Column field="PRICER" header="Τιμή μονάδας" style={{ width: '120px' }} body={PriceTemplate}></Column>
         <Column header="Ποσότητα/Σύνολο Τιμής" style={{ width: '130px' }} body={CalculateTemplate}></Column>
       </DataTable>

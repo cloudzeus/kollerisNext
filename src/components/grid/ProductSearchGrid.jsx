@@ -278,7 +278,6 @@ const ProductSearchGrid = () => {
 
 const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
    
-    console.log(NAME, SOFTONESTATUS)
     return (
         <div>
             <p className='font-bold'>{NAME}</p>
