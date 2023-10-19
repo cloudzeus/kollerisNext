@@ -28,9 +28,7 @@ const ProductSearchGrid = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [data, setData] = useState([])
 
-    useEffect(() => {
-        dispatch(setSelectedProducts([]))
-    }, [])
+  
     const fetch = async () => {
         if (!searchTerm) {
             dispatch(setLoading(true))

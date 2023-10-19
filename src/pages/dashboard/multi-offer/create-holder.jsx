@@ -31,11 +31,7 @@ const ΟffersPage = () => {
         router.push('/dashboard/multi-offer')
     }
     
-    useEffect(() => {
-        if(!selectedClient) {
-            router.push('/dashboard/multi-offer')
-        }
-    }, [])
+
 
     const createImpaHolder = () => {
        router.push('/dashboard/multi-offer/create-impa-holder')

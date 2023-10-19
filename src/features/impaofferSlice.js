@@ -2,6 +2,7 @@ import { combineReducers, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedImpa: null,
+	plainHolderName: '',
 	selectedProducts: [],
 	selectedClient: null,
 	pageId: 1,
@@ -42,6 +43,9 @@ const impaofferSlice = createSlice({
 	
 		setOfferEmail: (state, {payload}) => {
 			state.offerEmail = payload;
+		},
+		setPlainHolderName: (state, {payload}) => {
+			state.plainHolderName = payload;
 		}
 
 
@@ -61,7 +65,8 @@ export const {
 	setShowImpaTable,
 	setHolder,
 	setOfferEmail,
-	setSingleClientName
+	setSingleClientName,
+	setPlainHolderName
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

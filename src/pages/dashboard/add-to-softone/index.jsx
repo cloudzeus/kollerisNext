@@ -14,12 +14,7 @@ const Page = () => {
     const {productsForSoftone} = useSelector(store => store.products)
     const router = useRouter();
 
-    useEffect(() => {
-        if(productsForSoftone.length === 0) {
-            router.back();
-        }
-    }, [])
-
+  
 
  
   return (
@@ -31,6 +26,7 @@ const Page = () => {
                 <Column field="NAME"  body={Actions} style={{width: '40px'}}></Column>
             </DataTable>
         </div>
+        <Button className='mt-2' label="Πίσω" onClick={() => router.back()} />
     </ AdminLayout>
   )
 }

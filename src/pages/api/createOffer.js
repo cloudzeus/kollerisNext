@@ -79,12 +79,26 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }
     }
+   
 
     if(action === "findHolderProducts") {
         const {documentID, holderID} = req.body;
         try {
             await connectMongo();
             const holder = await Holders.findOne({_id: documentID, 'holders._id': holderID},   { holders: {products: 1}})
+            console.log(holder)
+            return res.status(200).json({ success: true, result: holder })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
+
+    if(action === "findHolderProductsByDocumentID") {
+        const {documentID} = req.body;
+        console.log(documentID)
+        try {
+            await connectMongo();
+            const holder = await Holders.find({_id: documentID },  { holders: {products: 1}})
             console.log(holder)
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
