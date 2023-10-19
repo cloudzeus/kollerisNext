@@ -22,7 +22,6 @@ import { Divider } from 'primereact/divider';
 import { signIn } from "next-auth/react"
 import { Toast } from 'primereact/toast';
 
-
 const registerSchema = yup.object().shape({
 	firstName: yup.string().required('Συμπληρώστε το όνομα'),
 	lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
@@ -59,7 +58,7 @@ const RegisterPage = () => {
 			return;
 		}
 		showSuccess(response.user.firstName)
-		router.push('/auth/signin')
+		router.push('/auth/thankyouregistration')
 	}, [response, router])
 
 
@@ -89,14 +88,7 @@ const RegisterPage = () => {
 						<h2>EΓΓΡΑΦΗ ΧΡΗΣΤΗ!</h2>
 						<Subheader>Συμπληρώστε τη φόρμα εγγραφής</Subheader>
 					</div>
-					<div className="col-4">
-						<Image
-							src="/static/imgs/logoDG.png"
-							alt="Picture of the author"
-							width={100}
-							height={28}
-						/>
-					</div>
+					
 				</div>
 
 				<form noValidate onSubmit={handleSubmit(onSubmit)}>

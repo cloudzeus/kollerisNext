@@ -7,23 +7,18 @@ import LoginLayout from '@/layouts/Auth/loginLayout'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-//REDUX:
 import { fetchUser } from '@/features/userSlice';
-//TOAST:
 import { toast } from 'react-toastify';
-//COMPONENTS- LAYOYTS: 
 import Image from 'next/image'
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { StyledHeader, Subheader } from '@/components/Forms/formStyles';
-// import Button from '@/components/Buttons/Button';
-import {  signIn } from "next-auth/react"
-//FORMIK:
+import { signIn } from "next-auth/react"
 import { Divider } from 'primereact/divider';
-
 import Input from "@/components/Forms/PrimeInput";
 import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 import { Button } from "primereact/button";
-
+import { Toast } from "primereact/toast";
+import { useRef } from "react";
 const schema = yup.object().shape({
     email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
     password: yup.string().required('Συμπληρώστε τον κωδικό'),
@@ -33,14 +28,23 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const dispatch = useDispatch();
-
-    const {handleSubmit, formState: { errors }, reset, control } = useForm({
+    const toast = useRef(null);
+    const { handleSubmit, formState: { errors }, reset, control } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-			password: '',
-			email: '',
-		}
+            password: '',
+            email: '',
+        }
     });
+    const showSuccess = (message) => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Επιτυχής Σύνδεση', life: 3000});
+    }
+
+
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Δεν βρέθηκε χρήστης', life: 3000});
+    }
+
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
@@ -51,75 +55,63 @@ const LoginForm = () => {
                 password: data.password,
                 redirect: false,
             })
-        console.log('next auth credentials response: ' + JSON.stringify(res))
         if (res.ok == true && res.status == 200 && res.error == null) {
-            setLoading(false);
             router.push('/dashboard/product')
             dispatch(fetchUser({ username: data.email, password: data.password }))
-            toast.success('Επιτυχής σύνδεση');
+            showSuccess()
         } else {
-            toast.error('Δεν βρέθηκε χρήστης');
-            setLoading(false);
+            showError()
         }
-        // reset();
+        setLoading(false);
 
     };
 
     return (
         < LoginLayout >
-            <Container>
-                <Container className="box">
-                    <div className="grid mb-4">
-                        <div className="col-8">
-                            <h2>ΚΑΛΩΣ ΗΡΘΑΤΕ!</h2>
-                            <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
-                        </div>
-                        <div className="col-4">
-                            <Image
-                                src="/static/imgs/logoDG.png"
-                                alt="Picture of the author"
-                                width={100}
-                                height={28}
-                            />
-                        </div>
+            <Toast ref={toast} />
+            <Container className="box">
+                <div className="grid mb-4">
+                    <div className="col-8">
+                        <h2>ΚΑΛΩΣ ΗΡΘΑΤΕ!</h2>
+                        <Subheader>Συνδεθείτε στον λογαριασμό σας</Subheader>
                     </div>
-                    <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                     <Input
-                    label={'email'}
-                    name={'email'}
-                    mb={'10px'}
-                    required
-                    control={control}
-                    error={errors.email}
-                />
-                <PrimeInputPass
-                    label={'password'}
-                    name={'password'}
-                    mb={'10px'}
-                    required
-                    control={control}
-                    error={errors.password}
-                />
-                        <div className='flexBetween'>
-                            <CheckboxInput label={'Αποθήκευση κωδικού'} />
-                            <Link className="linkBtn" href="/auth/reset-password" >
-                                Αλλαγή κωδικού
-                            </Link>
-                        </div>
-                        <Button 
-                            type="submit" 
-                            label="Σύνδεση" 
-                            loading={loading} 
-                            style={{width: '100%'}} 
-                        />
-                        <Divider className="my-4" />
-                        <div className="centerDiv">
-                            <Link className="linkBtn" href="/auth/register" >
-                                Δημιουργία Λογαριασμού
-                            </Link>
-                        </div>
-                    </form>
-                </Container>
+                </div>
+                <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                    <Input
+                        label={'email'}
+                        name={'email'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                        error={errors.email}
+                    />
+                    <PrimeInputPass
+                        label={'password'}
+                        name={'password'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                        error={errors.password}
+                    />
+                    <div className='flexBetween'>
+                        <CheckboxInput label={'Αποθήκευση κωδικού'} />
+                        <Link className="linkBtn" href="/auth/reset-password" >
+                            Αλλαγή κωδικού
+                        </Link>
+                    </div>
+                    <Button
+                        type="submit"
+                        label="Σύνδεση"
+                        loading={loading}
+                        style={{ width: '100%' }}
+                    />
+                    <Divider className="my-4" />
+                    <div className="centerDiv">
+                        <Link className="linkBtn" href="/auth/register" >
+                            Δημιουργία Λογαριασμού
+                        </Link>
+                    </div>
+                </form>
             </Container>
 
         </LoginLayout>
@@ -131,7 +123,9 @@ const LoginForm = () => {
 
 const Container = styled.div`
     padding: 30px;
-    width: 450px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    min-width: 450px;
     @media (max-width: 499px) {
         width: 90%;
     } 

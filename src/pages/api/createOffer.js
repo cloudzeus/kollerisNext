@@ -3,8 +3,6 @@ import connectMongo from "../../../server/config"
 import { ImpaCodes } from "../../../server/models/impaSchema"
 import Clients from "../../../server/models/modelClients";
 import Holders from "../../../server/models/holderModel";
-import { closeMongo } from "../../../server/config";
-import nodemailer from 'nodemailer';
 import { transporter } from "@/utils/nodemailerConfig";
 
 export default async function handler(req, res) {
@@ -181,20 +179,14 @@ export default async function handler(req, res) {
 
         try {
 
-            // const mail = {
-            //     from: 'info@kolleris.com',
-            //     to: email,
-            //     cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-            //     subject:`Προσφορά - NUM: ${num}`,
-            //     html: `${body}`
-            //   };
             const mail = {
                 from: 'info@kolleris.com',
                 to: email,
-                cc: ['johnchiout.dev@gmail.com' ],
+                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
                 subject:`Προσφορά - NUM: ${num}`,
                 html: `${body}`
               };
+         
               
               function sendEmail(mail) {
                 return new Promise((resolve, reject) => {

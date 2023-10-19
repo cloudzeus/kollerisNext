@@ -20,10 +20,14 @@ export default NextAuth({
               headers: { "Content-Type": "application/json" },
             });
             const user = await res.json();
-			
-            if (user && user.success == true) {
+            console.log('user')
+            console.log(user)
+            if (user.user  && user.success == true) {
               return user;
-            } else {
+            } else if(user.user.role === 'user') {
+              return {mgs: 'Δεν έχετε δικαίωμα πρόσβασης'}
+            }
+            else {
               return null;
             }
             

@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import { BasicContainer } from '@/components/styles'
 import { useRouter } from 'next/router'
-
+import { Button } from 'primereact/button'
 const AdminEmailConfirmation = () => {
 
     const router = useRouter()
@@ -11,12 +11,12 @@ const AdminEmailConfirmation = () => {
         <Container>
             <MessageBoard >
                 <div>
-                <i className="pi pi-times" ></i>
+                <i className="pi pi-check" ></i>
                     <h1>Oλοκληρώθηκε η Εγγραφή</h1>
                 </div>
-                {/* <Button 
+                <Button 
                  onClick= {() => router.push('/auth/signin')}
-                 size='140px' >Σύνδεση </Button> */}
+                 size='140px' >Σύνδεση </Button>
             </MessageBoard >
         </Container>
     )

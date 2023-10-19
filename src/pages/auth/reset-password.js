@@ -25,8 +25,6 @@ const {  handleSubmit, formState: { errors }, reset, control } = useForm({
   const onSubmit = async (data) => {
     setLoading(true)
     const resp = await axios.post('/api/user/resetPassword', {email: data.email, action: 'sendResetEmail'})
-    console.log(resp)
-    
     if(resp.data.success === true) {
       setLoading(false)
       setSubmit(prev => !prev)

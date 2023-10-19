@@ -36,7 +36,7 @@ const CreateNewPassword = () => {
         const resp = await axios.post('/api/user/resetPassword', {password: data.password, email: router.query.email , action: 'finalReset'})
         if(resp.data.success) {
             setLoading(false)
-            router.push('/auth/login')
+            router.push('/auth/signin')
         } else {
             setLoading(false)
             toast.error('Κάτι πήγε στραβά')

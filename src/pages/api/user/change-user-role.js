@@ -39,19 +39,23 @@ export default async function handler(req, res) {
 
 
         if (user && user.role === 'employee') {
-            const mailOptions = {
-                from: email,
+          
+            const mail = {
+                from: 'info@kolleris.com',
                 to: user.email,
-            }
-
-            await transporter.sendMail({
-                ...mailOptions,
                 subject: `Επιβεβαίωση Εγγραφής`,
                 text: "Mπορείτε πλέον να συνδεθείτε κανονικά στην ιστοσελίδα μας.",
                 html: emailTemplate(user)
-            })
-
-            // return res.status(200).json({ success: true, user });
+            };
+        
+            transporter.sendMail(mail, (err, info) => {
+                if (err) {
+                    console.log(err);
+        
+                } else {
+                    console.log('Email sent successfully!');
+                }
+            });
             res.redirect('/auth/admin-email-confirmation');
 
         } else {
