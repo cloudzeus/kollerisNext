@@ -7,6 +7,7 @@ import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import SoftoneProduct from "../../../../server/models/newProductModel";
+import Markes from "../../../../server/models/markesModel";
 
 
 export const config = {
@@ -133,6 +134,16 @@ export default async function handler(req, res) {
             // console.log(groupID)
             let response = await SubMtrGroup.find({ 'softOne.MTRGROUP': groupID }, { "softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0 })
           
+            return res.status(200).json({ success: true, result: response })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+
+    if(action === 'findBrands') {
+        try {
+            await connectMongo();
+            let response = await Markes.find({},  { "softOne.MTRMARK": 1, "softOne.NAME": 1, _id: 0 })
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })

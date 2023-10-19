@@ -389,18 +389,18 @@ export default async function handler(req, res) {
     }
 
 
-    if(action === "productBrands") {
+    if (action === "productBrands") {
         try {
             await connectMongo();
             console.log('here')
             // let group = await SoftoneProduct.find({}, {MTRMARK: 1, _id: 1, NAME: 1})
-     
+
             // for(let item of group) {
             //     let groupName = await Markes.findOne(
             //         { "softOne.MTRMARK": item.MTRMARK },
             //         { "softOne.NAME": 1, _id: 0 }
             //       );
-            
+
             //     let updateField = groupName?.softOne.NAME
             //     console.log(item)
             //     if(updateField)  {
@@ -412,7 +412,7 @@ export default async function handler(req, res) {
             //           console.log(updated);
             //     }
             // }
-            
+
             // for(let i of group) {
             //     await SoftoneProduct.findOneAndUpdate({
             //         _id: i._id
@@ -439,5 +439,25 @@ export default async function handler(req, res) {
         }
     }
 
+    if (action === "createVat") {
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllVat`;
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                })
+            });
+
+            let buffer = await translateData(response)
+            await connectMongo();
+            let insert = await Vat.insertMany(buffer.result)
+            return res.status(200).json({ success: true, result: insert });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+
+    }
 }
 

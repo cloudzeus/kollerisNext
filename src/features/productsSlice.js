@@ -21,6 +21,8 @@ const initialState = {
         rows: 10,
         page: 1,
     },
+    productsForSoftone: [],
+    singleProductForSoftone: null,
 }
 
 
@@ -122,6 +124,19 @@ const productsSlice = createSlice({
                 return;
             };
         },
+        setProductsForSoftone: (state, {payload}) => {
+            state.productsForSoftone = payload;
+        },
+        //There is a queue of products waiting to be inserted to softone, this is the single product that is being inserted
+        setSingleProductForSoftone: (state, {payload}) => {
+            state.singleProductForSoftone = payload;
+        },
+       removeProductForSoftone: (state, {payload}) => {
+           
+            let filter = state.productsForSoftone.filter(product => product._id !== payload)
+            state.productsForSoftone = filter;
+            // state.singleProductForSoftone = null;
+       }
 
 	},
 
@@ -141,6 +156,9 @@ export const {
     setSelectedProducts,
     setMtrLines,
     deleteSelectedProduct,
+    setProductsForSoftone,
+    setSingleProductForSoftone,
+    removeProductForSoftone
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
