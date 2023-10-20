@@ -18,9 +18,7 @@ const ExpandedRowGrid = ({data}) => {
         handleFetch()
     }, [])
 
-    const rowExpansionTemplate = (data) => {
-        <SubRowExpansion  data={data}/>
-    }
+   
     return (
         <div className="card p-5">
             <p className='mb-2 font-bold'>Προσφορές</p>
