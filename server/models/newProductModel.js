@@ -74,6 +74,13 @@ const softoneProduct = new mongoose.Schema({
         gr: String,
     },
     MTRMARK_NAME: String,
+    DIM1: String,
+    DIM2: String,
+    DIM3: String,
+    MTRUNIT3: String,
+    MTRUNIT4: String,
+    MU31: String,
+    MU41: String,
 },
 
 {

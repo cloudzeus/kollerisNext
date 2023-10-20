@@ -27,8 +27,8 @@ const Page = () => {
 
     useEffect(() => {
         console.log('---------------------------------')
-        console.log(productsForSoftone )
-    }, [productsForSoftone ])
+        console.log(singleProductForSoftone )
+    }, [singleProductForSoftone ])
     const dispatch = useDispatch();
     const router = useRouter();
     const toast = useRef(null);
@@ -88,7 +88,7 @@ const Page = () => {
             MU41: 1,
             GWEIGHT: '',
             COUNTRY: '',
-
+            MTRMARK_NAME: singleProductForSoftone?.MTRMARK_NAME || '',	
         }
     });
     const showSuccess = () => {
@@ -120,16 +120,6 @@ const Page = () => {
         if (!selectState.group?.softOne?.MTRGROUP) {
             showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Ομάδα')
         }
-        if (!selectState.vat) {
-            showError('Επιλέξτε ΦΠΑ')
-
-        }
-        if (!selectState.brand) {
-            showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Μάρκα')
-            return;
-
-        }
-
 
         let obj = {
             ...data,
@@ -141,14 +131,25 @@ const Page = () => {
            
         }
 
+        const mongoObj = {
+            MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
+            CATEGORY_NAME: selectState.category?.categoryName,
+            MTRGROUP: selectState.group?.softOne?.MTRGROUP,
+            GROUP_NAME: selectState.group?.groupName,
+            CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
+            SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+            MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
+            ...data
+        }
         let res = await axios.post('/api/product/apiProduct', {
             action: 'addToSoftone',
             data: obj,
+            mongoData: mongoObj,
             id: singleProductForSoftone?._id,
         })
         if (res.data.success) {
             dispatch(removeProductForSoftone(singleProductForSoftone?._id))
-            router.back();
+            // router.back();
 
         }
       
@@ -191,15 +192,15 @@ const Page = () => {
                             setState={setSelectState}
                             id={selectState.group?.softOne?.MTRGROUP}
                         />
-                        <Brands
-                            state={selectState.brand}
-                            setState={setSelectState}
-                        />
-                       
                         <ManufacturerSelect
                             state={selectState.manufacturer}
                             setState={setSelectState}
                         />
+                         <Input
+                                label={'Μάρκα'} 
+                                name={'MTRMARK_NAME'}
+                                control={control}
+                            />
                         <div>
                             <FormTitle>Λοιπά Υποχρεωτικά Πεδία</FormTitle>
                             <Input

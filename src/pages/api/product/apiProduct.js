@@ -358,7 +358,8 @@ export default async function handler(req, res) {
     }
 
 	if(action === "addToSoftone") {
-        const {data, id} = req.body;
+        const {data, id, mongoData} = req.body;
+        console.log(mongoData)
         try {
             const filteredObject = {};
 
@@ -370,29 +371,33 @@ export default async function handler(req, res) {
             console.log('filteredObject')
             console.log(filteredObject)
             await connectMongo();
-            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/addNewMtrl`;
-            const response = await fetch(URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: "Service",
-                    password: "Service",
-                 
-                   ...filteredObject
-                })
-            });
-            let responseJSON = await response.json();
-            console.log(responseJSON)      
+           
+          async function createSoftone() {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/addNewMtrl`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                       ...filteredObject
+                    })
+                });
+                let responseJSON = await response.json();
+                return responseJSON;
+            }
+            let responseJSON = await createSoftone();
             if(responseJSON.success) {
                 let update = await SoftoneProduct.findOneAndUpdate({_id: id}, 
                     {
                         $set: {
                             SOFTONESTATUS: true,
                             MTRL: responseJSON.MTRL,
+                            ...mongoData
                         }
                     }
                 )
             }      
-    
+            
     
             return res.status(200).json({ success: true});
         } catch (e) {
