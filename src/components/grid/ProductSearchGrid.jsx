@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, use } from 'react'
 import axios from 'axios';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -24,11 +24,16 @@ import {
 const ProductSearchGrid = () => {
     const dispatch = useDispatch()
     const { filters, category, group, subgroup, lazyState, loading, searchTerm, sort, selectedProducts } = useSelector(store => store.products)
-    const { selectedMarkes, mtrLines, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
+    const { selectedMarkes} = useSelector(state => state.supplierOrder)
     const [totalRecords, setTotalRecords] = useState(0);
     const [data, setData] = useState([])
 
   
+
+    useEffect(() => {
+        dispatch(setSearchTerm(''))
+    }, [])
+
     const fetch = async () => {
         if (!searchTerm) {
             dispatch(setLoading(true))

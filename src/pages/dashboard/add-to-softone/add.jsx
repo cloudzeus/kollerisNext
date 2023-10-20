@@ -149,7 +149,7 @@ const Page = () => {
         })
         if (res.data.success) {
             dispatch(removeProductForSoftone(singleProductForSoftone?._id))
-            // router.back();
+            router.back();
 
         }
       
