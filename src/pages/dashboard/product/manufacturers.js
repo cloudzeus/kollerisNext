@@ -15,7 +15,6 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import SyncManufacturers from '@/GridSync/SyncManufacturers';
 import GridActions from '@/components/grid/GridActions';
 import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';

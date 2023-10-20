@@ -46,6 +46,7 @@ const supplierSchema = new mongoose.Schema({
     EMAIL:{
         type: String,
     },
+    AFM: String,
     EMAILACC:{
         type: String,
     },
