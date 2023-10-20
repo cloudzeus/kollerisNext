@@ -6,26 +6,27 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setProductsForSoftone } from '@/features/productsSlice';
+import axios from 'axios';
 const SoftoneStatusButton = ({onClick}) => {
     const dispatch = useDispatch() 
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
     const { selectedProducts } = useSelector(state => state.products)
     const router = useRouter();
-    const checkStatus = () => {
-        const notInSoftone = selectedProducts.filter(product => product.SOFTONESTATUS == false)
-        dispatch(setProductsForSoftone(notInSoftone))
-        return notInSoftone
-      
+
+    const checkStatus = async () => {
+        let {data} = await axios.post('/api/product/apiProduct', { action: "checkStatus", products: selectedProducts})
+        dispatch(setProductsForSoftone( data.result))
+        return data.result;
     }
 
-    const onBtnClick =() => {
+  
+  
+    const onBtnClick = async () => {
         setLoading(true)
-        let result = checkStatus();
-      
-     
+        let  result = await checkStatus();
         if(result.length > 0) {
-        setVisible(true)
+            setVisible(true)
             setLoading(false)
             return;
         } 

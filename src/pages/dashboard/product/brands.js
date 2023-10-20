@@ -24,12 +24,12 @@ import { setSelectedMarkes } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
 export default function TemplateDemo() {
     const router = useRouter()
+    const dispatch = useDispatch();
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
-    const dispatch = useDispatch();
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);

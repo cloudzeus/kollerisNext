@@ -14,6 +14,7 @@ import axios from 'axios'
 import StepHeader from '../multiOffer/StepHeader';
 import { useRouter } from 'next/router';
 import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
+import { setSelectedProducts } from '@/features/productsSlice';
 import { ProgressBar } from 'primereact/progressbar';
 import CompletedOrder from './CompletedOrder';
 
@@ -184,6 +185,11 @@ const OrdersTable = ({ mtrmark, rowData}) => {
     const Actions = ({MTRMARK}) => {
         return <ActionsTemplate MTRMARK={MTRMARK} setRefetch={setRefetch} />
     }
+
+    const onNewOrder = () => {
+        dispatch(setSelectedProducts([]))
+        router.push('/dashboard/supplierOrder/supplier')
+    }
     return (
         <div className='mt-4 mb-5'>
             <StepHeader text="Παραγγελίες σε προμηθευτές" />
@@ -204,7 +210,7 @@ const OrdersTable = ({ mtrmark, rowData}) => {
                 <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
             ) : (
-                <Button label="Νέα Παραγγελία" severity='secondary' onClick={() => router.push('/dashboard/supplierOrder/supplier')}/>
+                <Button label="Νέα Παραγγελία" severity='secondary' onClick={onNewOrder}/>
             )}
             
         </div>
@@ -234,12 +240,13 @@ const ActionsTemplate = ({MTRMARK, setRefetch}) => {
 
 const RowExpansionGrid = ({ products, MTRMARK}) => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
 
 
     const onAddMore = () => {
-        console.log(MTRMARK)
-        setSelectedMarkes(MTRMARK)
+        dispatch(setSelectedProducts([]))
+        // setSelectedMarkes(MTRMARK)
         router.push('/dashboard/supplierOrder/addMore')
     }
 

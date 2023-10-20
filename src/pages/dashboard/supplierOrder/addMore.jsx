@@ -12,21 +12,26 @@ import { setLazyState } from '@/features/productsSlice';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
 import { setSelectedProducts } from '@/features/supplierOrderSlice';
+import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { selectedMarkes, searchTerm, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {selectedProducts, mtrLines} = useSelector(state => state.products)
-  console.log(selectedMarkes, selectedSupplier)
 
 
+
+  useEffect(() => {
+    if(!selectedMarkes) {
+      router.push('/dashboard/product/brands')
+    }
+  }, [])
   const handleFinalSubmit = async () => {
     let { data } = await axios.post('/api/createOrder', {
       action: 'updateBucket',
       products: mtrLines,
-      MTRMARK: selectedMarkes.mtrmark,
+      MTRMARK: selectedMarkes?.mtrmark,
     })
-    // dispatch(setSelectedProducts([]))
       router.push('/dashboard/product/brands')
   }
   return (
@@ -39,10 +44,9 @@ const ChooseProducts = () => {
           <SelectedProducts />
         </div>
       ) : null}
-      <div className='mt-3'>
-        <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        <Button className='ml-2' icon="pi pi-arrow-right" severity='success' onClick={handleFinalSubmit} />
-
+      <div className='mt-3 flex'>
+        <Button className='mr-2' severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
+        <SoftoneStatusButton   onClick={handleFinalSubmit}/>
       </div>
 
     </AdminLayout>

@@ -399,6 +399,26 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null });
         }
     }
+
+    if(action === 'checkStatus') {
+        const {products} = req.body;
+        try {
+            await connectMongo();
+            const productsArray = []
+            for(let item of products) {
+                console.log(item)
+                let product = await SoftoneProduct.findOne({SOFTONESTATUS: false, _id: item._id})
+                if(product) {
+                    productsArray.push(product)
+
+                }   
+            }
+            console.log(productsArray)
+            return res.status(200).json({ success: true, result: productsArray });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+    }
 }
 
 

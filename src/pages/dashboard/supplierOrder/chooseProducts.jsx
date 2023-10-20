@@ -12,11 +12,12 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
 import { setSelectedProducts } from '@/features/productsSlice';
+import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 const ChooseProducts = ({ hideBackBtn }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { selectedMarkes, searchTerm, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
-  const {mtrLines} = useSelector(state => state.products)
+  const {mtrLines, selectedProducts} = useSelector(state => state.products)
   console.log('selected supplier')
   console.log(selectedSupplier)
 
@@ -55,12 +56,19 @@ const ChooseProducts = ({ hideBackBtn }) => {
     <AdminLayout>
       <StepHeader text="Προσθήκη Προϊόντων στο bucket" />
       <ProductSearchGrid />
-      <SelectedProducts />
-      <div className='mt-3'>
-        <Button severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-        <Button className='ml-2' label="Ολοκλήρωση" onClick={handleFinalSubmit} />
+ 
+      {selectedProducts.length !== 0 ? (
+         <div className='mt-3'>
+          <StepHeader text="Επιλεγμένα Προϊόντα" />
+     <SelectedProducts />
+          <div className='mt-3 flex align-items-center'>
+            <Button className='mr-3' severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
+         <SoftoneStatusButton label="Ολοκλήρωση"  onClick={handleFinalSubmit}/>
 
-      </div>
+          </div>
+       </div>
+      ) : null}
+     
 
     </AdminLayout>
   )

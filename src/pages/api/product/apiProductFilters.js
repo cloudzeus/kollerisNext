@@ -94,18 +94,12 @@ export default async function handler(req, res) {
     }
    
 
-
-
-
-
-
     if (action === 'findCategories') {
         
         try {
             await connectMongo();
             let response = await MtrCategory.find({}, { "softOne.MTRCATEGORY": 1, categoryName: 1, _id: 0 })
-            // console.log('categories')
-            // console.log(response)
+           
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })

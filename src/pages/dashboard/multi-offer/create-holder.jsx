@@ -8,7 +8,7 @@ import axios from 'axios'
 import Input from '@/components/Forms/PrimeInput'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
 import { useRouter } from 'next/router'
-
+import { setSelectedProducts } from '@/features/productsSlice'
 function generateOfferNum(length) {
     const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
     const min = Math.pow(10, length - 1); // Generates a number like 100000 for length = 6
@@ -18,6 +18,7 @@ function generateOfferNum(length) {
 
 
 const ΟffersPage = () => {
+    const dispatch = useDispatch();
     const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
     const router = useRouter()
     const finalizeOffer = async () => {
@@ -34,10 +35,12 @@ const ΟffersPage = () => {
 
 
     const createImpaHolder = () => {
+        dispatch(setSelectedProducts([]))
        router.push('/dashboard/multi-offer/create-impa-holder')
     }
 
     const createHolder = () => {
+        dispatch(setSelectedProducts([]))
         router.push('/dashboard/multi-offer/plain-holder')
 
     }

@@ -182,7 +182,6 @@ export default async function handler(req, res) {
             }
             console.log(obj)
             let insert = await PendingOrders.create(obj)
-            console.log(insert)
             return res.status(200).json({ success: true, result: insert })
 
         } catch (e) {
