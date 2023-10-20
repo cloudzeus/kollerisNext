@@ -266,6 +266,18 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }   
     }
+    if(action === "findClientHolder") {
+        const {documentID, holderID, clientName} = req.body;
+        console.log(clientName)
+        try {
+            await connectMongo();
+            const holder = await Holders.find({ clientName: clientName})
+            console.log(holder)
+            return res.status(200).json({ success: true, result: holder })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
 }
 
 

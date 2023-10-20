@@ -15,6 +15,9 @@ import { Badge } from 'primereact/badge';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
+import ExpandedRowGrid from '@/components/client/ExpandedRowGrid';
+import ClientHolder from '@/components/client/ClientHolders';
+
 export default function Clients() {
     const router = useRouter();
     const [submitted, setSubmitted] = useState(false);
@@ -23,6 +26,8 @@ export default function Clients() {
     const [data, setData] = useState([])
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [expandedRows, setExpandedRows] = useState(null);
+
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
@@ -98,6 +103,20 @@ export default function Clients() {
         )
     }
 
+    
+    const allowExpansion = (rowData) => {
+        return rowData
+
+    };
+
+
+    const rowExpansionTemplate = (data) => {
+      
+        return (
+            <  ExpandedRowGrid data={data} setSubmitted={setSubmitted}/>
+        );
+    };
+
 
     return (
         <AdminLayout >
@@ -118,10 +137,15 @@ export default function Clients() {
                 loading={loading}
                 filterDisplay="row"
                 showGridlines
-            >
-                <Column header="Προσφορές" bodyStyle={{textAlign: 'center'}} body={OffersDetails} style={{width: '60px'}}></Column>
+                rowExpansionTemplate={rowExpansionTemplate}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+            >   
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion}  style={{ width: '20px' }} />
                 <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient} header="Ονομα" sortable></Column>
                 <Column field="AFM" header="ΑΦΜ" sortable></Column>
+                <Column field="EMAIL" header="ΑΦΜ" sortable></Column>
+
                 <Column field="ADDRESS" header="Διεύθυνση" sortable></Column>
                 <Column field="PHONE01" header="Τηλέφωνο" sortable></Column>
                 <Column field="ZIP" header="Ταχ.Κώδικας" sortable></Column>
@@ -155,46 +179,6 @@ export default function Clients() {
 
 
 
-const ActiveTempate = ({ status }) => {
-    return (
-        <div>
-            {status ? (
-                <Tag severity="success" value=" active "></Tag>
-            ) : (
-                <Tag severity="danger" value="deleted" ></Tag>
-            )}
-
-        </div>
-    )
-
-}
-
-
-
-const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={updatedFrom}
-            at={updatedAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--yellow-500)'
-        />
-
-    )
-}
-const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={createdFrom}
-            at={createdAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--green-400)'
-        />
-
-    )
-}
 
 
 
@@ -202,78 +186,6 @@ const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
 
 
 
-function Sync({data, setSubmitted}) {
-    const op = useRef(null);
-    const toast = useRef(null);
-    console.log('dataaaaaa')
-    console.log(data)
-    const [selected, setSelected] = useState([]);
-    console.log('selected')
-    console.log(selected)
-    const [loading, setLoading] = useState(false)
 
 
-const handleSync = async () => {
-    setLoading(true)
-    console.log('sync')
-    let {data} = await axios.post('/api/clients/apiClients', { action: 'upsert', data: selected })
-    if(!data.success) {
-        showError()
-        setLoading(false)
-        return;
-    }
-    showSuccess();
-    setLoading(false)
-    setSubmitted(true);
-}
 
-
-const showSuccess = () => {
-    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής Προσθήκη στο σύστημα μας', life: 5000 });
-}
-const showError = () => {
-    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία προσθήκης', life: 4000 });
-}
-
-
-const footerTemplate = () => {
-    return (
-        <div>
-            <Button  loading={loading} disabled={selected.length == 0 ? true : false} label="Sync" icon="pi pi-sync" className="p-button-secondary" onClick={handleSync}/>
-        </div>
-    );
-}
-
-
-return (
-    <div className="card flex flex-column align-items-center gap-3">
-        <Toast ref={toast} />
-        <Button 
-            type="button" 
-            icon="pi pi-sync"  
-            label="sync"
-            className="p-button-secondary"
-            tooltip='Αν νέες εγγραφές έχουν προστεθεί στο softone θα εμφανιστούν εδώ.
-            Πατήστε για να δείτε τις εγγραφές'
-            tooltipOptions={{ position: 'left' }}
-            onClick={(e) => op.current.toggle(e)}>
-            <Badge value={data.length} severity="danger" />
-        </Button>
-       
-        <OverlayPanel ref={op} showCloseIcon>
-            <DataTable 
-                value={data} 
-                selectionMode="single" 
-                paginator 
-                rows={5} 
-                selection={selected} 
-                footer={footerTemplate}
-                onSelectionChange={(e) => setSelected(e.value)}>
-                <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                <Column field="TRDR" header="TRDR" style={{minWidth: '12rem'}} />
-                <Column field="NAME" header="Όνομα Softone" style={{minWidth: '12rem'}} />
-            </DataTable>
-        </OverlayPanel>
-    </div>
-);
-}
