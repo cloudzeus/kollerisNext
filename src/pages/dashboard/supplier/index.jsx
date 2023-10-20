@@ -3,7 +3,7 @@ const Page = () => {
 
     return (
         <AdminLayout>
-            
+
         </AdminLayout >
     )
 }
