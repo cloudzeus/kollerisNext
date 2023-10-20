@@ -118,6 +118,7 @@ const OrdersTable = ({ mtrmark, rowData}) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', { action: 'findPending', mtrmark: mtrmark })
         setData(data.result)
+        console.log(data.result)
         dispatch(setSelectedSupplier({
             NAME: data.result[0]?.NAME,
             supplierEmail: data.result[0]?.supplierEmail,
@@ -204,7 +205,8 @@ const OrdersTable = ({ mtrmark, rowData}) => {
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
-                <Column header="Όνομα προμηθευτή" field="NAME"></Column>
+                <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
+                <Column header="Email" field="supplierEmail"></Column>
                 <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }} body={CompletionTemplate}></Column>
                 <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} body={PriceTemplate}></Column>
                 <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
@@ -219,21 +221,20 @@ const OrdersTable = ({ mtrmark, rowData}) => {
 
 const ActionsTemplate = ({MTRMARK, setRefetch}) => {
     const { orderReady, mtrLines } = useSelector(state => state.supplierOrder)
-
+    const [loading, setLoading] = useState(false)
     const submitOrder = async () => {
-        
+        setLoading(true)
         let { data } = await axios.post('/api/createOrder', { 
             action: 'submitOrder', 
             products: mtrLines,
             mtrmark: MTRMARK,
         })
+        setLoading(false)
         setRefetch(prev => !prev)
-      
     }
     return (
-        <div className=''>
-
-            <Button onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
+        <div>
+            <Button loading={loading} onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
         </div>
     )
 }

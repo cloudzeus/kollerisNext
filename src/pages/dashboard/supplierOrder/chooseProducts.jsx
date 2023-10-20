@@ -23,7 +23,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
 
   useEffect(() => {
     if(!selectedSupplier) {
-      router.push('/dashboard/product/suppliers')
+      router.push('/dashboard/product/brands')
     }
   }, [])
 
@@ -63,7 +63,7 @@ const ChooseProducts = ({ hideBackBtn }) => {
      <SelectedProducts />
           <div className='mt-3 flex align-items-center'>
             <Button className='mr-3' severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-         <SoftoneStatusButton label="Ολοκλήρωση"  onClick={handleFinalSubmit}/>
+         <SoftoneStatusButton onClick={handleFinalSubmit}/>
 
           </div>
        </div>

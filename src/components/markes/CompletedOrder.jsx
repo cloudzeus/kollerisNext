@@ -17,7 +17,7 @@ const CompletedOrder = ({ mtrmark }) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const handleFetch = async () => {
             const {data} = await axios.post('/api/createOrder', {action: "findCompleted", mtrmark: mtrmark})
-          
+            console.log(data.result)
             setData(data.result)
     }
     const allowExpansion = (rowData) => {
@@ -83,6 +83,7 @@ const CompletedOrder = ({ mtrmark }) => {
                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="PURDOCNUM"></Column>
                 <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
+                <Column header="Ημερομηνία" body={CreatedAt} field="createdAt"></Column>
                 <Column header="Status" style={{ width: '120px' }} field="status" body={Status} editor={(options) => statusEditor(options)}></Column>
                 <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
 
@@ -127,4 +128,13 @@ const Status = ({ status }) => {
     )
 }
 
+const CreatedAt = ({ createdAt }) => {
+    let splitdate = createdAt.split('T')[0]
+    return (
+        <div className='flex align-items-center'>
+            <i className="pi pi-calendar mr-2"></i>
+            <span className='text-600'>{splitdate}</span>
+        </div>
+    )
+}
 export default CompletedOrder;

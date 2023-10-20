@@ -178,7 +178,6 @@ export default async function handler(req, res) {
                 MTRMARK: MTRMARK,
                 minItems: minItems,
                 minValue: minValue,
-                orderNumber: orderNumber,
             }
             console.log(obj)
             let insert = await PendingOrders.create(obj)
@@ -300,26 +299,35 @@ export default async function handler(req, res) {
             const email = find?.supplierEmail;
             const orderNumber = find?.orderNumber;
             const TRDR = find?.TRDR;
-            console.log(TRDR)
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
                 const QTY1 = parseInt(item.QTY1);
                 return { MTRL, QTY1 };
             });
-            console.log( mtrlArr)
+
+
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
-            console.log(PURDOC)
             if(!PURDOC) {
                 return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
             }
+
+            const generateNextCode = async () => {
+                const lastDoc = await CompletedOrders.find().sort({ orderNumber: -1 }).limit(1).exec();
+                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
+                return lastCode + 10;
+
+            };
+
+
+            let nextCode = await generateNextCode()
             let obj = {
-                supplierName: find?.NAME,
+                supplierName: find?.supplierName,
                 supplierEmail: email,
                 status: "pending",
                 products: products,
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
-                orderNumber: orderNumber,
+                orderNumber: nextCode,
                 MTRMARK: parseInt(mtrmark),
             }
             let create = await CompletedOrders.create(obj);
