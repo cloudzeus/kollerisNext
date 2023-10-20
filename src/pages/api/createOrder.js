@@ -78,80 +78,80 @@ export default async function handler(req, res) {
         }
     }
 
-    if (action === "fetchProducts") {
-        const { skip, limit, searchTerm, mtrmark } = req.body;
-        console.log('FETCH PRODUCTS')
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-            let totalRecords;
-            let pipeline = [
-                {
-                    $match: {
-                        MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "markes",
-                        localField: "MTRMARK",
-                        foreignField: "softOne.MTRMARK",
-                        as: "matched_mark"  // Output alias for matched documents from MARKES
-                    }
-                },
-                {
-                    $unwind: "$matched_mark"
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        NAME: 1,
-                        PRICER: 1,
-                        MTRL: 1,
-                        CATEGORY_NAME: 1,
-                        GROUP_NAME: 1,
-                        SUBGROUP_NAME: 1,
-                        "brandName": "$matched_mark.softOne.NAME",
-                        "mtrmark": "$matched_mark.softOne.MTRMARK",
-                        "minValue": "$matched_mark.minValueOrder",
-                        "minItems": "$matched_mark.minItemsOrder",
-                    }
-                },
-                {
-                    $skip: skip  // Skip the first 10 documents
-                },
-                {
-                    $limit: limit // Limit the result to 10 documents
-                }
-            ]
+    // if (action === "fetchProducts") {
+    //     const { skip, limit, searchTerm, mtrmark } = req.body;
+    //     console.log('FETCH PRODUCTS')
+    //     try {
+    //         await connectMongo();
+    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+    //         let totalRecords;
+    //         let pipeline = [
+    //             {
+    //                 $match: {
+    //                     MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
+    //                 }
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: "markes",
+    //                     localField: "MTRMARK",
+    //                     foreignField: "softOne.MTRMARK",
+    //                     as: "matched_mark"  // Output alias for matched documents from MARKES
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: "$matched_mark"
+    //             },
+    //             {
+    //                 $project: {
+    //                     _id: 0,
+    //                     NAME: 1,
+    //                     PRICER: 1,
+    //                     MTRL: 1,
+    //                     CATEGORY_NAME: 1,
+    //                     GROUP_NAME: 1,
+    //                     SUBGROUP_NAME: 1,
+    //                     "brandName": "$matched_mark.softOne.NAME",
+    //                     "mtrmark": "$matched_mark.softOne.MTRMARK",
+    //                     "minValue": "$matched_mark.minValueOrder",
+    //                     "minItems": "$matched_mark.minItemsOrder",
+    //                 }
+    //             },
+    //             {
+    //                 $skip: skip  // Skip the first 10 documents
+    //             },
+    //             {
+    //                 $limit: limit // Limit the result to 10 documents
+    //             }
+    //         ]
 
 
-            if (searchTerm) {
-                totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
-                pipeline.unshift({
-                    $match: { NAME: regexSearchTerm }
-                });
-            } else {
-                totalRecords = await SoftoneProduct.countDocuments({});
-            }
+    //         if (searchTerm) {
+    //             totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
+    //             pipeline.unshift({
+    //                 $match: { NAME: regexSearchTerm }
+    //             });
+    //         } else {
+    //             totalRecords = await SoftoneProduct.countDocuments({});
+    //         }
 
-            let products = await SoftoneProduct.aggregate(pipeline)
-            return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+    //         let products = await SoftoneProduct.aggregate(pipeline)
+    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
+    // }
 
-    if (action === 'fetchMarkes') {
-        console.log('fetch markes')
-        try {
-            await connectMongo();
-            let markes = await Markes.find({}).select({ "softOne.NAME": 1, "softOne.MTRMARK": 1, _id: 0 })
-            return res.status(200).json({ success: true, result: markes })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+    // if (action === 'fetchMarkes') {
+    //     console.log('fetch markes')
+    //     try {
+    //         await connectMongo();
+    //         let markes = await Markes.find({}).select({ "softOne.NAME": 1, "softOne.MTRMARK": 1, _id: 0 })
+    //         return res.status(200).json({ success: true, result: markes })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
+    // }
 
    
 

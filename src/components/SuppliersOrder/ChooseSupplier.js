@@ -16,7 +16,11 @@ const ChooseSupplier = () => {
     const [showTable, setShowTable] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [searchTerm, setSearchTerm] = useState('')
+    const [searchTerm, setSearchTerm] = useState({
+        name: '',
+        email: '',
+        phone: '',
+    })
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
@@ -28,9 +32,11 @@ const ChooseSupplier = () => {
        dispatch(setSelectedSupplier(null)) 
     }, [])
     const fetch = async (action) => {
+        if(action == "fetchSuppliers") {
+            setLoading(true)
+        }
      
-        setLoading(true)
-        let { data } = await axios.post('/api/createOrder', {
+        let { data } = await axios.post('/api/supplier', {
             action: action,
             skip: lazyState.first,
             limit: lazyState.rows,
@@ -38,18 +44,21 @@ const ChooseSupplier = () => {
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
-        setLoading(false)
+        if(action == "fetchSuppliers") {
+            setLoading(false)
+        }
+     
 
     }
 
   
     useEffect(() => {
-        if (searchTerm == '') {
+        if (searchTerm.name == '' && searchTerm.email == '' && searchTerm.phone == '') {
             fetch("fetchSuppliers");
         } else {
-            fetch("searchSupplier")
+            fetch("search")
         }
-    }, [searchTerm, lazyState.rows, lazyState.first,])
+    }, [searchTerm.name, searchTerm.phone, searchTerm.email, lazyState.rows, lazyState.first,])
 
 
   
@@ -68,15 +77,36 @@ const ChooseSupplier = () => {
             <div className="flex justify-content-start w-20rem ">
                 <span className="p-input-icon-left w-full">
                     <i className="pi pi-search " />
-                    <InputText value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <InputText value={searchTerm.name} onChange={(e) => setSearchTerm(prev => ({...prev, name: e.target.value}))} />
                 </span>
             </div>
         )
     }
 
+    const SearchEmail = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.email} onChange={(e) => setSearchTerm(prev => ({...prev, email: e.target.value}))} />
+                </span>
+            </div>
+        )
+    }
+    const SearchPhone = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.phone}  onChange={(e) => setSearchTerm(prev => ({...prev, phone: e.target.value}))} />
+                </span>
+            </div>
+        )
+    }
+
+    
 
 
-   
  
   
     return (
@@ -99,10 +129,13 @@ const ChooseSupplier = () => {
                     size="small"
                     filterDisplay="row"
                     id={'_id'}
+                    showGridlines
                 >
                     <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
-                    <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
-                    <Column field="EMAIL" header="Email"></Column>
+                    <Column field="NAME" style={{width: '400px'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
+                    <Column field="EMAIL"  style={{width: '500px'}} filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
+                    <Column field="PHONE01" style={{width: '200px'}} filter showFilterMenu={false} filterElement={SearchPhone} header="Τηλέφωνο"></Column>
+                    <Column field="ADDRESS" header="Διεύθυνση"></Column>
                 </DataTable>
          
             {selectedSupplier ? (
