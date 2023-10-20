@@ -128,9 +128,9 @@ const ClientHolder = ({NAME}) => {
         >
             <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
             <Column header="Aρ. Προσφοράς"   field="num"></Column>
-            <Column header="Status" field="status" body={Status} style={{ width: '100px' }} editor={(options) => statusEditor(options)}></Column>
-            <Column header="Αλλαγή Status" rowEditor headerStyle={{width: '120px' }} bodyStyle={{ textAlign: 'center' }}></Column>
-            <Column header="Aποστολή σε Πελάτη" headerStyle={{ width: '200px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
+            <Column header="Status" field="status" body={Status} editor={(options) => statusEditor(options)}></Column>
+            <Column header="Αλλαγή Status" rowEditor bodyStyle={{ textAlign: 'center' }}></Column>
+            <Column header="Aποστολή σε Πελάτη" bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
             <Column headerStyle={{ width: '40px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column> 
 
 
