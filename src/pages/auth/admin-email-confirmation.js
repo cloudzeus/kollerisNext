@@ -4,7 +4,6 @@ import { BasicContainer } from '@/components/styles'
 import { useRouter } from 'next/router'
 import { Button } from 'primereact/button'
 const AdminEmailConfirmation = () => {
-
     const router = useRouter()
    
     return (

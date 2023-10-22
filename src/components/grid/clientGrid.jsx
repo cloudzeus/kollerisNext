@@ -28,11 +28,10 @@ const CustomersGrid = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch()
 
-
-    const fetchClients = async (action, searchTerm) => {
+    const fetchClients = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/clients/apiClients', {
-            action: action,
+            action: "fetchAll",
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm
@@ -45,39 +44,13 @@ const CustomersGrid = () => {
 
 
     useEffect(() => {
-        console.log('useEffect')
-        dispatch(setSelectedClient(null))
-        if(
-            searchTerm.name === '' 
-            || searchTerm.afm === '' 
-            || searchTerm.address === '' 
-            || searchTerm.phone === ''
-        ) {
-            console.log('we should be here')
-            fetchClients("fetchAll");
-        } 
-        if(searchTerm.name !== '') {
-            fetchClients("searchName", searchTerm.name);
-        }
-        if(searchTerm.afm !== '') {
-            fetchClients("searchAFM",  searchTerm.afm);
-        }
-        if(searchTerm.address !== '') {
-            fetchClients("searchAddress", searchTerm.address);
-        }
-        if(searchTerm.phone !== '') {
-            fetchClients("searchPhone", searchTerm.phone);
-        }
-
-        
-    }, [
+         fetchClients();
+     }, [
         lazyState.rows, 
         lazyState.first, 
-        searchTerm.name, 
-        searchTerm.afm,  
-        searchTerm.address,
-        searchTerm.phone
+        searchTerm
     ])
+
 
 
     const onSelectionChange = (e) => {
@@ -148,10 +121,8 @@ const CustomersGrid = () => {
             filterDisplay="row"
 
         >
-            <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
-            <Column field="NAME" style={{minWidth: '30rem'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
-            <Column field="EMAIL"   style={{minWidth: '15rem'}} header="EMAIL"></Column>
-
+            <Column selectionMode="single" headerStyle={{ maxWidth: '200px' }}></Column>
+            <Column field="NAME" style={{maxWidth: '350px'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
             <Column field="PHONE01" filter showFilterMenu={false} filterElement={SearchPhone} header="Τηλέφωνο"></Column>
             <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση"></Column>
             <Column field="AFM" style={{width: '120px'}} filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ"></Column>

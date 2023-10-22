@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       console.log('500 payload in login api: ' + JSON.stringify(payload))
 		  const accessToken = signJwtAccessToken(payload);
       console.log('300: user in login Access Token : ' + JSON.stringify(accessToken))
-     	return res.status(200).json({success: true, accessToken: accessToken, user:user});
+     	return res.status(200).json({success: true, accessToken: accessToken, user: user});
     } 
     else {
       return res.status(200).json({success: false, user: null});
