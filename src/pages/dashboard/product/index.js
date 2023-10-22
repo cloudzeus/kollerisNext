@@ -4,7 +4,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
-import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
@@ -13,7 +12,6 @@ import { MultiSelect } from 'primereact/multiselect';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { DisabledDisplay } from '@/componentsStyles/grid';
 import { InputTextarea } from 'primereact/inputtextarea';
-import TranslateField from '@/components/grid/GridTranslate';
 import ProductActions from '@/components/grid/Product/ProductActions';
 import { EditDialog, AddDialog } from '@/GridDialogs/ProductDialog';
 import ClassificationDialog from '@/GridDialogs/product/ClassificationDialog';
@@ -25,9 +23,21 @@ import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/Prod
 import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import StepHeader from '@/components/StepHeader';
+import { useSelector } from 'react-redux';
+import {
+    setCategory,
+    setGroup,
+    setSubgroup,
+    setFilters,
+    setLazyState2,
+    setLoading,
+    resetSelectedFilters,
+    setSearchTerm,
+    setSort,
+    setSoftoneFilter
+} from "@/features/productsSlice";
 
 
 const dialogStyle = {
@@ -45,7 +55,7 @@ const initialColumns = [
         header: 'Availability',
         id: 2,
     },
-  
+
 
 ]
 
@@ -117,33 +127,22 @@ function Product() {
     const { data: session } = useSession()
     let user = session?.user?.user;
     const { selectedProducts, setSelectedProducts, submitted, setSubmitted } = useContext(ProductQuantityContext)
-    const [categroriesFilter, setCategoriesFilter] = useState(null);
-    const [subGroupsFilter, setSubGroupsFilter] = useState(null);
-    const [groupFilter, setGroupFilter] = useState(null);
-    const [softoneStatusFilter, setSoftoneStatusFilter] = useState(null);
-    const [category, setCategory] = useState(null)
-    const [group, setGroup] = useState(null)
-    const [subgroup, setSubGroup] = useState(null)
+    const [data, setData] = useState([]);
+
     const dispatch = useDispatch();
 
-    const [loading, setLoading] = useState(false)
-    const [filteredData, setFilteredData] = useState([])
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
-    const [triggerUpdate, setTriggerUpdate] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
     const [addDialog, setAddDialog] = useState(false);
-
-
-
-    const [searchTerm, setSearchTerm] = useState('')
+    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter } = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
-    const [lazyState, setlazyState] = useState({
-        first: 0,
-        rows: 50,
-        page: 1,
-    });
+
+
+    useEffect(() => {
+        dispatch(setSearchTerm(''))
+    }, [])
 
 
     useEffect(() => {
@@ -151,43 +150,46 @@ function Product() {
     }, [submitted])
 
 
-
     const fetch = async () => {
-        setLoading(true)
+        if (!searchTerm) {
+            dispatch(setLoading(true))
+        }
         try {
-            let res = await axios.post('/api/product/apiProductFilters', {
-                action: 'filterCategories',
+            let { data } = await axios.post('/api/product/apiProductFilters', {
+                action: 'productSearchGrid',
                 searchTerm: searchTerm,
-                skip: lazyState.first,
-                limit: lazyState.rows,
+                skip: lazyState2.first,
+                limit: lazyState2.rows,
                 categoryID: category?.softOne.MTRCATEGORY,
                 groupID: group?.softOne.MTRGROUP,
                 subgroupID: subgroup?.softOne.cccSubgroup2,
-                softoneStatusFilter: softoneStatusFilter
+                sort: sort,
+                softoneFilter: softoneFilter
             },
             )
-            setLoading(false)
-            setFilteredData(res.data.result);
-            setTotalRecords(prev => {
-                if (prev === res.data.totalRecords) {
-                    return prev;
-                } else {
-                    return res.data.totalRecords
-                }
-            })
+            setData(data.result);
+            setTotalRecords(data.totalRecords)
+            dispatch(setLoading(false))
+
         } catch (e) {
             console.log(e)
-            setLoading(false)
         }
 
     }
-
-
     useEffect(() => {
+        fetch();
+    }, [lazyState2.rows, lazyState2.first, searchTerm, category, group, subgroup, sort, softoneFilter])
 
-        fetch()
-    }, [triggerUpdate, lazyState.first, lazyState.rows, searchTerm, category, group, subgroup, softoneStatusFilter,])
+    const onFilterCategoryChange = (e) => {
+        dispatch(setCategory(e.value))
 
+    }
+    const onFilterGroupChange = (e) => {
+        dispatch(setGroup(e.value))
+    }
+    const onFilterSubGroupChange = (e) => {
+        dispatch(setSubgroup(e.value))
+    }
 
 
 
@@ -217,16 +219,32 @@ function Product() {
     }
 
     const renderHeader = () => {
+        const optionsSoft = [
+            {name: 'IN softone', value: true},
+            {name: 'NOT IN softone', value: false},
+            {name: 'Χωρίς Φίλτρο', value: null}
+        ]
+        const onOptionChange = (e) => {
+            console.log(e.value)
+            dispatch( setSoftoneFilter(e.value))
+        }
         return (
             <div className="flex lg:no-wrap  sm:flex-wrap">
-                <div className="">
-                    <span className="p-input-icon-left mr-3 sm:w-full">
-                        <i className="pi pi-search" />
-                        <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
-                    </span>
+                   <div className='mr-2'>
+                <Dropdown
+                    emptyMessage="Δεν υπάρχουν υποομάδες"
+                    size="small"
+                    value={softoneFilter}
+                    options={optionsSoft}
+                    onChange={onOptionChange}
+                    optionLabel="name"
+                    placeholder="Φίλτρο Softone"
+                    className="p-column-filter grid-filter"
+                    style={{ minWidth: '14rem', fontSize: '12px' }}
+                />
                 </div>
                 <div className="sm:mt-1  lg:mt-0">
-                    <MultiSelect className="w-18rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
+                    <MultiSelect className="w-20rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
                 </div>
             </div>
 
@@ -236,10 +254,6 @@ function Product() {
 
     const header = renderHeader();
 
-    const onGlobalFilterChange = (event) => {
-        const value = event.target.value;
-        setSearchTerm(value)
-    };
 
     const addProduct = async (product) => {
         setSubmitted(false);
@@ -287,51 +301,42 @@ function Product() {
 
 
 
-
-
-    const onFilterCategoryChange = (e) => {
-        setCategory(e.value)
-        setGroup(null)
-        setSubGroup(null)
-        setlazyState({ ...lazyState, first: 0 })
-    }
-
-
-    const onFilterSubGroupChange = (e) => {
-        setSubGroup(e.value)
-        setlazyState({ ...lazyState, first: 0 })
-    }
+    const onPage = (event) => {
+        dispatch(setLazyState2({ ...lazyState2, first: event.first, rows: event.rows }))
+    };
 
     const CategoriesRowFilterTemplate = (options) => {
         useEffect(() => {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
                     action: 'findCategories',
-
                 })
-                setCategoriesFilter(data.result)
+                dispatch(setFilters({ action: 'category', value: data.result }))
             }
-
             handleCategories()
+
         }, [])
 
         const onDelete = () => {
-            setCategory(null)
-            setGroup(null)
-            setSubGroup(null)
+            dispatch(resetSelectedFilters())
+
         }
         return (
-            <div className='flex align-items-center'>
-                <Dropdown
-                    value={category}
-                    options={categroriesFilter}
-                    onChange={onFilterCategoryChange}
-                    optionLabel="categoryName"
-                    placeholder="Φίλτρο Κατηγορίας"
-                    className="p-column-filter  grid-filter"
-                    style={{ minWidth: '14rem', fontSize: '12px' }}
-                />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
+            <div className="flex align-items-center">
+                <div className='flex align-items-center'>
+                    <Dropdown
+                        emptyMessage="Δεν υπάρχουν κατηγορίες"
+                        value={category}
+                        options={filters.category}
+                        onChange={onFilterCategoryChange}
+                        optionLabel="categoryName"
+                        placeholder="Φίλτρο Κατηγορίας"
+                        className="p-column-filter  grid-filter w-14rem"
+
+                    />
+                    <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
+                </div>
+
             </div>
 
         )
@@ -339,20 +344,14 @@ function Product() {
 
 
     const GroupRowFilterTemplate = (options) => {
-        const onFilterGroupChange = (e) => {
-            setGroup(e.value)
-            setSubGroup(null)
-            setlazyState({ ...lazyState, first: 0 })
-        }
-
         useEffect(() => {
             const handleCategories = async () => {
+
                 let { data } = await axios.post('/api/product/apiProductFilters', {
                     action: 'findGroups',
                     categoryID: category?.softOne.MTRCATEGORY
                 })
-
-                setGroupFilter(data.result)
+                dispatch(setFilters({ action: 'group', value: data.result }))
             }
             handleCategories()
         }, [category])
@@ -361,85 +360,109 @@ function Product() {
         return (
             <div className='flex align-items-center'>
                 <Dropdown
+                    emptyMessage="Δεν υπάρχουν ομάδες"
                     disabled={!category ? true : false}
                     value={group}
-                    options={groupFilter}
+                    options={filters.group}
                     onChange={onFilterGroupChange}
                     optionLabel="groupName"
                     placeholder="Φίλτρο Κατηγορίας"
                     className="p-column-filter  grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setGroup(null)} ></i>
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => dispatch(setGroup(null))} ></i>
             </div>
 
         )
     };
 
 
+    const MarkesFilterTemplate = (options) => {
+        // useEffect(() => {
+        //     const handleCategories = async () => {
+        //         let { data } = await axios.post('/api/product/apiProductFilters', {
+        //             action: 'findMarkes',
+        //             markes: mtrmark
+        //         })
+        //         dispatch(setFilters({ action: 'subgroup', value: data.result }))
 
-    const SubGroupsRowFilterTemplate = (options) => {
-        useEffect(() => {
-            const handleCategories = async () => {
-                let { data } = await axios.post('/api/product/apiProductFilters', {
-                    action: 'findGroups',
-                    categoryID: category?.softOne.MTRCATEGORY
-                })
-                setSubGroupsFilter(data.result)
-            }
-
-            handleCategories()
-        }, [category, group])
+        //     }
+        //     handleCategories()
+        // }, [group])
 
         return (
             <div className="flex align-items-center">
                 <Dropdown
+                    emptyMessage="Δεν υπάρχουν υποομάδες"
                     size="small"
                     disabled={!group ? true : false}
                     value={subgroup}
-                    options={subGroupsFilter}
+                    options={filters.subgroup}
                     onChange={onFilterSubGroupChange}
                     optionLabel="subGroupName"
                     placeholder="Φίλτρο Υποομάδας"
                     className="p-column-filter grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setSubGroup(null)} ></i>
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => dispatch(setSubgroup(null))} ></i>
             </div>
         )
     };
+    const SubGroupsRowFilterTemplate = (options) => {
+        useEffect(() => {
+            const handleCategories = async () => {
+                let { data } = await axios.post('/api/product/apiProductFilters', {
+                    action: 'findSubGroups',
+                    groupID: group?.softOne.MTRGROUP
+                })
+                dispatch(setFilters({ action: 'subgroup', value: data.result }))
 
-    const SoftoneStatusFilter = (options) => {
-        const statusOptions = [
-            { label: 'Ενεργό', value: true },
-            { label: 'Ανενεργό', value: false },
-        ]
+            }
+            handleCategories()
+        }, [group])
+
         return (
             <div className="flex align-items-center">
                 <Dropdown
+                    emptyMessage="Δεν υπάρχουν υποομάδες"
                     size="small"
-                    value={softoneStatusFilter}
-                    options={statusOptions}
-                    onChange={(e) => setSoftoneStatusFilter(e.value)}
-                    optionLabel="label"
+                    disabled={!group ? true : false}
+                    value={subgroup}
+                    options={filters.subgroup}
+                    onChange={onFilterSubGroupChange}
+                    optionLabel="subGroupName"
                     placeholder="Φίλτρο Υποομάδας"
                     className="p-column-filter grid-filter"
                     style={{ minWidth: '14rem', fontSize: '12px' }}
                 />
-                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setSoftoneStatusFilter(null)} ></i>
+                <i className="pi pi-times ml-2 cursor-pointer" onClick={() => dispatch(setSubgroup(null))} ></i>
             </div>
         )
-    }
+    };
 
-    const softstatusTemplate = ({ SOFTONESTATUS }) => {
+ 
+
+    const onSearchName = () => {
+        const onSort = () => {
+            dispatch(setSort())
+
+        }
         return (
-            <SoftoneStatusTemplate softoneStatus={SOFTONESTATUS} />
+            <div>
+            <div className="flex align-items-center justify-content-start w-20rem ">
+                <div className="p-input-icon-left w-full">
+                    <i className="pi pi-search" />
+                    <InputText value={searchTerm} placeholder='Αναζήτηση Προϊόντος' onChange={(e) => dispatch(setSearchTerm(e.target.value))} />
+                </div>
+                <div className='ml-3'>
+                    {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+                    {sort === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+                    {sort === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+                </div>
+            </div>
+        </div> 
         )
     }
-
-    const onPage = (event) => {
-        setlazyState(event);
-    };
 
 
     return (
@@ -459,7 +482,7 @@ function Product() {
                 setSelectedProducts={setSelectedProducts} />
             <DataTable
                 header={header}
-                first={lazyState.first}
+                first={lazyState2.first}
                 lazy
                 totalRecords={totalRecords}
                 onPage={onPage}
@@ -468,9 +491,9 @@ function Product() {
                 selection={selectedProducts}
                 onSelectionChange={onSelection}
                 paginator
-                rows={lazyState.rows}
+                rows={lazyState2.rows}
                 rowsPerPageOptions={[50, 100, 200, 500]}
-                value={filteredData}
+                value={data}
                 showGridlines
                 dataKey="MTRL"
                 filterDisplay="row"
@@ -480,13 +503,13 @@ function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-                paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
+            // paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
-                <Column field="NAME" style={{ width: '400px' }} header="Όνομα" ></Column>
-                <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
+                <Column field="NAME" style={{ width: '400px' }} header="Όνομα" filter showFilterMenu={false} filterElement={ onSearchName} body={NameTemplate} ></Column>
                 <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
+                <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
                 <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
                 <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate} style={{ width: '90px' }} header="Διαθέσιμα" ></Column>
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}
@@ -607,6 +630,19 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 
+const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
+    return (
+        <div>
+            <p>{NAME}</p>
+            <div className='flex align-items-center'>
+                <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                <p>softone</p>
+            </div>
+        </div>
+    )
+}
+
+
 const productAvailabilityTemplate = ({ availability }) => {
 
     return (
@@ -627,9 +663,8 @@ const productReservedTemplate = ({ availability }) => {
 }
 
 
-const GridPriceTemplate = ({PRICER}) => {
+const GridPriceTemplate = ({ PRICER }) => {
     return (
-          <p>{PRICER} €</p>
+        <p>{PRICER} €</p>
     )
-  }
-  
+}

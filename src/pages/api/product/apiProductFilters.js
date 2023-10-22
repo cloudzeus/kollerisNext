@@ -146,14 +146,16 @@ export default async function handler(req, res) {
 
     if (action === 'productSearchGrid') {
        
-        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter, mtrmark, sort } = req.body;
+        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, mtrmark, sort, } = req.body;
         console.log('sort')
         console.log(sort)
+        console.log('softone filter')
+        console.log(softoneFilter)
         try {
             await connectMongo();
             let totalRecords;
             let softonefind;
-            if (!categoryID && !groupID && !subgroupID && searchTerm == '') {
+            if (!categoryID && !groupID && !subgroupID && searchTerm == '' && softoneFilter === null ) {
                 totalRecords = await SoftoneProduct.countDocuments();
                 if(sort !== 0) {
                     softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).sort({ NAME: sort }) // Sorting by "NAME" in descending order
@@ -199,20 +201,21 @@ export default async function handler(req, res) {
     
     
     
-            //FILTER BASED ON SOFTONE STATUS:
-            if (softoneStatusFilter === true || softoneStatusFilter === false) {
+          
+            if(softoneFilter === true || softoneFilter === false) {
                 totalRecords = await SoftoneProduct.countDocuments({
-                    SOFTONESTATUS: softoneStatusFilter
+                    SOFTONESTATUS: softoneFilter
                 });
                 softonefind = await SoftoneProduct.find({
-                    SOFTONESTATUS: softoneStatusFilter
+                    SOFTONESTATUS: softoneFilter
                 }).skip(skip).limit(limit);
-            }
+            } 
     
     
-            let regexSearchTerm = new RegExp(searchTerm, 'i');
+           
     
             if (searchTerm !== '') {
+                let regexSearchTerm = new RegExp(searchTerm, 'i');
                 totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
                 softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
             }

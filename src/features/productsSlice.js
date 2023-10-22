@@ -7,6 +7,7 @@ const initialState = {
     loading: false,
     sort: 0,
     searchTerm: '',
+    softoneFilter: null,
     filters: {
         category: null,
         group: null,
@@ -19,6 +20,11 @@ const initialState = {
     lazyState: {
         first: 0,
         rows: 10,
+        page: 1,
+    },
+    lazyState2: {
+        first: 0,
+        rows: 50,
         page: 1,
     },
     productsForSoftone: [],
@@ -79,18 +85,25 @@ const productsSlice = createSlice({
             state.subgroup = null;
             state.searchTerm = '';
             state.lazyState.first = 0;
+            state.lazyState2.first = 0;
         },
         setGroup: (state, {payload}) => {
             state.group = payload;
             state.subgroup = null;
             state.lazyState.first = 0;
+            state.lazyState2.first = 0;
         },
         setSubgroup: (state, {payload}) => {
             state.subgroup = payload;
             state.lazyState.first = 0;
+            state.lazyState2.first = 0;
+
         },
         setLazyState: (state, {payload}) => {
             state.lazyState = payload;
+        },
+        setLazyState2: (state, {payload}) => {
+            state.lazyState2 = payload;
         },
         setLoading: (state, {payload}) => {
             state.loading = payload
@@ -136,7 +149,10 @@ const productsSlice = createSlice({
             let filter = state.productsForSoftone.filter(product => product._id !== payload)
             state.productsForSoftone = filter;
             // state.singleProductForSoftone = null;
-       }
+       },
+       setSoftoneFilter: (state, {payload}) => {
+            state.softoneFilter = payload;
+       }    
 
 	},
 
@@ -149,6 +165,7 @@ export const {
     setGroup,
     setSubgroup,
     setLazyState,
+    setLazyState2,
     setLoading,
     resetSelectedFilters,
     setSearchTerm,
@@ -158,7 +175,8 @@ export const {
     deleteSelectedProduct,
     setProductsForSoftone,
     setSingleProductForSoftone,
-    removeProductForSoftone
+    removeProductForSoftone,
+    setSoftoneFilter,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
