@@ -238,25 +238,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     {tranlateBtn ? (
                         <>
                             <TranslateInput
-                                label={'Περιγραφή Γερμανική'}
-                                state={descriptions.de}
-                                handleState={handleGerman}
-                                targetLang="GE"
-                            />
-                            <TranslateInput
                                 label={'Περιγραφή Aγγλική'}
                                 state={descriptions.en}
                                 handleState={handleEnglish}
                                 targetLang="en-GB"
                             />
-                            <TranslateInput
-                                label={'Περιγραφή Iσπανική'}
-                                state={descriptions.es}
-                                handleState={handleSpanish}
-                                targetLang="es"
-                            />
-
-
                         </>
                     ) : null}
                 </Dialog>
@@ -286,10 +272,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
         resolver: yupResolver(addSchema),
         defaultValues: {
            descriptions: {
-                de: '',
                 en: '',
-                es: '',
-                fr: '',
            },
            NAME: '',
             DESCRIPTION: '',
@@ -312,10 +295,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
     const [descriptions, setDescriptions] = useState(
         {
-            de: '',
             en: '',
-            es: '',
-            fr: '',
         }
     )
 
@@ -503,26 +483,13 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
                     {translateBtn ? (
                         <>
-                            <TranslateInput
-                                label={'Περιγραφή Γερμανική'}
-                                state={descriptions.de}
-                                handleState={handleGerman}
-                                targetLang="GE"
-                            />
+                           
                             <TranslateInput
                                 label={'Περιγραφή Aγγλική'}
                                 state={descriptions.en}
                                 handleState={handleEnglish}
                                 targetLang="en-GB"
                             />
-                            <TranslateInput
-                                label={'Περιγραφή Iσπανική'}
-                                state={descriptions.es}
-                                handleState={handleSpanish}
-                                targetLang="es"
-                            />
-
-
                         </>
                     ) : null}
                         </div>

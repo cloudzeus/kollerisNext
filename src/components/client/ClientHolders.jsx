@@ -117,6 +117,7 @@ const ClientHolder = ({NAME}) => {
 
     return (
         <DataTable
+            style={{maxWidth: '1400px'}}
             loading={loading}
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}

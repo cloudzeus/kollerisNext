@@ -24,7 +24,7 @@ const ExpandedRowGrid = ({data}) => {
             <p className='mb-2 font-bold'>Προσφορές</p>
             <DataTable 
                 value={gridData} 
-                tableStyle={{ minWidth: '50rem' }}
+                tableStyle={{ minWidth: '50rem', maxwWith: '700px' }}
                 showGridlines
                 // rowExpansionTemplate={rowExpansionTemplate}
                 // expandedRows={expandedRows}
@@ -38,7 +38,6 @@ const ExpandedRowGrid = ({data}) => {
             <div className='mt-6 mb-8'>
             <p className='mb-2 font-bold'>Προσφορές Πολλαπλών Επιλογών</p>
             <ClientHolder NAME={data?.NAME} />
-
             </div>
         </div>
     )

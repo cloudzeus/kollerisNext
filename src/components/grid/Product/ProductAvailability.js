@@ -25,14 +25,6 @@ export const ProductAvailability = ({ data }) => {
                     <span>Διαθεσιμα:</span>
                     <span className='prod_availability_available'>{data?.DIATHESIMA}</span>
                 </div>
-
-                <div className='prod_availability_row update-row'>
-
-                    <span>updated:</span>
-                    <span className='prod_availability_date'>{data?.date}</span>
-                </div>
-
-
             </div>
 
         </div>
