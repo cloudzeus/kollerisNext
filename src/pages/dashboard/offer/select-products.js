@@ -1,13 +1,13 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
 import SelectedProducts from '@/components/grid/SelectedProducts'
-import { useRouter } from 'next/router';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import StepHeader from '@/components/StepHeader';
 import { useSelector } from 'react-redux';
 import { Button } from 'primereact/button';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
+import { useRouter } from 'next/router';
 const Page = () => {
     const router = useRouter();
     const toast = useRef(null);
@@ -15,9 +15,13 @@ const Page = () => {
     const { selectedClient } = useSelector(state => state.impaoffer)
     console.log(selectedProducts)
 
-    if(!selectedClient) {
-      router.push('/dashboard/offer')
-    }
+   
+
+    useEffect(() => {
+      if(!selectedClient) {
+        router.push('/dashboard/offer')
+      }
+    }, [])
 
     const showSuccess = (message) => {
       toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 3000 });

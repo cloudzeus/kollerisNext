@@ -151,18 +151,21 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false })
         }
     }
+
+
     if (action === 'productSearchGrid') {
        
-        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, mtrmark, sort, sortAvailability} = req.body;
-        console.log('sortavailability')
-        console.log(sortAvailability)
-        console.log('softone filter')
-        console.log(softoneFilter)
+        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, sort, sortAvailability, marka, codeSearch} = req.body;
+        
+        console.log(codeSearch)
         try {
             await connectMongo();
+            //initiate the return values
             let totalRecords;
             let softonefind;
-            if (!categoryID && !groupID && !subgroupID && searchTerm == '' && softoneFilter === null ) {
+            //Fetch results when no filter is applied
+            const noFilterCondition = !categoryID && !groupID && !subgroupID && searchTerm == '' && softoneFilter === null && marka === null && codeSearch === '';
+            if (noFilterCondition) {
                 totalRecords = await SoftoneProduct.countDocuments();
                 if(sort !== 0 )   {
                     softonefind = await SoftoneProduct.find({}).sort({ NAME: sort }).skip(skip).limit(limit) // Sorting by "NAME" in descending order
@@ -173,7 +176,9 @@ export default async function handler(req, res) {
                 }
     
             }
-    
+            
+
+             //Fetch results WITH CATEGORY GROUP AND SUBGROUP FILTERS
             if (categoryID) {
                 totalRecords = await SoftoneProduct.countDocuments({
                     MTRCATEGORY: categoryID
@@ -208,8 +213,8 @@ export default async function handler(req, res) {
             }
     
     
-    
-          
+            
+            //RETURN EITHER OR THE RESULTS OR DATA THAT EXIST IN SOFTONE OR PRODUCTS THAN DONT EXIST IN SOFTONE 
             if(softoneFilter === true || softoneFilter === false) {
                 totalRecords = await SoftoneProduct.countDocuments({
                     SOFTONESTATUS: softoneFilter
@@ -218,16 +223,28 @@ export default async function handler(req, res) {
                     SOFTONESTATUS: softoneFilter
                 }).skip(skip).limit(limit);
             } 
-    
-    
+
+            if(codeSearch !== '') {
+                let regexSearchTerm = new RegExp(codeSearch , 'i');
+                totalRecords = await SoftoneProduct.countDocuments({ CODE: regexSearchTerm });
+                softonefind = await SoftoneProduct.find({ CODE: regexSearchTerm }).skip(skip).limit(limit);
+                console.log(softonefind)
+            }
+
+            //FILTER BASE ON THE BRAND NAME
+            if(marka) {
+                totalRecords = await SoftoneProduct.countDocuments({ MTRMARK: marka?.softOne.MTRMARK});
+                softonefind = await SoftoneProduct.find({ MTRMARK: marka?.softOne.MTRMARK }).skip(skip).limit(limit);
+            }
            
-    
+            
             if (searchTerm !== '') {
                 let regexSearchTerm = new RegExp(searchTerm, 'i');
                 totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
                 softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
             }
-    
+            
+         
     
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {

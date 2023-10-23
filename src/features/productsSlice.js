@@ -18,6 +18,7 @@ const initialState = {
     category: null,
     group: null,
     subgroup: null,
+    marka: null,
     lazyState: {
         first: 0,
         rows: 10,
@@ -30,6 +31,7 @@ const initialState = {
     },
     productsForSoftone: [],
     singleProductForSoftone: null,
+    codeSearch: '',
 }
 
 
@@ -68,22 +70,28 @@ const productsSlice = createSlice({
             switch(payload.action) {
                 case "category": 
                     state.filters.category = payload.value;
-                    state.filters.group = null;
-                    state.filters.subgroup = null;
+                    // state.filters.group = null;
+                    // state.filters.subgroup = null;
                     break;
                 case "group": 
                     state.filters.group = payload.value;
-                    state.filters.subgroup = null;
+                    // state.filters.subgroup = null;
                     break;
                 case "subgroup":
                     state.filters.subgroup = payload.value;
                     break;
+                case "marka":
+                    state.filters.marka = payload.value;
+                    break;
             }
 		},
+
+        //set the state after dropwdown selection
         setCategory: (state, {payload}) => { 
             state.category = payload;
             state.group = null;
             state.subgroup = null;
+            state.marka = null;
             state.searchTerm = '';
             state.lazyState.first = 0;
             state.lazyState2.first = 0;
@@ -100,6 +108,17 @@ const productsSlice = createSlice({
             state.lazyState2.first = 0;
 
         },
+        setMarka: (state, {payload}) => {
+            state.marka = payload;
+            //reset others
+            state.group = null;
+            state.category = null;
+            state.subgroup = null;
+            state.searchTerm = '';
+            state.lazyState.first = 0;
+            state.lazyState2.first = 0;
+        },
+        //set lazystate after a page change, or a filter change
         setLazyState: (state, {payload}) => {
             state.lazyState = payload;
         },
@@ -116,12 +135,23 @@ const productsSlice = createSlice({
         },
         setSearchTerm: (state, {payload}) => {
             state.searchTerm = payload;
+            //reset all the others:
+            state.category = null;
+            state.group = null;
+            state.subgroup = null;
+            state.codeSearch = '';
+        },
+        setCodeSearch: (state, {payload}) => {
+            state.codeSearch = payload;
+            //reset all the others:
+            state.searchTerm = null;
             state.category = null;
             state.group = null;
             state.subgroup = null;
         },
         setSort: (state) => {
             state.searchTerm = '';
+            //reset all the others:
             state.category = null;
             state.group = null;
             state.subgroup = null;
@@ -141,10 +171,7 @@ const productsSlice = createSlice({
         },
         setSortAvailability: (state) => {
             state.searchTerm = '';
-            state.category = null;
-            state.group = null;
-            state.subgroup = null;
-            state.softoneFilter = null;
+          
             if(state.sortAvailability == 0) {
                 state.sortAvailability = 1;
                 return;
@@ -157,6 +184,11 @@ const productsSlice = createSlice({
                 state.sortAvailability = 0;
                 return;
             };
+              //reset all the others:
+              state.category = null;
+              state.group = null;
+              state.subgroup = null;
+              state.softoneFilter = null;
         },
         setProductsForSoftone: (state, {payload}) => {
             state.productsForSoftone = payload;
@@ -166,10 +198,8 @@ const productsSlice = createSlice({
             state.singleProductForSoftone = payload;
         },
        removeProductForSoftone: (state, {payload}) => {
-           
             let filter = state.productsForSoftone.filter(product => product._id !== payload)
             state.productsForSoftone = filter;
-            // state.singleProductForSoftone = null;
        },
        setSoftoneFilter: (state, {payload}) => {
             state.softoneFilter = payload;
@@ -185,6 +215,7 @@ export const {
     setCategory,
     setGroup,
     setSubgroup,
+    setMarka,
     setLazyState,
     setLazyState2,
     setLoading,
