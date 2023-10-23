@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
-        
+        console.log(data.vat.VAT)
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
             MTRL: data.MTRL,
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
             CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2,
             MTRMARK: data.MTRMARK.toString(),
             MTRMANFCTR: data.MTRMANFCTR,
-            VAT: data.VAT,
+            VAT: data.vat.VAT,
             COUNTRY:data.MTRMANFCTR,
             WIDTH: data.WIDTH,
             HEIGHT: data.HEIGHT,
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
                 MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
                 CCCSUBGOUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
                 MTRMANFCTR: data.MTRMANFCTR.toString(),
-                VAT: data.VAT,
+                VAT: data.vat.VAT,
                 COUNTRY: data.COUNTRY,
                 INTRASTAT: data.INTRASTAT,
                 WIDTH: data.WIDTH,
