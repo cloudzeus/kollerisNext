@@ -146,9 +146,9 @@ export default async function handler(req, res) {
 
     if (action === 'productSearchGrid') {
        
-        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, mtrmark, sort, } = req.body;
-        console.log('sort')
-        console.log(sort)
+        const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, mtrmark, sort, sortAvailability} = req.body;
+        console.log('sortavailability')
+        console.log(sortAvailability)
         console.log('softone filter')
         console.log(softoneFilter)
         try {
@@ -157,10 +157,11 @@ export default async function handler(req, res) {
             let softonefind;
             if (!categoryID && !groupID && !subgroupID && searchTerm == '' && softoneFilter === null ) {
                 totalRecords = await SoftoneProduct.countDocuments();
-                if(sort !== 0) {
-                    softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).sort({ NAME: sort }) // Sorting by "NAME" in descending order
+                if(sort !== 0 )   {
+                    softonefind = await SoftoneProduct.find({}).sort({ NAME: sort }).skip(skip).limit(limit) // Sorting by "NAME" in descending order
                 }
-                if(sort === 0) {
+               
+                if(sort === 0 ) {
                     softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit) 
                 }
     

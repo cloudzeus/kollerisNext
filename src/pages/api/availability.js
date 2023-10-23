@@ -18,20 +18,21 @@ export default async function handler(req, res) {
     try {
         await connectMongo();
         let buffer = await translateData(response)
-        const now = new Date();
-        const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
-        for(let item of buffer.result) {
-            let update = await SoftoneProduct.updateOne({MTRL: item.MTRL}, {
-                $set: {
-                    availability: {
-                        DIATHESIMA: item.DIATHESIMA,
-                        SEPARAGELIA: item.SEPARAGELIA,
-                        DESVMEVMENA: item.DESVMEVMENA,
-                        date: formattedDateTime.toString()
-                    }
-                }
-            })
-        }
+        console.log(buffer.result.length)
+        // const now = new Date();
+        // const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
+        // for(let item of buffer.result) {
+        //     let update = await SoftoneProduct.updateOne({MTRL: item.MTRL}, {
+        //         $set: {
+        //             availability: {
+        //                 DIATHESIMA: parseInt(item.DIATHESIMA),
+        //                 SEPARAGELIA: parseInt(item.SEPARAGELIA),
+        //                 DESVMEVMENA: parseInt(item.DESVMEVMENA),
+        //                 date: formattedDateTime.toString()
+        //             }
+        //         }
+        //     })
+        // }
         return res.status(200).json({success: true})
 
     } catch (e) {

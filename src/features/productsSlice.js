@@ -6,6 +6,7 @@ const initialState = {
     mtrLines: [],
     loading: false,
     sort: 0,
+    sortAvailability: 0,
     searchTerm: '',
     softoneFilter: null,
     filters: {
@@ -138,6 +139,25 @@ const productsSlice = createSlice({
                 return;
             };
         },
+        setSortAvailability: (state) => {
+            state.searchTerm = '';
+            state.category = null;
+            state.group = null;
+            state.subgroup = null;
+            state.softoneFilter = null;
+            if(state.sortAvailability == 0) {
+                state.sortAvailability = 1;
+                return;
+            };
+            if(state.sortAvailability == 1) {
+                state.sortAvailability = -1;
+                return;
+            };
+            if(state.sortAvailability == -1) {
+                state.sortAvailability = 0;
+                return;
+            };
+        },
         setProductsForSoftone: (state, {payload}) => {
             state.productsForSoftone = payload;
         },
@@ -178,6 +198,7 @@ export const {
     setSingleProductForSoftone,
     removeProductForSoftone,
     setSoftoneFilter,
+    setSortAvailability
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

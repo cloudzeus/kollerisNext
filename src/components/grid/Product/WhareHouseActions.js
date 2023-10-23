@@ -58,7 +58,7 @@ const WhareHouseActions = () => {
         if(data?.resultExport) {
             setResultExport(data.resultExport)
         }
-        setSubmitted(true)
+        setSubmitted(prev => !prev)
     }
    
 

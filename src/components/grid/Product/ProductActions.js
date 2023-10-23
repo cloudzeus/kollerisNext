@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setSingleProductForSoftone } from '@/features/productsSlice'
 import { Toast } from 'primereact/toast'
 
-const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
+const ProductActions = ({ rowData, onEdit, onEditClass, onAdd, setS }) => {
   const { setActiveIndex, setVisible, setSelectedProducts } = useContext(ProductQuantityContext)
   const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
   const toast = useRef(null)

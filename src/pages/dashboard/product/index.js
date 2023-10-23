@@ -36,7 +36,8 @@ import {
     resetSelectedFilters,
     setSearchTerm,
     setSort,
-    setSoftoneFilter
+    setSoftoneFilter,
+    setSortAvailability
 } from "@/features/productsSlice";
 
 
@@ -136,7 +137,7 @@ function Product() {
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
     const [expandedRows, setExpandedRows] = useState(null);
     const [addDialog, setAddDialog] = useState(false);
-    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter } = useSelector(store => store.products)
+    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
 
 
@@ -164,7 +165,8 @@ function Product() {
                 groupID: group?.softOne.MTRGROUP,
                 subgroupID: subgroup?.softOne.cccSubgroup2,
                 sort: sort,
-                softoneFilter: softoneFilter
+                softoneFilter: softoneFilter,
+                sortAvailability: sortAvailability
             },
             )
             setData(data.result);
@@ -178,7 +180,7 @@ function Product() {
     }
     useEffect(() => {
         fetch();
-    }, [lazyState2.rows, lazyState2.first, searchTerm, category, group, subgroup, sort, softoneFilter])
+    }, [lazyState2.rows, lazyState2.first, searchTerm, category, group, subgroup, sort, softoneFilter, sortAvailability, setSubmitted])
 
     const onFilterCategoryChange = (e) => {
         dispatch(setCategory(e.value))
@@ -512,7 +514,15 @@ function Product() {
                 <Column field="CATEGORY_NAME"   header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
                 <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
                 <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
-                <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate} style={{ width: '90px' }} header="Διαθέσιμα" ></Column>
+                <Column 
+                    field="availability.DIATHESIMA" 
+                    bodyStyle={{ textAlign: 'center' }} 
+                    body={productAvailabilityTemplate} 
+                    style={{ width: '90px' }} 
+                    header="Διαθέσιμα" 
+                    filter showFilterMenu={false} filterElement={SortAvailable}
+                    ></Column>
+
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
                 {visibleColumns.some(column => column.id === 8) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
@@ -666,5 +676,21 @@ const productReservedTemplate = ({ availability }) => {
 const GridPriceTemplate = ({ PRICER }) => {
     return (
         <p>{PRICER} €</p>
+    )
+}
+
+
+const SortAvailable = () => {
+    const  { sortAvailability} = useSelector(store => store.products)
+    const dispatch = useDispatch();
+    const onSort = () => {
+        dispatch(setSortAvailability())
+    }
+    return (
+        <div className='ml-3'>
+        { sortAvailability === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+        {sortAvailability === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+        {sortAvailability === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+    </div>
     )
 }

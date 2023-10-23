@@ -95,7 +95,7 @@ const LeftSide = () => {
                 severity="warning"
                 disabled={selectedProducts == null || selectedProducts.length < 1 ? true : false}
             />
-            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-5	" icons={customIcons}>
+            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)} className="md:w-6	 lg:w-8" icons={customIcons}>
                 {activeIndex === 0 ? (
                     <>
                         <FirstScreen  />
