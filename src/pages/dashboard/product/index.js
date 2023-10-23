@@ -20,7 +20,6 @@ import { ProductAvailability, ProductOrdered, ProductReserved } from '@/componen
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown'
 import { ProductQuantityProvider, ProductQuantityContext } from '@/_context/ProductGridContext';
-import SoftoneStatusTemplate from '@/components/grid/Product/SoftoneStatus';
 import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';

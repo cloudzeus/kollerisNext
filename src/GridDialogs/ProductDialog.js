@@ -27,7 +27,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         category: null,
         group: null,
         subgroup: null,
-        vat: null,
+        vat: {NAME: 'sefsefefes', VAT: 'sefsefef'},
     })
     const [descriptions, setDescriptions] = useState(
         {
@@ -38,32 +38,22 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         }
     )
        
-
     
-   
-    const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
-    const handleGerman = async (value) => {
-        setDescriptions({ ...descriptions, de: value })
-    }
+   
     const handleEnglish = async (value) => {
         setDescriptions({ ...descriptions, en: value })
     }
-    const handleSpanish = async (value) => {
-        setDescriptions({ ...descriptions, es: value })
-    }
-    
+   
+        console.log(selectState)
 
-    useEffect(() => {
-        reset({ ...gridRowData });
-    }, [])
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
-      
+        reset({ ...gridRowData });
      
         setDescriptions(prev => {
             return {
@@ -78,11 +68,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             category: {categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}},
             group: {groupName: gridRowData?.GROUP_NAME , softOne: {MTRGROUP: gridRowData?.MTRGROUP}},
             subgroup: {subGroupName: gridRowData?.SUBGROUP_NAME , softOne: {cccSubgroup2: gridRowData?.CCCSUBGOUP2}},
-            vat: {
-                VAT: '1040',
-                NAME: 'sefsefssesfe',
-              
-            }
+            vat: {VAT: gridRowData?.VAT},
+           
         })
     }, [gridRowData, reset]);
 
@@ -590,12 +577,35 @@ const SubGroups = ({ state, setState, id }) => {
 }
 const OptionsVat = ({ state, setState}) => {
     const [vatOptions, setVatOptions] = useState([])
+    const [data, setData] = useState([])
+
+    const VatTemplate = ((option) => {
+        for(let item of data) {
+            if(item.VAT === option.VAT) {
+                return (
+                    <p>{option.VAT + " -- " +  item.NAME}</p>
+                )
+            }
+        }
+      
+        return (
+            <div className="flex align-items-center">
+                <div>{option.VAT}</div>
+            </div>
+        );
+    })
+
+    
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
             action: 'findVats',
         })
-       
-        setVatOptions(data.result)
+        let newArray = [];
+        for(let item of data.result) {
+            newArray.push({VAT: item.VAT})
+        }   
+        setData(data.result)
+        setVatOptions(newArray)
     }
     useEffect(() => {
         handleFetch();
@@ -604,7 +614,8 @@ const OptionsVat = ({ state, setState}) => {
     return (
         <div className="card mb-3">
             <span className='mb-2 block'>Aλλαγή ΦΠΑ</span>
-            <Dropdown value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="NAME"
+
+            <Dropdown  itemTemplate={VatTemplate} value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="VAT"
                 placeholder="ΦΠΑ" className="w-full" />
         </div>
     )
