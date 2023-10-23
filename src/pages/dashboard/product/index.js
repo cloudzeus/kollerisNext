@@ -210,7 +210,6 @@ function Product() {
 
     };
 
-    const onSearch = (e) => onGlobalFilterChange(e);
 
     const onColumnToggle = (event) => {
         let selectedColumns = event.value;
@@ -507,8 +506,10 @@ function Product() {
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
+                {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
+                    : null}
                 <Column field="NAME" style={{ width: '400px' }} header="Όνομα" filter showFilterMenu={false} filterElement={ onSearchName} body={NameTemplate} ></Column>
-                <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
+                <Column field="CATEGORY_NAME"   header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
                 <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
                 <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
                 <Column field="availability.DIATHESIMA" bodyStyle={{ textAlign: 'center' }} body={productAvailabilityTemplate} style={{ width: '90px' }} header="Διαθέσιμα" ></Column>
@@ -517,8 +518,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 8) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate}></Column>
                 <Column style={{ width: '40px' }} field="PRICER05" header="Τιμή Scroutz"></Column>
-                {user?.role == "admin" ? <Column style={{ width: '40px' }} body={AddToCartTemplate}></Column>
-                    : null}
+                
             </DataTable>
             <EditDialog
                 style={dialogStyle}

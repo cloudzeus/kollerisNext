@@ -124,6 +124,7 @@ const productsSlice = createSlice({
             state.category = null;
             state.group = null;
             state.subgroup = null;
+            state.softoneFilter = null;
             if(state.sort == 0) {
                 state.sort = 1;
                 return;
