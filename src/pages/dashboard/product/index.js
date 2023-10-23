@@ -25,6 +25,8 @@ import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import StepHeader from '@/components/StepHeader';
+import { OverlayPanel } from 'primereact/overlaypanel';
+
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -123,15 +125,14 @@ export default function ProductLayout() {
 }
 
 function Product() {
+    const op = useRef(null);
     const toast = useRef(null);
     const router = useRouter();
     const { data: session } = useSession()
     let user = session?.user?.user;
+
     const { selectedProducts, setSelectedProducts, submitted, setSubmitted } = useContext(ProductQuantityContext)
     const [data, setData] = useState([]);
-
-    const dispatch = useDispatch();
-
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
@@ -139,6 +140,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
+    const dispatch = useDispatch();
 
 
     useEffect(() => {
@@ -472,10 +474,15 @@ function Product() {
             <div>
                 <StepHeader text="Προϊόντα" />
             </div>
+            <Button className='mb-3' type="button" severity="secondary" icon="pi pi-bars" label="Προσφορές" onClick={(e) => op.current.toggle(e)} />
+
+            <OverlayPanel ref={op}>
             <div className='flex flex-column'>
-                <Button label="Προσφορές πολλαπλών επιλογών" severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")} />
-                <Button label="Προσφορές σε πελάτη" severity='warning' className='mb-3 mt-1 w-20rem' onClick={() => router.push("/dashboard/offer")} />
+                <Button label="Προσφορές πολλαπλών επιλογών" outlined severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")} />
+                <Button label="Προσφορές σε πελάτη" outlined severity='secondary'  className='mb-3 mt-1 w-20rem' onClick={() => router.push("/dashboard/offer")} />
             </div>
+            </OverlayPanel>
+           
 
             <ProductToolbar
                 setSubmitted={setSubmitted}
@@ -520,7 +527,6 @@ function Product() {
                     body={productAvailabilityTemplate} 
                     style={{ width: '90px' }} 
                     header="Διαθέσιμα" 
-                    filter showFilterMenu={false} filterElement={SortAvailable}
                     ></Column>
 
                 {visibleColumns.some(column => column.id === 3) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}

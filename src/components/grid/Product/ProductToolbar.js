@@ -17,8 +17,6 @@ import ManufctOrder from './ManufctOrder';
 
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
-    
-
     const startContent = () => {
         return <LeftSide />
     }

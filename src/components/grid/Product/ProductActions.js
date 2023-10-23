@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setSingleProductForSoftone } from '@/features/productsSlice'
 import { Toast } from 'primereact/toast'
 
-const ProductActions = ({ rowData, onEdit, onEditClass, onAdd, setS }) => {
+const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
   const { setActiveIndex, setVisible, setSelectedProducts } = useContext(ProductQuantityContext)
   const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
   const toast = useRef(null)
@@ -48,6 +48,12 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd, setS }) => {
     dispatch(setSingleProductForSoftone(rowData))
     router.push('/dashboard/add-to-softone/add')
   }
+
+  const handleChangeVat = () => {
+    setSelectedProducts([rowData])
+    router.push(`/dashboard/product/changeVAT`)
+
+  }
   const op = useRef(null)
   return (
     <div className="">
@@ -80,36 +86,26 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd, setS }) => {
         <Button
           onClick={handleChangeClass}
           text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
-          <div className='mr-2 w-2rem	h-2rem bg-orange-600 border-circle flex  align-items-center justify-content-center'>
-            <i className="text-white pi pi-arrow-right text-sm " ></i>
-          </div>
           Αλλαγή Κατηγοριοποίησης
         </Button>
         <Button
           onClick={handleChangeAvailability}
           text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
-          <div className='mr-2 w-2rem	h-2rem bg-orange-600 border-circle flex  align-items-center justify-content-center'>
+          {/* <div className='mr-2 w-2rem	h-2rem bg-orange-600 border-circle flex  align-items-center justify-content-center'>
             <i className="text-white pi pi-arrow-right text-sm " ></i>
-          </div>
+          </div> */}
           Ενημέρωση αποθέματος
         </Button>
         <Button
           onClick={handleImpaChange}
           text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
-          <div className='mr-2 w-2rem	h-2rem bg-orange-600 border-circle flex  align-items-center justify-content-center'>
-            <i className="text-white pi pi-arrow-right text-sm " ></i>
-          </div>
           Ανάθεση – τροποποίηση IMPA
         </Button>
         <Button
           onClick={handleAddToSoftone}
           text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
-          <div className='mr-2 w-2rem	h-2rem bg-orange-600 border-circle flex  align-items-center justify-content-center'>
-            <i className="text-white pi pi-arrow-right text-sm " ></i>
-          </div>
           Προσθήκη στο Softone
         </Button>
-
       </OverlayPanel>
     </div>
   )

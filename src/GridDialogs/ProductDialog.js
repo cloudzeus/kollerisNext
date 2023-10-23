@@ -27,6 +27,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         category: null,
         group: null,
         subgroup: null,
+        vat: null,
     })
     const [descriptions, setDescriptions] = useState(
         {
@@ -37,6 +38,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         }
     )
        
+
+    
    
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
@@ -52,12 +55,16 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const handleSpanish = async (value) => {
         setDescriptions({ ...descriptions, es: value })
     }
-   
+    
+
+    useEffect(() => {
+        reset({ ...gridRowData });
+    }, [])
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
       
-        reset({ ...gridRowData });
+     
         setDescriptions(prev => {
             return {
                 de: gridRowData?.descriptions?.de,
@@ -71,10 +78,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             category: {categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}},
             group: {groupName: gridRowData?.GROUP_NAME , softOne: {MTRGROUP: gridRowData?.MTRGROUP}},
             subgroup: {subGroupName: gridRowData?.SUBGROUP_NAME , softOne: {cccSubgroup2: gridRowData?.CCCSUBGOUP2}},
+            vat: {
+                VAT: '1040',
+                NAME: 'sefsefssesfe',
+              
+            }
         })
     }, [gridRowData, reset]);
 
-
+    
 
 
 
@@ -151,6 +163,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
                     />
+                    <OptionsVat
+                        state={selectState.vat}
+                        setState={setSelectState}
+                    />
                     <FormTitle>Λεπτομέριες</FormTitle>
                     <Input
                         label={"Όνομα"}
@@ -185,12 +201,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                         required
                     />
-                    <Input
-                        label={'VAT'}
-                        name={'VAT'}
-                        control={control}
-                        required
-                    />
+                 
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ'}
                         name={'PRICER'}
@@ -574,6 +585,27 @@ const SubGroups = ({ state, setState, id }) => {
             <span className='mb-2 block'>Επιλογή Υποομάδας</span>
             <Dropdown value={state} onChange={(e) => setState(prev => ({ ...prev, subgroup: e.value }))} options={subgroupOptions} optionLabel="subGroupName"
                 placeholder="Κατηγορία" className="w-full" />
+        </div>
+    )
+}
+const OptionsVat = ({ state, setState}) => {
+    const [vatOptions, setVatOptions] = useState([])
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiProductFilters', {
+            action: 'findVats',
+        })
+       
+        setVatOptions(data.result)
+    }
+    useEffect(() => {
+        handleFetch();
+    }, [])
+
+    return (
+        <div className="card mb-3">
+            <span className='mb-2 block'>Aλλαγή ΦΠΑ</span>
+            <Dropdown value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="NAME"
+                placeholder="ΦΠΑ" className="w-full" />
         </div>
     )
 }

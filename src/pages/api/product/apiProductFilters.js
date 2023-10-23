@@ -8,6 +8,7 @@ import connectMongo from "../../../../server/config";
 import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import SoftoneProduct from "../../../../server/models/newProductModel";
 import Markes from "../../../../server/models/markesModel";
+import Vat from "../../../../server/models/vatModel";
 
 
 export const config = {
@@ -144,6 +145,15 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === 'findVats') {
+        try {
+            await connectMongo();
+            let response = await Vat.find({}, {NAME: 1, VAT: 1, _id: 0})
+            return res.status(200).json({ success: true, result: response })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
     if (action === 'productSearchGrid') {
        
         const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, mtrmark, sort, sortAvailability} = req.body;
