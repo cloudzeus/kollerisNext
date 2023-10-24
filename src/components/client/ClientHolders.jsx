@@ -1,16 +1,12 @@
-import StepHeader from "@/components/StepHeader";
+'use client'
 import React, { useEffect, useState, useRef } from 'react'
 import { Button } from 'primereact/button'
-
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
-import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import CSVExport from "@/components/exportCSV/MultiOffer"
 
 const ClientHolder = ({NAME}) => {
     const [expandedRows, setExpandedRows] = useState(null);
@@ -92,17 +88,11 @@ const ClientHolder = ({NAME}) => {
     const PrintActions = ({ holders, clientEmail, num, clientName }) => {
         const op = useRef(null);
 
-        console.log(clientEmail, num, clientName)
-        console.log(holders)
-        const _newData = [
-            { clientName: clientName, clientEmail: clientEmail, num: num, holders: holders }
-        ]
 
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <CSVExport holders={holders} email={clientEmail} name={clientName} />
                 </OverlayPanel>
             </div>
 
@@ -132,8 +122,6 @@ const ClientHolder = ({NAME}) => {
             <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
             <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}  bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
             <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
-
-
         </DataTable>
     )
 }

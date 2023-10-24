@@ -80,6 +80,18 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false })
         }
     }
+    if(action === 'findSingleOffer') {
+        const {clientName} = req.body;
+
+        try {
+            await connectMongo();
+            let find = await SingleOffer.find({ clientName : clientName })
+            console.log(find)
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
 
     if(action ==="findOrders") {
         try {
@@ -92,61 +104,7 @@ export default async function handler(req, res) {
         }
     }
 
-    if (action === "sendOfferEmail") {
-        const { products, email, id} = req.body;
-        let body =  products.map((item) => {
-            let elements = item.products.map((product) => {
-                return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-                <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
-                <p>Τιμή: <strong>${product.PRICE}€</strong></p>
-                <p>---------------</p>`;
-            }).join('');  // Join array elements into a single string
-            return `<p>Κωδικός Impa: <strong>${item.name}</strong></p> ${elements}`;
-        });
 
-
-        try {
-
-            const mail = {
-                from: 'info@kolleris.com',
-                to: email,
-                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-                subject:`Προσφορά - NUM: ${num}`,
-                html: `${body}`
-              };
-         
-              
-              function sendEmail(mail) {
-                return new Promise((resolve, reject) => {
-                  transporter.sendMail(mail, (err, info) => {
-                    if (err) {
-                      console.log(err);
-                      resolve(false); // Resolve with false if there's an error
-                    } else {
-                      console.log('Email sent successfully!');
-                      resolve(true); // Resolve with true if the email is sent successfully
-                    }
-                  });
-                });
-              }
-
-              let send = await sendEmail(mail);
-              console.log(send);
-            await connectMongo();
-            let update = await Holders.updateOne({ _id: id }, {
-                $set: {
-                    status: "sent"
-                }
-            })
-            console.log(update)
-            let modified = update.modifiedCount
-            return res.status(200).json({ success: true, result: modified, send: send })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null,  })
-        }
-
-
-    }
     
    
 }

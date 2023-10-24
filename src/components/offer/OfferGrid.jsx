@@ -5,7 +5,8 @@ import axios from 'axios';
 import { Button } from 'primereact/button';
 import XLSXDownloadButton from '../exportCSV/Download';
 import { OverlayPanel } from 'primereact/overlaypanel';
-
+import { Dropdown } from 'primereact/dropdown';
+import { Tag } from 'primereact/tag';
 
 const OffreGrid = () => {
     const [data, setData] = useState([])

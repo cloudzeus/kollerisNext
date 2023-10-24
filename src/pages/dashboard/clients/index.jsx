@@ -18,7 +18,6 @@ export default function Clients() {
     const [data, setData] = useState([])
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [expandedRows, setExpandedRows] = useState(null);
     const [searchTerm, setSearchTerm] = useState({
         name: '',
         afm: '',
@@ -35,9 +34,7 @@ export default function Clients() {
     const onPage = (event) => {
         setlazyState(event);
     };
-    const allowExpansion = (rowData) => {
-        return rowData
-    };
+   
 
     const fetchClients = async () => {
         setLoading(true)
@@ -132,20 +129,20 @@ export default function Clients() {
  
 
     const ShowOffers = ({OFFERSTATUS, NAME}) => {
-        let color;
+        const handleClick = () => {
+            const encodedString = encodeURIComponent(NAME);
+            router.push(`/dashboard/clients/offers/${encodedString}`)
+        }
         if(OFFERSTATUS) {
-            color = 'bg-green-500'
+            return (
+                <div className='flex cursor-pointer align-items-center p-2' onClick={handleClick}>
+                    <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{width: '4px', height: '4px'}}></div>
+                    <span className='font-xm text-500'>OFFERS</span>
+    
+                </div>
+            )
         }
-        if(!OFFERSTATUS) {
-            color = 'bg-red-500'
-        }
-        return (
-            <div className='flex cursor-pointer align-items-center p-2' onClick={() => router.push(`/dashboard/clients/offers/${NAME}`)}>
-                <div className={`${color}  border-round mr-1 mt-1 `} style={{width: '4px', height: '4px'}}></div>
-                <span className='font-xm text-500'>offer</span>
-
-            </div>
-        )
+       
     }
     return (
         <AdminLayout >
@@ -166,9 +163,6 @@ export default function Clients() {
                 loading={loading}
                 filterDisplay="row"
                 showGridlines
-                // rowExpansionTemplate={rowExpansionTemplate}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
             >   
                 <Column body={ShowOffers}></Column>
                 <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient} header="Ονομα" sortable></Column>
