@@ -12,8 +12,9 @@ import { Tag } from 'primereact/tag';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { CSVLink, CSVDownload } from "react-csv";
 import CSVExport from '@/components/exportCSV/MultiOffer';
+import  XLSXDownloadButton from '@/components/exportCSV/Download';
+
 const Page = () => {
     const router = useRouter();
     const [data, setData] = useState([])
@@ -62,7 +63,6 @@ const Page = () => {
 const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const [statuses] = useState(['pending', 'done', 'rejected']);
-    const [status, setStatus] = useState(null);
 
     const allowExpansion = (rowData) => {
         return rowData
@@ -123,15 +123,26 @@ const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
 
     const PrintActions = ({holders, clientEmail, num, clientName  }) => {
         const op = useRef(null);
-        const _newData= [
-            {clientName: clientName, clientEmail: clientEmail, num: num, holders: holders}
-        ]
+        const _newdata = [];
+        holders.forEach((holder) => {
+            holder.products.forEach((product) => {
+                _newdata.push({
+                    CLIENT_NAME: clientName,
+                    CLIENT_EMAIL: clientEmail,
+                    HOLDER: holder.name,
+                    NAME: product.NAME,
+                    QUANTITY: product.QTY1,
+                    PRICE: product.PRICE,
+                    TOTAL_PRICE: product.TOTAL_PRICE,
+                })
+            })
+        })
 
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <CSVExport holders={holders} email={clientEmail} name={clientName}/>
+                    <XLSXDownloadButton data={_newdata}fileName={`OFFER.${clientName.split(' ').join('-')}`}/>
                 </OverlayPanel>
             </div>
     
@@ -139,8 +150,34 @@ const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
         )
     }
 
+    const Header = () => {
+        const _newdata = [];
+        data.forEach((item => {
+            item.holders.forEach((holder) => {
+                holder.products.forEach((product) => {
+                    _newdata.push({
+                        CLIENT_NAME: item.clientName,
+                        CLIENT_EMAIL: item.clientEmail,
+                        CLIENT_PHONE: item.clientPhone,
+                        HOLDER: holder.name,
+                        NAME: product.NAME,
+                        QUANTITY: product.QTY1,
+                        PRICE: product.PRICE,
+                        TOTAL_PRICE: product.TOTAL_PRICE,
+                    })
+                })
+            })
+        }))
+        return (
+            <div className='flex justify-content-end'>
+                <XLSXDownloadButton data={_newdata}fileName="all-offers"/>
+            </div>
+        )
+    }
+    const header = Header();
     return (
         <DataTable
+            header={header}
             loading={loading}
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}

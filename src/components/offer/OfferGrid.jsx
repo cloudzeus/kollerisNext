@@ -98,7 +98,7 @@ const OffreGrid = () => {
         });
         return (
             <div className='flex justify-content-end'>
-                <XLSXDownloadButton data={_newdata} />
+                <XLSXDownloadButton data={_newdata} fileName="offer"/>
             </div>
         )
     }
@@ -176,7 +176,7 @@ const PrintActions = (data) => {
         <div className='flex justify-content-center'>
             <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
             <OverlayPanel className='w-15rem' ref={op}>
-                <XLSXDownloadButton data={products} />
+                <XLSXDownloadButton data={products} fileName="offer" />
             </OverlayPanel>
         </div>
 

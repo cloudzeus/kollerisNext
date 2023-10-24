@@ -8,7 +8,9 @@ import { Button } from 'primereact/button';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
-import { setLoading } from '@/features/productsSlice';
+
+
+
 const Page = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false)
