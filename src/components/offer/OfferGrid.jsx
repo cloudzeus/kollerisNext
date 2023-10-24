@@ -8,7 +8,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 
-const OffreGrid = () => {
+const OfferGrid = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
@@ -184,4 +184,4 @@ const PrintActions = (data) => {
 
     )
 }
-export default OffreGrid
+export default OfferGrid
