@@ -13,7 +13,7 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { CSVLink, CSVDownload } from "react-csv";
-import CSVExport from '@/components/exportCSV/multiOffer';
+import CSVExport from '@/components/exportCSV/MultiOffer';
 const Page = () => {
     const router = useRouter();
     const [data, setData] = useState([])
@@ -123,9 +123,6 @@ const CustomDataTable = ({ data, setRefetch, loading, setLoading}) => {
 
     const PrintActions = ({holders, clientEmail, num, clientName  }) => {
         const op = useRef(null);
-      
-        console.log( clientEmail, num, clientName )
-        console.log(holders)
         const _newData= [
             {clientName: clientName, clientEmail: clientEmail, num: num, holders: holders}
         ]

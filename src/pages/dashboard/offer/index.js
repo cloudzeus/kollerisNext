@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedProducts } from '@/features/productsSlice';
 import { Toast } from 'primereact/toast';
+import OfferGrid from '@/components/offer/OfferGrid';
 const Page = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -22,9 +23,12 @@ const Page = () => {
       <div>
         <Button icon="pi pi-plus" label="Δημιουργία Προσφοράς" severity='warning' onClick={onClick} />
       </div>
+      <OfferGrid />
     </ AdminLayout >
 
   )
 }
+
+
 
 export default Page;

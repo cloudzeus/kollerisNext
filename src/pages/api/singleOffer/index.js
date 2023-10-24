@@ -75,7 +75,16 @@ export default async function handler(req, res) {
         }
     }
 
-
+    if(action ==="findOrders") {
+        try {
+            await connectMongo();
+            let find = await SingleOffer.find({})
+            console.log(find)
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
   
  
 }

@@ -18,7 +18,6 @@ import {
     setSearchTerm,
     setSort,
     setSelectedProducts,
-    setSoftoneFilter,
     setMarka
 } from "@/features/productsSlice";
 
@@ -211,7 +210,6 @@ const ProductSearchGrid = () => {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
                     action: 'findBrands',
-                    mtrmark: selectedMarkes?.mtrmark
                 })
                 dispatch(setFilters({ action: 'marka', value: data.result }))
 
@@ -271,7 +269,6 @@ const ProductSearchGrid = () => {
         )
     };
 
-    console.log(codeSearch)
 
     const SearchEAN = () => {
         const onSort = () => {

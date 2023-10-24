@@ -9,7 +9,6 @@ import { Toast } from 'primereact/toast';
 import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
 import ExpandedRowGrid from '@/components/client/ExpandedRowGrid';
-import { setSelectedClient } from '@/features/impaofferSlice';
 
 export default function Clients() {
     const router = useRouter();
@@ -130,15 +129,24 @@ export default function Clients() {
         )
     }
    
+ 
 
-    const rowExpansionTemplate = (data) => {
-      
+    const ShowOffers = ({OFFERSTATUS, NAME}) => {
+        let color;
+        if(OFFERSTATUS) {
+            color = 'bg-green-500'
+        }
+        if(!OFFERSTATUS) {
+            color = 'bg-red-500'
+        }
         return (
-            <  ExpandedRowGrid data={data} setSubmitted={setSubmitted}/>
-        );
-    };
+            <div className='flex cursor-pointer align-items-center p-2' onClick={() => router.push(`/dashboard/clients/offers/${NAME}`)}>
+                <div className={`${color}  border-round mr-1 mt-1 `} style={{width: '4px', height: '4px'}}></div>
+                <span className='font-xm text-500'>offer</span>
 
-
+            </div>
+        )
+    }
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -158,11 +166,11 @@ export default function Clients() {
                 loading={loading}
                 filterDisplay="row"
                 showGridlines
-                rowExpansionTemplate={rowExpansionTemplate}
+                // rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
             >   
-                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion}  style={{ width: '20px' }} />
+                <Column body={ShowOffers}></Column>
                 <Column field="NAME"  filter showFilterMenu={false}  filterElement={SearchClient} header="Ονομα" sortable></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" sortable></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress}  header="Διεύθυνση" sortable></Column>

@@ -91,8 +91,8 @@ const productsSlice = createSlice({
             state.category = payload;
             state.group = null;
             state.subgroup = null;
-            state.marka = null;
-            state.searchTerm = '';
+            // state.marka = null;
+            // state.searchTerm = '';
             state.lazyState.first = 0;
             state.lazyState2.first = 0;
         },
@@ -111,10 +111,10 @@ const productsSlice = createSlice({
         setMarka: (state, {payload}) => {
             state.marka = payload;
             //reset others
-            state.group = null;
-            state.category = null;
-            state.subgroup = null;
-            state.searchTerm = '';
+            // state.group = null;
+            // state.category = null;
+            // state.subgroup = null;
+            // state.searchTerm = '';
             state.lazyState.first = 0;
             state.lazyState2.first = 0;
         },
@@ -136,26 +136,26 @@ const productsSlice = createSlice({
         setSearchTerm: (state, {payload}) => {
             state.searchTerm = payload;
             //reset all the others:
-            state.category = null;
-            state.group = null;
-            state.subgroup = null;
-            state.codeSearch = '';
+            // state.category = null;
+            // state.group = null;
+            // state.subgroup = null;
+            // state.codeSearch = '';
         },
         setCodeSearch: (state, {payload}) => {
             state.codeSearch = payload;
             //reset all the others:
-            state.searchTerm = null;
-            state.category = null;
-            state.group = null;
-            state.subgroup = null;
+            // state.searchTerm = null;
+            // state.category = null;
+            // state.group = null;
+            // state.subgroup = null;
         },
         setSort: (state) => {
-            state.searchTerm = '';
+            // state.searchTerm = '';
             //reset all the others:
-            state.category = null;
-            state.group = null;
-            state.subgroup = null;
-            state.softoneFilter = null;
+            // state.category = null;
+            // state.group = null;
+            // state.subgroup = null;
+            // state.softoneFilter = null;
             if(state.sort == 0) {
                 state.sort = 1;
                 return;

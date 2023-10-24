@@ -4,6 +4,7 @@ import { ImpaCodes } from "../../../server/models/impaSchema"
 import Clients from "../../../server/models/modelClients";
 import Holders from "../../../server/models/holderModel";
 import { transporter } from "@/utils/nodemailerConfig";
+import SingleOffer from "../../../server/models/singleOfferModel";
 
 export default async function handler(req, res) {
     const action = req.body.action
@@ -268,6 +269,7 @@ export default async function handler(req, res) {
     }
     if(action === "findClientHolder") {
         const {documentID, holderID, clientName} = req.body;
+        console.log('client name')
         console.log(clientName)
         try {
             await connectMongo();
@@ -278,6 +280,21 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }
     }
+
+    if(action === 'countOffers') {
+        const {clientName} = req.body;
+        try {
+            await connectMongo();
+            const totalRecords = await Holders.countDocuments({ clientName: clientName});
+            const totalRecords2 = await SingleOffer.countDocuments({ clientName: clientName});
+            const newRecords = totalRecords + totalRecords2
+            console.log(totalRecords)
+            console.log(newRecords)
+            return res.status(200).json({ success: true, result:  newRecords })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    } 
 }
 
 

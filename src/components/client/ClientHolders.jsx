@@ -1,9 +1,7 @@
-'use client';
+import StepHeader from "@/components/StepHeader";
 import React, { useEffect, useState, useRef } from 'react'
 import { Button } from 'primereact/button'
-import StepHeader from '@/components/StepHeader';
-import { setPageId, setHolder } from '@/features/impaofferSlice'
-import { useSelector, useDispatch } from 'react-redux'
+
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
@@ -12,19 +10,15 @@ import { Tag } from 'primereact/tag';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { CSVLink, CSVDownload } from "react-csv";
-import CSVExport from '@/components/exportCSV/multiOffer';
-
-
+import CSVExport from "@/components/exportCSV/MultiOffer"
 
 const ClientHolder = ({NAME}) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const [statuses] = useState(['pending', 'done', 'rejected']);
-    const [status, setStatus] = useState(null);
-    const router = useRouter();
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
+
     const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/createOffer', { action: 'findClientHolder', clientName: NAME })
@@ -32,11 +26,14 @@ const ClientHolder = ({NAME}) => {
         setLoading(false)
     }
 
-
+   
   
     useEffect(() => {
         handleFetch();
-    }, [refetch])
+    }, [refetch, NAME])
+
+
+
     const allowExpansion = (rowData) => {
         return rowData
     };
@@ -55,9 +52,7 @@ const ClientHolder = ({NAME}) => {
         }
     };
 
-    const RowExpansionTemplate = ({ holders, _id }) => {
-        return <RowExpansionGrid holders={holders} documentID={_id} />
-    }
+  
     const statusEditor = (options) => {
         return (
             <Dropdown
@@ -114,34 +109,39 @@ const ClientHolder = ({NAME}) => {
 
         )
     }
-
+    
+    const RowExpansionTemplate = ({ holders, _id }) => {
+        return <RowExpansionGrid holders={holders} documentID={_id} />
+    }
     return (
         <DataTable
-            style={{maxWidth: '1400px'}}
             loading={loading}
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}
-            rowExpansionTemplate={RowExpansionTemplate}
+            rowExpansionTemplate={RowExpansionTemplate }
             value={data}
             editMode="row"
             onRowEditComplete={onRowEditComplete}
             showGridlines
         >
             <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
-            <Column header="Aρ. Προσφοράς"   field="num"></Column>
-            <Column header="Status" field="status" body={Status} editor={(options) => statusEditor(options)}></Column>
-            <Column header="Αλλαγή Status" rowEditor bodyStyle={{ textAlign: 'center' }}></Column>
-            <Column header="Aποστολή σε Πελάτη" bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
-            <Column headerStyle={{ width: '40px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column> 
+            <Column header="Όνομα Πελάτη"  field="clientName"></Column>
+            <Column header="Εmail" body={ClientDetails} field="clientName"></Column>
+            <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
+            <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
+            <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+            <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}  bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
+            <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
 
 
         </DataTable>
     )
 }
 
+
 const RowExpansionGrid = ({ holders, documentID }) => {
     const [expandedRows, setExpandedRows] = useState(null);
-
+ 
     const allowExpansion = (rowData) => {
         return rowData
     };
@@ -151,8 +151,8 @@ const RowExpansionGrid = ({ holders, documentID }) => {
     }
 
     return (
-        <div className="p-3 mb-2 mt-2">
-            <p className='mb-2 font-bold ml-1'>holders</p>
+        <div className="p-3 mb-8 mt-4">
+            <p className='mb-3 font-bold ml-1'>holders</p>
             <DataTable
                 className='border-1 border-300'
                 expandedRows={expandedRows}
@@ -217,7 +217,6 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
         <div className='p-3'>
             <p className='mb-3 font-bold ml-1'>Προϊόντα</p>
             <DataTable
-                className='border-1 border-400'
                 value={data}
                 loading={loading}
             >
@@ -252,18 +251,16 @@ const Status = ({ status }) => {
 }
 
 
-
-
-
-
-const ClientDetails = ({ clientName, clientEmail, clientPhone }) => {
+const ClientDetails = ({clientName, clientEmail, clientPhone}) => {
     return (
         <div>
             <div className='flex align-items-center mt-2 mr-2' >
-                <i className="pi pi-envelope mr-2 border-1 border-700 p-2 border-round" style={{ fontSize: '10px' }}></i>
+                <i className="pi pi-envelope mr-2 border-1 border-700 p-2 border-round" style={{fontSize: '10px'}}></i>
                 <p className='block text-sm'>{clientEmail}</p>
             </div>
         </div>
     )
 }
+
+
 export default ClientHolder;

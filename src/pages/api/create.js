@@ -12,6 +12,9 @@ import Currency from "../../../server/models/currencyModel";
 import SoftoneProduct from "../../../server/models/newProductModel";
 import { Product } from "../../../server/models/newProductModel";
 import Supplier from "../../../server/models/suppliersSchema";
+import Clients from "../../../server/models/modelClients";
+import Holders from "../../../server/models/holderModel";
+import SingleOffer from "../../../server/models/singleOfferModel";
 export default async function handler(req, res) {
     let action = req.body.action;
 
@@ -458,6 +461,38 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null });
         }
 
+    }
+    if(action ==="offerstatus") {
+        await connectMongo();
+        // let updateCliesnt = await Clients.updateMany({}, {
+        //     $set: {
+        //         OFFERSTATUS: false
+        //     }
+        // })
+        let clientName = await Clients.find({}, {NAME:1, _id: 0})
+        for(let name of clientName) {
+            let holders = await Holders.find({NAME: name.NAME})
+            if(holders.length > 0) {
+                let update = await Clients.findOneAndUpdate({
+                    NAME: name.NAME
+                }, {
+                    $set: {
+                        OFFERSTATUS: true
+                    }
+                })
+            }
+            let singleoffer = await SingleOffer.find({NAME: name.NAME})
+            if(singleoffer.length > 0) {
+                let update = await Clients.findOneAndUpdate({
+                    NAME: name.NAME
+                }, {
+                    $set: {
+                        OFFERSTATUS: true
+                    }
+                })
+            }
+        }
+        return res.status(200).json({ success: true  });
     }
 }
 

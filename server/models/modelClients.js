@@ -7,6 +7,10 @@ const clientsSchema= new mongoose.Schema({
         type: String,
         require: true
     },
+    OFFERSTATUS: {
+        type: Boolean,
+        default: false,
+    },
     CODE: {
         type: String,
         require: true
