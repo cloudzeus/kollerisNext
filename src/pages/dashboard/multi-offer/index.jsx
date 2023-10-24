@@ -2,8 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button } from 'primereact/button'
 import StepHeader from '@/components/StepHeader';
-import { setPageId, setHolder } from '@/features/impaofferSlice'
-import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
@@ -12,7 +10,6 @@ import { Tag } from 'primereact/tag';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import CSVExport from '@/components/exportCSV/MultiOffer';
 import  XLSXDownloadButton from '@/components/exportCSV/Download';
 
 const Page = () => {

@@ -25,7 +25,7 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import StepHeader from '@/components/StepHeader';
 import { OverlayPanel } from 'primereact/overlaypanel';
-
+import XLSXDownloadButton from '@/components/exportCSV/Product';
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -41,7 +41,6 @@ import {
     setSortAvailability,
     setMarka
 } from "@/features/productsSlice";
-import XLSXDownloadButton from '@/components/exportCSV/Products';
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -228,6 +227,7 @@ function Product() {
             console.log(e.value)
             dispatch( setSoftoneFilter(e.value))
         }
+
         return (
             <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
                 <div className='flex'>

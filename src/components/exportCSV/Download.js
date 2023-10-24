@@ -2,7 +2,7 @@ import { Button } from 'primereact/button';
 import React from 'react';
 import * as XLSX from 'xlsx';
 
-function XLSXDownloadButton({data, fileName}) {
+function XLSXDownloadButton({data, fileName, disabled}) {
 
     const handleDownload = () => {
         const workbook = XLSX.utils.book_new();
@@ -14,7 +14,7 @@ function XLSXDownloadButton({data, fileName}) {
     
       return (
         <div >
-            <Button  className='w-full' label=".xlsx" severity="success" icon="pi pi-download" onClick={handleDownload} />
+            <Button  disabled={disabled} className='w-full' label=".xlsx" severity="success" icon="pi pi-download" onClick={handleDownload} />
         </div>
       )
   };
