@@ -10,7 +10,8 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import axios from 'axios';
 import XLSXDownloadButton from '@/components/exportCSV/Download';
-
+import { Dropdown } from 'primereact/dropdown';
+import { Tag } from 'primereact/tag';
 
 const Page = () => {
     const router = useRouter();
