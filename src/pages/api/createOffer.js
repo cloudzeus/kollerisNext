@@ -157,7 +157,11 @@ export default async function handler(req, res) {
                 status: 'created',
                 num: num
             })
-            console.log(insert)
+            await Clients.updateOne({ NAME: NAME }, {
+                $set: {
+                    OFFERSTATUS: true
+                }
+            })
             return res.status(200).json({ success: true, result: insert })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

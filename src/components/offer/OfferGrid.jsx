@@ -63,10 +63,11 @@ const OffreGrid = () => {
 
 
     //SUBMIT ACTIONS, SEND EMAIL TO CLIENT:
-    const Actions = ({ holders, clientEmail, num, _id }) => {
+    const Actions = ({ clientEmail, num, _id }) => {
+        console.log(clientEmail, _id)
         const onSendOffer = async () => {
             setLoading(true)
-            let { data } = await axios.post('/api/createOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
+            let { data } = await axios.post('/api/singleOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
             console.log(data.emailSent)
             setRefetch(prev => !prev)
             setLoading(false)
@@ -80,6 +81,7 @@ const OffreGrid = () => {
 
     const Header = () => {
         const _newdata = [];
+
         data.forEach((item) => {
             item.products.forEach((product) => {
                 _newdata.push({

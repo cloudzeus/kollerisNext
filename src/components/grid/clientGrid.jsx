@@ -123,6 +123,7 @@ const CustomersGrid = () => {
         >
             <Column selectionMode="single" headerStyle={{ maxWidth: '200px' }}></Column>
             <Column field="NAME" style={{maxWidth: '350px'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
+            <Column field="EMAIL" style={{maxWidth: '350px'}}  header="Email"></Column>
             <Column field="PHONE01" filter showFilterMenu={false} filterElement={SearchPhone} header="Τηλέφωνο"></Column>
             <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση"></Column>
             <Column field="AFM" style={{width: '120px'}} filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ"></Column>
