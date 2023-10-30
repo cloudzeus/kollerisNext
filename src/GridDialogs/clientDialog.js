@@ -16,9 +16,8 @@ import { useSession } from "next-auth/react"
 
 
 const addSchema = yup.object().shape({
-    code: yup.string().required('O κωδικός είναι υποχρεωτικός'),
-    greekDescription: yup.string().required('Υπορχρεωτική Περιγραφή'),
-    englishDescription: yup.string().required('Υπορχρεωτική αγγλική Περιγραφή'),
+        NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
+        AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
 });
 
 
@@ -157,9 +156,14 @@ const AddDialog = ({
     } = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
-            code: '',
-            englishDescription: '',
-            greekDescription: '',
+            NAME: '',
+            PHONE01: '',
+            PHONE02: '',
+            EMAIL: '',
+            ADDRESS: '',
+            ZIP: '',
+            AFM: '',
+            DIASCODE: '',
         }
     });
     const toast = useRef(null);
@@ -172,14 +176,19 @@ const AddDialog = ({
 
     const handleAdd = async (data) => {
         console.log(data)
-        let res = await axios.post('/api/product/apiImpa', { action: 'createImpa', data: data })
-        console.log(res.data)
-        if(!res.data.success) return showError(res.data.error)
-        setDisabled(true)
-        setSubmitted(true)
-        showSuccess('Επιτυχής εισαγωγή στην βάση')
-        hideDialog()
-        reset();
+        try {
+            let res = await axios.post('/api/clients/apiClients', { action: 'addClient', data: data })
+            console.log(res.data)
+            setSubmitted(true)
+            hideDialog()
+            showSuccess('Επιτυχής εισαγωγή στην βάση')
+            reset();
+
+        } catch (e) {
+            showError
+            hideDialog()
+        }
+       
     }
 
 
@@ -210,27 +219,49 @@ const AddDialog = ({
                 className="p-fluid"
                 footer={productDialogFooter}
                 onHide={hideDialog}>
-                <FormTitle>Λεπτομέριες</FormTitle>
-                <Input
-                    label={'Impa code'}
-                    name={'code'}
-                    control={control}
-                    required
-                    error={errors.code}
+                 <Input
+                   label={'Όνομα'}
+                   name={'NAME'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'ΑΦΜ'}
+                   name={'AFM'}
+                   control={control}
+                   required
+               />
+                   <Input
+                   label={'Διεύθυνση'}
+                   name={'ADDRESS'}
+                   control={control}
+               />
+               
+                   <Input
+                   label={'T.K'}
+                   name={'ZIP'}
+                   control={control}
+               />
+               
+                   <Input
+                   label={'Τηλέφωνο'}
+                   name={'PHONE01'}
+                   control={control}
+               />
+                   <Input
+                   label={'Τηλέφωνο 2'}
+                   name={'PHONE02'}
+                   control={control}
+               />
+                   <Input
+                   label={'Εmail'}
+                   name={'EMAIL'}
+                   control={control}
                 />
-                <Input
-                    label={'Ελληνική Περιγραφή'}
-                    name={'greekDescription'}
-                    control={control}
-                    required
-                    error={errors.greekDescription}
-                />
-                <Input
-                    label={'Αγγλική Περιγραφή'}
-                    name={'englishDescription'}
-                    control={control}
-                    required
-                    error={errors.englishDescription}
+                   <Input
+                   label={'DIASCODE'}
+                   name={'DIASCODE'}
+                   control={control}
                 />
             </Dialog>
         </form>

@@ -5,7 +5,22 @@ import Clients from "../../../../server/models/modelClients";
 export default async function handler(req, res) {
     const action = req.body.action
  
-
+    if(action === 'addClient') {
+        let {data} = req.body;
+        console.log('addClient')
+        console.log(data)
+        try {
+            await connectMongo();
+            let result = await Clients.create({
+                ...data,
+                OFFERSTATUS: false,
+            })
+            console.log(result)
+            return res.status(200).json({ success: true })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
 
     
     if(action === 'upsert') {
