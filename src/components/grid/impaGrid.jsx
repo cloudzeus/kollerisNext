@@ -10,7 +10,7 @@ import { setSelectedImpa, setDataSource, setShowImpaTable } from '@/features/imp
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 
-const ChooseImpa = () => {
+const ImpaGrid = () => {
     const dispatch = useDispatch();
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -31,11 +31,9 @@ const ChooseImpa = () => {
 
 
     const handleFetch = async (action) => {
-        if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') {
-            setLoading(true)
-        }
+       
         const res = await axios.post('/api/product/apiImpa', {
-            action: action,
+            action: 'findAll',
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm
@@ -48,10 +46,7 @@ const ChooseImpa = () => {
 
 
     useEffect(() => {
-        if (searchTerm.greek) handleFetch('searchGreekImpa');
-        if (searchTerm.english) handleFetch('searchEng');
-        if (searchTerm.code) handleFetch('searchCode');
-        if (searchTerm.greek === '' && searchTerm.english === '' && searchTerm.code === '') handleFetch('findAll')
+       handleFetch()
     }, [searchTerm, lazyState.rows, lazyState.first,])
 
 
@@ -65,7 +60,7 @@ const ChooseImpa = () => {
             <div className="flex justify-content-start ">
                 <span className="p-input-icon-left w-5">
                     <i className="pi pi-search" />
-                    <InputText value={searchTerm.greek} onChange={(e) => setSearchTerm((prev) => ({ ...prev, greek: e.target.value }))} />
+                    <InputText className='w-full' value={searchTerm.greek} onChange={(e) => setSearchTerm((prev) => ({ ...prev, greek: e.target.value }))} />
                 </span>
             </div>
         )
@@ -84,10 +79,10 @@ const ChooseImpa = () => {
 
        
         return (
-            <div className="flex justify-content-start ">
-                <span className="p-input-icon-left w-5">
+            <div className="flex justify-content-start  ">
+                <span className="p-input-icon-left w-5 ">
                     <i className="pi pi-search" />
-                    <InputText value={searchTerm.code} onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} />
+                    <InputText   value={searchTerm.code} onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} />
                 </span>
             </div>
         )
@@ -122,7 +117,7 @@ const ChooseImpa = () => {
 
             >
                 <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
-                <Column field="code" header="Code" style={{ minWidth: '12rem' }} filter filterElement={searchCode} showFilterMenu={false} />
+                <Column field="code" header="Code"  filter filterElement={searchCode} showFilterMenu={false} />
                 <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
                 <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false} />
             </DataTable>
@@ -134,4 +129,4 @@ const ChooseImpa = () => {
 
 
 
-export default ChooseImpa;
+export default ImpaGrid;

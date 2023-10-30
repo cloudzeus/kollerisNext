@@ -25,10 +25,7 @@ const Page = () => {
     const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
 
 
-    useEffect(() => {
-        console.log('---------------------------------')
-        console.log(singleProductForSoftone )
-    }, [singleProductForSoftone ])
+  
     const dispatch = useDispatch();
     const router = useRouter();
     const toast = useRef(null);

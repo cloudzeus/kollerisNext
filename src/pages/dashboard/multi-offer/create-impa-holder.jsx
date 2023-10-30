@@ -6,7 +6,7 @@ import { setSelectedProducts } from '@/features/productsSlice';
 import StepHeader from '@/components/StepHeader';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
-import ChooseImpa from '@/components/multiOffer/ChooseImpa';
+import ImpaGrid from '@/components/grid/impaGrid';
 import ImpaDataTable from '@/components/multiOffer/ImpaProductsTable';
 import axios from 'axios';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -75,7 +75,7 @@ const PickListComp = () => {
             <div className='mt-4' >
                 <StepHeader text={"Eπιλογή Impa"} />
                 <CustomToolbar setShow={setShow} show={show} />
-                {showImpaTable ? (<ChooseImpa />) : null}
+                {showImpaTable ? (<ImpaGrid  />) : null}
 
                 {(!showImpaTable && selectedImpa) ? (
                     <div>

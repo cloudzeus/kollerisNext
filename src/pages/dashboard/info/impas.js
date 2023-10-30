@@ -13,6 +13,7 @@ import { Toolbar } from "primereact/toolbar";
 import { setGridRowData } from "@/features/grid/gridSlice";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
+import { useRouter } from "next/router";
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -24,6 +25,8 @@ const dialogStyle = {
 
 const Impas = () => {
     const [data, setData] = useState([]);
+    console.log('data')
+    console.log(data)
     const dispatch = useDispatch();
     const toast = useRef(null);
     const [searchTerm, setSearchTerm] = useState({
@@ -55,16 +58,14 @@ const Impas = () => {
     };
 
     const handleFetch = async (action) => {
-        if(action === "findAllWithProducts") setLoading(true)
         const {data} = await axios.post('/api/product/apiImpa', {
-            action: action,
+            action: 'findAll',
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
-        if(action === "findAllWithProducts") setLoading(false)
     }
     useEffect(() => {
         if (searchTerm.greek) handleFetch('searchGreekImpa');
@@ -79,7 +80,12 @@ const Impas = () => {
 
     const rowExpansionTemplate = (props) => {
         return (
-            <ExpandedDataTable products={props.products} />
+            <ExpandedDataTable 
+                id={props._id} 
+                setSubmitted={setSubmitted}
+                showSuccess={showSuccess}
+                showError={showError}
+            />
         )
     }
 
@@ -165,6 +171,7 @@ const Impas = () => {
             <StepHeader text="Κωδικοί Impas" />
             <Toolbar start={LeftToolbarTemplate} ></Toolbar>
             <DataTable
+                showGridlines  
                 key={'code'}
                 value={data}
                 first={lazyState.first}
@@ -209,13 +216,65 @@ const Impas = () => {
 
 
 
-const ExpandedDataTable = ({ products }) => {
-    console.log(products)
+const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
+    const [refetch, setRefetch] = useState(false);
+  
+    useEffect(() => {
+        const handleFetch = async () => {
+            setLoading(true);
+            let {data} = await axios.post('/api/product/apiImpa', {action: 'findImpaProducts', id: id})
+            setData(data.result)
+            setLoading(false);
+        
+        }
+        handleFetch()
+    }, [refetch])
+
+    const renderHeader  =  () => {
+        const handleClick = () => {
+            router.push(`/dashboard/products-to-impa/${id}`)
+        }
+        return (
+            <div>
+            <Button label="Νέο" icon="pi pi-plus" severity="secondary"  onClick={handleClick}/>
+        </div>
+        )
+    }
+    const header = renderHeader()
+
+
+    const DeleteProducts = (product) => {
+
+        const handleDelete = async () => {
+            setLoading(true);
+          let {data} = await axios.post('/api/product/apiImpa', {action: 'deleteImpaProduct', id: product._id, impaId: id})
+          if(!data.success) showError('Αποτυχία Διαγραφής')
+            showSuccess('Επιτυχής Διαγραφή')
+            setLoading(false);
+            setRefetch(prev => !prev)
+
+        }
+        return (
+            <div>
+                <i className="pi pi-trash text-red-400 cursor-pointer" onClick={handleDelete}></i>
+            </div>
+        )
+    }
     return (
         <div className="p-4">
             <p className="font-semibold mb-3 ">Προϊόντα συσχετισμένα με impa:</p>
-            <DataTable dataKey="_id" value={products}>
+            <DataTable
+                loading={loading}
+                showGridlines   
+                 header={header}
+                dataKey="_id" 
+                value={data}>
                 <Column field="NAME" header="Προϊόν"></Column>
+                <Column field="CODE" style={{width: '50px'}} body={DeleteProducts}></Column>
+
             </DataTable>
         </div>
     )
