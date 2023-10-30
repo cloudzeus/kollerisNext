@@ -50,7 +50,7 @@ const ImpaHolder = () => {
     return (
         <AdminLayout >
             <div className='flex align-items-center justify-content-between mb-5'>
-                <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => dispatch(setPageId(2))} />
+                <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
             </div>
             <PickListComp />
             <div className='mt-4 mb-5'>

@@ -21,13 +21,18 @@ function generateRandomId(length = 8) {
 const PlainHolder = () => {
     const dispatch = useDispatch();
     const {plainHolderName} = useSelector(state => state.impaoffer)
+    const router = useRouter();
     const onChange = (e) => {
         dispatch(setPlainHolderName(e.target.value))
     }
 
+    useEffect(() => {
+        dispatch(setPlainHolderName(''))
+    }, [])
 
     return (
         < AdminLayout>
+            <Button label="Πίσω" icon="pi pi-angle-left" className='mb-5' onClick={() => router.back()} />
             <StepHeader text={"Ονομα Holder"} />
             <div className='w-20rem mb-3 mt-2 flex'>
                 <InputText className='w-full' value={plainHolderName} onChange={onChange } placeholder='Δώστε ένα όνομα στον Holder' />

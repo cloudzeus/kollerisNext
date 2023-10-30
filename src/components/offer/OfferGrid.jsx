@@ -119,7 +119,7 @@ const OfferGrid = ({clientName}) => {
                 <Column field="SALDOCNUM" header="SALDOCNUM"></Column>
                 <Column field="createdAt" body={createdAt} header="Ημερομηνία Δημ."></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
-                <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                <Column header="Αλλαγή Status"  rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 <Column header="Aποστολή σε Πελάτη" headerStyle={{ width: '165px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
                 <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
 

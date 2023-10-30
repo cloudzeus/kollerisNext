@@ -22,46 +22,18 @@ export default async function handler(req, res) {
 
     }
 
-    if (action === 'findProducts') {
-        const { skip, limit } = req.body;
-        try {
-            await connectMongo();
-            const totalRecords = await SoftoneProduct.countDocuments();
-            const products = await SoftoneProduct.find({}).skip(skip).limit(limit)
-                .select('MTRL CODE PRICER _id NAME')
-                .populate('impas');
-            return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-
-    // if (action === 'findClients') {
-    //     const { skip, limit, } = req.body;
-      
+    // if (action === 'findProducts') {
+    //     const { skip, limit } = req.body;
     //     try {
     //         await connectMongo();
-    //         const totalRecords = await Clients.countDocuments();
-    //         const clients = await Clients.find({}).skip(skip).limit(limit);
-    //         return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+    //         const totalRecords = await SoftoneProduct.countDocuments();
+    //         const products = await SoftoneProduct.find({}).skip(skip).limit(limit)
+    //             .select('MTRL CODE PRICER _id NAME')
+    //             .populate('impas');
+    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
     //     } catch (e) {
     //         return res.status(500).json({ success: false, result: null })
     //     }
-    // }
-
-    // if (action === "searchClients") {
-    //     const { skip, limit, searchTerm } = req.body;
-    //     try {
-    //         await connectMongo();
-    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-    //         const totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm });
-    //         const clients = await Clients.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
-    //         console.log(clients)
-    //         return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-      
     // }
 
 

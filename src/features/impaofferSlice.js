@@ -46,6 +46,9 @@ const impaofferSlice = createSlice({
 		},
 		setPlainHolderName: (state, {payload}) => {
 			state.plainHolderName = payload;
+		},
+		removeHolder: (state, {payload}) => {
+			state.holder = state.holder.filter((item) => item.id !== payload);
 		}
 
 
@@ -66,7 +69,8 @@ export const {
 	setHolder,
 	setOfferEmail,
 	setSingleClientName,
-	setPlainHolderName
+	setPlainHolderName,
+	removeHolder
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

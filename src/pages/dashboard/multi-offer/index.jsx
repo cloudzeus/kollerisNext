@@ -39,13 +39,6 @@ const Page = () => {
             <div className='mt-4 ml-1'>
                 <StepHeader text={"Προσφορές Πολλαπλών σημείων σε πελάτες"} />
                 {data ? (
-                    // <CustomDataTable 
-                    //     data={data} 
-                    //     refetch={refetch} 
-                    //     loading={loading} 
-                    //     setRefetch={setRefetch} 
-                    //     setLoading={setLoading}
-                    //     />
                     <ClientHolder NAME={null} />
                 ) : (
                     <div className='p-4 bg-white border-round'>

@@ -3,10 +3,9 @@ import React, { useState, useEffect } from 'react'
 import { Button } from 'primereact/button'
 import StepHeader from '@/components/StepHeader'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPageId, setSelectedImpa, } from '@/features/impaofferSlice'
 import axios from 'axios'
-import Input from '@/components/Forms/PrimeInput'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
+import { removeHolder } from '@/features/impaofferSlice'
 import { useRouter } from 'next/router'
 import { setSelectedProducts } from '@/features/productsSlice'
 function generateOfferNum(length) {
@@ -21,6 +20,7 @@ const ΟffersPage = () => {
     const dispatch = useDispatch();
     const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
     const router = useRouter()
+
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', { 
             action: 'addOfferDatabase', 
@@ -66,7 +66,7 @@ const ΟffersPage = () => {
                     <Button 
                     onClick={finalizeOffer} 
                     disabled={holder.length === 0}
-                    raised icon="pi pi-angle-right" className='mt-2 mb-4' label="Ολοκλήρωση Προσφοράς" />
+                    raised  className='mt-2 mb-4' label="Ολοκλήρωση" />
                 ) : null}
                  
 
@@ -79,9 +79,15 @@ const ΟffersPage = () => {
 const MapHolders = () => {
     const { holder } = useSelector(state => state.impaoffer)
     const [showContent, setShowContent] = useState(null)
+    const dispatch = useDispatch();
     console.log(holder)
     const dropDownClick = (id) => {
         setShowContent(id)
+    }
+
+    const deleteHolderHandler = (id) => {
+        console.log(id)
+        dispatch(removeHolder(id))
     }
     return (
         <div className='mb-2'>
@@ -108,7 +114,7 @@ const MapHolders = () => {
                                 <p>Σύνολο Προϊόντων:</p>
                                 <p className='font-bold ml-2 pr-3'>{item?.products?.length}</p>
                                 <div className='ml-2 pl-4 border-left-1 border-400'>
-                                    <i className="pi pi-trash cursor-pointer" style={{ fontSize: '1.3rem', color: 'red' }}></i>
+                                    <i className="pi pi-trash cursor-pointer" style={{ fontSize: '1.3rem', color: 'red' }} onClick={() => deleteHolderHandler(item.id)}></i>
                                 </div>
                             </div>
                         </div>
