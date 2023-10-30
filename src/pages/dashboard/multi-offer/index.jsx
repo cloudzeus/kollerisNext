@@ -11,7 +11,7 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import  XLSXDownloadButton from '@/components/exportCSV/Download';
-
+import ClientHolder from '@/components/client/ClientHolders';
 const Page = () => {
     const router = useRouter();
     const [data, setData] = useState([])
@@ -39,13 +39,14 @@ const Page = () => {
             <div className='mt-4 ml-1'>
                 <StepHeader text={"Προσφορές Πολλαπλών σημείων σε πελάτες"} />
                 {data ? (
-                    <CustomDataTable 
-                        data={data} 
-                        refetch={refetch} 
-                        loading={loading} 
-                        setRefetch={setRefetch} 
-                        setLoading={setLoading}
-                        />
+                    // <CustomDataTable 
+                    //     data={data} 
+                    //     refetch={refetch} 
+                    //     loading={loading} 
+                    //     setRefetch={setRefetch} 
+                    //     setLoading={setLoading}
+                    //     />
+                    <ClientHolder NAME={null} />
                 ) : (
                     <div className='p-4 bg-white border-round'>
                         <p>Δεν υπάρχουν προσφορές</p>

@@ -36,49 +36,34 @@ export default async function handler(req, res) {
         }
     }
 
-    if (action === 'findClients') {
-        const { skip, limit, } = req.body;
+    // if (action === 'findClients') {
+    //     const { skip, limit, } = req.body;
       
-        try {
-            await connectMongo();
-            const totalRecords = await Clients.countDocuments();
-            const clients = await Clients.find({}).skip(skip).limit(limit);
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+    //     try {
+    //         await connectMongo();
+    //         const totalRecords = await Clients.countDocuments();
+    //         const clients = await Clients.find({}).skip(skip).limit(limit);
+    //         return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
+    // }
 
-    if (action === "searchClients") {
-        const { skip, limit, searchTerm } = req.body;
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-            const totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm });
-            const clients = await Clients.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
-            console.log(clients)
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
+    // if (action === "searchClients") {
+    //     const { skip, limit, searchTerm } = req.body;
+    //     try {
+    //         await connectMongo();
+    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
+    //         const totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm });
+    //         const clients = await Clients.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
+    //         console.log(clients)
+    //         return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
       
-    }
+    // }
 
-
-
-    if (action === "findHolders") {
-
-        try {
-            await connectMongo();
-            const holders = await Holders.find({});
-            console.log(holders)
-            // await closeMongo();
-            return res.status(200).json({ success: true, result: holders })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-   
 
     if(action === "findHolderProducts") {
         const {documentID, holderID} = req.body;
@@ -272,13 +257,18 @@ export default async function handler(req, res) {
         }   
     }
     if(action === "findClientHolder") {
-        const {documentID, holderID, clientName} = req.body;
-        console.log('client name')
-        console.log(clientName)
+        const { clientName} = req.body;
+       
         try {
+            let holder;
             await connectMongo();
-            const holder = await Holders.find({ clientName: clientName})
-            console.log(holder)
+            if(clientName) {
+                holder = await Holders.find({ clientName: clientName})
+            }
+            if(!clientName || clientName === '') {
+                holder = await Holders.find({})
+            }
+           
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

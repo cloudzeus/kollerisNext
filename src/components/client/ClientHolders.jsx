@@ -104,25 +104,27 @@ const ClientHolder = ({NAME}) => {
         return <RowExpansionGrid holders={holders} documentID={_id} />
     }
     return (
-        <DataTable
-            loading={loading}
-            expandedRows={expandedRows}
-            onRowToggle={(e) => setExpandedRows(e.data)}
-            rowExpansionTemplate={RowExpansionTemplate }
-            value={data}
-            editMode="row"
-            onRowEditComplete={onRowEditComplete}
-            showGridlines
-        >
-            <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
-            <Column header="Όνομα Πελάτη"  field="clientName"></Column>
-            <Column header="Εmail" body={ClientDetails} field="clientName"></Column>
-            <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
-            <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
-            <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
-            <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}  bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
-            <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
-        </DataTable>
+        <>
+                <DataTable
+                loading={loading}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+                rowExpansionTemplate={RowExpansionTemplate }
+                value={data}
+                editMode="row"
+                onRowEditComplete={onRowEditComplete}
+                showGridlines
+            >
+                <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
+                <Column header="Όνομα Πελάτη"  field="clientName"></Column>
+                <Column header="Εmail" body={ClientDetails} field="clientName"></Column>
+                <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
+                <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
+                <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}  bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
+                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
+            </DataTable>
+        </>
     )
 }
 

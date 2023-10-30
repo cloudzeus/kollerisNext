@@ -13,8 +13,8 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 import { EditDialog, AddDialog } from '@/GridDialogs/clientDialog';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { Dropdown } from 'primereact/dropdown';
-import { set } from 'mongoose';
+import { Checkbox } from "primereact/checkbox";
+
 export default function Clients() {
     const router = useRouter();
     const dispatch = useDispatch();
@@ -93,16 +93,7 @@ export default function Clients() {
 
 
 
-    const renderHeader = () => {
-
-        return (
-            <span className="p-input-icon-left">
-                <i className="pi pi-search" />
-                <InputText type="search" value={''} onChange={(e) => onGlobalFilterChange(e)} placeholder="Αναζήτηση" />
-            </span>
-        );
-    };
-    const header = renderHeader();
+   
 
 
 
@@ -193,6 +184,7 @@ export default function Clients() {
 
 
     const ShowOffers = ({ OFFERSTATUS, NAME }) => {
+        
         const handleClick = () => {
             const encodedString = encodeURIComponent(NAME);
             router.push(`/dashboard/clients/offers/${encodedString}`)
@@ -201,11 +193,12 @@ export default function Clients() {
             return (
                 <div className='flex cursor-pointer align-items-center justify-content-center p-0' onClick={handleClick}>
                     <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{ width: '4px', height: '4px' }}></div>
-                    <span className='font-xm text-500'>OFFERS</span>
+                    <span className='font-xm text-600' style={{fontSize: '10px'}}>OFFERS</span>
 
                 </div>
             )
         }
+        
 
     }
 
@@ -253,8 +246,8 @@ export default function Clients() {
                 filterDisplay="row"
                 showGridlines
             >   
-             <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}}></Column>
-                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers}></Column>
+                <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}}></Column>
+                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column>
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>

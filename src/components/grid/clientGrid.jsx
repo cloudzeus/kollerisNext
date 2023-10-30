@@ -17,7 +17,8 @@ const CustomersGrid = () => {
         name: '',
         afm: '',
         address: '',
-        phone: ''
+        phone: '',
+        email: ''
     })
     const [lazyState, setlazyState] = useState({
         first: 0,
@@ -102,6 +103,16 @@ const CustomersGrid = () => {
             </div>
         )
     }
+    const SearchEmail = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.email} onChange={(e) => setSearchTerm(prev => ({...prev, email: e.target.value}))} />
+                </span>
+            </div>
+        )
+    }
 
     return (
         <DataTable
@@ -123,7 +134,7 @@ const CustomersGrid = () => {
         >
             <Column selectionMode="single" headerStyle={{ maxWidth: '200px' }}></Column>
             <Column field="NAME" style={{maxWidth: '350px'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
-            <Column field="EMAIL" style={{maxWidth: '350px'}}  header="Email"></Column>
+            <Column field="EMAIL" style={{maxWidth: '350px'}} filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
             <Column field="PHONE01" filter showFilterMenu={false} filterElement={SearchPhone} header="Τηλέφωνο"></Column>
             <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση"></Column>
             <Column field="AFM" style={{width: '120px'}} filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ"></Column>

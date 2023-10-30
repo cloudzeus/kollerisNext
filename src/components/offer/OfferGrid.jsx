@@ -112,6 +112,7 @@ const OfferGrid = ({clientName}) => {
                 onRowEditComplete={onRowEditComplete}
                 value={data}
                 tableStyle={{ minWidth: '50rem' }}
+                showGridlines
             >
                 <Column field="clientName" header="Όνομα"></Column>
                 <Column field="clientEmail" header="Email"></Column>

@@ -5,13 +5,6 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import StepHeader from '@/components/StepHeader';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import axios from 'axios';
-import XLSXDownloadButton from '@/components/exportCSV/Download';
-import { Dropdown } from 'primereact/dropdown';
-import { Tag } from 'primereact/tag';
 import OfferGrid from '@/components/offer/OfferGrid';
 const Page = () => {
     const router = useRouter();
@@ -22,7 +15,7 @@ const Page = () => {
 
     return (
         <AdminLayout>
-            <Button label="Back" onClick={() => router.back()}  className='mb-4'/>
+            <Button label="Πίσω" icon="pi pi-arrow-left" onClick={() => router.back()}  className='mb-4'/>
             <div className='mb-3'>
             <StepHeader text="Προσφορές πολλαπλών επιλογών" />
             </div>

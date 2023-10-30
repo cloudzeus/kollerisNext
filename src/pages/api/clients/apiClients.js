@@ -1,6 +1,7 @@
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import Clients from "../../../../server/models/modelClients";
+import { sendError } from "next/dist/server/api-utils";
 
 export default async function handler(req, res) {
     const action = req.body.action
@@ -73,6 +74,7 @@ export default async function handler(req, res) {
     //USE IN THE GLOBAL CUSTOMERS TABLE WHERE YOU SELECT A CUSTOMER:
     if(action === "fetchAll") {
         const {skip, limit, searchTerm, sortOffers} = req.body;
+        console.log(searchTerm)
         try {
             await connectMongo();
             let totalRecords;
@@ -112,10 +114,14 @@ export default async function handler(req, res) {
                 clients = await Clients.find({ EMAIL: regexSearchTerm }).skip(skip).limit(limit);
             }
 
-            if(sortOffers !== 0) {
+            if(sortOffers !== 0 && sortOffers !== undefined) {
+                console.log('sefsefefes')
                 clients = await Clients.find({}).sort({OFFERSTATUS: sortOffers}).skip(skip).limit(limit);
                 totalRecords = await Clients.countDocuments({});
             }
+            console.log(sortOffers)
+            console.log('clients')
+            // console.log(clients)
             return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
         } catch (e) {
             return res.status(400).json({ success: false })
