@@ -8,14 +8,14 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 
-const OfferGrid = () => {
+const OfferGrid = ({clientName}) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
 
     const handleFetch = async () => {
         setLoading(true)
-        let res = await axios.post('/api/singleOffer', { action: 'findOrders' })
+        let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
         setLoading(false)
     }

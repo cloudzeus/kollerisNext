@@ -674,11 +674,17 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
     return (
         <div>
-            <p>{NAME}</p>
+            <p className='font-medium'>{NAME}</p>
+            <div className='flex mt-1'>
             <div className='flex align-items-center'>
                 <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
-                <p>softone</p>
+                <p className='text-500'>softone</p>
             </div>
+            {/* <div className='flex align-items-center ml-2'>
+                <p className='underline	text-blue-400'>impa</p>
+            </div> */}
+            </div>
+            
         </div>
     )
 }

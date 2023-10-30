@@ -5,10 +5,8 @@ import SingleOffer from "../../../../server/models/singleOfferModel";
 
 export default async function handler(req, res) {
     const action = req.body.action
- 
-  
-    if(action === 'createOrder') {
-        let {data, email, name , TRDR} = req.body;
+    if (action === 'createOrder') {
+        let { data, email, name, TRDR } = req.body;
         console.log(data)
         console.log(email, name, TRDR)
         const mtrlArr = data.map(item => {
@@ -27,22 +25,22 @@ export default async function handler(req, res) {
                         username: "Service",
                         password: "Service",
                         SERIES: 7001,
-                        COMPANY:1001,
+                        COMPANY: 1001,
                         TRDR: TRDR,
                         MTRLINES: mtrlArr
                     })
                 });
-        
+
                 let responseJSON = await response.json();
                 console.log(responseJSON)
-            
+
                 return responseJSON;
             }
             let saldoc = await getSaldoc();
-            if(!saldoc.success) {
+            if (!saldoc.success) {
                 return res.status(200).json({ success: false, error: "softone saldocnum error" })
             }
-            if(saldoc.SALDOCNUM) {
+            if (saldoc.SALDOCNUM) {
                 let create = await SingleOffer.create({
                     SALDOCNUM: saldoc.SALDOCNUM,
                     products: data,
@@ -54,7 +52,7 @@ export default async function handler(req, res) {
                 console.log('created single offer')
                 console.log(create)
             }
-            
+
             await Clients.updateOne({ TRDR: TRDR }, {
                 $set: {
                     OFFERSTATUS: true
@@ -67,44 +65,38 @@ export default async function handler(req, res) {
 
     }
 
-    if(action === 'findSingleOrder') {
-        const {TRDR} = req.body;
-        console.log(TRDR)
+    // if (action === 'findSingleOrder') {
+    //     const { TRDR } = req.body;
 
-        try {
-            await connectMongo();
-            let find = await SingleOffer.find({ TRDR: TRDR })
-            console.log(find)
-            return res.status(200).json({ success: true, result: find })
-        } catch (e) {
-            return res.status(400).json({ success: false })
-        }
-    }
-    if(action === 'findSingleOffer') {
-        const {clientName} = req.body;
-
-        try {
-            await connectMongo();
-            let find = await SingleOffer.find({ clientName : clientName })
-            console.log(find)
-            return res.status(200).json({ success: true, result: find })
-        } catch (e) {
-            return res.status(400).json({ success: false })
-        }
-    }
-
-    if(action ==="findOrders") {
-        try {
-            await connectMongo();
-            let find = await SingleOffer.find({})
-            console.log(find)
-            return res.status(200).json({ success: true, result: find })
-        } catch (e) {
-            return res.status(400).json({ success: false })
-        }
-    }
-
-
-    
+    //     try {
+    //         await connectMongo();
+    //         let find = await SingleOffer.find({ TRDR: TRDR })
+    //         console.log(find)
+    //         return res.status(200).json({ success: true, result: find })
+    //     } catch (e) {
+    //         return res.status(400).json({ success: false })
+    //     }
+    // }
    
+    if (action === "findOffers") {
+        const { clientName } = req.body;
+        try {
+            await connectMongo();
+            let find;
+            if (clientName !== '' || clientName !== null || clientName !== undefined) {
+                console.log('ther is no client name')
+                find = await SingleOffer.find({ clientName: clientName })
+            } 
+            if(clientName === undefined || clientName === null || clientName === ''){
+                find = await SingleOffer.find()
+            }
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+
+
+
+
 }
