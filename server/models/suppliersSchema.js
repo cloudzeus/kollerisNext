@@ -4,7 +4,6 @@ import { model, models, Schema } from 'mongoose';
 const supplierSchema = new mongoose.Schema({
     TRDR: {
       type: String,
-      required: true,
     },
     CODE: {
       type: String,
@@ -62,7 +61,11 @@ const supplierSchema = new mongoose.Schema({
     },
     JOBTYPETRD:{
         type: String,
-    }
+    },
+    updatedFrom: String,
+  },
+  {
+    timestamps: true,
   });
   
 const Supplier = models.Supplier || model('Supplier', supplierSchema);

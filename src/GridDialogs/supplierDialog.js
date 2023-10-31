@@ -37,11 +37,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
  
    
     const handleEdit = async (data) => {
-        // let user = session.user.user.lastName;
+        let user = session.user.user.lastName;
          console.log(data)
    
         try {
-            await axios.post('/api/clients/apiClients', {action: "updateOne", data: data})
+            await axios.post('/api/suppliers', {action: "updateOne", data: data, user: user})
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
@@ -78,7 +78,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Πελάτη"
+                    header= "Διόρθωση Προμηθευτή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
@@ -124,11 +124,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    name={'EMAIL'}
                    control={control}
                 />
-                   <Input
-                   label={'DIASCODE'}
-                   name={'DIASCODE'}
-                   control={control}
-                />
+                
                
               
                 </Dialog>
@@ -163,7 +159,6 @@ const AddDialog = ({
             ADDRESS: '',
             ZIP: '',
             AFM: '',
-            DIASCODE: '',
         }
     });
     const toast = useRef(null);
@@ -177,7 +172,7 @@ const AddDialog = ({
     const handleAdd = async (data) => {
         console.log(data)
         try {
-            let res = await axios.post('/api/clients/apiClients', { action: 'addClient', data: data })
+            let res = await axios.post('/api/suppliers', { action: 'create', data: data })
             console.log(res.data)
             setSubmitted(true)
             hideDialog()
@@ -214,7 +209,7 @@ const AddDialog = ({
                 visible={dialog}
                 style={{ width: '32rem' }}
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                header="Προσθήκη Πελάτη"
+                header="Προσθήκη Προμηθευτή"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
@@ -258,11 +253,7 @@ const AddDialog = ({
                    name={'EMAIL'}
                    control={control}
                 />
-                   <Input
-                   label={'DIASCODE'}
-                   name={'DIASCODE'}
-                   control={control}
-                />
+                  
             </Dialog>
         </form>
     )

@@ -119,63 +119,11 @@ export default async function handler(req, res) {
                 clients = await Clients.find({}).sort({OFFERSTATUS: sortOffers}).skip(skip).limit(limit);
                 totalRecords = await Clients.countDocuments({});
             }
-            console.log(sortOffers)
-            console.log('clients')
-            // console.log(clients)
+          
             return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
         } catch (e) {
             return res.status(400).json({ success: false })
         }
     }
-    if(action === "searchName") {
-        const { skip, limit, searchTerm, key} = req.body;
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp(searchTerm, 'i');
-            const totalRecords = await Clients.countDocuments({ ["NAME"]: regexSearchTerm });
-            const clients = await Clients.find({ "NAME": regexSearchTerm }).skip(skip).limit(limit);
-            console.log('clients')
-            console.log(clients)
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-    if(action === "searchAFM") {
-        const { skip, limit, searchTerm } = req.body;
-        console.log(searchTerm)
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp(searchTerm, 'i');
-            const totalRecords = await Clients.countDocuments({ AFM: regexSearchTerm });
-            const clients = await Clients.find({ AFM: regexSearchTerm }).skip(skip).limit(limit);
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-    if(action === "searchAddress") {
-        const { skip, limit, searchTerm } = req.body;
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp(searchTerm, 'i');
-            const totalRecords = await Clients.countDocuments({ ADDRESS: regexSearchTerm });
-            const clients = await Clients.find({ ADDRESS: regexSearchTerm }).skip(skip).limit(limit);
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-    if(action === "searchPhone") {
-        const { skip, limit, searchTerm } = req.body;
-        try {
-            await connectMongo();
-            let regexSearchTerm = new RegExp(searchTerm, 'i');
-            const totalRecords = await Clients.countDocuments({ PHONE01: regexSearchTerm });
-            const clients = await Clients.find({ PHONE01: regexSearchTerm }).skip(skip).limit(limit);
-            return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+  
 }

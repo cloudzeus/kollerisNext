@@ -56,13 +56,15 @@ const SidebarList = () => {
 
                 </div>
             ) : null}
-              <SidebarHeader  title={'Προμηθευτές'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+                <SidebarItem title={'Προμηθευτές'} goTo={'/dashboard/suppliers'} />
+
+              {/* <SidebarHeader  title={'Προμηθευτές'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 3 ? (
                 <div >
                     <SidebarSubItem title={'Παραγγελία'} goTo={'/dashboard/supplierOrder'} />
 
                 </div>
-            ) : null}
+            ) : null} */}
             {activeTab == 4 ? (
                 <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
 

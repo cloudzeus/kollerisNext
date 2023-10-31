@@ -7,7 +7,7 @@ const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
             {actionFrom ? (
                 <div>
                     <Container>
-                        <Avatar icon={"pi pi-user"}  style={{ backgroundColor: backgroundColor, color: color, width: '25px', height: '25px' }} shape="circle" />
+                        <Avatar icon={"pi pi-user"}  style={{ backgroundColor: backgroundColor, color: color, width: '20px', height: '20px', fontSize: '12px' }} shape="circle" />
                         <div className="right-div">
                             <span className="value">{actionFrom}</span>
                             <span className="dateAt">{at.split('T')[0]}</span>
@@ -32,16 +32,16 @@ const Container = styled.div`
 
     }
     .value {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .dateAt {
-        font-size: 10px;
+        font-size: 9px;
         font-style: italic;
     }
 
     .p-avatar-icon {
-        font-size: 12px;
+        font-size: 10px;
     }
 `
 

@@ -8,14 +8,16 @@ import { useDispatch } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
-import ExpandedRowGrid from '@/components/client/ExpandedRowGrid';
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
-import { EditDialog, AddDialog } from '@/GridDialogs/clientDialog';
+import { EditDialog, AddDialog } from '@/GridDialogs/supplierDialog';
 import { setGridRowData } from '@/features/grid/gridSlice';
 import { Checkbox } from "primereact/checkbox";
+import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
-export default function Clients() {
+
+
+export default function Page() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [submitted, setSubmitted] = useState(false);
@@ -48,13 +50,16 @@ export default function Clients() {
 
 
     const fetchClients = async () => {
-        setLoading(true)
-        let { data } = await axios.post('/api/clients/apiClients', {
+        const isAnyFieldNotEmpty = Object.values(searchTerm).some(value => value == '');
+        if (isAnyFieldNotEmpty) {
+            setLoading(true)
+        }
+       
+        let { data } = await axios.post('/api/suppliers', {
             action: "fetchAll",
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm,
-            sortOffers: sortOffers
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
@@ -97,7 +102,7 @@ export default function Clients() {
 
 
 
-    const SearchClient = () => {
+    const SearchName = () => {
         return (
             <div className="flex justify-content-start w-20rem ">
                 <span className="p-input-icon-left w-full">
@@ -228,7 +233,7 @@ export default function Clients() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <StepHeader text="Πελάτες" />
+            <StepHeader text="Προμηθευτές" />
             <Toolbar start={LeftToolbarTemplate}></Toolbar>
             <DataTable
                 lazy
@@ -247,14 +252,16 @@ export default function Clients() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}}></Column>
-                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column>
-                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Ονομα"></Column>
+                {/* <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column> */}
+                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>
                 <Column field="EMAIL" filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
                 <Column field="PHONE01" filter showFilterMenu={false} filterElement={ SearchPhone01} header="Τηλέφωνο" ></Column>
                 <Column field="PHONE02" filter showFilterMenu={false} filterElement={SearchPhone02} header="Τηλέφωνο 2" ></Column>
                 <Column field="ZIP" header="Ταχ.Κώδικας" ></Column>
+                <Column field="updatedFrom" header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
+
             </DataTable>
             <EditDialog
                 data={editData}
@@ -287,7 +294,18 @@ export default function Clients() {
 
 
 
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
+    return (
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
 
+    )
+}
 
 
 

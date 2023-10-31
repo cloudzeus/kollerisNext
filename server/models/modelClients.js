@@ -68,6 +68,7 @@ const clientsSchema= new mongoose.Schema({
     CMPMODE: {
         type: String,
     },
+    updatedFrom: String,
   
 },{
     timestamps: true
