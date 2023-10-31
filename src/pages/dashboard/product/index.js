@@ -135,7 +135,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
-    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka} = useSelector(store => store.products)
+    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
 
@@ -167,6 +167,7 @@ function Product() {
                 marka: marka,
                 codeSearch: codeSearch,
                 filterImpa: filterImpa,
+                sortPrice: sortPrice,
             },
             )
             setData(data.result);
@@ -194,6 +195,7 @@ function Product() {
         setSubmitted,
         codeSearch,
         filterImpa,
+        sortPrice,
     ])
 
 
@@ -249,7 +251,6 @@ function Product() {
             {name: 'Χωρίς Φίλτρο', value: null}
         ]
         const onOptionChange = (e) => {
-            console.log(e.value)
             dispatch( setSoftoneFilter(e.value))
         }
 
@@ -537,6 +538,19 @@ function Product() {
         )
     }
 
+    const SortPrice = () => {
+        const onSort = () => {
+            dispatch(setSortPrice())
+        }
+        return (
+                  <div className='ml-3'>
+                    {sortPrice === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+                    {sortPrice === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+                    {sortPrice === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+                </div>
+        )
+    }
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -604,9 +618,8 @@ function Product() {
                 {visibleColumns.some(column => column.id === 3) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="MTRMARK_NAME" style={{ width: '300px' }} header="Όνομα Μάρκας" filter showFilterMenu={false} filterElement={MarkesFilter}></Column>}
                 {visibleColumns.some(column => column.id === 5) && <Column field="CODE" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>}
-                <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate}></Column>
-                <Column style={{ width: '40px' }} field="PRICER05" header="Τιμή Scroutz"></Column>
-                
+                <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate}  filter showFilterMenu={false} filterElement={SortPrice} ></Column>
+                <Column style={{ width: '40px' }} field="PRICER05" header="Τιμή Scroutz"></Column> 
             </DataTable>
             <EditDialog
                 style={dialogStyle}
@@ -719,7 +732,6 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 const NameTemplate = ({ NAME, SOFTONESTATUS, impas}) => {
-    console.log(impas)
     return (
         <div>
             <p className='font-medium'>{NAME}</p>

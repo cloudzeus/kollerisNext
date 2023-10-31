@@ -497,24 +497,23 @@ export default async function handler(req, res) {
 
     if(action === "updateProduct") {
         await connectMongo();
-        try {
-            let products= await SoftoneProduct.find({})
-            for(let product of products) {
-                let update = await SoftoneProduct.findOneAndUpdate({_id: product._id}, {
+        try {   
+                let find = await SoftoneProduct.find({NAME: 'ΤΡΥΠΑΝΙ SDS PLUS 22x1000mm 4932367029 MILWAUKEE'})
+                console.log(find)
+                let update = await SoftoneProduct.findOneAndUpdate({_id: find._id}, {
                     $set: {
-                        PRICER: parseFloat(product.PRICER),
-                        PRICEW: parseFloat(product.PRICEW),
-                        PRICER02: parseFloat(product.PRICER02),
-                        PRICER05: parseFloat(product.PRICER05),
+                        PRICER: parseFloat(find.PRICER),
+                        PRICEW: parseFloat(find.PRICEW),
+                        PRICER02: parseFloat(find.PRICER02),
+                        PRICER05: parseFloat(find.PRICER05),
                     },
                     
                 },
                 {
                     new: true
                 })
-                console.log(update)
+                // console.log(update)
 
-            }
             return res.status(200).json({ success: true  });
         } catch (e) {
             return res.status(400).json({ success: false });

@@ -167,14 +167,25 @@ export default async function handler(req, res) {
             marka,
             codeSearch,
             filterImpa,
+            sortPrice,
         } = req.body;
         
-        console.log(filterImpa)
+        console.log('sort price')
+        console.log(sortPrice)
         try {
             await connectMongo();
     
             let totalRecords;
+            let sortObject = {};
             let filterConditions = {};
+
+            if(sort !== 0) {
+                sortObject = { NAME: sort }
+            }
+
+            if(sortPrice !== 0) {
+                sortObject = { PRICER: sortPrice }
+            }
     
             if (categoryID) {
                 filterConditions.MTRCATEGORY = categoryID;
@@ -217,27 +228,25 @@ export default async function handler(req, res) {
                 // No specific filters, fetch all products
                 totalRecords = await SoftoneProduct.countDocuments();
             } else {
-                // Apply filters and get totalRecords
                 totalRecords = await SoftoneProduct.countDocuments(filterConditions);
             }
     
             let softonefind;
-    
-            if (sort !== 0) {
+            if (Object.keys(sortObject).length === 0) {
                 softonefind = await SoftoneProduct.find(filterConditions)
-                    .populate('impas')
-                    .sort({ NAME: sort })
-                    .skip(skip)
-                    .limit(limit)
-                    
+                .populate('impas')
+                .sort(sortObject)
+                .skip(skip)
+                .limit(limit)
             } else {
                 softonefind = await SoftoneProduct.find(filterConditions)
-                    .populate('impas')
-                    .skip(skip)
-                    .limit(limit)
+                .populate('impas')
+                .sort(sortObject)
+                .skip(skip)
+                .limit(limit)
             }
             
-            console.log(softonefind)
+            console.log(sortObject)
 
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {

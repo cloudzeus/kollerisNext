@@ -27,7 +27,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         category: null,
         group: null,
         subgroup: null,
-        vat: {NAME: 'sefsefefes', VAT: 'sefsefef'},
+        vat: null,
     })
     const [descriptions, setDescriptions] = useState(
         {
@@ -48,7 +48,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         setDescriptions({ ...descriptions, en: value })
     }
    
-        console.log(selectState)
 
 
     useEffect(() => {
@@ -79,7 +78,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-
+        console.log('dataa')
+        console.log(data)
 
         try {
             let resp = await axios.post('/api/product/apiProduct', {
@@ -91,13 +91,17 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
                 },
             })
-            if (!resp.data.success) showError()
+            console.log(resp.data)
+            if (!resp.data.success) {
+                showError(resp.data?.error)
+                return;
+            }
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
 
         } catch (e) {
-            console.log(e)
+            showError("Αποτυχία. Προσπαθήστε ξανά")
         }
 
     }
@@ -105,8 +109,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const showSuccess = (message) => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
     }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    const showError = (error) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 4000 });
     }
 
 
@@ -201,36 +205,33 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         control={control}
                         required
                     />
+                       <Input
+                        label={'Τιμή Scroutz'}
+                        name={'PRICE05'}
+                        control={control}
+                    />
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
                         name={'PRICER02'}
                         control={control}
-                        required
+                       
                     />
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
                         name={'PRICER03'}
                         control={control}
-                        required
                     />
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
                         name={'PRICER04'}
                         control={control}
-                        required
                     />
                     <Input
                         label={'Τιμή ΑΠΟΘΗΚΗΣ'}
                         name={'PRICEW'}
                         control={control}
-                        required
                     />
-                    <Input
-                        label={'Τιμή Scroutz'}
-                        name={'PRICE05'}
-                        control={control}
-                        required
-                    />
+                 
                     <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
                     <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
                     {tranlateBtn ? (
@@ -332,7 +333,6 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             SUBGROUP_NAME: selectState.subgroup?.subGroupName,
             descriptions: descriptions,
         }
-        console.log(obj)
         let res = await axios.post('/api/product/apiProduct', {
             action: 'create',
             data: {

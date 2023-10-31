@@ -48,7 +48,6 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
-        console.log(data.vat.VAT)
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
             MTRL: data.MTRL,
@@ -56,7 +55,7 @@ export default async function handler(req, res) {
             CODE: data.CODE,
             CODE1: data.CODE1,
             CODE2: data.CODE2,
-            ISACTIVE: data.ISACTIVE,
+            ISACTIVE: data.ISACTIVE || 1,
             MTRCATEGORY: data.category.softOne.MTRCATEGORY,
             MTRGROUP: data.group.softOne.MTRGROUP,
             CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2,
@@ -64,26 +63,27 @@ export default async function handler(req, res) {
             MTRMANFCTR: data.MTRMANFCTR,
             VAT: data.vat.VAT,
             COUNTRY:data.MTRMANFCTR,
-            WIDTH: data.WIDTH,
-            HEIGHT: data.HEIGHT,
-            LENGTH: data.LENGTH,
-            GWEIGHT: data.GWEIGHT,
-            VOLUME: data.VOLUME,
-            STOCK: data.STOCK,
-            PRICER: data.PRICER,
-            PRICER01: data.PRICE01 || "0",
-            PRICER02: data.PRICE02 || "0",
-            PRICER03: data.PRICE03 || "0",
-            PRICER04: data.PRICE04 || "0",
-            PRICER05: data.PRICER05 || "0",
-            PRICEW01: data.PRICEW01 || "0",
-            PRICEW02: data.PRICEW02 || "0",
-            PRICEW03: data.PRICEW03 || "0",
-            PRICEW04: data.PRICEW04 || "0",
-            PRICEW05: data.PRICEW05 || "0",
-            PRICEW: data.PRICEW,
+            WIDTH: data.WIDTH || '0',
+            HEIGHT: data.HEIGHT || '0',
+            LENGTH: data.LENGTH || '0',
+            GWEIGHT: data.GWEIGHT || '0',
+            VOLUME: data.VOLUME || '0',
+            STOCK: data.STOCK || '0',
+            PRICER: data.PRICER || '0',
+            PRICER01: data.PRICE01 || '0',
+            PRICER02: data?.PRICE02  || '0',
+            PRICER03: data?.PRICE03 || '0',
+            PRICER04: data?.PRICE04 || '0',
+            PRICER05: data?.PRICER05 ||'0',
+            PRICEW01: data?.PRICEW01  || '0',
+            PRICEW02: data?.PRICEW02 || '0',
+            PRICEW03: data?.PRICEW03 || '0',
+            PRICEW04: data?.PRICEW04 || '0',
+            PRICEW05: data?.PRICEW05 || '0',
+            PRICEW: data?.PRICEW,
            
         }
+        console.log(obj)
         const response = await fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -93,9 +93,11 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
+        console.log('responseJSON')
+        console.log(responseJSON)
 
-        if(responseJSON.error !== 'No Errors') {
-            return res.status(400).json({ success: false, result: null });
+        if(!responseJSON.success) {
+            return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
         }
         let updateSoftoneProduct = await SoftoneProduct.updateOne({ MTRL: data.MTRL }, {
             $set: {
@@ -118,7 +120,7 @@ export default async function handler(req, res) {
                 STOCK: data.STOCK,
                 PRICER: data.PRICER,
                 PRICEW: data.PRICEW,
-                PRICER02: data.PRICE02 || "0",
+                PRICER02: data.PRICE02 || 0,
                 PRICER05: data.PRICER05,
                CATEGORY_NAME: data.category.categoryName,
                DESCRIPTION: data.DESCRIPTION,
@@ -128,7 +130,7 @@ export default async function handler(req, res) {
                descriptions: data.descriptions,
             }
         })
-        
+        console.log(updateSoftoneProduct)
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
     }
@@ -206,7 +208,6 @@ export default async function handler(req, res) {
             });
            
             let respJSON = await response.json()
-            console.log(respJSON)
             return respJSON ;
         }
 
