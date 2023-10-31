@@ -39,7 +39,8 @@ import {
     setSort,
     setSoftoneFilter,
     setSortAvailability,
-    setMarka
+    setMarka,
+    setSortPrice,
 } from "@/features/productsSlice";
 
 const dialogStyle = {
@@ -53,7 +54,22 @@ const dialogStyle = {
 
 
 const initialColumns = [
-   
+    {
+        header: 'Εμπορική Κατηγορία',
+        id: 9
+    },
+    {
+        header: 'Ομάδα',
+        id: 10
+    },
+    {
+        header: 'Υποομάδα',
+        id: 11
+    },
+    {
+        header: 'Διαθέσιμα',
+        id: 12
+    },
 
 
 ]
@@ -80,6 +96,10 @@ const columns = [
     {
         header: 'EAN Code',
         id: 5,
+    },
+    {
+        header: 'Ιmpa Code',
+        id: 6,
     },
 
 
@@ -114,11 +134,10 @@ function Product() {
     const [expandedRows, setExpandedRows] = useState(null);
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
-
+    const [filterImpa, setFilterImpa] = useState(0)
     const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
-
 
     useEffect(() => {
         dispatch(setSearchTerm(''))
@@ -146,7 +165,8 @@ function Product() {
                 sort: sort,
                 softoneFilter: softoneFilter,
                 marka: marka,
-                codeSearch: codeSearch
+                codeSearch: codeSearch,
+                filterImpa: filterImpa,
             },
             )
             setData(data.result);
@@ -173,12 +193,17 @@ function Product() {
         sortAvailability, 
         setSubmitted,
         codeSearch,
+        filterImpa,
     ])
 
 
     //Define filter actions:
     const onFilterCategoryChange = (e) => {
         dispatch(setCategory(e.value))
+
+    }
+    const onFilterImpa = (e) => {
+        setFilterImpa(e.value)
 
     }
     const onFilterGroupChange = (e) => {
@@ -414,6 +439,27 @@ function Product() {
             </div>
         )
     };
+    const HasImpa = () => {
+        let options = [
+            {name: 'Με Impa', value: 1},
+            {name: 'Όλα', value: 0},
+        ]
+      
+        return (
+            <div className="flex align-items-center">
+                <Dropdown
+                    size="small"
+                    value={filterImpa}
+                    options={options}
+                    onChange={onFilterImpa}
+                    optionLabel="name"
+                    placeholder="Φίλτρο Impa"
+                    className="p-column-filter grid-filter"
+                    style={{ minWidth: '14rem', fontSize: '12px' }}
+                />
+            </div>
+        )
+    };
 
  
 
@@ -541,17 +587,18 @@ function Product() {
                 {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
                     : null}
                 <Column field="NAME" style={{ width: '400px' }} header="Όνομα" filter showFilterMenu={false} filterElement={ onSearchName} body={NameTemplate} ></Column>
-                <Column field="CATEGORY_NAME"   header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
-                <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
-                <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
+                {visibleColumns.some(column => column.id === 6) && ( <Column field="impas.code" header="Κωδικός Impa" body={ImpaCode} filter filterElement={HasImpa} showFilterMenu={false}></Column>)}
+                {visibleColumns.some(column => column.id === 9) && ( <Column field="CATEGORY_NAME"   header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>)}
+                {visibleColumns.some(column => column.id === 10) && (<Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>)}
+                {visibleColumns.some(column => column.id === 11) && (<Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>)}
+                {visibleColumns.some(column => column.id === 12) &&  ( 
                 <Column 
                     field="availability.DIATHESIMA" 
                     bodyStyle={{ textAlign: 'center' }} 
                     body={productAvailabilityTemplate} 
                     style={{ width: '90px' }} 
                     header="Διαθέσιμα" 
-                    ></Column>
-
+                    ></Column>)}
                 {visibleColumns.some(column => column.id === 1) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}
                 {visibleColumns.some(column => column.id === 2) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
                 {visibleColumns.some(column => column.id === 3) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
@@ -671,7 +718,8 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 
-const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
+const NameTemplate = ({ NAME, SOFTONESTATUS, impas}) => {
+    console.log(impas)
     return (
         <div>
             <p className='font-medium'>{NAME}</p>
@@ -680,15 +728,22 @@ const NameTemplate = ({ NAME, SOFTONESTATUS }) => {
                 <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
                 <p className='text-500'>softone</p>
             </div>
-            {/* <div className='flex align-items-center ml-2'>
-                <p className='underline	text-blue-400'>impa</p>
-            </div> */}
             </div>
             
         </div>
     )
 }
 
+
+const ImpaCode = ({impas}) => {
+    return (
+        <div>
+            <p className='font-bold'>{impas?.code}</p>
+            <p>{impas?.englishDescription || impas?.greekDescription }</p>
+
+        </div>
+    )
+}
 
 const productAvailabilityTemplate = ({ availability }) => {
 

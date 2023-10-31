@@ -494,5 +494,34 @@ export default async function handler(req, res) {
         }
         return res.status(200).json({ success: true  });
     }
+
+    if(action === "updateProduct") {
+        await connectMongo();
+        try {
+            let products= await SoftoneProduct.find({})
+            for(let product of products) {
+                let update = await SoftoneProduct.findOneAndUpdate({_id: product._id}, {
+                    $set: {
+                        PRICER: parseFloat(product.PRICER),
+                        PRICEW: parseFloat(product.PRICEW),
+                        PRICER02: parseFloat(product.PRICER02),
+                        PRICER05: parseFloat(product.PRICER05),
+                    },
+                    
+                },
+                {
+                    new: true
+                })
+                console.log(update)
+
+            }
+            return res.status(200).json({ success: true  });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
+
+
 }
+
 

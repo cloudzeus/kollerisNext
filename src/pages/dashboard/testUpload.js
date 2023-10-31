@@ -3,48 +3,42 @@ import React, { useState } from 'react'
 
 const TestUpload = () => {
     const [file, setFile] = useState(null)
-
-
+    const [binaryData, setBinaryData] = useState(null)
     const onUpload = async (event) => {
         const selectedFile = event.target.files[0];
-        setFile(selectedFile);
+        // setFile(selectedFile);
+        console.log(selectedFile)
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const binaryData = event.target.result;
+              // At this point, 'binaryData' contains the raw binary data of the selected file.
+              console.log('Raw Binary Data:', binaryData);
+                setBinaryData(binaryData)
+              // You can now send, manipulate, or process 'binaryData' as needed.
+            };
+        
+            reader.readAsArrayBuffer(selectedFile);
+          }
 
     }
 
-    const onSubmit = async () => {
-        if (file) {
-            const formData = new FormData();
-            formData.append('image', file, file.name);
-            try {
-                // Send the FormData to the server using an HTTP request (e.g., fetch or axios)
-                const response = await fetch('/api/storageZone', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                // Handle the response from the server as needed
-                if (response.ok) {
-                    console.log('Image uploaded successfully.');
-                } else {
-                    console.error('Image upload failed.');
-                }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-            }
-        } else {
-            console.log('No file selected.');
-        }
-
+    const onSubmit = async (event) => {
+     
+        const response = await fetch('/api/storageZone', {
+            method: 'POST',
+            body: binaryData,
+        });
     }
-return (
-    <div className='p-2'>
-        <label htmlFor="avatar">Choose a profile picture:</label>
-        <input type="file" id="avatar" name="avatar" onClick={onUpload} />
-        <div>
-            <button onClick={onSubmit}>Submit</button>
+    return (
+        <div className='p-2'>
+            <label htmlFor="avatar">Choose a profile picture:</label>
+            <input type="file" id="avatar" name="avatar" onChange={onUpload} />
+            <div>
+                <button  onClick={onSubmit}>Submit</button>
+            </div>
         </div>
-    </div>
-)
+    )
 }
 
 export default TestUpload;

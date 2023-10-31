@@ -26,7 +26,8 @@ import mongoose from 'mongoose';
     }],
     status: Boolean,
     updatedFrom: String,
-    products:[{ type: Schema.Types.ObjectId, ref: "SoftoneProduct" }]
+    products:[{ type: Schema.Types.ObjectId, ref: "SoftoneProduct" }],
+    isActive: Boolean,
 
 }, {
 

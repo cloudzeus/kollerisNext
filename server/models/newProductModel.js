@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { model, models, Schema } from 'mongoose';
-
+import { ImpaCodes } from './impaSchema';
 
 const softoneProduct = new mongoose.Schema({
     product: {
@@ -44,10 +44,10 @@ const softoneProduct = new mongoose.Schema({
     GWEIGHT: String,
     VOLUME: String,
     STOCK: String,
-    PRICER: String,
-    PRICEW: String,
-    PRICER02: String,
-    PRICER05: String,
+    PRICER: Number,
+    PRICEW: Number,
+    PRICER02: Number,
+    PRICER05: Number,
     UPDDATE: String,
     availability: {
         DIATHESIMA: String,

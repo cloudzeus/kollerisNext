@@ -6,6 +6,7 @@ const initialState = {
     mtrLines: [],
     loading: false,
     sort: 0,
+    sortPrice: 0,
     sortAvailability: 0,
     searchTerm: '',
     softoneFilter: null,
@@ -110,11 +111,6 @@ const productsSlice = createSlice({
         },
         setMarka: (state, {payload}) => {
             state.marka = payload;
-            //reset others
-            // state.group = null;
-            // state.category = null;
-            // state.subgroup = null;
-            // state.searchTerm = '';
             state.lazyState.first = 0;
             state.lazyState2.first = 0;
         },
@@ -135,27 +131,13 @@ const productsSlice = createSlice({
         },
         setSearchTerm: (state, {payload}) => {
             state.searchTerm = payload;
-            //reset all the others:
-            // state.category = null;
-            // state.group = null;
-            // state.subgroup = null;
-            // state.codeSearch = '';
+           
         },
         setCodeSearch: (state, {payload}) => {
             state.codeSearch = payload;
-            //reset all the others:
-            // state.searchTerm = null;
-            // state.category = null;
-            // state.group = null;
-            // state.subgroup = null;
+      
         },
         setSort: (state) => {
-            // state.searchTerm = '';
-            //reset all the others:
-            // state.category = null;
-            // state.group = null;
-            // state.subgroup = null;
-            // state.softoneFilter = null;
             if(state.sort == 0) {
                 state.sort = 1;
                 return;
@@ -166,6 +148,20 @@ const productsSlice = createSlice({
             };
             if(state.sort == -1) {
                 state.sort = 0;
+                return;
+            };
+        },
+        setSortPrice: (state) => {
+            if(state.sortPrice == 0) {
+                state.sortPrice = 1;
+                return;
+            };
+            if(state.sortPrice == 1) {
+                state.sortPrice = -1;
+                return;
+            };
+            if(state.sortPrice == -1) {
+                state.sortPrice = 0;
                 return;
             };
         },
@@ -229,7 +225,8 @@ export const {
     setSingleProductForSoftone,
     removeProductForSoftone,
     setSoftoneFilter,
-    setSortAvailability
+    setSortAvailability,
+    setSortPrice
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

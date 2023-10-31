@@ -164,11 +164,12 @@ export default async function handler(req, res) {
             limit,
             softoneFilter,
             sort,
-            sortAvailability,
             marka,
-            codeSearch
+            codeSearch,
+            filterImpa,
         } = req.body;
-    
+        
+        console.log(filterImpa)
         try {
             await connectMongo();
     
@@ -177,6 +178,12 @@ export default async function handler(req, res) {
     
             if (categoryID) {
                 filterConditions.MTRCATEGORY = categoryID;
+            }
+    
+            if (filterImpa === 1) {
+                filterConditions = {
+                    impas: { $exists: true, $ne: null },
+                };
             }
     
             if (groupID) {
@@ -204,6 +211,7 @@ export default async function handler(req, res) {
                 let regexSearchTerm = new RegExp(searchTerm, 'i');
                 filterConditions.NAME = regexSearchTerm;
             }
+            
     
             if (Object.keys(filterConditions).length === 0) {
                 // No specific filters, fetch all products
@@ -217,118 +225,26 @@ export default async function handler(req, res) {
     
             if (sort !== 0) {
                 softonefind = await SoftoneProduct.find(filterConditions)
+                    .populate('impas')
                     .sort({ NAME: sort })
                     .skip(skip)
-                    .limit(limit);
+                    .limit(limit)
+                    
             } else {
                 softonefind = await SoftoneProduct.find(filterConditions)
+                    .populate('impas')
                     .skip(skip)
-                    .limit(limit);
+                    .limit(limit)
             }
-            console.log('filtered conditions')
-            console.log(filterConditions)
+            
+            console.log(softonefind)
+
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {
             return res.status(400).json({ success: false, error: e.message });
         }
     }
-    // if (action === 'productSearchGrid') {
-       
-    //     const{ groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneFilter, sort, sortAvailability, marka, codeSearch} = req.body;
-        
-    //     console.log(categoryID)
-    //     try {
-    //         await connectMongo();
-    //         //initiate the return values
-    //         let totalRecords;
-    //         let softonefind;
-    //         //Fetch results when no filter is applied
-    //         const noFilterCondition = !categoryID && !groupID && !subgroupID && searchTerm == '' && softoneFilter === null && marka === null && codeSearch === '';
-    //         if (noFilterCondition) {
-    //             totalRecords = await SoftoneProduct.countDocuments();
-    //             if(sort !== 0 )   {
-    //                 softonefind = await SoftoneProduct.find({}).sort({ NAME: sort }).skip(skip).limit(limit) // Sorting by "NAME" in descending order
-    //             }
-               
-    //             if(sort === 0 ) {
-    //                 softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit) 
-    //             }
-    
-    //         }
-            
-
-    //          //Fetch results WITH CATEGORY GROUP AND SUBGROUP FILTERS
-    //         if (categoryID) {
-    //             totalRecords = await SoftoneProduct.countDocuments({
-    //                 MTRCATEGORY: categoryID
-    //             });
-    //             softonefind = await SoftoneProduct.find({
-    //                 MTRCATEGORY: categoryID
-    //             }).skip(skip).limit(limit);
-    //         }
-    
-    //         if (categoryID && groupID) {
-    //             totalRecords = await SoftoneProduct.countDocuments({
-    //                 MTRCATEGORY: categoryID,
-    //                 MTRGROUP: groupID
-    //             });
-    //             softonefind = await SoftoneProduct.find({
-    //                 MTRCATEGORY: categoryID,
-    //                 MTRGROUP: groupID
-    //             }).skip(skip).limit(limit);
-    //         }
-    
-    //         if (categoryID && groupID && subgroupID) {
-    //             totalRecords = await SoftoneProduct.countDocuments({
-    //                 MTRCATEGORY: categoryID,
-    //                 MTRGROUP: groupID,
-    //                 CCCSUBGOUP2: subgroupID
-    //             });
-    //             softonefind = await SoftoneProduct.find({
-    //                 MTRCATEGORY: categoryID,
-    //                 MTRGROUP: groupID,
-    //                 CCCSUBGOUP2: subgroupID
-    //             }).skip(skip).limit(limit);
-    //         }
-    
-    
-            
-    //         //RETURN EITHER OR THE RESULTS OR DATA THAT EXIST IN SOFTONE OR PRODUCTS THAN DONT EXIST IN SOFTONE 
-    //         if(softoneFilter === true || softoneFilter === false) {
-    //             totalRecords = await SoftoneProduct.countDocuments({
-    //                 SOFTONESTATUS: softoneFilter
-    //             });
-    //             softonefind = await SoftoneProduct.find({
-    //                 SOFTONESTATUS: softoneFilter
-    //             }).skip(skip).limit(limit);
-    //         } 
-
-    //         if(codeSearch !== '') {
-    //             let regexSearchTerm = new RegExp(codeSearch , 'i');
-    //             totalRecords = await SoftoneProduct.countDocuments({ CODE: regexSearchTerm });
-    //             softonefind = await SoftoneProduct.find({ CODE: regexSearchTerm }).skip(skip).limit(limit);
-    //             console.log(softonefind)
-    //         }
-
-    //         //FILTER BASE ON THE BRAND NAME
-    //         if(marka) {
-    //             totalRecords = await SoftoneProduct.countDocuments({ MTRMARK: marka?.softOne.MTRMARK});
-    //             softonefind = await SoftoneProduct.find({ MTRMARK: marka?.softOne.MTRMARK }).skip(skip).limit(limit);
-    //         }
-           
-            
-    //         if (searchTerm !== '') {
-    //             let regexSearchTerm = new RegExp(searchTerm, 'i');
-    //             totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
-    //             softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
-    //         }
-            
-    
-    //         return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
-    //     } catch (e) {
-    //         return res.status(400).json({ success: false })
-    //     }
-    // }
+   
 
 
 }
