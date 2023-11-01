@@ -15,13 +15,10 @@ import {useSelector} from 'react-redux'
 
 const ClientHolder = ({ NAME }) => {
     const [expandedRows, setExpandedRows] = useState(null);
-    const { selectedClient } = useSelector(state => state.impaoffer)
-    console.log(selectedClient)
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
-    const op = useRef(null);
 
 
     const handleFetch = async () => {
@@ -74,8 +71,9 @@ const ClientHolder = ({ NAME }) => {
 
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
-        console.log(newData, index)
-        let { data } = await axios.post('/api/createOffer', { action: 'updateStatus', status: newData.status, id: newData._id })
+        setLoading(true)
+        let { data } = await axios.post('/api/createOffer', { action: 'updateStatus', status: newData.status, id: newData._id, TRDR: newData.TRDR, data: newData.holders })
+        setLoading(false)
         setRefetch(prev => !prev)
     };
 
@@ -84,7 +82,6 @@ const ClientHolder = ({ NAME }) => {
     const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id  }) => {
         const op = useRef(null);
         const _products = []
-        console.log(holders)
         holders.map((holder) => {
             holder.products.map((product) => {
                 _products.push({
@@ -100,9 +97,7 @@ const ClientHolder = ({ NAME }) => {
 
             })
         })
-        console.log('new products')
-
-        console.log(_products)
+     
 
         return (
             <div className='flex justify-content-center'>
@@ -146,6 +141,7 @@ const ClientHolder = ({ NAME }) => {
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column header="Όνομα Πελάτη" field="clientName"></Column>
                 <Column header="Email" field="clientEmail"></Column>
+                <Column header="SALDOCNUM" field="SALDOCNUM" style={{width: '90px'}}></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
                 <Column header="Aριθμός Προσφοράς" headerStyle={{ width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
                 <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>

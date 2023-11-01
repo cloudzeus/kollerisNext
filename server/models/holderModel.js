@@ -12,6 +12,7 @@ const holderchema = new mongoose.Schema({
     TRDR: String,
     status: String,
     createdFrom: String,
+    SALDOCNUM: Number,
     holders: [
         {
             name: String,

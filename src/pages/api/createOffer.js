@@ -74,15 +74,18 @@ export default async function handler(req, res) {
 
     if (action === "updateStatus") {
         const { status, id, TRDR, data } = req.body;
-        console.log(id)
         let saldoc;
-       
+      
         if(status === 'done') {
-            const mtrlArr = data.map(item => {
-                const MTRL = parseInt(item.MTRL);
-                const QTY1 = parseInt(item.QTY1);
-                return { MTRL, QTY1 };
-            });
+            const mtrlArr = data.flatMap(holder => {
+                let arr = holder.products.map(product => {
+                         const MTRL = parseInt(product.MTRL);
+                         const QTY1 = parseInt(product.QTY1);
+                         return { MTRL, QTY1 };
+                   })
+                   return arr
+                })
+              
                 async function getSaldoc() {
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
                 const response = await fetch(URL, {
@@ -93,29 +96,37 @@ export default async function handler(req, res) {
                         SERIES: 7001,
                         COMPANY: 1001,
                         TRDR: TRDR,
-                        MTRLINES: mtrlArr
+                        MTRLINES: mtrlArr 
                     })
                 });
 
                 let responseJSON = await response.json();
-                console.log(responseJSON)
-
                 return responseJSON;
             }
-            saldoc = await getSaldoc();
+        
+            let softResponse = await getSaldoc();
+            if(!softResponse.success) {
+                saldoc = 'saldoc error'
+            } else {
+                saldoc = softResponse.SALDOCNUM
+            }
         } 
-        try {
-            await connectMongo();
-            let update = await Holders.updateOne({ _id: id }, {
-                $set: {
-                    status: status
-                }
-            })
-            console.log(update)
-            return res.status(200).json({ success: true, result: update })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
+       
+
+            try {
+                await connectMongo();
+                let update = await Holders.updateOne({ _id: id }, {
+                    $set: {
+                        status: status,
+                        SALDOCNUM: saldoc,
+                    }
+                })
+                console.log(update)
+                return res.status(200).json({ success: true, result: update })
+            } catch (e) {
+                return res.status(500).json({ success: false, result: null })
+            }
+       
     }
 
 
