@@ -189,4 +189,41 @@ export default async function handler(req, res) {
             return res.status(500).json({success: false})
         }
     }
+
+    if(action === "deactivate") {
+        const {selected} = req.body;
+        console.log(selected)
+     
+        let ids = selected.map(item => item._id)
+        try {
+            await connectMongo();
+            let update = await ImpaCodes.updateMany(
+                {_id: {$in: ids}}, 
+                {$set: {isActive: false},
+            }
+            )
+            console.log(update)
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+    }
+    if(action === "activate") {
+        const {selected} = req.body;
+        console.log(selected)
+     
+        let ids = selected.map(item => item._id)
+        try {
+            await connectMongo();
+            let update = await ImpaCodes.updateMany(
+                {_id: {$in: ids}}, 
+                {$set: {isActive: true},
+            }
+            )
+            console.log(update)
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+    }
 }

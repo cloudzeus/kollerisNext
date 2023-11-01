@@ -15,6 +15,7 @@ import Supplier from "../../../server/models/suppliersSchema";
 import Clients from "../../../server/models/modelClients";
 import Holders from "../../../server/models/holderModel";
 import SingleOffer from "../../../server/models/singleOfferModel";
+import { ImpaCodes } from "../../../server/models/impaSchema";
 export default async function handler(req, res) {
     let action = req.body.action;
 
@@ -519,7 +520,19 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false });
         }
     }
-
+    if(action === "activeImpas") {
+        await connectMongo();
+        try {
+            let update = await ImpaCodes.updateMany({}, {
+                $set: {
+                    isActive: true,
+                }
+            })
+            return res.status(200).json({ success: true  });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
 
 }
 
