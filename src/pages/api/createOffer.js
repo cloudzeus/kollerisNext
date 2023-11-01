@@ -24,13 +24,13 @@ export default async function handler(req, res) {
 
     }
 
-   
 
-    if(action === "findHolderProducts") {
-        const {documentID, holderID} = req.body;
+
+    if (action === "findHolderProducts") {
+        const { documentID, holderID } = req.body;
         try {
             await connectMongo();
-            const holder = await Holders.findOne({_id: documentID, 'holders._id': holderID},   { holders: {products: 1}})
+            const holder = await Holders.findOne({ _id: documentID, 'holders._id': holderID }, { holders: { products: 1 } })
             console.log(holder)
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
@@ -38,12 +38,12 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === "findHolderProductsByDocumentID") {
-        const {documentID} = req.body;
+    if (action === "findHolderProductsByDocumentID") {
+        const { documentID } = req.body;
         console.log(documentID)
         try {
             await connectMongo();
-            const holder = await Holders.find({_id: documentID },  { holders: {products: 1}})
+            const holder = await Holders.find({ _id: documentID }, { holders: { products: 1 } })
             console.log(holder)
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
@@ -72,12 +72,12 @@ export default async function handler(req, res) {
     }
 
 
-    if(action === "updateStatus") {
-        const {status, id} = req.body;
+    if (action === "updateStatus") {
+        const { status, id } = req.body;
         console.log(id)
         try {
             await connectMongo();
-            let update = await Holders.updateOne({_id: id}, {
+            let update = await Holders.updateOne({ _id: id }, {
                 $set: {
                     status: status
                 }
@@ -89,9 +89,9 @@ export default async function handler(req, res) {
         }
     }
 
-    
+
     if (action === "addOfferDatabase") {
-        const { holders, client, email, id, num} = req.body;
+        const { holders, client, email, id, num } = req.body;
         console.log(JSON.stringify(holders))
         try {
             await connectMongo();
@@ -116,72 +116,29 @@ export default async function handler(req, res) {
 
     }
     if (action === "sendEmail") {
-        const { holders, products, cc, clientName, clientEmail, id, num, subject, message, fileName, includeFile} = req.body;
+        const { holders, products, cc, clientName, clientEmail, id, num, subject, message, fileName, includeFile } = req.body;
         let newcc = []
-        for(let item of cc) {
+        for (let item of cc) {
             newcc.push(item.email)
         }
-      
-        console.log('holders')
-        console.log(holders)
-        console.log('client')
-        console.log(clientName)
-        console.log(id)
-        console.log(num)
-        let csv = await createCSVfile(products)
-        console.log(csv)
-        let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
-        console.log(send)
-        // let body = holders.map((item) => {
-        //     let elements = item.products.map((product) => {
-        //         return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-        //         <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
-        //         <p>Τιμή: <strong>${product.PRICE}€</strong></p>
-        //         <p>---------------</p>`;
-        //     }).join('');  // Join array elements into a single string
-        //     return `<p>Κωδικός Impa: <strong>${item.name}</strong></p> ${elements}`;
-        // });
 
-
-        // try {
-
-        //     const mail = {
-        //         from: 'info@kolleris.com',
-        //         to: email,
-        //         cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-        //         subject:`Προσφορά - NUM: ${num}`,
-        //         html: `${body}`
-        //       };
-         
-              
-        //       function sendEmail(mail) {
-        //         return new Promise((resolve, reject) => {
-        //           transporter.sendMail(mail, (err, info) => {
-        //             if (err) {
-        //               console.log(err);
-        //               resolve(false); // Resolve with false if there's an error
-        //             } else {
-        //               console.log('Email sent successfully!');
-        //               resolve(true); // Resolve with true if the email is sent successfully
-        //             }
-        //           });
-        //         });
-        //       }
-
-        //       let send = await sendEmail(mail);
-        //       console.log(send);
-        //     await connectMongo();
-        //     let update = await Holders.updateOne({ _id: id }, {
-        //         $set: {
-        //             status: "sent"
-        //         }
-        //     })
-        //     console.log(update)
-        //     let modified = update.modifiedCount
-        //     return res.status(200).json({ success: true, result: modified, send: send })
-        // } catch (e) {
-        //     return res.status(500).json({ success: false, result: null,  })
-        // }
+        try {
+            let csv = await createCSVfile(products)
+            console.log(csv)
+            let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
+            console.log(send)
+            await connectMongo();
+            let update = await Holders.updateOne({ _id: id }, {
+                $set: {
+                    status: "sent"
+                }
+            })
+            console.log(update)
+            let modified = update.modifiedCount
+            return res.status(200).json({ success: true, result: modified, send: send })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
 
 
     }
@@ -189,7 +146,7 @@ export default async function handler(req, res) {
     if (action === "addProductsToImpa") {
         const { products, impa } = req.body;
         console.log('PRODUCTS')
-     
+
         console.log(products)
         console.log('impa')
         console.log(impa)
@@ -201,7 +158,7 @@ export default async function handler(req, res) {
                 { $addToSet: { products: { $each: ids } } }
 
             )
-    
+
             // await closeMongo();
             console.log('find')
             console.log(find);
@@ -212,59 +169,59 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === "removeHolderItems") {
-        const {mtrl, documentID, holderID} = req.body;
+    if (action === "removeHolderItems") {
+        const { mtrl, documentID, holderID } = req.body;
         console.log(holderID)
         console.log(documentID)
         try {
             await connectMongo();
             let removeItem = await Holders.findOneAndUpdate(
-                { _id: documentID, 'holders._id': holderID }, 
+                { _id: documentID, 'holders._id': holderID },
                 {
                     $pull: {
-                      'holders.$.products': { MTRL: mtrl.toString() } 
+                        'holders.$.products': { MTRL: mtrl.toString() }
                     }
-                  }
-                )
+                }
+            )
             console.log(removeItem)
             return res.status(200).json({ success: true, result: removeItem })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
-        }   
+        }
     }
-    if(action === "findClientHolder") {
-        const { clientName} = req.body;
-       
+    if (action === "findClientHolder") {
+        const { clientName } = req.body;
+
         try {
             let holder;
             await connectMongo();
-            if(clientName) {
-                holder = await Holders.find({ clientName: clientName})
+            if (clientName) {
+                holder = await Holders.find({ clientName: clientName })
             }
-            if(!clientName || clientName === '') {
+            if (!clientName || clientName === '') {
                 holder = await Holders.find({})
             }
-           
+
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === 'countOffers') {
-        const {clientName} = req.body;
+    if (action === 'countOffers') {
+        const { clientName } = req.body;
         try {
             await connectMongo();
-            const totalRecords = await Holders.countDocuments({ clientName: clientName});
-            const totalRecords2 = await SingleOffer.countDocuments({ clientName: clientName});
+            const totalRecords = await Holders.countDocuments({ clientName: clientName });
+            const totalRecords2 = await SingleOffer.countDocuments({ clientName: clientName });
             const newRecords = totalRecords + totalRecords2
             console.log(totalRecords)
             console.log(newRecords)
-            return res.status(200).json({ success: true, result:  newRecords })
+            return res.status(200).json({ success: true, result: newRecords })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
-    } 
+    }
 }
 
 
