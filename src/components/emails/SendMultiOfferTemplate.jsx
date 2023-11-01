@@ -6,6 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { MultiSelect } from 'primereact/multiselect';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Checkbox } from "primereact/checkbox";
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 const emails = [
     { email: 'kolleris@info.gr', default: true },

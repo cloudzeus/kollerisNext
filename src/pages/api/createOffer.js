@@ -73,8 +73,37 @@ export default async function handler(req, res) {
 
 
     if (action === "updateStatus") {
-        const { status, id } = req.body;
+        const { status, id, TRDR, data } = req.body;
         console.log(id)
+        let saldoc;
+       
+        if(status === 'done') {
+            const mtrlArr = data.map(item => {
+                const MTRL = parseInt(item.MTRL);
+                const QTY1 = parseInt(item.QTY1);
+                return { MTRL, QTY1 };
+            });
+                async function getSaldoc() {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        SERIES: 7001,
+                        COMPANY: 1001,
+                        TRDR: TRDR,
+                        MTRLINES: mtrlArr
+                    })
+                });
+
+                let responseJSON = await response.json();
+                console.log(responseJSON)
+
+                return responseJSON;
+            }
+            saldoc = await getSaldoc();
+        } 
         try {
             await connectMongo();
             let update = await Holders.updateOne({ _id: id }, {
@@ -116,7 +145,7 @@ export default async function handler(req, res) {
 
     }
     if (action === "sendEmail") {
-        const { holders, products, cc, clientName, clientEmail, id, num, subject, message, fileName, includeFile } = req.body;
+        const { holders, products, cc, clientName, clientEmail, id, num, subject, message, fileName, includeFile, TRDR, mtrLines } = req.body;
         let newcc = []
         for (let item of cc) {
             newcc.push(item.email)
@@ -128,6 +157,27 @@ export default async function handler(req, res) {
             let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
             console.log(send)
             await connectMongo();
+            // async function getSaldoc() {
+            //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
+            //     const response = await fetch(URL, {
+            //         method: 'POST',
+            //         body: JSON.stringify({
+            //             username: "Service",
+            //             password: "Service",
+            //             SERIES: 7001,
+            //             COMPANY: 1001,
+            //             TRDR: TRDR,
+            //             MTRLINES: mtrlArr
+            //         })
+            //     });
+
+            //     let responseJSON = await response.json();
+            //     console.log(responseJSON)
+
+            //     return responseJSON;
+            // }
+            // let saldoc = await getSaldoc();
+
             let update = await Holders.updateOne({ _id: id }, {
                 $set: {
                     status: "sent"

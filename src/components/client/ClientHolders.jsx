@@ -75,35 +75,7 @@ const ClientHolder = ({ NAME }) => {
         setRefetch(prev => !prev)
     };
 
-    // const Actions = ({ holders, clientEmail, num, _id }) => {
-    //     const onSendOffer = async () => {
-    //         setLoading(true)
-    //         let { data } = await axios.post('/api/createOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
-    //         console.log(data.emailSent)
-    //         setRefetch(prev => !prev)
-    //         setLoading(false)
-    //     }
-    //     return (
-    //         <div className='flex justify-content-center'>
-    //             <Button icon="pi pi-envelope" onClick={onSendOffer} />
-    //         </div>
-    //     )
-    // }
-
-    const PrintActions = ({ holders, clientEmail, num, clientName }) => {
-
-
-
-        return (
-            <div className='flex justify-content-center'>
-                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
-                <OverlayPanel className='w-15rem' ref={op}>
-                </OverlayPanel>
-            </div>
-
-
-        )
-    }
+  
 
     const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id  }) => {
         const op = useRef(null);
