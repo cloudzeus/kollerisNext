@@ -36,7 +36,8 @@ const ImpaGrid = () => {
             action: 'findAll',
             skip: lazyState.first,
             limit: lazyState.rows,
-            searchTerm: searchTerm
+            searchTerm: searchTerm,
+            fetchActive: true,
         })
 
         setData(res.data.result)
@@ -115,8 +116,9 @@ const ImpaGrid = () => {
                 className='w-full'
                 filterDisplay="row"
 
-            >
+            >   
                 <Column selectionMode="single" headerStyle={{ width: '3rem' }}></Column>
+                <Column field="isActive" style={{width: '40px'}}  header="isActive" body={IsActive}></Column>
                 <Column field="code" header="Code"  filter filterElement={searchCode} showFilterMenu={false} />
                 <Column field="englishDescription" header="Περιγραφή" sortable style={{ minWidth: '12rem' }} filter filterElement={searchEngName} showFilterMenu={false} />
                 <Column field="greekDescription" header="Ελλ. Περιγραφή" style={{ minWidth: '12rem' }} filter filterElement={searchGreekName} showFilterMenu={false} />
@@ -126,6 +128,13 @@ const ImpaGrid = () => {
     )
 }
 
+const IsActive = ({ isActive }) => {
+    return (
+        <div style={{ width: '20px', height: '20px' }} className={`${isActive ? "bg-green-500" : "bg-red-500"} border-round flex align-items-center justify-content-center`}>
+            {isActive ? <i className="pi pi-check text-white text-xs"></i> : <i className="pi pi-times text-white text-xs"></i>}
+        </div>
+    )
+}
 
 
 

@@ -140,8 +140,6 @@ const Impas = () => {
     }
 
     const onDeactivate = async () => {
-        console.log('deactivate')
-
         try {
             let { data } = await axios.post('/api/product/apiImpa', { action: 'deactivate', selected: selected })
             if (!data.success) return showError('Αποτυχία απενεργοποίησης')

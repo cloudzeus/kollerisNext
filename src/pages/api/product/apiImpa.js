@@ -72,13 +72,16 @@ export default async function handler(req, res) {
     // }
 
     if(action === 'findAll') {
-        let {skip, limit, searchTerm} = req.body;
-        console.log(searchTerm)
+        const {skip, limit, searchTerm, fetchActive} = req.body;
         let totalRecords;
         let impas;
         let filterConditions = {};
         try {
             await connectMongo();
+
+            if(fetchActive) {
+                filterConditions.isActive = true;
+            }
             if (searchTerm.code) {
                 filterConditions.code= new RegExp(searchTerm.code, 'i');
             }   
