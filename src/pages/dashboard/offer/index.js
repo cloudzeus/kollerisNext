@@ -21,7 +21,7 @@ const Page = () => {
   return (
     < AdminLayout >
       <div>
-        <Button icon="pi pi-plus" label="Δημιουργία Προσφοράς" severity='warning' onClick={onClick} />
+        <Button icon="pi pi-plus" label="Δημιουργία Προσφοράς"  severity='secondary' onClick={onClick} />
       </div>
       <OfferGrid />
     </ AdminLayout >

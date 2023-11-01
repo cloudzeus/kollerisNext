@@ -34,8 +34,7 @@ const SidebarList = () => {
     const [activeTab, setActiveTab] = useState(0)
     return (
         <ul>
-            {/* <SidebarItem  title={'Aρχική'} goTo={'/dashboard'} /> */}
-            {/* PRODUCT */}
+            {/* PRODUCTS */}
             <SidebarHeader  title={'Προϊόντα'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
             {activeTab == 1 ? (
                 <div >
@@ -47,7 +46,7 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-            <SidebarItem title={'Create Offer'} goTo={'/dashboard/multi-offer'} />
+              {/* TIMIKATALOGOI */}
             <SidebarHeader  title={'Τιμοκατάλογοι'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 2 ? (
                 <div >
@@ -56,19 +55,21 @@ const SidebarList = () => {
 
                 </div>
             ) : null}
-                <SidebarItem title={'Προμηθευτές'} goTo={'/dashboard/suppliers'} />
 
-              {/* <SidebarHeader  title={'Προμηθευτές'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {/* CLIENTS */}
+            <SidebarHeader  title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 3 ? (
                 <div >
-                    <SidebarSubItem title={'Παραγγελία'} goTo={'/dashboard/supplierOrder'} />
+                      <SidebarSubItem title={'Λίστα πελατών'} goTo={'/dashboard/clients'} />
+                    <SidebarSubItem title={'Προσφορές'} goTo={'/dashboard/offer'} />
+                    <SidebarSubItem title={'Προσφορές Πολλ. Επιλογών'} goTo={'/dashboard/multi-offer'} />
 
                 </div>
-            ) : null} */}
-            {activeTab == 4 ? (
-                <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/supplier-order'} />
-
             ) : null}
+                {/* CLIENTS */}
+                <SidebarItem title={'Προμηθευτές'} goTo={'/dashboard/suppliers'} />
+                    {/* CLIENTS */}
+           
             <SidebarItem title={'Χρήστες'} goTo={'/dashboard/users'} />
             <SidebarItem title={'Πελάτες'} goTo={'/dashboard/clients'} />
             <SidebarItem title={'Impas'} goTo={'/dashboard/info/impas'} />
@@ -90,7 +91,7 @@ const SidebarHeader = ({id, setActiveTab, activeTab, title, dropdown }) => {
     return (
         <li onClick={handleClick} className={`sidebar-item ${activeTab == id ? "active" : null}`}>
             <div>
-                <span className='text-lg ml-3'>{title}</span>
+                <span className='ml-3'>{title}</span>
             </div>
             {dropdown ? (<i className={` pi ${!activeIcon ? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
         </li>
@@ -107,7 +108,7 @@ const SidebarItem = ({title, goTo }) => {
 
     return (
         <li onClick={handleClick} className={`sidebar-item`}>
-            <span className='text-lg ml-3'>{title}</span>
+            <span className='ml-3'>{title}</span>
         </li>
 
     )
@@ -117,7 +118,7 @@ const SidebarSubItem = ({ title, goTo }) => {
 
     return (
         <li onClick={() => router.push(goTo)} className={` sub-item`}>
-            <span className='text-lg ml-3'>{title}</span>
+            <span className='ml-3'>{title}</span>
         </li>
 
 
@@ -180,6 +181,7 @@ const Container = styled.div`
         li.sidebar-item {
             padding: 15px;
             background-color: #2d353f;
+        
         }
 
         li:hover {
@@ -207,6 +209,9 @@ const Container = styled.div`
         list-style: none;
         position: relative;
         background-color: #252b33;
+        min-height: 45px;
+        line-height: 1.4;
+        
        
     }
 

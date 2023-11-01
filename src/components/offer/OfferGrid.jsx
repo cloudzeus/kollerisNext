@@ -7,7 +7,7 @@ import XLSXDownloadButton from '../exportCSV/Download';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
-
+import CreatedAt from '@/components/grid/CreatedAt';
 const OfferGrid = ({clientName}) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -117,7 +117,7 @@ const OfferGrid = ({clientName}) => {
                 <Column field="clientName" header="Όνομα"></Column>
                 <Column field="clientEmail" header="Email"></Column>
                 <Column field="SALDOCNUM" header="SALDOCNUM"></Column>
-                <Column field="createdAt" body={createdAt} header="Ημερομηνία Δημ."></Column>
+                <Column field="createdAt" body={CreatedAt} header="Ημερομηνία Δημ."></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column header="Αλλαγή Status"  rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 <Column header="Aποστολή σε Πελάτη" headerStyle={{ width: '165px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
@@ -149,14 +149,7 @@ const Status = ({ status }) => {
     )
 }
 
-const createdAt = ({ createdAt }) => {
-    return (
-        <div className='flex align-items-center'>
-            <i className="pi pi-calendar mr-2 text-primary" style={{ fontSize: '13px' }}></i>
-            <p>{createdAt.split('T')[0]}</p>
-        </div>
-    )
-}
+
 
 
 

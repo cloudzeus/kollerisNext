@@ -7,6 +7,7 @@ import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { OverlayPanel } from 'primereact/overlaypanel';
+import CreatedAt from '../grid/CreatedAt'
 
 const ClientHolder = ({NAME}) => {
     const [expandedRows, setExpandedRows] = useState(null);
@@ -14,7 +15,9 @@ const ClientHolder = ({NAME}) => {
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
+    const op = useRef(null);
 
+    
     const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/createOffer', { action: 'findClientHolder', clientName: NAME })
@@ -86,7 +89,7 @@ const ClientHolder = ({NAME}) => {
     }
 
     const PrintActions = ({ holders, clientEmail, num, clientName }) => {
-        const op = useRef(null);
+       
 
 
         return (
@@ -117,7 +120,7 @@ const ClientHolder = ({NAME}) => {
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column header="Όνομα Πελάτη"  field="clientName"></Column>
-                <Column header="Εmail" body={ClientDetails} field="clientName"></Column>
+                <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
                 <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
@@ -241,16 +244,7 @@ const Status = ({ status }) => {
 }
 
 
-const ClientDetails = ({clientName, clientEmail, clientPhone}) => {
-    return (
-        <div>
-            <div className='flex align-items-center mt-2 mr-2' >
-                <i className="pi pi-envelope mr-2 border-1 border-700 p-2 border-round" style={{fontSize: '10px'}}></i>
-                <p className='block text-sm'>{clientEmail}</p>
-            </div>
-        </div>
-    )
-}
+
 
 
 export default ClientHolder;

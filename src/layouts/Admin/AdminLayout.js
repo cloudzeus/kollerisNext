@@ -1,26 +1,3 @@
-// import React, { useState } from 'react'
-// import BreadCrumbs from './BreadCrumbs';
-// import SidebarMain from '@/components/Sidebar';
-// import Navbar from '@/components/Navbar';
-// import styles from "../../styles/sidebar.module.css"
-
-// const AdminLayout = ({ children }) => {
-// 	return (
-// 		<div className={styles.fullPageWrapper}>
-// 			 <SidebarMain  />
-// 			 <div className={styles.content}>
-// 				<Navbar />
-// 				{/* <BreadCrumbs /> */}
-// 				<div className={styles.mainContent}>
-// 					{children}
-// 				</div>
-// 			 </div> 
-// 		</div>
-// 	);
-
-// }
-
-// export default AdminLayout
 
 'use client'
 import React, { useState } from 'react'
@@ -134,14 +111,13 @@ const Navbar = styled.nav`
 	align-items: center;
 	width: 100%;
 	justify-content: space-between;
-	border-bottom: 1px solid #dbdcdc;
+	border-bottom: 1px solid #ededed;
 	padding: 10px;
 	height: 70px;
   }
 
   .bottom {
-	padding: 5px;
-	height: 40px;
+	height: 45px;
 	display: flex;
 	align-items: center;
   }
@@ -151,7 +127,7 @@ const Navbar = styled.nav`
 `;
 
 const MainContent = styled.div`
-  padding: 20px;
+  padding: 25px;
   margin-top: 110px;
   background-color: ${({ theme }) => theme.palette.background};
   width: ${({ isSidebarOpen }) => isSidebarOpen ? 'calc(100% - 240px)' : '100%'};
