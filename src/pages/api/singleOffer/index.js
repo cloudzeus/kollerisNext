@@ -114,6 +114,18 @@ export default async function handler(req, res) {
            }
     }
 
+    if(action === "deleteOffer") {
+        const {id} = req.body;
+        console.log(id)
+        try {
+            let del = await SingleOffer.deleteOne({_id: id})
+            console.log('delete offer')
+            console.log(del)
+            return res.status(200).json({ success: true, result: del })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
 
 
 }

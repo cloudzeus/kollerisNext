@@ -9,20 +9,25 @@ import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import CreatedAt from '@/components/grid/CreatedAt';
 import SendEmailTemplate from '../emails/SendEmailTemplate';
+import { set } from 'mongoose';
 
 const OfferGrid = ({clientName}) => {
     const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState({
+        grid: false,
+        delete: false,
+    })
     const [refetch, setRefetch] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
 
     const handleFetch = async () => {
-        setLoading(true)
+        setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
-        setLoading(false)
-    }
+        setLoading(prev => ({ ...prev, grid: false }))
 
+    }
+    console.log(data)
 
 
     useEffect(() => {
@@ -46,9 +51,11 @@ const OfferGrid = ({clientName}) => {
     //ON STATUS UPDATE:
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
-        console.log(newData, index)
+        setLoading(prev => ({ ...prev, grid: true }))
         let { data } = await axios.post('/api/createOffer', { action: 'updateStatus', status: newData.status, id: newData._id })
+        setLoading(prev => ({ ...prev, grid: false }))
         setRefetch(prev => !prev)
+
     };
     //OPTIONS FOR THE STATUS ON EDIT:
     const statusEditor = (options) => {
@@ -68,7 +75,9 @@ const OfferGrid = ({clientName}) => {
 
     //SUBMIT ACTIONS, SEND EMAIL TO CLIENT:
     // const Actions = ({products, clientName, clientEmail, _id, SALDOCNUM,createdAt}) => {
-    const Actions = ({clientEmail, clientName, products, SALDOCNUM, createdAt}) => {
+    const Actions = ({clientEmail, clientName, products, SALDOCNUM, createdAt, _id}) => {
+        console.log('id')
+        console.log(_id)
         const op = useRef(null);
         const _products = products.map((item, index) => {
             return {
@@ -85,11 +94,17 @@ const OfferGrid = ({clientName}) => {
         })
         
     
-      
+        const onDelete = async () => {
+            setLoading(prev => ({ ...prev, delete: true }))
+            let {data} = await axios.post('/api/singleOffer', {action: 'deleteOffer', id: _id})
+            setLoading(prev => ({ ...prev, delete: false }))
+            setRefetch(prev => !prev)
+        }
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
+                    <Button loading={loading.delete} label="Διαγραφή" severity='danger' className='w-full mb-2' icon="pi pi-trash" onClick={onDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
                     <SendEmailTemplate 
                         mt={2} 
@@ -137,6 +152,7 @@ const OfferGrid = ({clientName}) => {
     return (
         <div className="card mt-3">
             <DataTable
+                loading={loading.grid}
                 header={header}
                 editMode="row"
                 onRowEditComplete={onRowEditComplete}

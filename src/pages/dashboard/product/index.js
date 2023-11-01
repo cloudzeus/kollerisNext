@@ -101,6 +101,10 @@ const columns = [
         header: 'Ιmpa Code',
         id: 6,
     },
+    {
+        header: 'Τιμή Κόστους',
+        id: 13,
+    },
 
 
 ]
@@ -125,7 +129,6 @@ function Product() {
     const router = useRouter();
     const { data: session } = useSession()
     let user = session?.user?.user;
-
     const { selectedProducts, setSelectedProducts, submitted, setSubmitted } = useContext(ProductQuantityContext)
     const [data, setData] = useState([]);
     const [editDialog, setEditDialog] = useState(false);
@@ -135,7 +138,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
-    const { filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
+    const {filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
 
@@ -618,6 +621,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 3) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
                 {visibleColumns.some(column => column.id === 4) && <Column field="MTRMARK_NAME" style={{ width: '300px' }} header="Όνομα Μάρκας" filter showFilterMenu={false} filterElement={MarkesFilter}></Column>}
                 {visibleColumns.some(column => column.id === 5) && <Column field="CODE" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>}
+                {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
                 <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate}  filter showFilterMenu={false} filterElement={SortPrice} ></Column>
                 <Column style={{ width: '40px' }} field="PRICER05" header="Τιμή Scroutz"></Column> 
             </DataTable>
@@ -725,6 +729,14 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
             backgroundColor='var(--yellow-500)'
         />
 
+    )
+}
+
+const Cost = ({COST}) => {
+    return (
+        <div>
+            <p className='font-bold'>{`${COST}€`}</p>
+        </div>
     )
 }
 

@@ -45,6 +45,7 @@ const softoneProduct = new mongoose.Schema({
     VOLUME: String,
     STOCK: String,
     PRICER: Number,
+    COST: Number,
     PRICEW: Number,
     PRICER02: Number,
     PRICER05: Number,

@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux'
 
 const ClientHolder = ({ NAME }) => {
     const [expandedRows, setExpandedRows] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
@@ -97,12 +98,20 @@ const ClientHolder = ({ NAME }) => {
 
             })
         })
-     
+        const handleDelete = async () => {
+            // setLoading(true)
+            setDeleteLoading(true)
+            await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id })
+            // setLoading(false)
+            setDeleteLoading(false)
+            setRefetch(prev => !prev)
+        }
 
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
+                    <Button loading={deleteLoading} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
                     <SendMultiOfferEmail
                         mt={2}

@@ -50,6 +50,7 @@ export default async function handler(req, res) {
         let { data } = req.body;
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
+         
             MTRL: data.MTRL,
             NAME: data.NAME,
             CODE: data.CODE,
@@ -101,7 +102,8 @@ export default async function handler(req, res) {
         }
         let updateSoftoneProduct = await SoftoneProduct.updateOne({ MTRL: data.MTRL }, {
             $set: {
-               NAME: data.NAME,
+                COST: data.COST,
+                NAME: data.NAME,
                 CODE: data.CODE,
                 CODE1: data.CODE1,
                 CODE2: data.CODE2,

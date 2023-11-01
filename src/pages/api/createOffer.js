@@ -291,6 +291,17 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null })
         }
     }
+
+    if(action === 'deleteOffer') {
+        const { id } = req.body;
+        try {
+            await connectMongo();
+            const deleted = await Holders.deleteOne({ _id: id });
+            return res.status(200).json({ success: true, result: deleted })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+    }
 }
 
 

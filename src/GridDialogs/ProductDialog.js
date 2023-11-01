@@ -15,6 +15,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { useSession } from "next-auth/react"
 import TranslateInput from '@/components/Forms/TranslateInpit';
 
+const addSchema = yup.object().shape({
+    // name: yup.string().required('Συμπληρώστε το όνομα'),
+    cost: yup.number()
+});
 
 
 
@@ -176,34 +180,35 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         label={'Κωδικός ΕΑΝ'}
                         name={'CODE'}
                         control={control}
-                        required
                     //    error={errors.NAME}
+                    />
+                    <Input
+                        label={'Τιμή Κόστους'}
+                        name={'COST'}
+                        control={control}
+                        error={errors.cost}
                     />
 
                     <Input
                         label={'Κωδικός εργοστασίου'}
                         name={'CODE1'}
                         control={control}
-                        required
                     />
                     <Input
                         label={'Κωδικός 2'}
                         name={'CODE2'}
                         control={control}
-                        required
                     />
                  
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ'}
                         name={'PRICER'}
                         control={control}
-                        required
                     />
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
                         name={'PRICER01'}
                         control={control}
-                        required
                     />
                        <Input
                         label={'Τιμή Scroutz'}
@@ -252,9 +257,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 }
 
 
-const addSchema = yup.object().shape({
-    // name: yup.string().required('Συμπληρώστε το όνομα'),
-});
 
 
 const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
@@ -286,6 +288,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             PRICER04: '',
             PRICEW: '',
             PRICE05: '',
+            COST: 0,
         }
     });
 
@@ -416,6 +419,14 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                     //    error={errors.NAME}
                     />
+                      <Input
+                        label={'Τιμή Κόστους'}
+                        name={'COST'}
+                        control={control}
+                        required
+                       error={errors.cost}
+                    />
+
 
                     <Input
                         label={'Κωδικός εργοστασίου'}
