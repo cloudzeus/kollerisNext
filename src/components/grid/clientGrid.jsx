@@ -117,6 +117,7 @@ const CustomersGrid = () => {
     return (
         <DataTable
             paginator
+            loading={loading}
             rows={lazyState.rows}
             rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
             first={lazyState.first}

@@ -120,19 +120,27 @@ export default async function handler(req, res) {
 
 
     if (action === "addOfferDatabase") {
-        const { holders, client, email, id, num } = req.body;
+        const { holders, client, email, id, num, createdFrom } = req.body;
         console.log(JSON.stringify(holders))
+        console.log(client)
+        console.log(createdFrom)
+
         try {
             await connectMongo();
             let insert = await Holders.create({
                 clientName: client.NAME,
                 clientEmail: client.EMAIL || '',
                 clientPhone: client.PHONE01 || '',
+                TRDR: client.TRDR,
                 holders: holders,
+                createdFrom: createdFrom,
                 status: 'created',
                 num: num
             })
-            await Clients.updateOne({ NAME: NAME }, {
+            console.log('insert')
+            console.log(insert)
+           
+            await Clients.updateOne({ NAME: client.NAME }, {
                 $set: {
                     OFFERSTATUS: true
                 }
@@ -249,7 +257,7 @@ export default async function handler(req, res) {
                 holder = await Holders.find({ clientName: clientName })
             }
             if (!clientName || clientName === '') {
-                holder = await Holders.find({})
+                holder = await Holders.find({}).sort({ createdAt: -1 })
             }
 
             return res.status(200).json({ success: true, result: holder })

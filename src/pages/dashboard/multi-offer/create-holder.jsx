@@ -25,7 +25,12 @@ const ΟffersPage = () => {
     const router = useRouter()
     const { data: session, update } = useSession();
     let user = session?.user?.user;
-   
+    
+    useEffect(() => {
+        if(!selectedClient) {
+            router.push('/dashboard/multi-offer/choose-client')
+        }
+    }, [] )
 
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', { 

@@ -11,8 +11,12 @@ import CreatedAt from '../grid/CreatedAt'
 import SendEmailTemplate from '@/components/emails/SendEmailTemplate'
 import XLSXDownloadButton from '../exportCSV/Download'
 import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
+import {useSelector} from 'react-redux'
+
 const ClientHolder = ({ NAME }) => {
     const [expandedRows, setExpandedRows] = useState(null);
+    const { selectedClient } = useSelector(state => state.impaoffer)
+    console.log(selectedClient)
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
@@ -144,6 +148,7 @@ const ClientHolder = ({ NAME }) => {
                 <Column header="Email" field="clientEmail"></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
                 <Column header="Aριθμός Προσφοράς" headerStyle={{ width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
+                <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column header="Status Edit" rowEditor headerStyle={{ width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
@@ -153,6 +158,19 @@ const ClientHolder = ({ NAME }) => {
 }
 
 
+const CreatedFrom = ({createdFrom}) => {
+    return (
+        <div className='flex align-items-center'>
+            {createdFrom ? (
+                <>
+                <i className="pi pi-user mr-1 mt-1 text-primary" style={{fontSize: '12px'}}></i>
+                 <span className="text-600">{createdFrom}</span>
+                </>
+            ) : null}
+
+        </div>
+    )
+}
 const RowExpansionGrid = ({ holders, documentID }) => {
     const [expandedRows, setExpandedRows] = useState(null);
 

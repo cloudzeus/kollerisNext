@@ -9,7 +9,9 @@ const holderchema = new mongoose.Schema({
     clientName: String,
     clientEmail: String,
     clientPhone: String,
+    TRDR: String,
     status: String,
+    createdFrom: String,
     holders: [
         {
             name: String,

@@ -12,7 +12,7 @@ const ChooseCustomer = () => {
     const router = useRouter();
     return (
         <AdminLayout>
-            <Button label="Πίσω" icon="pi pi-angle-left" className='mb-5' onClick={() => router.back()} />
+            <Button label="Πίσω" icon="pi pi-angle-left" className='mb-5' onClick={() => router.push('/dashboard/multi-offer')} />
             <StepHeader text="Eπιλογή Πελάτη" />
             <CustomersGrid />
             <ClientDetails />
