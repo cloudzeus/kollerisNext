@@ -15,6 +15,7 @@ const pendingOrderSchema = new mongoose.Schema({
     supplierEmail: String,
     TRDR: String,
     status: String,
+    createdFrom: String,
     products: [
         {
             _id: String,

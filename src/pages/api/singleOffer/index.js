@@ -2,11 +2,16 @@ import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import Clients from "../../../../server/models/modelClients";
 import SingleOffer from "../../../../server/models/singleOfferModel";
+import { transporter } from "@/utils/nodemailerConfig";
+import { sendEmail } from "@/utils/offersEmailConfig";
+import createCSVfile from "@/utils/createCSVfile";
+import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
+
 
 export default async function handler(req, res) {
     const action = req.body.action
     if (action === 'createOrder') {
-        let { data, email, name, TRDR } = req.body;
+        const { data, email, name, TRDR, createdFrom } = req.body;
         console.log(data)
         console.log(email, name, TRDR)
         const mtrlArr = data.map(item => {
@@ -14,8 +19,7 @@ export default async function handler(req, res) {
             const QTY1 = parseInt(item.QTY1);
             return { MTRL, QTY1 };
         });
-        console.log(data)
-        console.log(mtrlArr)
+     
         try {
             async function getSaldoc() {
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
@@ -47,7 +51,8 @@ export default async function handler(req, res) {
                     status: 'created',
                     TRDR: TRDR,
                     clientName: name,
-                    clientEmail: email
+                    clientEmail: email,
+                    createdFrom: createdFrom
                 })
                 console.log('created single offer')
                 console.log(create)
@@ -65,18 +70,6 @@ export default async function handler(req, res) {
 
     }
 
-    // if (action === 'findSingleOrder') {
-    //     const { TRDR } = req.body;
-
-    //     try {
-    //         await connectMongo();
-    //         let find = await SingleOffer.find({ TRDR: TRDR })
-    //         console.log(find)
-    //         return res.status(200).json({ success: true, result: find })
-    //     } catch (e) {
-    //         return res.status(400).json({ success: false })
-    //     }
-    // }
    
     if (action === "findOffers") {
         const { clientName } = req.body;
@@ -88,7 +81,7 @@ export default async function handler(req, res) {
                 find = await SingleOffer.find({ clientName: clientName })
             } 
             if(clientName === undefined || clientName === null || clientName === ''){
-                find = await SingleOffer.find()
+                find = await SingleOffer.find().sort({createdAt: -1})
             }
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
@@ -96,6 +89,30 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "sendEmail") {
+        const {products, cc, subject, fileName, message, createdAt, includeFile, clientEmail, clientName, SALDOCNUM} = req.body;
+            let newcc = []
+            for(let item of cc) {
+                newcc.push(item.email)
+            }
+          
+           try {
+            let csv = await createCSVfile(products)
+            console.log(csv)
+            let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
+            console.log(send)
+            if(send) {
+                await SingleOffer.updateOne({SALDOCNUM: SALDOCNUM}, {
+                    $set: {
+                        status: 'sent'
+                    }
+                })
+            }
+            return res.status(200).json({ success: true, send: send})
+           } catch (e) {
+            return res.status(400).json({ success: false })
+           }
+    }
 
 
 

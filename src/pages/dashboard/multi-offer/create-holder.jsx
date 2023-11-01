@@ -8,6 +8,9 @@ import AdminLayout from '@/layouts/Admin/AdminLayout'
 import { removeHolder } from '@/features/impaofferSlice'
 import { useRouter } from 'next/router'
 import { setSelectedProducts } from '@/features/productsSlice'
+import { useSession } from 'next-auth/react'
+
+
 function generateOfferNum(length) {
     const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
     const min = Math.pow(10, length - 1); // Generates a number like 100000 for length = 6
@@ -20,6 +23,9 @@ const ΟffersPage = () => {
     const dispatch = useDispatch();
     const { selectedClient, holder, offerEmail } = useSelector(state => state.impaoffer)
     const router = useRouter()
+    const { data: session, update } = useSession();
+    let user = session?.user?.user;
+   
 
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', { 
@@ -27,6 +33,7 @@ const ΟffersPage = () => {
             holders: holder, 
             client: selectedClient, 
             email: offerEmail, 
+            createdFrom: user?.lastName,
             num: generateOfferNum(6) 
         })
         router.push('/dashboard/multi-offer')

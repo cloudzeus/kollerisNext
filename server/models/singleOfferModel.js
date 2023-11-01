@@ -12,6 +12,7 @@ const singleOfferchema = new mongoose.Schema({
     TRDR: String,
     name: String,
     SALDOCNUM: Number,
+    createdFrom: String,
     products: [
         {
             _id: String,

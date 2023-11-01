@@ -8,9 +8,12 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import CreatedAt from '@/components/grid/CreatedAt';
+import SendEmailTemplate from '../emails/SendEmailTemplate';
+
 const OfferGrid = ({clientName}) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
+    const [refetch, setRefetch] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
 
     const handleFetch = async () => {
@@ -24,7 +27,7 @@ const OfferGrid = ({clientName}) => {
 
     useEffect(() => {
         handleFetch();
-    }, [])
+    }, [refetch])
 
 
     //STATUS ROW:
@@ -64,19 +67,43 @@ const OfferGrid = ({clientName}) => {
 
 
     //SUBMIT ACTIONS, SEND EMAIL TO CLIENT:
-    const Actions = ({ clientEmail, num, _id }) => {
-        console.log(clientEmail, _id)
-        const onSendOffer = async () => {
-            setLoading(true)
-            let { data } = await axios.post('/api/singleOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
-            console.log(data.emailSent)
-            setRefetch(prev => !prev)
-            setLoading(false)
-        }
+    // const Actions = ({products, clientName, clientEmail, _id, SALDOCNUM,createdAt}) => {
+    const Actions = ({clientEmail, clientName, products, SALDOCNUM, createdAt}) => {
+        const op = useRef(null);
+        const _products = products.map((item, index) => {
+            return {
+                CLIENT_NAME: clientName,
+                CLIENT_EMAIL: clientEmail || 'Δεν υπάρχει email',
+                SALDOCNUM: SALDOCNUM,
+                CREATED_AT: createdAt,
+                SALDOCNUM: SALDOCNUM,
+                PRODUCT_NAME: item.NAME,
+                PRICE: item.PRICE,
+                QTY1: item.QTY1,
+                TOTAL_PRICE: item.TOTAL_PRICE
+            }
+        })
+        
+    
+      
         return (
             <div className='flex justify-content-center'>
-                <Button icon="pi pi-envelope" onClick={onSendOffer} />
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
+                    <SendEmailTemplate 
+                        mt={2} 
+                        email={clientEmail} 
+                        products={_products} 
+                        clientName={clientName} 
+                        SALDOCNUM={SALDOCNUM}
+                        setRefetch={setRefetch}
+                        op={op}
+                        />
+                </OverlayPanel>
             </div>
+    
+    
         )
     }
 
@@ -104,6 +131,9 @@ const OfferGrid = ({clientName}) => {
         )
     }
     const header = Header();
+
+   
+
     return (
         <div className="card mt-3">
             <DataTable
@@ -119,17 +149,28 @@ const OfferGrid = ({clientName}) => {
                 <Column field="SALDOCNUM" header="SALDOCNUM"></Column>
                 <Column field="createdAt" body={CreatedAt} header="Ημερομηνία Δημ."></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
-                <Column header="Αλλαγή Status"  rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
-                <Column header="Aποστολή σε Πελάτη" headerStyle={{ width: '165px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
-                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
-
+                <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>
+                <Column header="Status Edit"  rowEditor headerStyle={{width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
             </DataTable>
         </div>
     )
 }
 
 
+const CreatedFrom = ({createdFrom}) => {
+    return (
+        <div className='flex align-items-center'>
+            {createdFrom ? (
+                <>
+                <i className="pi pi-user mr-1 mt-1 text-primary" style={{fontSize: '12px'}}></i>
+                 <span className="text-600">{createdFrom}</span>
+                </>
+            ) : null}
 
+        </div>
+    )
+}
 
 const Status = ({ status }) => {
     let color;
@@ -153,29 +194,5 @@ const Status = ({ status }) => {
 
 
 
-const PrintActions = (data) => {
-    const products = data.products.map((item, index) => {
-        return {
-            CLIENT_NAME: data.clientName,
-            CLIENT_EMAIL: data.clientEmail,
-            SALDOCNUM: data.SALDOCNUM,
-            PRODUCT_NAME: item.NAME,
-            PRICE: item.PRICE,
-            QTY1: item.QTY1,
-            TOTAL_PRICE: item.TOTAL_PRICE
-        }
-    })
 
-    const op = useRef(null);
-    return (
-        <div className='flex justify-content-center'>
-            <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.3rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
-            <OverlayPanel className='w-15rem' ref={op}>
-                <XLSXDownloadButton data={products} fileName="offer" />
-            </OverlayPanel>
-        </div>
-
-
-    )
-}
 export default OfferGrid

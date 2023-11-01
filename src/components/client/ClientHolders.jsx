@@ -8,8 +8,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import CreatedAt from '../grid/CreatedAt'
-
-const ClientHolder = ({NAME}) => {
+import SendEmailTemplate from '@/components/emails/SendEmailTemplate'
+import XLSXDownloadButton from '../exportCSV/Download'
+import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
+const ClientHolder = ({ NAME }) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
@@ -17,7 +19,7 @@ const ClientHolder = ({NAME}) => {
     const [loading, setLoading] = useState(false)
     const op = useRef(null);
 
-    
+
     const handleFetch = async () => {
         setLoading(true)
         let res = await axios.post('/api/createOffer', { action: 'findClientHolder', clientName: NAME })
@@ -25,8 +27,8 @@ const ClientHolder = ({NAME}) => {
         setLoading(false)
     }
 
-   
-  
+
+
     useEffect(() => {
         handleFetch();
     }, [refetch, NAME])
@@ -51,7 +53,7 @@ const ClientHolder = ({NAME}) => {
         }
     };
 
-  
+
     const statusEditor = (options) => {
         return (
             <Dropdown
@@ -73,23 +75,23 @@ const ClientHolder = ({NAME}) => {
         setRefetch(prev => !prev)
     };
 
-    const Actions = ({ holders, clientEmail, num, _id }) => {
-        const onSendOffer = async () => {
-            setLoading(true)
-            let { data } = await axios.post('/api/createOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
-            console.log(data.emailSent)
-            setRefetch(prev => !prev)
-            setLoading(false)
-        }
-        return (
-            <div className='flex justify-content-center'>
-                <Button icon="pi pi-envelope" onClick={onSendOffer} />
-            </div>
-        )
-    }
+    // const Actions = ({ holders, clientEmail, num, _id }) => {
+    //     const onSendOffer = async () => {
+    //         setLoading(true)
+    //         let { data } = await axios.post('/api/createOffer', { action: 'sendOfferEmail', holders: holders, email: clientEmail, num: num, id: _id })
+    //         console.log(data.emailSent)
+    //         setRefetch(prev => !prev)
+    //         setLoading(false)
+    //     }
+    //     return (
+    //         <div className='flex justify-content-center'>
+    //             <Button icon="pi pi-envelope" onClick={onSendOffer} />
+    //         </div>
+    //     )
+    // }
 
     const PrintActions = ({ holders, clientEmail, num, clientName }) => {
-       
+
 
 
         return (
@@ -102,30 +104,77 @@ const ClientHolder = ({NAME}) => {
 
         )
     }
-    
+
+    const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id  }) => {
+        const op = useRef(null);
+        const _products = []
+        console.log(holders)
+        holders.map((holder) => {
+            holder.products.map((product) => {
+                _products.push({
+                    name: clientName,
+                    email: clientEmail,
+                    holderName: holder.name,
+                    productName: product.NAME,
+                    productPrice: product.PRICE,
+                    productQuantity: product.QTY1,
+                    productTotalPrice: product.TOTAL_PRICE
+
+                })
+
+            })
+        })
+        console.log('new products')
+
+        console.log(_products)
+
+        return (
+            <div className='flex justify-content-center'>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
+                    <SendMultiOfferEmail
+                        mt={2}
+                        email={clientEmail}
+                        products={_products}
+                        clientName={clientName}
+                        SALDOCNUM={SALDOCNUM}
+                        setRefetch={setRefetch}
+                        holders={holders}
+                        createdAt={createdAt}
+                        num={num}
+                        _id={_id}
+                    />
+                </OverlayPanel>
+            </div>
+
+
+        )
+    }
+
     const RowExpansionTemplate = ({ holders, _id }) => {
         return <RowExpansionGrid holders={holders} documentID={_id} />
     }
     return (
         <>
-                <DataTable
+            <DataTable
                 loading={loading}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={RowExpansionTemplate }
+                rowExpansionTemplate={RowExpansionTemplate}
                 value={data}
                 editMode="row"
                 onRowEditComplete={onRowEditComplete}
                 showGridlines
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
-                <Column header="Όνομα Πελάτη"  field="clientName"></Column>
+                <Column header="Όνομα Πελάτη" field="clientName"></Column>
+                <Column header="Email" field="clientEmail"></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
-                <Column header="Aριθμός Προσφοράς" headerStyle={{width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
+                <Column header="Aριθμός Προσφοράς" headerStyle={{ width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
-                <Column header="Αλλαγή Status" rowEditor headerStyle={{ width: '10%', width: '160px' }} bodyStyle={{ textAlign: 'center' }}></Column>
-                <Column header="Aποστολή σε Πελάτη" headerStyle={{width: '165px' }}  bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
-                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={PrintActions}></Column>
+                <Column header="Status Edit" rowEditor headerStyle={{ width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
             </DataTable>
         </>
     )
@@ -134,7 +183,7 @@ const ClientHolder = ({NAME}) => {
 
 const RowExpansionGrid = ({ holders, documentID }) => {
     const [expandedRows, setExpandedRows] = useState(null);
- 
+
     const allowExpansion = (rowData) => {
         return rowData
     };

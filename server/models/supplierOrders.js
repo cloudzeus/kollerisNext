@@ -14,6 +14,7 @@ const supplierOrderSchema = new mongoose.Schema({
     supplierEmail: String,
     status: String,
     PURDOCNUM: String,
+    createdFrom: String,
     products: [
         {
             _id: String,

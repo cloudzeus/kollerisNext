@@ -8,17 +8,21 @@ import { Button } from 'primereact/button';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
-
+import { useSession } from 'next-auth/react';
 
 
 const Page = () => {
     const router = useRouter();
+    const { data: session, update } = useSession();
+
+
     const [loading, setLoading] = useState(false)
     const toast = useRef(null);
     const {selectedProducts, mtrLines} = useSelector(state => state.products);
     const {offerEmail} = useSelector(state => state.impaoffer);
     const { selectedClient } = useSelector(state => state.impaoffer)
-
+    const user = session?.user?.user;
+    console.log(user)
     useEffect(() => {
       if(!selectedClient) {
         router.push('/dashboard/offer')
@@ -40,7 +44,8 @@ const Page = () => {
           data: mtrLines, 
           email: offerEmail,
           name: selectedClient?.NAME,
-          TRDR: selectedClient?.TRDR
+          TRDR: selectedClient?.TRDR,
+          createdFrom: user?.lastName
         })
 
         if(!data.success) {

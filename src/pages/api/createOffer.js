@@ -3,8 +3,10 @@ import connectMongo from "../../../server/config"
 import { ImpaCodes } from "../../../server/models/impaSchema"
 import Clients from "../../../server/models/modelClients";
 import Holders from "../../../server/models/holderModel";
-import { transporter } from "@/utils/nodemailerConfig";
 import SingleOffer from "../../../server/models/singleOfferModel";
+import createCSVfile from "@/utils/createCSVfile";
+import { sendEmail } from "@/utils/offersEmailConfig";
+
 
 export default async function handler(req, res) {
     const action = req.body.action
@@ -22,20 +24,7 @@ export default async function handler(req, res) {
 
     }
 
-    // if (action === 'findProducts') {
-    //     const { skip, limit } = req.body;
-    //     try {
-    //         await connectMongo();
-    //         const totalRecords = await SoftoneProduct.countDocuments();
-    //         const products = await SoftoneProduct.find({}).skip(skip).limit(limit)
-    //             .select('MTRL CODE PRICER _id NAME')
-    //             .populate('impas');
-    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-    // }
-
+   
 
     if(action === "findHolderProducts") {
         const {documentID, holderID} = req.body;
@@ -126,58 +115,73 @@ export default async function handler(req, res) {
 
 
     }
-    if (action === "sendOfferEmail") {
-        const { holders, client, email, id, num} = req.body;
-        let body = holders.map((item) => {
-            let elements = item.products.map((product) => {
-                return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
-                <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
-                <p>Τιμή: <strong>${product.PRICE}€</strong></p>
-                <p>---------------</p>`;
-            }).join('');  // Join array elements into a single string
-            return `<p>Κωδικός Impa: <strong>${item.name}</strong></p> ${elements}`;
-        });
+    if (action === "sendEmail") {
+        const { holders, products, cc, clientName, clientEmail, id, num, subject, message, fileName, includeFile} = req.body;
+        let newcc = []
+        for(let item of cc) {
+            newcc.push(item.email)
+        }
+      
+        console.log('holders')
+        console.log(holders)
+        console.log('client')
+        console.log(clientName)
+        console.log(id)
+        console.log(num)
+        let csv = await createCSVfile(products)
+        console.log(csv)
+        let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
+        console.log(send)
+        // let body = holders.map((item) => {
+        //     let elements = item.products.map((product) => {
+        //         return `<p>--- <strong>Προϊόν</strong>--- </p><p>Όνομα: ${product.NAME}</p>
+        //         <p>Ποσότητα: <strong>${product.QTY1}</strong></p>
+        //         <p>Τιμή: <strong>${product.PRICE}€</strong></p>
+        //         <p>---------------</p>`;
+        //     }).join('');  // Join array elements into a single string
+        //     return `<p>Κωδικός Impa: <strong>${item.name}</strong></p> ${elements}`;
+        // });
 
 
-        try {
+        // try {
 
-            const mail = {
-                from: 'info@kolleris.com',
-                to: email,
-                cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
-                subject:`Προσφορά - NUM: ${num}`,
-                html: `${body}`
-              };
+        //     const mail = {
+        //         from: 'info@kolleris.com',
+        //         to: email,
+        //         cc: [ 'gkozyris@i4ria.com', 'johnchiout.dev@gmail.com', 'info@kolleris.com'],
+        //         subject:`Προσφορά - NUM: ${num}`,
+        //         html: `${body}`
+        //       };
          
               
-              function sendEmail(mail) {
-                return new Promise((resolve, reject) => {
-                  transporter.sendMail(mail, (err, info) => {
-                    if (err) {
-                      console.log(err);
-                      resolve(false); // Resolve with false if there's an error
-                    } else {
-                      console.log('Email sent successfully!');
-                      resolve(true); // Resolve with true if the email is sent successfully
-                    }
-                  });
-                });
-              }
+        //       function sendEmail(mail) {
+        //         return new Promise((resolve, reject) => {
+        //           transporter.sendMail(mail, (err, info) => {
+        //             if (err) {
+        //               console.log(err);
+        //               resolve(false); // Resolve with false if there's an error
+        //             } else {
+        //               console.log('Email sent successfully!');
+        //               resolve(true); // Resolve with true if the email is sent successfully
+        //             }
+        //           });
+        //         });
+        //       }
 
-              let send = await sendEmail(mail);
-              console.log(send);
-            await connectMongo();
-            let update = await Holders.updateOne({ _id: id }, {
-                $set: {
-                    status: "sent"
-                }
-            })
-            console.log(update)
-            let modified = update.modifiedCount
-            return res.status(200).json({ success: true, result: modified, send: send })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null,  })
-        }
+        //       let send = await sendEmail(mail);
+        //       console.log(send);
+        //     await connectMongo();
+        //     let update = await Holders.updateOne({ _id: id }, {
+        //         $set: {
+        //             status: "sent"
+        //         }
+        //     })
+        //     console.log(update)
+        //     let modified = update.modifiedCount
+        //     return res.status(200).json({ success: true, result: modified, send: send })
+        // } catch (e) {
+        //     return res.status(500).json({ success: false, result: null,  })
+        // }
 
 
     }
