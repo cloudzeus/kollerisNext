@@ -167,28 +167,8 @@ export default function Page() {
         )
     }
 
+
    
-
-
-    // const ShowOffers = ({ OFFERSTATUS, NAME }) => {
-        
-    //     const handleClick = () => {
-    //         const encodedString = encodeURIComponent(NAME);
-    //         router.push(`/dashboard/clients/offers/${encodedString}`)
-    //     }
-    //     if (OFFERSTATUS) {
-    //         return (
-    //             <div className='flex cursor-pointer align-items-center justify-content-center p-0' onClick={handleClick}>
-    //                 <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{ width: '4px', height: '4px' }}></div>
-    //                 <span className='font-xm text-600' style={{fontSize: '10px'}}>OFFERS</span>
-
-    //             </div>
-    //         )
-    //     }
-        
-
-    // }
-
     //EDIT TEMPALTE AND HANDLER
     const editProduct = async (product) => {
         setSubmitted(false);
@@ -198,7 +178,8 @@ export default function Page() {
 
     const newOrder = async (supplier) => {
         dispatch(setSelectedSupplier(supplier))
-        router.push(`/dashboard/suppliers/chooseProducts/${supplier.TRDR}/${supplier.NAME}/${supplier.EMAIL}}`)
+        let email = supplier.EMAIL || 'no-email'
+        router.push(`/dashboard/suppliers/chooseProducts/${supplier.TRDR}/${supplier.NAME}/${email}/${supplier.minOrderValue}}`)
     }
     const ActionTemplate = (rowData) => {
         const op = useRef(null);
@@ -212,7 +193,6 @@ export default function Page() {
                     <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
                     </div>
                 </OverlayPanel>
-            {/* <i className="pi pi-pencil mr-2 cursor-pointer text-500" style={{fontSize: '12px'}} onClick={() => editProduct(rowData)}></i> */}
         </div>
         )
     }
@@ -295,23 +275,6 @@ export default function Page() {
 }
 
 
-
-
-
-
-
-const Offers = (rowData) => {
-    const dispatch = useDispatch();
-    // useEffect(() => {
-    //     dispatch(setSelectedSupplier(rowData))
-    // }, [])
-    const router = useRouter()
-    return (
-        <div>
-            <Button icon="pi pi-tag" onClick={() => router.push(`/dashboard/suppliers/order/${rowData.TRDR}`)} />
-        </div>
-    )
-}
 
 
 

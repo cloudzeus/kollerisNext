@@ -13,6 +13,8 @@ import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
 import { setSelectedProducts } from '@/features/productsSlice';
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
+import { withCoalescedInvoke } from 'next/dist/lib/coalesced-function';
+import { min } from 'date-fns';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
@@ -22,12 +24,12 @@ const ChooseProducts = () => {
   let TRDR = id[0];
   let NAME = id[1];
   let EMAIL = id[2];
-
+  let minOrderValue= parseInt(id[3]);
+  console.log(minOrderValue)
+  console.log(id)
   useEffect(() => {
     dispatch(setSelectedProducts([]))
-    // if(!selectedSupplier) {
-    //   router.push('/dashboard/suppliers')
-    // }
+   
   }, [selectedSupplier])
 
 
@@ -44,7 +46,7 @@ const ChooseProducts = () => {
       email: EMAIL,
       TRDR: TRDR,
       NAME: NAME,
-      minOrderValue: selectedSupplier?.minOrderValue,
+      minOrderValue: minOrderValue,
     })
     router.push(`/dashboard/suppliers/order/${TRDR}`)
   }
