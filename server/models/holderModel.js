@@ -19,11 +19,13 @@ const holderchema = new mongoose.Schema({
             products: [
                 {
                     _id: String,
+                    COST: Number,
                     MTRL: String,
-                    PRICE: String,
+                    PRICE: Number,
                     NAME: String,
                     QTY1: Number,
-                    TOTAL_PRICE: Number
+                    TOTAL_PRICE: Number,
+                    TOTAL_COST: Number,
                 }
             ],
         }

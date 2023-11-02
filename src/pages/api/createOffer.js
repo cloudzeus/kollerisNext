@@ -172,37 +172,14 @@ export default async function handler(req, res) {
 
         try {
             let csv = await createCSVfile(products)
-            console.log(csv)
             let send = await sendEmail(clientEmail, newcc, subject, message, fileName, csv, includeFile);
-            console.log(send)
             await connectMongo();
-            // async function getSaldoc() {
-            //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
-            //     const response = await fetch(URL, {
-            //         method: 'POST',
-            //         body: JSON.stringify({
-            //             username: "Service",
-            //             password: "Service",
-            //             SERIES: 7001,
-            //             COMPANY: 1001,
-            //             TRDR: TRDR,
-            //             MTRLINES: mtrlArr
-            //         })
-            //     });
-
-            //     let responseJSON = await response.json();
-            //     console.log(responseJSON)
-
-            //     return responseJSON;
-            // }
-            // let saldoc = await getSaldoc();
-
             let update = await Holders.updateOne({ _id: id }, {
                 $set: {
                     status: "sent"
                 }
             })
-            console.log(update)
+           
             let modified = update.modifiedCount
             return res.status(200).json({ success: true, result: modified, send: send })
         } catch (e) {

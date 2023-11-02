@@ -19,7 +19,6 @@ import { setSelectedSupplier } from '@/features/supplierOrderSlice';
 
 
 export default function Page() {
-    const op = useRef(null);
     const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder)
 
     const router = useRouter();
@@ -202,15 +201,17 @@ export default function Page() {
         router.push('/dashboard/supplierOrder/chooseProducts')
     }
     const ActionTemplate = (rowData) => {
+        const op = useRef(null);
+
         return (
             <div className='flex align-items-center justify-content-center'>
             <i className="pi pi-cog mr-2 cursor-pointer text-primary" style={{fontSize: '12px'}} onClick={(e) => op.current.toggle(e)}></i>
-            <OverlayPanel ref={op}>
-                <div className='flex flex-column'>
-                <Button label="Διαμόρφωση Προμηθευτή" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
-                <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
-                </div>
-            </OverlayPanel>
+                <OverlayPanel ref={op}>
+                    <div className='flex flex-column'>
+                    <Button label="Διαμόρφωση Προμηθευτή" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
+                    <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
+                    </div>
+                </OverlayPanel>
             {/* <i className="pi pi-pencil mr-2 cursor-pointer text-500" style={{fontSize: '12px'}} onClick={() => editProduct(rowData)}></i> */}
         </div>
         )
@@ -245,7 +246,7 @@ export default function Page() {
                 filterDisplay="row"
                 showGridlines
             >   
-                <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
+                <Column body={ActionTemplate} style={{width: '50px'}}></Column>
                 <Column body={Offers} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
                 {/* <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column> */}
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
@@ -285,9 +286,9 @@ export default function Page() {
 
 const Offers = (rowData) => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setSelectedSupplier(rowData))
-    }, [])
+    // useEffect(() => {
+    //     dispatch(setSelectedSupplier(rowData))
+    // }, [])
     const router = useRouter()
     return (
         <div>

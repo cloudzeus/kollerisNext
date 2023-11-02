@@ -9,20 +9,21 @@ const completedOrderSchema = new mongoose.Schema({
         default: 10000,
     },
     supplierName: String,
-    TRDR: String,
-    NAME: String,
     supplierEmail: String,
+    TRDR: String,
     status: String,
     PURDOCNUM: String,
+    createdFrom: String,
     products: [
         {
             _id: String,
             MTRL: String,
-            PRICE: String,
             NAME: String,
+            PRICE: Number,
             QTY1: Number,
-            TOTAL_PRICE: Number
-
+            COST: Number,
+            TOTAL_PRICE: Number,
+            TOTAL_COST: Number,
         }
     ]
 },

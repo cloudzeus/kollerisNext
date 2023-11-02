@@ -19,10 +19,12 @@ const supplierOrderSchema = new mongoose.Schema({
         {
             _id: String,
             MTRL: String,
-            PRICE: String,
+            PRICE: Number,
             NAME: String,
             QTY1: Number,
-            TOTAL_PRICE: Number
+            COST: Number,
+            TOTAL_PRICE: Number,
+            TOTAL_COST: Number,
 
         }
     ]

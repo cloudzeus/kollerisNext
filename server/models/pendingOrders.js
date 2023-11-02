@@ -8,7 +8,11 @@ const pendingOrderSchema = new mongoose.Schema({
         unique: true,
         default: 10000,
     },
-    minValue: Number,
+    minOrderValue: Number,
+    orderCompletionValue: {
+        type: Number,
+        default: 0,
+    },
     supplierName: String,
     supplierEmail: String,
     TRDR: String,
@@ -18,10 +22,12 @@ const pendingOrderSchema = new mongoose.Schema({
         {
             _id: String,
             MTRL: String,
-            PRICE: String,
             NAME: String,
             QTY1: Number,
-            TOTAL_PRICE: Number
+            PRICE: Number,
+            TOTAL_PRICE: Number,
+            COST: Number,
+            TOTAL_COST: Number,
 
         }
     ]

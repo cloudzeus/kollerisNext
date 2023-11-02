@@ -8,8 +8,7 @@ export default async function handler(req, res) {
  
     if(action === 'addClient') {
         let {data} = req.body;
-        console.log('addClient')
-        console.log(data)
+       
         try {
             await connectMongo();
             let result = await Clients.create({
@@ -26,7 +25,6 @@ export default async function handler(req, res) {
     
     if(action === 'upsert') {
         let {data} = req.body;
-        console.log('upsert')
        
 
         try {
@@ -44,8 +42,7 @@ export default async function handler(req, res) {
 
     if(action === "updateOne") {
         let {data} = req.body;
-        console.log('updateOne')
-        console.log(data)
+       
         try {
             await connectMongo();
             const updateData = {
@@ -64,8 +61,7 @@ export default async function handler(req, res) {
                 {$set: updateData},
                 {new: true}
             )
-            console.log('result')
-            console.log(result)
+          
             return res.status(200).json({ success: true })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -74,7 +70,6 @@ export default async function handler(req, res) {
     //USE IN THE GLOBAL CUSTOMERS TABLE WHERE YOU SELECT A CUSTOMER:
     if(action === "fetchAll") {
         const {skip, limit, searchTerm, sortOffers} = req.body;
-        console.log(searchTerm)
         try {
             await connectMongo();
             let totalRecords;

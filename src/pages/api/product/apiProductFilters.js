@@ -86,7 +86,6 @@ export default async function handler(req, res) {
         }
 
 
-        // console.log(softonefind)
         return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
     }
    
@@ -146,7 +145,6 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let response = await Vat.find({}, {VAT: 1, NAME: 1, _id: 0})
-            console.log(response)
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -170,8 +168,7 @@ export default async function handler(req, res) {
             sortPrice,
         } = req.body;
         
-        console.log('sort price')
-        console.log(sortPrice)
+       
         try {
             await connectMongo();
     
@@ -246,7 +243,6 @@ export default async function handler(req, res) {
                 .limit(limit)
             }
             
-            console.log(sortObject)
 
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {

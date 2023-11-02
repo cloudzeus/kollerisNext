@@ -26,7 +26,6 @@ export default async function handler(req, res) {
 
     if(action === "create") {
         const {data} = req.body;
-        console.log(data)
         let MTRL = null;
         let SOFTONESTATUS = false
         if(MTRL) {
@@ -38,8 +37,7 @@ export default async function handler(req, res) {
                 ...data,
                 SOFTONESTATUS: SOFTONESTATUS,
             });
-            console.log('product')
-            console.log(product)
+          
             return res.status(200).json({ success: true, result: product });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -84,7 +82,6 @@ export default async function handler(req, res) {
             PRICEW: data?.PRICEW,
            
         }
-        console.log(obj)
         const response = await fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -94,8 +91,7 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-        console.log('responseJSON')
-        console.log(responseJSON)
+ 
 
         if(!responseJSON.success) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
@@ -132,7 +128,6 @@ export default async function handler(req, res) {
                descriptions: data.descriptions,
             }
         })
-        console.log(updateSoftoneProduct)
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
     }
@@ -144,7 +139,6 @@ export default async function handler(req, res) {
 
         const regexPattern = new RegExp(query, 'i');
         let search = await SoftoneProduct.find({ NAME: regexPattern })
-        console.log(search)
         return res.status(200).json({ success: true, result: search });
     }
 
@@ -362,7 +356,7 @@ export default async function handler(req, res) {
 
 	if(action === "addToSoftone") {
         const {data, id, mongoData} = req.body;
-        console.log(mongoData)
+        // console.log(mongoData)
         try {
             const filteredObject = {};
 
@@ -371,8 +365,7 @@ export default async function handler(req, res) {
                 filteredObject[key] = data[key];
             }
             }
-            console.log('filteredObject')
-            console.log(filteredObject)
+       
             await connectMongo();
            
           async function createSoftone() {
@@ -414,14 +407,12 @@ export default async function handler(req, res) {
             await connectMongo();
             const productsArray = []
             for(let item of products) {
-                console.log(item)
                 let product = await SoftoneProduct.findOne({SOFTONESTATUS: false, _id: item._id})
                 if(product) {
                     productsArray.push(product)
 
                 }   
             }
-            console.log(productsArray)
             return res.status(200).json({ success: true, result: productsArray });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });

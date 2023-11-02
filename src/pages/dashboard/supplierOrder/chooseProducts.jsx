@@ -18,6 +18,7 @@ const ChooseProducts = () => {
   const router = useRouter()
   const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
+  console.log('selected Supplier')
   console.log(selectedSupplier)
 
   useEffect(() => {
@@ -37,18 +38,17 @@ const ChooseProducts = () => {
 
 
  
-console.log(selectedProducts)
 
   const handleFinalSubmit = async () => {
     let { data } = await axios.post('/api/createOrder', {
       action: 'createBucket',
       products: mtrLines,
-      email: inputEmail,
+      email: selectedSupplier?.EMAIL,
       TRDR: selectedSupplier?.TRDR,
       NAME: selectedSupplier?.NAME,
-      minItems: selectedSupplier?.minOrderValue,
+      minOrderValue: selectedSupplier?.minOrderValue,
     })
-    // router.push('/dashboard/suppliers')
+    router.push(`/dashboard/suppliers/order/${selectedSupplier?.TRDR}`)
   }
   return (
     <AdminLayout>

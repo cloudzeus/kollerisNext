@@ -99,7 +99,12 @@ const itemTemplate = (item) => {
                     <i className="pi pi-tag text-sm"></i>
                     <span>{item.CODE}</span>
                     <div>
-                        <span className='font-bold text-primary'>{item.PRICER }€</span>
+                        <span>Τιμή:</span>
+                        <span className='font-bold text-primary ml-1'>{item.PRICER }€</span>
+                    </div>
+                    <div>
+                        <span>Κόστος:</span>
+                        <span className='font-bold text-primary ml-1'>{item.COST }€</span>
                     </div>
                 </div>
 

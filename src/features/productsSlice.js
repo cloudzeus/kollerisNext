@@ -50,8 +50,10 @@ const productsSlice = createSlice({
 					NAME: item.NAME,
 					QTY1: 1,
 					PRICE: parseInt(item.PRICER),
+                    COST: item.COST,
 					MTRL: item.MTRL,
-					TOTAL_PRICE: parseInt(item.PRICER)
+					TOTAL_PRICE: parseInt(item.PRICER),
+                    TOTAL_COST: item.COST,
 				}
 			})
 			state.mtrLines = updateMTRLINES;
@@ -63,7 +65,7 @@ const productsSlice = createSlice({
 		setMtrLines: (state, {payload}) => {
 			state.mtrLines = state.mtrLines.map(item => {
 				if (item.MTRL === payload.MTRL) {
-					return { ...item, QTY1: payload.QTY1, TOTAL_PRICE: payload.QTY1 * parseInt(item.PRICE) };
+					return { ...item, QTY1: payload.QTY1, TOTAL_PRICE: payload.QTY1 * parseInt(item.PRICE) , TOTAL_COST: payload.QTY1 * item.COST};
 				}
 				return item;
 			});

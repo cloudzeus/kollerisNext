@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { TabView, TabPanel } from 'primereact/tabview';
 import Gallery from '@/components/Gallery';
 import { DisabledDisplay } from '@/componentsStyles/grid';
@@ -10,15 +10,16 @@ import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
-
+import SendOrderEmail from '@/components/emails/SendOrderEmail';
 import StepHeader from '../multiOffer/StepHeader';
 import { useRouter } from 'next/router';
 import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
 import { setSelectedProducts } from '@/features/productsSlice';
 import { ProgressBar } from 'primereact/progressbar';
+import CreatedAt from '../grid/CreatedAt';
+import { OverlayPanel } from 'primereact/overlaypanel';
 
-
-const PendingOrders = ({id}) => {
+const PendingOrders = ({ id }) => {
     const [data, setData] = useState([])
     const dispatch = useDispatch()
     const router = useRouter();
@@ -36,7 +37,7 @@ const PendingOrders = ({id}) => {
 
     const handleFetch = async () => {
         setLoading(true)
-        let { data } = await axios.post('/api/createOrder', { action: 'findPending', TRDR: id})
+        let { data } = await axios.post('/api/createOrder', { action: 'findPending', TRDR: id })
         console.log(data.result)
         setData(data.result)
         setLoading(false)
@@ -44,16 +45,43 @@ const PendingOrders = ({id}) => {
 
     useEffect(() => {
         handleFetch();
-    }, [refetch])
+    }, [refetch, id])
 
 
 
-    const Actions = () => {
-        return <ActionsTemplate  setRefetch={setRefetch} />
+    const Actions = ({ supplierName, supplierEmail,products }) => {
+        const op = useRef(null);
+
+        const _products = products.map((item, index) => {
+            return {
+                PRODUCT_NAME: item.NAME,
+                COST: item.COST,
+                QTY1: item.QTY1,
+                TOTAL_COST: item.TOTAL_COST
+            }
+        })
+        console.log(_products)
+        return (
+            <div>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <SendOrderEmail
+                        mt={2}
+                        email={supplierEmail}
+                        products={_products}
+                        name={supplierName}
+                        TRDR={id}
+                        setRefetch={setRefetch}
+                        op={op}
+                    />
+                </OverlayPanel>
+
+            </div>
+        )
     }
 
     const RowExpansionTemplate = ({ products, NAME, supplierEmail }) => {
-        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail}  />
+        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail} id={id} />
     }
 
 
@@ -68,7 +96,7 @@ const PendingOrders = ({id}) => {
         return (
             <div className="card p-2">
                 <span className='text-xs font-bold'>{`${price.toFixed(2)} / ${minValues.minValue} €`}</span>
-       
+
             </div>
 
         )
@@ -84,7 +112,7 @@ const PendingOrders = ({id}) => {
 
         return (
             <div className="flex align-items-center justify-content-center">
-                <ProgressBar value={toFixed} style={{fontSize: '9px' , height: '20px', borderRadius: '30px', width: '100px'}}  ></ProgressBar>
+                <ProgressBar value={toFixed} style={{ fontSize: '9px', height: '20px', borderRadius: '30px', width: '100px' }}  ></ProgressBar>
             </div>
 
         )
@@ -100,7 +128,7 @@ const PendingOrders = ({id}) => {
     return (
         <div className='mt-4 mb-5'>
             <StepHeader text="Παραγγελίες εν ενεργεία" />
-                <DataTable
+            <DataTable
                 loading={loading}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -109,42 +137,27 @@ const PendingOrders = ({id}) => {
                 editMode="row"
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
-                <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
+                <Column header="Αρ. παραγγελίας" style={{ width: '150px' }} field="orderNumber"></Column>
                 <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
                 <Column header="Email" field="supplierEmail"></Column>
-                <Column header="Min Order" field="minOrderValue"></Column>
-                <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }}></Column>
-                <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} ></Column>
+                <Column header="Ημερομ. Δημιουργίας" body={CreatedAt}></Column>
+                <Column header="Min Order" field="minOrderValue" body={Completion}></Column>
+                <Column header="Ποσοστο Ολοκλ." field="TOTAL_COST" style={{ width: "140px" }}></Column>
                 <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
-           
-            
+
+
         </div>
     )
 }
 
-const ActionsTemplate = ({ setRefetch}) => {
-    const { orderReady, mtrLines } = useSelector(state => state.supplierOrder)
-    const [loading, setLoading] = useState(false)
-  
-  
-    const submitOrder = async () => {
-        setLoading(true)
-        let { data } = await axios.post('/api/createOrder', { 
-            action: 'submitOrder', 
-            products: mtrLines,
-        })
-        setLoading(false)
-        setRefetch(prev => !prev)
-    }
-    return (
-        <div>
-            <Button loading={loading} onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
-        </div>
-    )
+
+
+const ActionsTemplate = ({ setRefetch }) => {
+
 }
 
-const RowExpansionGrid = ({ products}) => {
+const RowExpansionGrid = ({ products, id }) => {
     const router = useRouter();
     const dispatch = useDispatch()
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
@@ -152,7 +165,7 @@ const RowExpansionGrid = ({ products}) => {
 
     const onAddMore = () => {
         dispatch(setSelectedProducts([]))
-        router.push('/dashboard/supplierOrder/addMore')
+        router.push(`/dashboard/suppliers/add-to-bucket/${id}`)
     }
 
     const Footer = () => {
@@ -161,7 +174,7 @@ const RowExpansionGrid = ({ products}) => {
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
                 <div>
-                    <Button size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onAddMore } />
+                    <Button size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onAddMore} />
                 </div>
                 <div className='flex'>
                     <div className='mr-3'>
@@ -205,6 +218,12 @@ const TotalTemplate = ({ TOTAL_PRICE }) => {
     )
 }
 
-
+const Completion = ({ minOrderValue, orderCompletionValue }) => {
+    return (
+        <div>
+            <span className='font-bold'>{`${orderCompletionValue.toFixed(2)} / ${minOrderValue} €`}</span>
+        </div>
+    )
+}
 
 export default PendingOrders;
