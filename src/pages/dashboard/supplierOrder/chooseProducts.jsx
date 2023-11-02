@@ -18,11 +18,11 @@ const ChooseProducts = () => {
   const router = useRouter()
   const { selectedMarkes, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
-
+  console.log(selectedSupplier)
 
   useEffect(() => {
     if(!selectedSupplier) {
-      router.push('/dashboard/product/brands')
+      router.push('/dashboard/suppliers')
     }
   }, [])
 

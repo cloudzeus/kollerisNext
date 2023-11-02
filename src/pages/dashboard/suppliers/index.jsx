@@ -12,12 +12,16 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 import { EditDialog, AddDialog } from '@/GridDialogs/supplierDialog';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { Checkbox } from "primereact/checkbox";
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { useSelector } from 'react-redux';
+import { setSelectedSupplier } from '@/features/supplierOrderSlice';
 
 
 export default function Page() {
+    const op = useRef(null);
+    const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder)
+
     const router = useRouter();
     const dispatch = useDispatch();
     const [submitted, setSubmitted] = useState(false);
@@ -164,48 +168,27 @@ export default function Page() {
         )
     }
 
-    const FilterOffers = () => {
-        console.log(sortOffers)
-       const onSort = () => {
-        setSortOffers(prev => {
-            if(prev === 0) return 1;
-            if(prev === 1) return -1;
-            if(prev === -1) return 0;
-        })
-       }
+   
+
+
+    // const ShowOffers = ({ OFFERSTATUS, NAME }) => {
         
-        return (
-            <div>
-                {/* <Dropdown value={selectedFilterOffer} onChange={(e) => setSelectedFilterOffer(e.value)} options={options} optionLabel="name" 
-                placeholder="Επιλογή Φίλτρου" className="w-full md:w-14rem" /> */}
-                  <div className='ml-3'>
-                    {sortOffers === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
-                    {sortOffers === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
-                    {sortOffers === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
-                </div>
-            </div>
-        )
-    }
+    //     const handleClick = () => {
+    //         const encodedString = encodeURIComponent(NAME);
+    //         router.push(`/dashboard/clients/offers/${encodedString}`)
+    //     }
+    //     if (OFFERSTATUS) {
+    //         return (
+    //             <div className='flex cursor-pointer align-items-center justify-content-center p-0' onClick={handleClick}>
+    //                 <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{ width: '4px', height: '4px' }}></div>
+    //                 <span className='font-xm text-600' style={{fontSize: '10px'}}>OFFERS</span>
 
-
-    const ShowOffers = ({ OFFERSTATUS, NAME }) => {
-        
-        const handleClick = () => {
-            const encodedString = encodeURIComponent(NAME);
-            router.push(`/dashboard/clients/offers/${encodedString}`)
-        }
-        if (OFFERSTATUS) {
-            return (
-                <div className='flex cursor-pointer align-items-center justify-content-center p-0' onClick={handleClick}>
-                    <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{ width: '4px', height: '4px' }}></div>
-                    <span className='font-xm text-600' style={{fontSize: '10px'}}>OFFERS</span>
-
-                </div>
-            )
-        }
+    //             </div>
+    //         )
+    //     }
         
 
-    }
+    // }
 
     //EDIT TEMPALTE AND HANDLER
     const editProduct = async (product) => {
@@ -214,11 +197,22 @@ export default function Page() {
         dispatch(setGridRowData(product))
     };
 
+    const newOrder = async (supplier) => {
+        dispatch(setSelectedSupplier(supplier))
+        router.push('/dashboard/supplierOrder/chooseProducts')
+    }
     const ActionTemplate = (rowData) => {
         return (
-            <div className='flex align-items-center'>
-                <i className="pi pi-pencil mr-2 cursor-pointer text-500" style={{fontSize: '12px'}} onClick={() => editProduct(rowData)}></i>
-            </div>
+            <div className='flex align-items-center justify-content-center'>
+            <i className="pi pi-cog mr-2 cursor-pointer text-primary" style={{fontSize: '12px'}} onClick={(e) => op.current.toggle(e)}></i>
+            <OverlayPanel ref={op}>
+                <div className='flex flex-column'>
+                <Button label="Διαμόρφωση Προμηθευτή" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
+                <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
+                </div>
+            </OverlayPanel>
+            {/* <i className="pi pi-pencil mr-2 cursor-pointer text-500" style={{fontSize: '12px'}} onClick={() => editProduct(rowData)}></i> */}
+        </div>
         )
     }
 
@@ -251,7 +245,7 @@ export default function Page() {
                 filterDisplay="row"
                 showGridlines
             >   
-                <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}}></Column>
+                <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
                 {/* <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column> */}
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>

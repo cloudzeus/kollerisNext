@@ -9,7 +9,7 @@ import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-
+import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 
 const Page = () => {
     const router = useRouter();
@@ -68,7 +68,11 @@ const Page = () => {
                  <StepHeader text="Επιλεγμένα Προϊόντα" />
                  </div>
                  <SelectedProducts />
-                 <Button loading={loading} onClick={onClick} className='mt-4' label="Ολοκλήρωση" color="primary" />
+                 {/* <Button loading={loading} onClick={onClick} className='mt-4' label="Ολοκλήρωση" color="primary" /> */}
+                 <div className='mt-3'>
+                 < SoftoneStatusButton onClick={onClick} btnText="Ολοκλήρωση" />
+
+                 </div>
                </>
             ) : null}
            

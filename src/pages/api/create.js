@@ -463,17 +463,17 @@ export default async function handler(req, res) {
         }
 
     }
-    if(action ==="offerstatus") {
+    if (action === "offerstatus") {
         await connectMongo();
         // let updateCliesnt = await Clients.updateMany({}, {
         //     $set: {
         //         OFFERSTATUS: false
         //     }
         // })
-        let clientName = await Clients.find({}, {NAME:1, _id: 0})
-        for(let name of clientName) {
-            let holders = await Holders.find({NAME: name.NAME})
-            if(holders.length > 0) {
+        let clientName = await Clients.find({}, { NAME: 1, _id: 0 })
+        for (let name of clientName) {
+            let holders = await Holders.find({ NAME: name.NAME })
+            if (holders.length > 0) {
                 let update = await Clients.findOneAndUpdate({
                     NAME: name.NAME
                 }, {
@@ -482,8 +482,8 @@ export default async function handler(req, res) {
                     }
                 })
             }
-            let singleoffer = await SingleOffer.find({NAME: name.NAME})
-            if(singleoffer.length > 0) {
+            let singleoffer = await SingleOffer.find({ NAME: name.NAME })
+            if (singleoffer.length > 0) {
                 let update = await Clients.findOneAndUpdate({
                     NAME: name.NAME
                 }, {
@@ -493,34 +493,34 @@ export default async function handler(req, res) {
                 })
             }
         }
-        return res.status(200).json({ success: true  });
+        return res.status(200).json({ success: true });
     }
 
-    if(action === "updateProduct") {
+    if (action === "updateProduct") {
         await connectMongo();
-        try {   
-                let find = await SoftoneProduct.find({NAME: 'ΤΡΥΠΑΝΙ SDS PLUS 22x1000mm 4932367029 MILWAUKEE'})
-                console.log(find)
-                let update = await SoftoneProduct.findOneAndUpdate({_id: find._id}, {
-                    $set: {
-                        PRICER: parseFloat(find.PRICER),
-                        PRICEW: parseFloat(find.PRICEW),
-                        PRICER02: parseFloat(find.PRICER02),
-                        PRICER05: parseFloat(find.PRICER05),
-                    },
-                    
+        try {
+            let find = await SoftoneProduct.find({ NAME: 'ΤΡΥΠΑΝΙ SDS PLUS 22x1000mm 4932367029 MILWAUKEE' })
+            console.log(find)
+            let update = await SoftoneProduct.findOneAndUpdate({ _id: find._id }, {
+                $set: {
+                    PRICER: parseFloat(find.PRICER),
+                    PRICEW: parseFloat(find.PRICEW),
+                    PRICER02: parseFloat(find.PRICER02),
+                    PRICER05: parseFloat(find.PRICER05),
                 },
+
+            },
                 {
                     new: true
                 })
-                // console.log(update)
+            // console.log(update)
 
-            return res.status(200).json({ success: true  });
+            return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false });
         }
     }
-    if(action === "activeImpas") {
+    if (action === "activeImpas") {
         await connectMongo();
         try {
             let update = await ImpaCodes.updateMany({}, {
@@ -528,12 +528,30 @@ export default async function handler(req, res) {
                     isActive: true,
                 }
             })
-            return res.status(200).json({ success: true  });
+            return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false });
         }
     }
 
+    if (action === "populateSuppliers") {
+        await connectMongo();
+        try {
+            let suppliers = await Supplier.updateMany({}, {
+                $set: {
+                    minOrderValue: 1000,
+                    orderCompletionValue: 0,
+                },
+    
+            })
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+       
+    }
 }
+
+
 
 

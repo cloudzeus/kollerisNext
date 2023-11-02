@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setProductsForSoftone } from '@/features/productsSlice';
 import axios from 'axios';
-const SoftoneStatusButton = ({onClick}) => {
+const SoftoneStatusButton = ({onClick, btnText}) => {
     const dispatch = useDispatch() 
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
@@ -58,7 +58,7 @@ const SoftoneStatusButton = ({onClick}) => {
                 rejectLabel='Συνέχεια'
                  header="SOFTONE STATUS" icon="pi pi-exclamation-triangle" accept={accept} reject={reject} />
             {selectedProducts.length !== 0 ? (
-            <Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onBtnClick} loading={loading}
+            <Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label={btnText} onClick={onBtnClick} loading={loading}
             />
             ) : null}
         </div>

@@ -13,10 +13,13 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 import { EditDialog, AddDialog } from '@/GridDialogs/clientDialog';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { Checkbox } from "primereact/checkbox";
+import { OverlayPanel } from 'primereact/overlaypanel';
+
 
 export default function Clients() {
     const router = useRouter();
+    const op = useRef(null);
+
     const dispatch = useDispatch();
     const [submitted, setSubmitted] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0)
@@ -247,6 +250,7 @@ export default function Clients() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}}></Column>
+
                 <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column>
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchClient} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>

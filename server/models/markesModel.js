@@ -63,8 +63,7 @@ const markesSchema = new mongoose.Schema({
         code: String,
     }],
     updatedFrom: String,
-    createdFrom: String,
-    deletedFrom: String,
+    
   
 },{
     timestamps: true

@@ -12,6 +12,9 @@ import { useRouter } from 'next/router'
 import SelectedProducts from '@/components/grid/SelectedProducts'
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton'
 import { setPlainHolderName } from '@/features/impaofferSlice'
+
+
+
 function generateRandomId(length = 8) {
     return Math.random().toString(36).substr(2, length);
 }
@@ -73,9 +76,8 @@ const Continue = ({value}) => {
 
             </div>
             <div className='mt-4 mb-5'>
-                <SoftoneStatusButton  onClick={onHolderCompletions}/>
-                {/* {selectedProducts.length !== 0 ? (<Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
-                ) : null} */}
+                <SoftoneStatusButton btnText="Ολοκλήρωση Holder"  onClick={onHolderCompletions}/>
+               
             </div>
         </>
     )

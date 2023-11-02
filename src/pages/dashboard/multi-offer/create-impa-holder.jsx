@@ -13,6 +13,7 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
+import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 function generateRandomId(length = 8) {
     return Math.random().toString(36).substr(2, length);
 }
@@ -27,11 +28,11 @@ const ImpaHolder = () => {
     const router = useRouter();
     useEffect(() => {
         dispatch(setSelectedProducts([]))
-        if(!selectedClient) {
+        if (!selectedClient) {
             router.push('/dashboard/multi-offer')
         }
     }, [])
-  
+
 
     const onHolderCompletions = async () => {
         let subString = selectedImpa?.greekDescription || selectedImpa?.englishDescriptio
@@ -42,7 +43,7 @@ const ImpaHolder = () => {
             products: mtrLines
         }))
 
-        await axios.post('/api/createOffer', {action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts})
+        await axios.post('/api/createOffer', { action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts })
         router.push('/dashboard/multi-offer/create-holder')
     }
 
@@ -54,8 +55,12 @@ const ImpaHolder = () => {
             </div>
             <PickListComp />
             <div className='mt-4 mb-5'>
-                {selectedProducts.length !== 0 ? (<Button icon="pi pi-angle-right" disabled={selectedProducts.length === 0} label="Ολοκλήρωση Holder" onClick={onHolderCompletions} />
-                ) : null}
+                <div className='mt-3'>
+
+                    < SoftoneStatusButton onClick={onHolderCompletions} btnText="Ολοκλήρωση Holder" />
+
+                </div>
+
             </div>
         </AdminLayout>
     )
@@ -75,7 +80,7 @@ const PickListComp = () => {
             <div className='mt-4' >
                 <StepHeader text={"Eπιλογή Impa"} />
                 <CustomToolbar setShow={setShow} show={show} />
-                {showImpaTable ? (<ImpaGrid  />) : null}
+                {showImpaTable ? (<ImpaGrid />) : null}
 
                 {(!showImpaTable && selectedImpa) ? (
                     <div>

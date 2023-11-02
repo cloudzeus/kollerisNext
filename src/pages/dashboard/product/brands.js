@@ -209,6 +209,7 @@ export default function TemplateDemo() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" sortable></Column>
                 <Column field="minItemsOrder"  header="Min items order" sortable></Column>
