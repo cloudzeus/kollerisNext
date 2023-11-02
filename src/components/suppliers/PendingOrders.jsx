@@ -18,9 +18,11 @@ import { setSelectedProducts } from '@/features/productsSlice';
 import { ProgressBar } from 'primereact/progressbar';
 import CreatedAt from '../grid/CreatedAt';
 import { OverlayPanel } from 'primereact/overlaypanel';
+import { Toast } from 'primereact/toast';
 
 const PendingOrders = ({ id }) => {
     const [data, setData] = useState([])
+    const toast = useRef(null);
     const dispatch = useDispatch()
     const router = useRouter();
     const [refetch, setRefetch] = useState(false)
@@ -30,6 +32,12 @@ const PendingOrders = ({ id }) => {
         minValue: 0,
         minItem: 0,
     })
+
+
+
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Δεν έχετε συμπληρώσει το ποσό για αποστολή παραγγελίας', life: 3000});
+    }
 
     const allowExpansion = (rowData) => {
         return rowData
@@ -49,26 +57,26 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const Actions = ({ supplierName, supplierEmail,products }) => {
+    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, orderCompletionValue }) => {
         const op = useRef(null);
-
-        const _products = products.map((item, index) => {
-            return {
-                PRODUCT_NAME: item.NAME,
-                COST: item.COST,
-                QTY1: item.QTY1,
-                TOTAL_COST: item.TOTAL_COST
+        const onBulletsClick = (e) => {
+            if(orderCompletionValue < minOrderValue) {
+                showError()
+                return;
+            } else {
+                op.current.toggle(e)
             }
-        })
-        console.log(_products)
+           
+
+        }
         return (
             <div>
-                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
                     <SendOrderEmail
                         mt={2}
                         email={supplierEmail}
-                        products={_products}
+                        products={products}
                         name={supplierName}
                         TRDR={id}
                         setRefetch={setRefetch}
@@ -85,66 +93,35 @@ const PendingOrders = ({ id }) => {
     }
 
 
-    const PriceTemplate = ({ products }) => {
-
-        let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
-        if (price >= minValues.minValue) {
-            dispatch(setOrderReady(true))
-        }
-
-
-        return (
-            <div className="card p-2">
-                <span className='text-xs font-bold'>{`${price.toFixed(2)} / ${minValues.minValue} €`}</span>
-
-            </div>
-
-        )
-    }
-    const CompletionTemplate = ({ products }) => {
-
-        let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
-        if (price >= minValues.minValue) {
-            dispatch(setOrderReady(true))
-        }
-        let value = (price / minValues.minValue) * 100 > 100 ? 100 : (price / minValues.minValue) * 100
-        let toFixed = value.toFixed(2)
-
-        return (
-            <div className="flex align-items-center justify-content-center">
-                <ProgressBar value={toFixed} style={{ fontSize: '9px', height: '20px', borderRadius: '30px', width: '100px' }}  ></ProgressBar>
-            </div>
-
-        )
-    }
-    // const Actions = ({MTRMARK}) => {
-    //     return <ActionsTemplate  setRefetch={setRefetch} />
-    // }
-
-    const onNewOrder = () => {
-        dispatch(setSelectedProducts([]))
-        router.push('/dashboard/supplierOrder/supplier')
-    }
+ 
+ 
     return (
         <div className='mt-4 mb-5'>
-            <StepHeader text="Παραγγελίες εν ενεργεία" />
-            <DataTable
-                loading={loading}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={RowExpansionTemplate}
-                value={data}
-                editMode="row"
-            >
-                <Column expander={allowExpansion} style={{ width: '5rem' }} />
-                <Column header="Αρ. παραγγελίας" style={{ width: '150px' }} field="orderNumber"></Column>
-                <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
-                <Column header="Email" field="supplierEmail"></Column>
-                <Column header="Ημερομ. Δημιουργίας" body={CreatedAt}></Column>
-                <Column header="Min Order" field="minOrderValue" body={Completion}></Column>
-                <Column header="Ποσοστο Ολοκλ." field="TOTAL_COST" style={{ width: "140px" }}></Column>
-                <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
-            </DataTable>
+            <Toast ref={toast} />
+            <StepHeader text="Ενεργή Παραγγελία" />
+            {data && data.length ? (
+                  <DataTable
+                  loading={loading}
+                  expandedRows={expandedRows}
+                  onRowToggle={(e) => setExpandedRows(e.data)}
+                  rowExpansionTemplate={RowExpansionTemplate}
+                  value={data}
+                  editMode="row"
+              >
+                  <Column expander={allowExpansion} style={{ width: '5rem' }} />
+                  <Column header="Αρ. παραγγελίας" style={{ width: '150px' }} field="orderNumber"></Column>
+                  <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
+                  <Column header="Email" field="supplierEmail"></Column>
+                  <Column header="Ημερομ. Δημιουργίας" style={{minWidth: '250px'}} body={CreatedAt}></Column>
+                  <Column header="Min Order" field="minOrderValue" style={{minWidth: '200px'}} body={Completion}></Column>
+                  <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
+              </DataTable>
+            ): (
+                <div className='p-4 bg-white border-round'>
+                <p>Δεν υπάρχει ενεργή παραγγελία</p>
+            </div>
+            )}
+          
 
 
         </div>
@@ -153,9 +130,7 @@ const PendingOrders = ({ id }) => {
 
 
 
-const ActionsTemplate = ({ setRefetch }) => {
 
-}
 
 const RowExpansionGrid = ({ products, id }) => {
     const router = useRouter();
@@ -169,7 +144,7 @@ const RowExpansionGrid = ({ products, id }) => {
     }
 
     const Footer = () => {
-        let price = products.map(product => product.TOTAL_PRICE).reduce((a, b) => a + b, 0)
+        let price = products.map(product => product.TOTAL_COST).reduce((a, b) => a + b, 0)
         let items = products.map(product => product.QTY1).reduce((a, b) => a + b, 0)
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
@@ -201,27 +176,30 @@ const RowExpansionGrid = ({ products, id }) => {
                 footer={Footer}
             >
                 <Column header="Όνομα" field="NAME"></Column>
-                <Column header="PR" style={{ width: '60px' }} field="PRICE"></Column>
+                <Column header="COST" style={{ width: '60px' }} field="COST"></Column>
                 <Column header="QT" style={{ width: '60px' }} field="QTY1"></Column>
-                <Column header="TOTAL" style={{ width: '60px' }} body={TotalTemplate} field="TOTAL_PRICE"></Column>
+                <Column header="TOTAL" style={{ width: '60px' }} body={TotalTemplate} field="TOTAL_COST"></Column>
             </DataTable>
         </div>
     )
 };
 
 
-const TotalTemplate = ({ TOTAL_PRICE }) => {
+const TotalTemplate = ({ TOTAL_COST }) => {
     return (
         <div>
-            <span className='font-bold'>{TOTAL_PRICE.toFixed(2) + "€"}</span>
+            <span className='font-bold'>{TOTAL_COST.toFixed(2) + "€"}</span>
         </div>
     )
 }
 
 const Completion = ({ minOrderValue, orderCompletionValue }) => {
+    let condition = orderCompletionValue >= minOrderValue;
     return (
         <div>
-            <span className='font-bold'>{`${orderCompletionValue.toFixed(2)} / ${minOrderValue} €`}</span>
+            <span className={`${condition ? "text-green-500 font-bold" : null }`}> {`${orderCompletionValue.toFixed(2)}`} </span>
+            <span>/</span>
+            <span className='font-bold'>{` ${minOrderValue} €`}</span>
         </div>
     )
 }

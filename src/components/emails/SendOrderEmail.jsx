@@ -25,6 +25,7 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
 
     const [state, setState] = useState({
         visible: false,
+        editEmail: false,
         email: '',
         subject: '',
         message: '',
@@ -104,8 +105,8 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
                 <div className="flex flex-column gap-2">
                     <label className='font-bold' htmlFor="username">Προς:</label>
                     <div className='flex'>
-                    <InputText className='w-full mr-2' value={state.email} disabled={true}  />
-                    <Button icon="pi pi-pencil" severity='secondary' onClick={(e) => setState(prev => ({...prev, email: e.target.value}))}/>
+                    <InputText className='w-full mr-2' value={state.email} onChange={(e) => setState(prev => ({...prev, email: e.target.value}))} disabled={true}  />
+                    <Button icon="pi pi-pencil" severity='secondary' onClick={() => setState(prev => ({...prev, editEmail: !prev.editEmail}))}/>
                     </div>
                    
                 </div>

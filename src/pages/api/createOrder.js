@@ -246,11 +246,10 @@ export default async function handler(req, res) {
     }
 
     if(action === "findCompleted") {
-        const { mtrmark } = req.body;
+        const { TRDR } = req.body;
         try {
             await connectMongo();
-            let complete = await CompletedOrders.find({MTRMARK: mtrmark}).sort({ createdAt: -1 })
-            console.log(complete)
+            let complete = await CompletedOrders.find({TRDR: TRDR}).sort({ createdAt: -1 })
             return res.status(200).json({ success: true, result: complete })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -266,11 +265,8 @@ export default async function handler(req, res) {
         }
         try {
             let find = await PendingOrders.findOne({ TRDR:TRDR });
-            
+            let nextcode = find.orderNumber;
             const products = find.products;
-          
-            const orderNumber = find?.orderNumber;
-          
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
                 const QTY1 = parseInt(item.QTY1);
@@ -282,19 +278,7 @@ export default async function handler(req, res) {
             if(!PURDOC) {
                 return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
             }
-            console.log(PURDOC)
-
-            const generateNextCode = async () => {
-                const lastDoc = await CompletedOrders.find().sort({ orderNumber: -1 }).limit(1).exec();
-                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-                return lastCode + 10;
-
-            };
             
-
-
-            let nextCode = await generateNextCode()
-            console.log(nextCode)
             let obj = {
                 supplierName: find?.supplierName,
                 supplierEmail: email,
@@ -302,13 +286,11 @@ export default async function handler(req, res) {
                 products: products,
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
-                orderNumber: nextCode,
+                orderNumber: nextcode,
                
             }
-            console.log(obj)
-            // let create = await CompletedOrders.create(obj);
-            // console.log('create')
-            // console.log(create)
+            let create = await CompletedOrders.create(obj);
+           
             
             const _products = products.map((item, index) => {
                 return {
@@ -318,17 +300,16 @@ export default async function handler(req, res) {
                     TOTAL_COST: item.TOTAL_COST
                 }
             })
-        console.log(_products)
+            console.log(_products)
             let csv = await createCSVfile(_products)
-            console.log(csv)
             let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
             console.log(send)
-            // if(PURDOC) {
-            //    let deletePending = await PendingOrders.deleteOne({ MTRMARK: mtrmark });
-            //    console.log(deletePending)
+            if(PURDOC) {
+               let deletePending = await PendingOrders.deleteOne({ TRDR: TRDR });
+               console.log(deletePending)
 
-            // }
-            // return res.status(200).json({ success: true, result: create })
+            }
+            return res.status(200).json({ success: true, result: create, send: send })
 
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
