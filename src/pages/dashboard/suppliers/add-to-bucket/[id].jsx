@@ -25,12 +25,7 @@ const Page = () => {
 
 
 
-  useEffect(() => {
-    if(!id) {
-      router.push('/dashboard/suppliers')
-    }
 
-  }, [id])
   const handleFinalSubmit = async () => {
     let { data } = await axios.post('/api/createOrder', {
       action: 'updateBucket',

@@ -198,7 +198,7 @@ export default function Page() {
 
     const newOrder = async (supplier) => {
         dispatch(setSelectedSupplier(supplier))
-        router.push('/dashboard/supplierOrder/chooseProducts')
+        router.push(`/dashboard/suppliers/chooseProducts/${supplier.TRDR}/${supplier.NAME}/${supplier.EMAIL}}`)
     }
     const ActionTemplate = (rowData) => {
         const op = useRef(null);
@@ -224,6 +224,23 @@ export default function Page() {
             </div>
         )
     }
+    const ShowOffers = ({ ORDERSTATUS, NAME, TRDR }) => {
+        
+        const handleClick = () => {
+            router.push(`/dashboard/suppliers/order/${TRDR}`)
+        }
+        if (ORDERSTATUS) {
+            return (
+                <div className='flex cursor-pointer align-items-center justify-content-center p-0' onClick={handleClick}>
+                    <div className={`bg-green-600  border-round mr-1 mt-1 `} style={{ width: '4px', height: '4px' }}></div>
+                    <span className='font-xm text-600' style={{fontSize: '10px'}}>OFFERS</span>
+
+                </div>
+            )
+        }
+        
+
+    }
 
     return (
         <AdminLayout >
@@ -247,8 +264,7 @@ export default function Page() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} style={{width: '50px'}}></Column>
-                <Column body={Offers} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
-                {/* <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column> */}
+                <Column body={ShowOffers} header="Order Status" style={{minWidth: '70px'}}></Column>
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>

@@ -63,8 +63,6 @@ const supplierSchema = new mongoose.Schema({
         type: String,
     },
     updatedFrom: String,
-    minOrderValue: Number,
-    orderCompletionValue: Number,
     ORDERSTATUS: Boolean,
   },
   {

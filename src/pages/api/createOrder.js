@@ -130,12 +130,11 @@ export default async function handler(req, res) {
             let insert = await PendingOrders.create(obj)
             console.log('insert')
             console.log(insert)
-            // let update = await Supplier.updateOne({ TRDR: TRDR }, {
-            //     $set: {
-            //         minOrderValue: minOrderValue,
-            //         orderCompletionValue: completion,
-            //     }
-            // })
+            await Supplier.updateOne({ TRDR: TRDR }, {
+                $set: {
+                  ORDERSTATUS: true,
+                }
+            })
           
             return res.status(200).json({ success: true, result: insert})
         } catch (e) {
@@ -272,7 +271,6 @@ export default async function handler(req, res) {
                 const QTY1 = parseInt(item.QTY1);
                 return { MTRL, QTY1 };
             });
-            console.log(mtrlArr)
 
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
             if(!PURDOC) {
@@ -303,12 +301,15 @@ export default async function handler(req, res) {
             console.log(_products)
             let csv = await createCSVfile(_products)
             let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
-            console.log(send)
             if(PURDOC) {
-               let deletePending = await PendingOrders.deleteOne({ TRDR: TRDR });
-               console.log(deletePending)
+                await PendingOrders.deleteOne({ TRDR: TRDR });
 
             }
+            await Supplier.updateOne({ TRDR: TRDR }, {
+                $set: {
+                  ORDERSTATUS: false,
+                }
+            })
             return res.status(200).json({ success: true, result: create, send: send })
 
         } catch (e) {

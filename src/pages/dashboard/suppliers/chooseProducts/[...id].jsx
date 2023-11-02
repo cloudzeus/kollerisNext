@@ -18,22 +18,20 @@ const ChooseProducts = () => {
   const router = useRouter()
   const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
-  console.log('selected Supplier')
-  console.log(selectedSupplier)
+  const {id} = router.query
+  let TRDR = id[0];
+  let NAME = id[1];
+  let EMAIL = id[2];
 
   useEffect(() => {
     dispatch(setSelectedProducts([]))
-    if(!selectedSupplier) {
-      router.push('/dashboard/suppliers')
-    }
+    // if(!selectedSupplier) {
+    //   router.push('/dashboard/suppliers')
+    // }
   }, [selectedSupplier])
 
 
 
-
-  useEffect(() => {
-    console.log( mtrLines)
-  }, [mtrLines])
 
 
 
@@ -43,12 +41,12 @@ const ChooseProducts = () => {
     let { data } = await axios.post('/api/createOrder', {
       action: 'createBucket',
       products: mtrLines,
-      email: selectedSupplier?.EMAIL,
-      TRDR: selectedSupplier?.TRDR,
-      NAME: selectedSupplier?.NAME,
+      email: EMAIL,
+      TRDR: TRDR,
+      NAME: NAME,
       minOrderValue: selectedSupplier?.minOrderValue,
     })
-    router.push(`/dashboard/suppliers/order/${selectedSupplier?.TRDR}`)
+    router.push(`/dashboard/suppliers/order/${TRDR}`)
   }
   return (
     <AdminLayout>
@@ -58,7 +56,7 @@ const ChooseProducts = () => {
       {selectedProducts.length !== 0 ? (
          <div className='mt-3'>
           <StepHeader text="Επιλεγμένα Προϊόντα" />
-     <SelectedProducts />
+     <SelectedProducts  />
           <div className='mt-3 flex align-items-center'>
             <Button className='mr-3' severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
          <SoftoneStatusButton btnText="Επόμενο" onClick={handleFinalSubmit}/>
