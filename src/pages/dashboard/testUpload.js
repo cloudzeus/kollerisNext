@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { set } from 'mongoose';
 import React, { useState } from 'react'
 
 const TestUpload = () => {
@@ -6,29 +7,27 @@ const TestUpload = () => {
     const [binaryData, setBinaryData] = useState(null)
     const onUpload = async (event) => {
         const selectedFile = event.target.files[0];
-        // setFile(selectedFile);
-        console.log(selectedFile)
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              const binaryData = event.target.result;
-              // At this point, 'binaryData' contains the raw binary data of the selected file.
-              console.log('Raw Binary Data:', binaryData);
-                setBinaryData(binaryData)
-              // You can now send, manipulate, or process 'binaryData' as needed.
-            };
-        
-            reader.readAsArrayBuffer(selectedFile);
+          async function getBinaryFromFile(file) {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader()
+              reader.addEventListener('load', () => resolve(reader.result))
+              reader.addEventListener('error', (err) => reject(err))
+              reader.readAsArrayBuffer(file);
+            })
           }
+        
+          const binary = await getBinaryFromFile(selectedFile)
+          setBinaryData(binary)
+          console.log(binary)
+          
 
     }
 
     const onSubmit = async (event) => {
-     
-        const response = await fetch('/api/storageZone', {
-            method: 'POST',
+        const response = await axios.post('/api/storageZone', {
             body: binaryData,
         });
+        console.log(response )
     }
     return (
         <div className='p-2'>
