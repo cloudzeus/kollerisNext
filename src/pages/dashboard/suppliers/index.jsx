@@ -246,6 +246,7 @@ export default function Page() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
+                <Column body={Offers} bodyStyle={{textAlign: 'center'}} style={{width: '50px'}}></Column>
                 {/* <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} style={{width: '40px'}}></Column> */}
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
@@ -282,7 +283,18 @@ export default function Page() {
 
 
 
-
+const Offers = (rowData) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(setSelectedSupplier(rowData))
+    }, [])
+    const router = useRouter()
+    return (
+        <div>
+            <Button icon="pi pi-tag" onClick={() => router.push(`/dashboard/suppliers/order/${rowData.TRDR}`)} />
+        </div>
+    )
+}
 
 
 

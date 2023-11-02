@@ -33,7 +33,7 @@ const SoftoneStatusButton = ({onClick, btnText}) => {
         if(result.length === 0) {
             onClick()
         }
-       
+        setLoading(false)
     }
     
     const accept = () => {

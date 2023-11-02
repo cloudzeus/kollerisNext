@@ -68,10 +68,8 @@ const Page = () => {
                  <StepHeader text="Επιλεγμένα Προϊόντα" />
                  </div>
                  <SelectedProducts />
-                 {/* <Button loading={loading} onClick={onClick} className='mt-4' label="Ολοκλήρωση" color="primary" /> */}
                  <div className='mt-3'>
                  < SoftoneStatusButton onClick={onClick} btnText="Ολοκλήρωση" />
-
                  </div>
                </>
             ) : null}

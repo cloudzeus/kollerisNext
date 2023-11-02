@@ -16,15 +16,16 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { selectedMarkes, inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
+  const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
   console.log(selectedSupplier)
 
   useEffect(() => {
+    dispatch(setSelectedProducts([]))
     if(!selectedSupplier) {
       router.push('/dashboard/suppliers')
     }
-  }, [])
+  }, [selectedSupplier])
 
 
 
@@ -36,7 +37,7 @@ const ChooseProducts = () => {
 
 
  
-
+console.log(selectedProducts)
 
   const handleFinalSubmit = async () => {
     let { data } = await axios.post('/api/createOrder', {
@@ -45,11 +46,9 @@ const ChooseProducts = () => {
       email: inputEmail,
       TRDR: selectedSupplier?.TRDR,
       NAME: selectedSupplier?.NAME,
-      MTRMARK: selectedMarkes.mtrmark,
-      minItems: selectedMarkes.minItemsOrder,
-      minValue: selectedMarkes.minValueOrder
+      minItems: selectedSupplier?.minOrderValue,
     })
-    router.push('/dashboard/product/brands')
+    // router.push('/dashboard/suppliers')
   }
   return (
     <AdminLayout>
@@ -62,7 +61,7 @@ const ChooseProducts = () => {
      <SelectedProducts />
           <div className='mt-3 flex align-items-center'>
             <Button className='mr-3' severity='success' icon="pi pi-arrow-left" onClick={() => router.back()} />
-         <SoftoneStatusButton onClick={handleFinalSubmit}/>
+         <SoftoneStatusButton btnText="Επόμενο" onClick={handleFinalSubmit}/>
 
           </div>
        </div>

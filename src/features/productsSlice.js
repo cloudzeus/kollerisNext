@@ -4,6 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     selectedProducts: [],
     mtrLines: [],
+    orderLines: [],
     loading: false,
     sort: 0,
     sortPrice: 0,
@@ -67,6 +68,7 @@ const productsSlice = createSlice({
 				return item;
 			});
 		},
+	
 		setFilters: (state, {payload}) => {
             switch(payload.action) {
                 case "category": 

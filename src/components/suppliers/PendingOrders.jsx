@@ -14,90 +14,11 @@ import axios from 'axios'
 import StepHeader from '../multiOffer/StepHeader';
 import { useRouter } from 'next/router';
 import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
+import { setSelectedProducts } from '@/features/productsSlice';
 import { ProgressBar } from 'primereact/progressbar';
-import CompletedOrder from './CompletedOrder';
-
-const GridExpansionTemplate = ({ data, setSubmitted }) => {
-    
-    let mtrmark = data?.softOne.MTRMARK
-    let newArray = []
-    for (let image of data.photosPromoList) {
-        newArray.push(image.photosPromoUrl)
-    }
-
-    return (
-        < >
-            <div className="card p-20">
-                <TabView>
-                    <TabPanel header="Παραγγελίες">
-                        <OrdersTable mtrmark={mtrmark} rowData={data} setSubmitted={setSubmitted} />
-                    </TabPanel>
-                    <TabPanel header="Ολοκληρ. Παραγγελίες">
-                        <CompletedOrder mtrmark={mtrmark} rowData={data} />
-                    </TabPanel>
-                    <TabPanel header="Φωτογραφίες">
-                        <Gallery images={newArray} />
-                    </TabPanel>
-                    <TabPanel header="Βίντεο">
-                        < DisabledDisplay  >
-                            {data?.videoPromoList?.map((video, index) => {
-                                return (
-                                    <UrlInput
-                                        key={index}
-                                        label={video.name}
-                                        value={video.videoUrl}
-                                    />
-                                )
-                            })}
-                        </ DisabledDisplay  >
-
-                    </TabPanel>
-                    <TabPanel header="Λεπτομέριες">
-                        < DisabledDisplay  >
-                            <div className="disabled-card">
-                                <label>
-                                    Περιγραφή
-                                </label>
-                                <InputTextarea autoResize disabled value={data.description} />
-                            </div>
-                            <div className="disabled-card">
-                                <label>
-                                    Pim Username
-                                </label>
-                                <InputText disabled value={data?.pimAccess?.pimUserName} />
-                            </div>
-                            <UrlInput
-                                label={'URL Iστοσελίδας'}
-                                value={data.webSiteUrl}
-                            />
-                            <UrlInput
-                                label={'URL Ιnstagram'}
-                                value={data.instagramUrl}
-                            />
-                            <UrlInput
-                                label={'URL Facebook'}
-                                value={data.facebookUrl}
-                            />
-                            <UrlInput
-                                label={'URL Pim'}
-                                value={data?.pimAccess?.pimUrl}
-                            />
 
 
-                        </DisabledDisplay>
-
-                    </TabPanel>
-                </TabView>
-            </div>
-        </ >
-    );
-}
-
-
-
-const OrdersTable = ({ mtrmark, rowData}) => {
-  
-   
+const PendingOrders = ({id}) => {
     const [data, setData] = useState([])
     const dispatch = useDispatch()
     const router = useRouter();
@@ -115,24 +36,9 @@ const OrdersTable = ({ mtrmark, rowData}) => {
 
     const handleFetch = async () => {
         setLoading(true)
-        let { data } = await axios.post('/api/createOrder', { action: 'findPending', mtrmark: mtrmark })
+        let { data } = await axios.post('/api/createOrder', { action: 'findPending', TRDR: id})
+        console.log(data.result)
         setData(data.result)
-        dispatch(setSelectedSupplier({
-            NAME: data.result[0]?.NAME,
-            supplierEmail: data.result[0]?.supplierEmail,
-        }))
-
-        dispatch(setSelectedMarkes({
-            NAME: rowData?.softOne?.NAME,
-            mtrmark: mtrmark,
-            minItemsOrder: rowData?.minItemsOrder,
-            minValueOrder: rowData?.minValueOrder,
-
-        }))
-        setMinvalues({
-            minValue: data.minValue,
-            minItem: data.minItem,
-        })
         setLoading(false)
     }
 
@@ -142,10 +48,12 @@ const OrdersTable = ({ mtrmark, rowData}) => {
 
 
 
+    const Actions = () => {
+        return <ActionsTemplate  setRefetch={setRefetch} />
+    }
 
-
-    const RowExpansionTemplate = ({ products, NAME, supplierEmail, MTRMARK }) => {
-        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail}  MTRMARK={MTRMARK}/>
+    const RowExpansionTemplate = ({ products, NAME, supplierEmail }) => {
+        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail}  />
     }
 
 
@@ -181,13 +89,17 @@ const OrdersTable = ({ mtrmark, rowData}) => {
 
         )
     }
-    const Actions = ({MTRMARK}) => {
-        return <ActionsTemplate MTRMARK={MTRMARK} setRefetch={setRefetch} />
+    // const Actions = ({MTRMARK}) => {
+    //     return <ActionsTemplate  setRefetch={setRefetch} />
+    // }
+
+    const onNewOrder = () => {
+        dispatch(setSelectedProducts([]))
+        router.push('/dashboard/supplierOrder/supplier')
     }
     return (
         <div className='mt-4 mb-5'>
-            <StepHeader text="Παραγγελίες σε προμηθευτές" />
-            {data.length > 0 ? (
+            <StepHeader text="Παραγγελίες εν ενεργεία" />
                 <DataTable
                 loading={loading}
                 expandedRows={expandedRows}
@@ -198,48 +110,48 @@ const OrdersTable = ({ mtrmark, rowData}) => {
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
-                <Column header="Όνομα προμηθευτή" field="NAME"></Column>
-                <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }} body={CompletionTemplate}></Column>
-                <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} body={PriceTemplate}></Column>
+                <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
+                <Column header="Email" field="supplierEmail"></Column>
+                <Column header="Min Order" field="minOrderValue"></Column>
+                <Column header="Ποσοστο Ολοκλ." field="TOTAL_PRICE" style={{ width: "140px" }}></Column>
+                <Column header="Συν.Τιμή" field="TOTAL_PRICE" style={{ width: "200px" }} ></Column>
                 <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
             </DataTable>
-            ) : (
-                <Button label="Νέα Παραγγελία" severity='secondary' onClick={() => router.push('/dashboard/supplierOrder/supplier')}/>
-            )}
+           
             
         </div>
     )
 }
 
-const ActionsTemplate = ({MTRMARK, setRefetch}) => {
+const ActionsTemplate = ({ setRefetch}) => {
     const { orderReady, mtrLines } = useSelector(state => state.supplierOrder)
-
+    const [loading, setLoading] = useState(false)
+  
+  
     const submitOrder = async () => {
-        
+        setLoading(true)
         let { data } = await axios.post('/api/createOrder', { 
             action: 'submitOrder', 
             products: mtrLines,
-            mtrmark: MTRMARK,
         })
+        setLoading(false)
         setRefetch(prev => !prev)
-      
     }
     return (
-        <div className=''>
-
-            <Button onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
+        <div>
+            <Button loading={loading} onClick={submitOrder} size="small" disabled={!orderReady} icon="pi pi-angle-right" className="p-button-sm p-button-success mr-2" />
         </div>
     )
 }
 
-const RowExpansionGrid = ({ products, MTRMARK}) => {
+const RowExpansionGrid = ({ products}) => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
 
 
     const onAddMore = () => {
-        console.log(MTRMARK)
-        setSelectedMarkes(MTRMARK)
+        dispatch(setSelectedProducts([]))
         router.push('/dashboard/supplierOrder/addMore')
     }
 
@@ -295,4 +207,4 @@ const TotalTemplate = ({ TOTAL_PRICE }) => {
 
 
 
-export default GridExpansionTemplate
+export default PendingOrders;

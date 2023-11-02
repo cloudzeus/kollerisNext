@@ -8,7 +8,6 @@ const completedOrderSchema = new mongoose.Schema({
         unique: true,
         default: 10000,
     },
-    MTRMARK: Number,
     supplierName: String,
     TRDR: String,
     NAME: String,

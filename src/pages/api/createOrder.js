@@ -78,86 +78,12 @@ export default async function handler(req, res) {
         }
     }
 
-    // if (action === "fetchProducts") {
-    //     const { skip, limit, searchTerm, mtrmark } = req.body;
-    //     console.log('FETCH PRODUCTS')
-    //     try {
-    //         await connectMongo();
-    //         let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-    //         let totalRecords;
-    //         let pipeline = [
-    //             {
-    //                 $match: {
-    //                     MTRMARK: parseInt(mtrmark) // Filtering documents by MTRMARK
-    //                 }
-    //             },
-    //             {
-    //                 $lookup: {
-    //                     from: "markes",
-    //                     localField: "MTRMARK",
-    //                     foreignField: "softOne.MTRMARK",
-    //                     as: "matched_mark"  // Output alias for matched documents from MARKES
-    //                 }
-    //             },
-    //             {
-    //                 $unwind: "$matched_mark"
-    //             },
-    //             {
-    //                 $project: {
-    //                     _id: 0,
-    //                     NAME: 1,
-    //                     PRICER: 1,
-    //                     MTRL: 1,
-    //                     CATEGORY_NAME: 1,
-    //                     GROUP_NAME: 1,
-    //                     SUBGROUP_NAME: 1,
-    //                     "brandName": "$matched_mark.softOne.NAME",
-    //                     "mtrmark": "$matched_mark.softOne.MTRMARK",
-    //                     "minValue": "$matched_mark.minValueOrder",
-    //                     "minItems": "$matched_mark.minItemsOrder",
-    //                 }
-    //             },
-    //             {
-    //                 $skip: skip  // Skip the first 10 documents
-    //             },
-    //             {
-    //                 $limit: limit // Limit the result to 10 documents
-    //             }
-    //         ]
-
-
-    //         if (searchTerm) {
-    //             totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
-    //             pipeline.unshift({
-    //                 $match: { NAME: regexSearchTerm }
-    //             });
-    //         } else {
-    //             totalRecords = await SoftoneProduct.countDocuments({});
-    //         }
-
-    //         let products = await SoftoneProduct.aggregate(pipeline)
-    //         return res.status(200).json({ success: true, result: products, totalRecords: totalRecords })
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-    // }
-
-    // if (action === 'fetchMarkes') {
-    //     console.log('fetch markes')
-    //     try {
-    //         await connectMongo();
-    //         let markes = await Markes.find({}).select({ "softOne.NAME": 1, "softOne.MTRMARK": 1, _id: 0 })
-    //         return res.status(200).json({ success: true, result: markes })
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-    // }
-
+    
    
 
     if (action === "createBucket") {
 
-        const { products, email, TRDR, NAME, MTRMARK, minItems, minValue } = req.body;
+        const { products, email, TRDR, NAME, minValue } = req.body;
        
         try {
             await connectMongo();
@@ -168,15 +94,12 @@ export default async function handler(req, res) {
 
             };
             let orderNumber = await generateNextCode();
-            console.log(orderNumber )
             let obj = {
                 supplierName: NAME,
                 supplierEmail: email,
                 status: "pending",
                 products: products,
                 TRDR: TRDR,
-                MTRMARK: MTRMARK,
-                minItems: minItems,
                 minValue: minValue,
             }
             console.log(obj)
@@ -250,15 +173,13 @@ export default async function handler(req, res) {
 
 
     if (action === 'findPending') {
-        const { mtrmark } = req.body;
-        console.log(mtrmark)
+        const { TRDR } = req.body;
+        console.log(TRDR)
         try {
             await connectMongo();
-            const orders = await PendingOrders.find({MTRMARK: mtrmark}).sort({ createdAt: -1 })
-            const minvalues = await Markes.findOne({ "softOne.MTRMARK": mtrmark }).select({ minValueOrder: 1, minItemsOrder: 1, _id: 0 })
-            let minValue = minvalues.minValueOrder;
-            let minItem = minvalues.minItemsOrder;
-            return res.status(200).json({ success: true, result: orders, minValue: minValue, minItem: minItem })
+            const order = await PendingOrders.find({TRDR: TRDR})
+            console.log(order)
+            return res.status(200).json({ success: true, result: order})
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }

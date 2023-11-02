@@ -8,8 +8,6 @@ const pendingOrderSchema = new mongoose.Schema({
         unique: true,
         default: 10000,
     },
-    MTRMARK: Number,
-    minItems: Number,
     minValue: Number,
     supplierName: String,
     supplierEmail: String,
