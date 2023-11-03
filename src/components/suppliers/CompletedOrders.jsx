@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
@@ -8,6 +8,10 @@ import { Dropdown } from 'primereact/dropdown'
 import StepHeader from '../multiOffer/StepHeader';
 import { Tag } from 'primereact/tag'
 import CreatedAt from '@/components/grid/CreatedAt'
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { Toast } from 'primereact/toast';
+import { Button } from 'primereact/button'
+
 
 const CompletedOrders = ({ id }) => {
     const [data, setData] = useState(false)
@@ -15,6 +19,7 @@ const CompletedOrders = ({ id }) => {
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false) 
     const [expandedRows, setExpandedRows] = useState(null);
+    const [sortOffers, setSortOffers] = useState(0)
     const handleFetch = async () => {
             const {data} = await axios.post('/api/createOrder', {action: "findCompleted", TRDR: id})
             setData(data.result)
@@ -64,6 +69,21 @@ const CompletedOrders = ({ id }) => {
         let { data } = await axios.post('/api/createOrder', { action: 'updateStatus', status: newData.status, id: newData._id })
         setRefetch(prev => !prev)
     };
+
+
+    const Actions = ({_id}) => {
+        const handleClick = (e) => {
+            console.log(_id)
+            axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id})
+            setRefetch(prev => !prev)
+        }
+        return (
+            <div>
+                <i className="pi pi-trash pointer" style={{ fontSize: '1.1rem', color: 'red' }} onClick={handleClick}></i>
+            </div>
+        )
+    }
+
     return (
         <div>
                <div className='mt-4 mb-5'>
@@ -77,6 +97,7 @@ const CompletedOrders = ({ id }) => {
                  onRowEditComplete={onRowEditComplete}
                  value={data}
                  editMode="row"
+                 showGridlines
              >
                  <Column expander={allowExpansion} style={{ width: '5rem' }} />
                  <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
@@ -85,6 +106,8 @@ const CompletedOrders = ({ id }) => {
                  <Column header="Ημερομηνία" body={CreatedAt} field="createdAt"></Column>
                  <Column header="Status" style={{ width: '120px' }} field="status" body={Status} editor={(options) => statusEditor(options)}></Column>
                  <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                 <Column header="Aποστολή" body={Actions} style={{ width: "90px" }} bodyStyle={{ textAlign: 'center' }}></Column>
+
              </DataTable>
             ) : (
                 <div className='p-4 bg-white border-round'>

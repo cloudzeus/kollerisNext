@@ -107,6 +107,8 @@ const PendingOrders = ({ id }) => {
                   rowExpansionTemplate={RowExpansionTemplate}
                   value={data}
                   editMode="row"
+                  showGridlines
+
               >
                   <Column expander={allowExpansion} style={{ width: '5rem' }} />
                   <Column header="Αρ. παραγγελίας" style={{ width: '150px' }} field="orderNumber"></Column>

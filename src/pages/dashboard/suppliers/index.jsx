@@ -31,7 +31,7 @@ export default function Page() {
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [sortOffers, setSortOffers] = useState(0)
+    const [sortOffers, setSortOffers] = useState(1)
     const [searchTerm, setSearchTerm] = useState({
         name: '',
         afm: '',
@@ -63,6 +63,7 @@ export default function Page() {
             skip: lazyState.first,
             limit: lazyState.rows,
             searchTerm: searchTerm,
+            sortOffers: sortOffers,
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
@@ -167,7 +168,26 @@ export default function Page() {
         )
     }
 
-
+    const FilterOffers = () => {
+       const onSort = () => {
+        setSortOffers(prev => {
+            if(prev === 0) return 1;
+            if(prev === 1) return -1;
+            if(prev === -1) return 0;
+        })
+       }
+       console.log(sortOffers)
+        
+        return (
+            <div>
+                  <div className='ml-3'>
+                    {sortOffers === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+                    {sortOffers === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+                    {sortOffers === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+                </div>
+            </div>
+        )
+    }
    
     //EDIT TEMPALTE AND HANDLER
     const editProduct = async (product) => {
@@ -244,7 +264,7 @@ export default function Page() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} style={{width: '50px'}}></Column>
-                <Column body={ShowOffers} header="Order Status" style={{minWidth: '70px'}}></Column>
+                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} header="Order Status" style={{minWidth: '70px'}}></Column>
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>

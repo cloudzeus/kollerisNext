@@ -88,16 +88,16 @@ export default async function handler(req, res) {
         return parseFloat(total);
     }
 
-  
+
 
     if (action === "createBucket") {
-        const { products, email, TRDR, NAME, minOrderValue} = req.body;
+        const { products, email, TRDR, NAME, minOrderValue } = req.body;
         console.log(TRDR)
         //First time we create the order to the suppliers. 
         //So we create an id based on the last completed order and increment it by 10
         //Min order value is a fixed mumber that we get from the suppliers
         //First time we create the order the order completion value is 0 and we just add the sum, the rest of the proccess will happen when we add more products to the order
-      
+
         try {
             await connectMongo();
             const generateNextCode = async () => {
@@ -105,13 +105,13 @@ export default async function handler(req, res) {
                 const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
                 return lastCode + 10;
             };
-        
+
             //CHECK IF THERE IS ALREADY AN ORDER WITH THIS TRDR
             let find = await PendingOrders.findOne({ TRDR: TRDR });
             console.log('find')
             console.log(find)
-            if(find) {
-                return res.status(200).json({success: false, result: "Υπάρχει ήδη ενεργή παραγγελία στον προμηθευτή"})
+            if (find) {
+                return res.status(200).json({ success: false, result: "Υπάρχει ήδη ενεργή παραγγελία στον προμηθευτή" })
             }
             console.log('next')
             let completion = calculateCompletion(products);
@@ -126,35 +126,35 @@ export default async function handler(req, res) {
                 orderCompletionValue: completion,
             }
             console.log(obj)
-          
+
             let insert = await PendingOrders.create(obj)
             console.log('insert')
             console.log(insert)
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
-                  ORDERSTATUS: true,
+                    ORDERSTATUS: true,
                 }
             })
-          
-            return res.status(200).json({ success: true, result: insert})
+
+            return res.status(200).json({ success: true, result: insert })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
 
-      
+
     }
-    
+
 
 
     if (action === 'updateBucket') {
         const { products, TRDR } = req.body;
-       
+
         try {
             await connectMongo();
-            let find = await PendingOrders.findOne({ TRDR: TRDR})
+            let find = await PendingOrders.findOne({ TRDR: TRDR })
             //find products in the database with this TRDR
             let dbproducts = find?.products;
-            let newordercompletion =  find.orderCompletionValue + calculateCompletion(products);
+            let newordercompletion = find.orderCompletionValue + calculateCompletion(products);
             //loop through the products that are sent from the client
             // find those that already exist in the holder and update the quanityt and prices
             // push those that do not exist
@@ -168,12 +168,12 @@ export default async function handler(req, res) {
             }
 
             await PendingOrders.updateOne(
-                {TRDR: TRDR}, 
+                { TRDR: TRDR },
                 {
-                $set: {
-                     orderCompletionValue: newordercompletion
-                }
-            })
+                    $set: {
+                        orderCompletionValue: newordercompletion
+                    }
+                })
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
                     orderCompletionValue: newordercompletion
@@ -202,7 +202,7 @@ export default async function handler(req, res) {
                             products: item
                         }
                     })
-               
+
             }
 
             return res.status(200).json({ success: true })
@@ -216,39 +216,27 @@ export default async function handler(req, res) {
 
 
     }
-   
+
 
 
     if (action === 'findPending') {
         const { TRDR } = req.body;
         try {
             await connectMongo();
-            const order = await PendingOrders.find({TRDR: TRDR})
+            const order = await PendingOrders.find({ TRDR: TRDR })
             console.log(order)
-            return res.status(200).json({ success: true, result: order})
+            return res.status(200).json({ success: true, result: order })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
     }
-    if (action === "findOnePending") {
-        const { mtrmark } = req.body;
-        try {
-            await connectMongo();
-            const orders = await PendingOrders.countDocuments({ MTRMARK: mtrmark });
-            console.log(orders)
-            return res.status(200).json({ success: true, result: orders })
 
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
 
-    }
-
-    if(action === "findCompleted") {
+    if (action === "findCompleted") {
         const { TRDR } = req.body;
         try {
             await connectMongo();
-            let complete = await CompletedOrders.find({TRDR: TRDR}).sort({ createdAt: -1 })
+            let complete = await CompletedOrders.find({ TRDR: TRDR }).sort({ createdAt: -1 })
             return res.status(200).json({ success: true, result: complete })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -257,13 +245,13 @@ export default async function handler(req, res) {
 
 
     if (action === "submitOrder") {
-        const { TRDR, products, cc,  subject, message, fileName, includeFile, name, email, createdAt } = req.body;
+        const { TRDR, products, cc, subject, message, fileName, includeFile, name, email, createdAt } = req.body;
         let newcc = []
         for (let item of cc) {
             newcc.push(item.email)
         }
         try {
-            let find = await PendingOrders.findOne({ TRDR:TRDR });
+            let find = await PendingOrders.findOne({ TRDR: TRDR });
             let nextcode = find.orderNumber;
             const products = find.products;
             const mtrlArr = products.map(item => {
@@ -273,23 +261,23 @@ export default async function handler(req, res) {
             });
 
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
-            if(!PURDOC) {
+            if (!PURDOC) {
                 return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
             }
-            
+
             let obj = {
                 supplierName: find?.supplierName,
                 supplierEmail: email,
-                status: "pending",
+                status: "sent",
                 products: products,
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
                 orderNumber: nextcode,
-               
+
             }
             let create = await CompletedOrders.create(obj);
-           
-            
+
+
             const _products = products.map((item, index) => {
                 return {
                     PRODUCT_NAME: item.NAME,
@@ -301,13 +289,13 @@ export default async function handler(req, res) {
             console.log(_products)
             let csv = await createCSVfile(_products)
             let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
-            if(PURDOC) {
+            if (PURDOC) {
                 await PendingOrders.deleteOne({ TRDR: TRDR });
 
             }
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
-                  ORDERSTATUS: false,
+                    ORDERSTATUS: false,
                 }
             })
             return res.status(200).json({ success: true, result: create, send: send })
@@ -317,9 +305,20 @@ export default async function handler(req, res) {
         }
 
     }
-
+    if (action === "deleteCompletedOrder") {
+        const {id} = req.body;
+        try {
+            await connectMongo();
+            let deleted = await CompletedOrders.deleteOne({_id: id})
+            return res.status(200).json({success: true, result: deleted})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
 
 }
+
+
 
 
 

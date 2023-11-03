@@ -4,97 +4,34 @@ import { connect } from "mongoose";
 export default async function handler(req, res) {
 
     const action = req.body.action;
-    // if (action === 'fetchSuppliers') {
-    //     const { skip, limit } = req.body
-    //     try {
-    //         await connectMongo();
-    //         let totalRecords = await Supplier.countDocuments({});
-    //         let suppliers = await Supplier.find({}).skip(skip).limit(limit)
-
-    //         return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords });
-    //     } catch (e) {
-    //         return res.status(500).json({ success: false, result: null })
-    //     }
-    // }
-
-    // if (action === "searchSupplier") {
-    //     let { skip, limit, searchTerm } = req.body;
-     
-    // }
-
-    // if(action === "search") {
-    //     let { skip, limit, searchTerm } = req.body;
-    //     try {
-    //         await connectMongo();
-    //         let result;
-    //         let totalRecords;
-    
-    //         if(searchTerm.name !== '') {
-    //             let regexSearchTerm = new RegExp(searchTerm.name, 'i');
-    //             totalRecords = await Supplier.countDocuments({ NAME: regexSearchTerm })
-    //             result = await Supplier.find({ NAME: regexSearchTerm }).skip(skip).limit(limit)
-               
-    //         }
-    //         if(searchTerm.email !== '') {
-    //             let regexSearchTerm = new RegExp(searchTerm.email, 'i');
-    //             totalRecords = await Supplier.countDocuments({ EMAIL: regexSearchTerm })
-    //             result = await Supplier.find({ EMAIL: regexSearchTerm }).skip(skip).limit(limit)
-    //         }
-    
-    //         if(searchTerm.phone !== '') {
-    //             let regexSearchTerm = new RegExp(searchTerm.phone, 'i');
-    //             totalRecords = await Supplier.countDocuments({ PHONE01: regexSearchTerm })
-    //             result = await Supplier.find({ PHONE01: regexSearchTerm }).skip(skip).limit(limit)
-    //         }
-    
-    //         return res.status(200).json({ success: true, result: result, totalRecords: totalRecords })
-    //     } catch (e) {
-    //         return res.status(400).json({success: false, result: null})
-    //     }
-    // }
     
     if(action === "fetchAll") {
-        const {skip, limit, searchTerm} = req.body;
+        const {skip, limit, searchTerm, sortOffers} = req.body;
         try {
             await connectMongo();
-            let totalRecords;
-            let suppliers;
-            if(!searchTerm.afm  && !searchTerm.name && !searchTerm.address && !searchTerm.phone01 && !searchTerm.phone02 && !searchTerm.email) {
-                totalRecords = await Supplier.countDocuments({});
-                suppliers = await Supplier.find({}).skip(skip).limit(limit);
+        
+            const filterConditions = {};
+            if (searchTerm.afm) filterConditions.AFM = new RegExp(searchTerm.afm, 'i');
+            if (searchTerm.name) filterConditions.NAME = new RegExp(searchTerm.name, 'i');
+            if (searchTerm.phone01) filterConditions.PHONE01 = new RegExp(searchTerm.phone01, 'i');
+            if (searchTerm.phone02) filterConditions.PHONE02 = new RegExp(searchTerm.phone02, 'i');
+            if (searchTerm.email) filterConditions.EMAIL = new RegExp(searchTerm.email, 'i');
+            if (searchTerm.address) filterConditions.ADDRESS = new RegExp(searchTerm.address, 'i');
+        
+            let query = Supplier.find(filterConditions);
+        
+            if (sortOffers === 1) {
+              query = query.sort({ ORDERSTATUS: 1 });
+            } else if (sortOffers === -1) {
+              query = query.sort({ ORDERSTATUS: -1 });
             }
-            if(searchTerm?.name) {
-                let regexSearchTerm = new RegExp(searchTerm.name, 'i');
-                totalRecords = await Supplier.countDocuments({ NAME: regexSearchTerm });
-                suppliers = await Supplier.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
-            }
-            if(searchTerm?.phone01) {
-                let regexSearchTerm = new RegExp(searchTerm?.phone01, 'i');
-                totalRecords = await Supplier.countDocuments({ PHONE01: regexSearchTerm });
-                suppliers= await Supplier.find({  PHONE01: regexSearchTerm }).skip(skip).limit(limit);
-            }
-            if(searchTerm?.phone02) {
-                let regexSearchTerm = new RegExp(searchTerm?.phone02, 'i');
-                totalRecords = await Supplier.countDocuments({ PHONE02: regexSearchTerm });
-                suppliers = await Supplier.find({  PHONE02: regexSearchTerm }).skip(skip).limit(limit);
-            }
-            if(searchTerm?.afm) {
-                let regexSearchTerm = new RegExp(searchTerm.afm, 'i');
-                totalRecords = await Supplier.countDocuments({ AFM: regexSearchTerm });
-                suppliers = await Supplier.find({ AFM: regexSearchTerm }).skip(skip).limit(limit);
-            }
-            if(searchTerm?.address) {
-                let regexSearchTerm = new RegExp(searchTerm.address, 'i');
-                totalRecords = await Supplier.countDocuments({ ADDRESS: regexSearchTerm });
-                suppliers = await Supplier.find({ ADDRESS: regexSearchTerm }).skip(skip).limit(limit);
-            }
-            if(searchTerm?.email) {
-                let regexSearchTerm = new RegExp(searchTerm.email, 'i');
-                totalRecords = await Supplier.countDocuments({ EMAIL: regexSearchTerm });
-                suppliers = await Supplier.find({ EMAIL: regexSearchTerm }).skip(skip).limit(limit);
-            }
+            let condition = Object.keys(filterConditions).length === 0;
+            const totalRecords = await (condition
+              ? Supplier.countDocuments()
+              : Supplier.countDocuments(filterConditions));
+        
+            const suppliers = await query.skip(skip).limit(limit);
 
-         
             return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords })
         } catch (e) {
             return res.status(400).json({ success: false })
