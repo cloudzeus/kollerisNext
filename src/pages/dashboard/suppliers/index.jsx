@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -16,11 +16,16 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useSelector } from 'react-redux';
 import { setSelectedSupplier } from '@/features/supplierOrderSlice';
+import styled from 'styled-components';
+import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalogSlice';
+import * as XLSX from 'xlsx';
 
 
 export default function Page() {
-    const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder)
+    const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder) 
 
+    const {gridData} = useSelector(state => state.catalog)
+    const fileInputRef = useRef(null);
     const router = useRouter();
     const dispatch = useDispatch();
     const [submitted, setSubmitted] = useState(false);
@@ -31,6 +36,7 @@ export default function Page() {
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [fileLoading, setFileLoading] = useState(false)
     const [sortOffers, setSortOffers] = useState(1)
     const [searchTerm, setSearchTerm] = useState({
         name: '',
@@ -201,6 +207,46 @@ export default function Page() {
         let email = supplier.EMAIL || 'no-email'
         router.push(`/dashboard/suppliers/chooseProducts/${supplier.TRDR}/${supplier.NAME}/${email}/${supplier.minOrderValue}}`)
     }
+
+    const onUploadClick = () => {
+        fileInputRef.current.click()
+    }
+
+    useEffect(() => {
+        if(gridData.length) {
+
+        }
+    }, [gridData])
+
+
+    const handleFileUpload = (e) => {
+        console.log(e)
+        setFileLoading(true)
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(e.target.files[0]);
+        reader.onload = (e) => {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const parsedData = XLSX.utils.sheet_to_json(sheet);
+            dispatch(setGridData(parsedData.slice(0, 5)))
+
+            if (parsedData.length > 0) {
+                const firstRow = parsedData[0];
+                const secondRow = parsedData[1];
+                const value = Object.values(secondRow)[0];
+                const headers = Object.keys(firstRow).map((key) => ({
+                    field: key,
+                }));
+                dispatch(setHeaders(headers))
+                setFileLoading(false)
+                router.push('/dashboard/catalogs/upload-catalog')
+
+            }
+        };
+    };
+
     const ActionTemplate = (rowData) => {
         const op = useRef(null);
 
@@ -211,6 +257,11 @@ export default function Page() {
                     <div className='flex flex-column'>
                     <Button label="Διαμόρφωση Προμηθευτή" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
                     <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
+                    
+            <UploadBtn>
+                <input className="hide" ref={fileInputRef} type="file" onChange={handleFileUpload} />
+                <Button className='w-full' severity='warning' loading={fileLoading} onClick={onUploadClick} label="Ανέβασμα τιμοκατάλογου" icon="pi pi-plus"></Button>
+            </UploadBtn>
                     </div>
                 </OverlayPanel>
         </div>
@@ -313,6 +364,12 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     )
 }
 
+const UploadBtn = styled.div`
+  .hide {
+    display: none;
+  }
+  display: inline-block;
+`;
 
 
 

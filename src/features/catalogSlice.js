@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     gridData: [],
+	data: [],
 	newData: [],
 	headers: [],
 	selectedPriceKey: null,
@@ -33,15 +34,18 @@ const catalogSlice = createSlice({
 		setGridData: (state, {payload}) => {
 			state.gridData = payload;
 		},
+		setData: (state, {payload}) => {
+			state.data = payload;
+		},
 		setNewData: (state, {payload}) => {
 			state.newData = payload;
 		},
 		setCurrentPage: (state, {payload}) => {
 			state.currentPage = payload;
 		},
-        setSelectedMongoKey: (state, {payload}) => {
-			state.selectedMongoKey = payload;
-		},
+        // setSelectedMongoKey: (state, {payload}) => {
+		// 	state.selectedMongoKey = payload;
+		// },
         setHeaders: (state, {payload}) => {
 			state.headers = payload;
 		},
@@ -115,7 +119,8 @@ export const {
 	setSelectedPriceKey,
 	setPricesMultiplier,
 	setNewData,
-	setReturnedProducts
+	setReturnedProducts,
+	setData,
 } = catalogSlice.actions;
 
 export default catalogSlice.reducer;

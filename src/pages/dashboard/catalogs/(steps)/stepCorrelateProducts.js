@@ -64,24 +64,9 @@ const OurDatabaseKeys = [
   
     {
         key: 'ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'ENLISH-DESCRIPTION'
+        value: 'englishDescription'
     },
-    {
-        key: 'ΓΕΡΜΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'GERMAN-DESCRIPTION'
-    },
-    {
-        key: 'ΓΑΛΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'FRENCH-DESCRIPTION'
-    },
-    {
-        key: 'ΙΣΠΑΝΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'SPANISH-DESCRIPTION'
-    },
-    {
-        key: 'ΙΤΑΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'ITALIAN-DESCRIPTION'
-    },
+    
    
 
 ]
@@ -159,7 +144,9 @@ const SelectTemplate = ({ value, text, key }) => {
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
     const [dvalue, setdValue] = useState('')
-
+    console.log(value, text, key)
+    const { selectedMongoKey } = useSelector((state) => state.catalog)
+    
     // useEffect(() => {
     //     dispatch(setSelectedMongoKey(null))
     //     dispatch(setAttribute(null))
