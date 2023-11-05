@@ -13,13 +13,19 @@ import { setGridData, setHeaders, setSelectedPriceKey } from '@/features/catalog
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import { setSelectedMongoKey } from '@/features/catalogSlice';
+import { Toast } from 'primereact/toast';
 
 const Page = () => {
     const [loading, setLoading] = useState(false);
-
     const router = useRouter();
-    const { gridData, headers, data, selectedPriceKey, mongoKeys } = useSelector((state) => state.catalog)
-    console.log( mongoKeys)
+    const toast = useRef(null);
+    const { gridData, headers, mongoKeys } = useSelector((state) => state.catalog)
+    const [isSubmit, setIsSubmit] = useState(false)
+
+
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+    }
 
     const SelectTemplate = ({ field }) => {
         const dispatch = useDispatch()
@@ -33,7 +39,6 @@ const Page = () => {
             }))
 
         }
-
 
         return (
             <div >
@@ -50,24 +55,32 @@ const Page = () => {
         )
     }
 
-    // const Remove = ({ value }) => {
-    //     const dispatch = useDispatch()
-    //     const { selectedHeaders } = useSelector((state) => state.catalog)
-    //     const remove = (e) => {
-
-    //         const filtered = selectedHeaders.filter(item => item.value !== value)
-    //         dispatch(setSelectedHeaders(filtered))
-    //     }
-    //     return (
-    //         <i className="pi pi-trash" style={{ fontSize: '1rem', color: 'red' }} onClick={remove}></i>
-
-    //     )
-    // }
+    useEffect(() => {
+        
+        let nameCondition = mongoKeys.some(key => key.related === 'NAME');
+        let codeCondition = mongoKeys.some(key => key.related === 'CODE');
+        if (nameCondition && codeCondition) {
+            setIsSubmit(true); // Set isSubmit to true if 'name' or 'code' condition is met
+        } else {
+            setIsSubmit(false); // Set isSubmit to false if none of the conditions are met'
+        }
+        console.log(mongoKeys)
+    }, [mongoKeys])
 
 
+    const onSubmit = () => {
+        console.log(isSubmit)
+       if(!isSubmit) {
+        showError('Πρέπει να επιλέξεις στήλη για το όνομα ή τον κωδικό')
+        return;
+
+       }
+        router.push('/dashboard/catalogs/result')
+    }
 
     return (
         <AdminLayout >
+            <Toast ref={toast} />
             <DataTable
                 showGridlines
                 loading={loading}
@@ -80,10 +93,10 @@ const Page = () => {
                 filterDisplay="row"
             >
                 {headers.map((header, index) => (
-                    <Column filterElement={SelectTemplate} showFilterMenu={false} filter key={header.field} field={header.field} header={header.header} />
+                    <Column filterElement={SelectTemplate} showFilterMenu={false} filter key={header.field} field={header.field} header={header.field} />
                 ))}
             </DataTable>
-            <Button label="διαμόρφωση" onClick={() => router.push('/dashboard/catalogs/result')} />
+            <Button label="Διαμόρφωση" onClick={onSubmit} className='mt-2'/>
         </AdminLayout >
     );
 };
@@ -103,7 +116,7 @@ const OurDatabaseKeys = [
         value: 'Κανένα'
     },
     {
-        key: 'name',
+        key: 'NAME',
         value: 'Όνομα'
     },
     {

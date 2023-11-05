@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { model, models, Schema } from 'mongoose';
+import { Catalogs } from './catalogsModle';
+
 
 const supplierSchema = new mongoose.Schema({
     TRDR: {
@@ -64,6 +66,10 @@ const supplierSchema = new mongoose.Schema({
     },
     updatedFrom: String,
     ORDERSTATUS: Boolean,
+    catalog: {
+      type: mongoose.Schema.Types.ObjectId,  // Assuming catalog references the Catalogs model
+      ref: 'Catalogs',  // Reference to the Catalogs model
+  },
   },
   {
     timestamps: true,

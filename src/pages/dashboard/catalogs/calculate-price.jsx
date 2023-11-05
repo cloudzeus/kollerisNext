@@ -25,20 +25,21 @@ const StepCalcPrice = () => {
   const { selectedPriceKey, pricesMultiplier, gridData, newData } = useSelector((state) => state.catalog)
   const dispatch = useDispatch();
     const router = useRouter();
-
+    console.log('selectedPriceKey')
+    console.log(selectedPriceKey)
   useEffect(() => {
     const _newData = gridData.map((item) => {
-      let value = parseInt(item[selectedPriceKey])
-
+      let value = parseFloat(item[selectedPriceKey].toFixed(2))
       if (item.hasOwnProperty(selectedPriceKey) && !isNaN(value)) {
         	
 			function calculateAndRound(a, b) {
-				const result = a * b;
-				return Math.round(result * 100) / 100;
+      
+				const result = a* b;
+				return parseFloat(result.toFixed(2))
 			}
         return {
           ...item,
-          [selectedPriceKey]: item[selectedPriceKey],
+          [selectedPriceKey]: value,
           PRICER: calculateAndRound(value, pricesMultiplier.PRICER),
           PRICEW: calculateAndRound(value, pricesMultiplier.PRICEW),
           PRICER05:calculateAndRound(value, pricesMultiplier.PRICER05),
@@ -59,19 +60,17 @@ const StepCalcPrice = () => {
       {newData ? (
         <DataTable
           showGridlines
-          paginator rows={10} rowsPerPageOptions={[20, 50, 100, 200]}
-          value={newData}
+          value={newData.slice(0, 5)}
           tableStyle={{ minWidth: '50rem' }}>
-          <Column header={'Τιμή αρχείου'} field={selectedPriceKey} />
-          <Column header={'Tιμή Λιανικής'} field={'PRICER'} style={{ width: '200px' }} />
-          <Column header={'Τιμή Χονδρικής'} field={'PRICEW'} style={{ width: '200px' }} />
-          <Column header={'Τιμή Scroutz'} field={'PRICER05'} style={{ width: '200px' }} />
+          <Column header={'Τιμή αρχείου/COST'} field={selectedPriceKey} />
+          <Column header={'Tιμή Λιανικής/PRICER'} field={'PRICER'} style={{ width: '200px' }} />
+          <Column header={'Τιμή Χονδρικής/PRICEW'} field={'PRICEW'} style={{ width: '200px' }} />
+          <Column header={'Τιμή Scroutz/PRICER05'} field={'PRICER05'} style={{ width: '200px' }} />
         </DataTable>
       ) : null}
 
       <div className='mt-3'>
-        <Button label="STEP 1" severity="success" icon="pi pi-arrow-left" onClick={() => dispatch(setCurrentPage(1))} />
-        <Button label="STEP 3" severity="success" icon="pi pi-arrow-right" className='ml-2' onClick={() => {
+        <Button label="Επόμενο" icon="pi pi-arrow-right" className='ml-2' onClick={() => {
             router.push('/dashboard/catalogs/other-keys')
         }} />
       </div>

@@ -219,9 +219,9 @@ export default function Page() {
     }, [gridData])
 
 
-    const handleFileUpload = (e) => {
-        console.log(e)
+    const handleFileUpload = (e, rowData) => {
         setFileLoading(true)
+        dispatch(setSelectedSupplier(rowData))
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = (e) => {
@@ -230,7 +230,7 @@ export default function Page() {
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const parsedData = XLSX.utils.sheet_to_json(sheet);
-            dispatch(setGridData(parsedData.slice(0, 5)))
+            dispatch(setGridData(parsedData))
 
             if (parsedData.length > 0) {
                 const firstRow = parsedData[0];
@@ -259,7 +259,7 @@ export default function Page() {
                     <Button disabled={rowData?.ORDERSTATUS} label="ΝΕΑ Παραγγελία" severity='success' icon="pi pi-plus" className='w-full mb-2' onClick={() => newOrder(rowData)} />
                     
             <UploadBtn>
-                <input className="hide" ref={fileInputRef} type="file" onChange={handleFileUpload} />
+                <input className="hide" ref={fileInputRef} type="file" onChange={(e) => handleFileUpload(e, rowData)} />
                 <Button className='w-full' severity='warning' loading={fileLoading} onClick={onUploadClick} label="Ανέβασμα τιμοκατάλογου" icon="pi pi-plus"></Button>
             </UploadBtn>
                     </div>

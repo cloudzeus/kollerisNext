@@ -43,9 +43,7 @@ const catalogSlice = createSlice({
 		setCurrentPage: (state, {payload}) => {
 			state.currentPage = payload;
 		},
-        // setSelectedMongoKey: (state, {payload}) => {
-		// 	state.selectedMongoKey = payload;
-		// },
+      
         setHeaders: (state, {payload}) => {
 			state.headers = payload;
 		},
@@ -56,9 +54,11 @@ const catalogSlice = createSlice({
 			state.dropdownValue = payload;
 		},
         setSelectedMongoKey: (state, {payload}) => {
-			state.attributes = state.attributes.filter(item => item.name !== payload.newkey);
 			const existingKey = state.mongoKeys.find(item => item.oldKey === payload.oldKey);
-			if(existingKey) return;
+			if(existingKey) {
+				existingKey.related = payload.related;
+				return;
+			};
 			state.mongoKeys.push(payload);
 		},
 		setAttribute: (state, {payload}) => {
@@ -75,16 +75,11 @@ const catalogSlice = createSlice({
 	
 		setSelectedPriceKey: (state, {payload}) => {
 			state.selectedPriceKey = payload;
+
 		},
 		setPricesMultiplier: (state, {payload}) => {
-			function calculateAndRound(a, b) {
-				const result = a * b;
-				return Math.round(result * 100) / 100;
-			}
-		
 			switch (payload.type) {
 				case "PRICER":
-					const roundedUp = calculateAndRound(payload.QTY1, parseFloat(payload.value));
 					state.pricesMultiplier.PRICER = payload.value;
 					state.prices.PRICER = payload.value * state.prices.PRICER;
 				  break;

@@ -7,6 +7,7 @@ import { model, models, Schema } from 'mongoose';
 
 const catalogSchema = new mongoose.Schema({
         url: String,
+      
 });
 
 
