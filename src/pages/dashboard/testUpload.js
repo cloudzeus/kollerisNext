@@ -1,5 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image';
+import { getBunnyFile } from '@/utils/bunny_cdn';
+import { uploadBunny } from '@/utils/bunny_cdn';
+
 
 const ACCESS_KEY = 'd4374cd3-86c0-4943-903e419f73de-008e-4a66';
 
@@ -8,14 +12,15 @@ const storageZoneName = 'kolleris'
 const region = 'storage'
 const path = 'images'
 const headers = {
-  AccessKey: ACCESS_KEY,
   'Content-Type': 'application/octet-stream',
 }
 
 
 const TestUpload = () => {
     const [binaryData, setBinaryData] = useState(null)
-    const [selectedFile, setSelectedFile] = useState(null)
+    const [image, setImage] = useState(null)
+    const [imageSrc, setImageSrc] = useState(null)
+    const [base64, setBase64] = useState(null)
     const onUpload = async (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -27,19 +32,47 @@ const TestUpload = () => {
 
     }
 
+    const handleGetFile = async () => {
+        try {
+            let {data} = await axios.post('/api/bunny/getFile', {fileName: '3M.jpg'})
+            const reader = new FileReader();
+            const blob = new Blob([data.result], { type: 'application/octet-stream' });
+            console.log(blob)
+            const objectURL = URL.createObjectURL(blob);
+            setImageSrc(objectURL)
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     useEffect(() => {
-        console.log('binaryData')
-        console.log(binaryData)
-    }, [binaryData])
+        handleGetFile()
+    }, [])
+
+
+
+    useEffect(() => {
+        const blob = new Blob([binaryData], { type: 'image/jpeg' }); // Adjust the type accordingly
+        const reader = new FileReader();
+    
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          setImageSrc(dataUrl);
+        };
+    
+        reader.readAsDataURL(blob);
+      }, [binaryData]);
+
 
     
     const onSubmit = async () => {
         try {
             if (!binaryData) return;
-            console.log(binaryData)
-             let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/${fileName}`, binaryData , { headers: headers })
-             console.log(result.data)
+         
+            let result = await uploadBunny(binaryData)
+            console.log('result')
+            console.log(result)
         } catch (error) {
             console.error('Error:', error);
         }
@@ -51,8 +84,17 @@ const TestUpload = () => {
             <div>
                 <button disabled={!binaryData} onClick={onSubmit}>Submit</button>
             </div>
+                <>
+                {imageSrc && <Image src={`${imageSrc}`} width={200} height={200} alt="Image from binary data" />}
+                {/* {image && <Image src={`data:image/png;base64,${image}`} width={200} height={200} alt="Image from binary data" />}
+                {base64&& <Image src={`data:image/png;base64,${base64}`} width={200} height={200} alt="Image from binary data" />} */}
+                   
+                </>
         </div>
     )
 }
+
+
+
 
 export default TestUpload;
