@@ -12,64 +12,46 @@ const storageZoneName = 'kolleris'
 const region = 'storage'
 const path = 'images'
 const headers = {
-  'Content-Type': 'application/octet-stream',
+    'Content-Type': 'application/octet-stream',
 }
 
 
 const TestUpload = () => {
     const [binaryData, setBinaryData] = useState(null)
-    const [image, setImage] = useState(null)
     const [imageSrc, setImageSrc] = useState(null)
-    const [base64, setBase64] = useState(null)
+    const [imageSrc2, setImageSrc2] = useState(null)
     const onUpload = async (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
-            reader.onload = (event) => {
-                const arrayBuffer = event.target.result;
-                setBinaryData(arrayBuffer);
-            };
+        reader.onload = (event) => {
+            const arrayBuffer = event.target.result;
+            setBinaryData(arrayBuffer);
+        };
         reader.readAsArrayBuffer(file);
 
     }
 
-    const handleGetFile = async () => {
-        try {
-            let {data} = await axios.post('/api/bunny/getFile', {fileName: '3M.jpg'})
-            const reader = new FileReader();
-            const blob = new Blob([data.result], { type: 'application/octet-stream' });
-            console.log(blob)
-            const objectURL = URL.createObjectURL(blob);
-            setImageSrc(objectURL)
-
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    useEffect(() => {
-        handleGetFile()
-    }, [])
 
 
 
     useEffect(() => {
         const blob = new Blob([binaryData], { type: 'image/jpeg' }); // Adjust the type accordingly
         const reader = new FileReader();
-    
+
         reader.onload = () => {
-          const dataUrl = reader.result;
-          setImageSrc(dataUrl);
+            const dataUrl = reader.result;
+            setImageSrc(dataUrl);
         };
-    
+
         reader.readAsDataURL(blob);
-      }, [binaryData]);
+    }, [binaryData]);
 
 
-    
+
     const onSubmit = async () => {
         try {
             if (!binaryData) return;
-         
+
             let result = await uploadBunny(binaryData)
             console.log('result')
             console.log(result)
@@ -84,12 +66,12 @@ const TestUpload = () => {
             <div>
                 <button disabled={!binaryData} onClick={onSubmit}>Submit</button>
             </div>
-                <>
+            <>
                 {imageSrc && <Image src={`${imageSrc}`} width={200} height={200} alt="Image from binary data" />}
-                {/* {image && <Image src={`data:image/png;base64,${image}`} width={200} height={200} alt="Image from binary data" />}
-                {base64&& <Image src={`data:image/png;base64,${base64}`} width={200} height={200} alt="Image from binary data" />} */}
-                   
-                </>
+                <Image src={"https://kolleris.b-cdn.net/test09.jpg"} width={200} height={200} alt="Image from binary data" />
+
+
+            </>
         </div>
     )
 }

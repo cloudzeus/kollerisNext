@@ -9,17 +9,12 @@ const headers = {
   'Content-Type': 'application/octet-stream',
 }
 
-export async function uploadBunny(data) {
-    const fileName = 'test09.jpg'
+export async function uploadBunny(data, fileName) {
     let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/${fileName}`, data , { headers: headers })
     return result.data
 }
 
 
-export async function getBunnyFile(fileName) {
-    let result = await axios.get(`https://${region}.bunnycdn.com/${storageZoneName}/${fileName}`, { headers:{
-        AccessKey: AccessKey,
-    } })
-    console.log(result.data)
-    return result.data
-}
+
+
+// "kolleris.b-cdn.net/test09.jpg"

@@ -66,7 +66,7 @@ const softoneProduct = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'ImpaCodes'
     },
-    photos: [],
+    images: [],
     descriptions: {
         en: String,
         de: String,
