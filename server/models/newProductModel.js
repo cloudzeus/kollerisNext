@@ -68,10 +68,9 @@ const softoneProduct = new mongoose.Schema({
         ref: 'ImpaCodes'
     },
     images: [{
-        path: String,
         name: String,
-        isLogo: Boolean,
     }],
+    hasImage: Boolean,
     descriptions: {
         en: String,
         de: String,

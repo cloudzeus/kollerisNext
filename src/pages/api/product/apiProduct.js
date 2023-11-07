@@ -24,11 +24,11 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=10');
     const action = req.body.action;
 
-    if(action === "create") {
-        const {data} = req.body;
+    if (action === "create") {
+        const { data } = req.body;
         let MTRL = null;
         let SOFTONESTATUS = false
-        if(MTRL) {
+        if (MTRL) {
             SOFTONESTATUS = true;
         }
         try {
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
                 ...data,
                 SOFTONESTATUS: SOFTONESTATUS,
             });
-          
+
             return res.status(200).json({ success: true, result: product });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         let { data } = req.body;
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
-         
+
             MTRL: data.MTRL,
             NAME: data.NAME,
             CODE: data.CODE,
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
             MTRMARK: data.MTRMARK.toString(),
             MTRMANFCTR: data.MTRMANFCTR,
             VAT: data.vat.VAT,
-            COUNTRY:data.MTRMANFCTR,
+            COUNTRY: data.MTRMANFCTR,
             WIDTH: data.WIDTH || '0',
             HEIGHT: data.HEIGHT || '0',
             LENGTH: data.LENGTH || '0',
@@ -70,17 +70,17 @@ export default async function handler(req, res) {
             STOCK: data.STOCK || '0',
             PRICER: data.PRICER || '0',
             PRICER01: data.PRICE01 || '0',
-            PRICER02: data?.PRICE02  || '0',
+            PRICER02: data?.PRICE02 || '0',
             PRICER03: data?.PRICE03 || '0',
             PRICER04: data?.PRICE04 || '0',
-            PRICER05: data?.PRICER05 ||'0',
-            PRICEW01: data?.PRICEW01  || '0',
+            PRICER05: data?.PRICER05 || '0',
+            PRICEW01: data?.PRICEW01 || '0',
             PRICEW02: data?.PRICEW02 || '0',
             PRICEW03: data?.PRICEW03 || '0',
             PRICEW04: data?.PRICEW04 || '0',
             PRICEW05: data?.PRICEW05 || '0',
             PRICEW: data?.PRICEW,
-           
+
         }
         const response = await fetch(URL, {
             method: 'POST',
@@ -91,9 +91,9 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
- 
 
-        if(!responseJSON.success) {
+
+        if (!responseJSON.success) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
         }
         let updateSoftoneProduct = await SoftoneProduct.updateOne({ MTRL: data.MTRL }, {
@@ -120,18 +120,18 @@ export default async function handler(req, res) {
                 PRICEW: data.PRICEW,
                 PRICER02: data.PRICE02 || 0,
                 PRICER05: data.PRICER05,
-               CATEGORY_NAME: data.category.categoryName,
-               DESCRIPTION: data.DESCRIPTION,
-               GROUP_NAME: data.category.groupName,
-               SUBGROUP_NAME: data.category.subGroupName,
-               SOFTONESTATUS: true,
-               descriptions: data.descriptions,
+                CATEGORY_NAME: data.category.categoryName,
+                DESCRIPTION: data.DESCRIPTION,
+                GROUP_NAME: data.category.groupName,
+                SUBGROUP_NAME: data.category.subGroupName,
+                SOFTONESTATUS: true,
+                descriptions: data.descriptions,
             }
         })
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
 
     }
-   
+
     if (action === 'search') {
         let query = req.body.query;
         await connectMongo();
@@ -175,7 +175,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'updateClass') {
-        let { categoryid, groupid, subgroupid, gridData, categoryName , groupName, subGroupName  } = req.body;
+        let { categoryid, groupid, subgroupid, gridData, categoryName, groupName, subGroupName } = req.body;
         let OBJ = {
             MTRGROUP: groupid,
             GROUP_NAME: groupName,
@@ -199,20 +199,20 @@ export default async function handler(req, res) {
                     MTRCATEGORY: categoryid,
                     MTRGROUP: groupid,
                     CCCSUBGOUP2: subgroupid,
-                    CCCSUBGROUP3:""   
+                    CCCSUBGROUP3: ""
                 })
             });
-           
+
             let respJSON = await response.json()
-            return respJSON ;
+            return respJSON;
         }
 
         try {
             let results = [];
             if (gridData) {
                 for (let item of gridData) {
-                    if(!item.hasOwnProperty('MTRL')) {
-                       results.push({name: item?.NAME, updated: false, mtrl: false  }) 
+                    if (!item.hasOwnProperty('MTRL')) {
+                        results.push({ name: item?.NAME, updated: false, mtrl: false })
                     }
                     let MTRLID = item.MTRL;
                     let result = await SoftoneProduct.updateOne({
@@ -220,14 +220,14 @@ export default async function handler(req, res) {
                     }, {
                         ...OBJ
                     })
-        
-                    if (result.modifiedCount > 0  && item.hasOwnProperty('MTRL')) {
-                       results.push({ name: item.NAME, updated: true, mtrl: true  }) 
+
+                    if (result.modifiedCount > 0 && item.hasOwnProperty('MTRL')) {
+                        results.push({ name: item.NAME, updated: true, mtrl: true })
                     }
                     if (result.modifiedCount < 1) {
-                       results.push({ MTRLID: MTRLID, updated: false, mtrl: true })
+                        results.push({ MTRLID: MTRLID, updated: false, mtrl: true })
                     }
-                   
+
                     updateSoft(item)
 
 
@@ -235,7 +235,7 @@ export default async function handler(req, res) {
                 }
             }
             // console.log(results)
-            return res.status(200).json({ success: true, result: results});
+            return res.status(200).json({ success: true, result: results });
 
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -245,19 +245,19 @@ export default async function handler(req, res) {
     }
 
 
-   
+
     if (action === 'warehouse') {
         const { exportWarehouse, importWarehouse, diathesimotita } = req.body;
         const now = new Date();
         const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
-     
-        const updates =  diathesimotita.map(item => ({
+
+        const updates = diathesimotita.map(item => ({
             updateOne: {
                 filter: { MTRL: item.MTRL },
                 update: {
                     $set: {
                         "availability.DIATHESIMA": item.available,
-                        "availability.date":  formattedDateTime.toString(),
+                        "availability.date": formattedDateTime.toString(),
                     }
                 },
                 upsert: false  // optional: set to true if you want to create a new document when no document matches the filter
@@ -294,10 +294,10 @@ export default async function handler(req, res) {
             let importRes;
             let exportRes;
             if (exportWarehouse && exportWarehouse.length > 0) {
-                   importRes = await modifySoftonePost(1011, exportWarehouse)
+                importRes = await modifySoftonePost(1011, exportWarehouse)
             }
             if (importWarehouse && importWarehouse.length > 0) {
-                   exportRes =  await modifySoftonePost(1010, importWarehouse)
+                exportRes = await modifySoftonePost(1010, importWarehouse)
             }
 
 
@@ -354,36 +354,36 @@ export default async function handler(req, res) {
 
     }
 
-	if(action === "addToSoftone") {
-        const {data, id, mongoData} = req.body;
+    if (action === "addToSoftone") {
+        const { data, id, mongoData } = req.body;
         // console.log(mongoData)
         try {
             const filteredObject = {};
 
             for (const key in data) {
-            if (data[key] !== '') {
-                filteredObject[key] = data[key];
+                if (data[key] !== '') {
+                    filteredObject[key] = data[key];
+                }
             }
-            }
-       
+
             await connectMongo();
-           
-          async function createSoftone() {
+
+            async function createSoftone() {
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/addNewMtrl`;
                 const response = await fetch(URL, {
                     method: 'POST',
                     body: JSON.stringify({
                         username: "Service",
                         password: "Service",
-                       ...filteredObject
+                        ...filteredObject
                     })
                 });
                 let responseJSON = await response.json();
                 return responseJSON;
             }
             let responseJSON = await createSoftone();
-            if(responseJSON.success) {
-                let update = await SoftoneProduct.findOneAndUpdate({_id: id}, 
+            if (responseJSON.success) {
+                let update = await SoftoneProduct.findOneAndUpdate({ _id: id },
                     {
                         $set: {
                             SOFTONESTATUS: true,
@@ -392,26 +392,26 @@ export default async function handler(req, res) {
                         }
                     }
                 )
-            }      
-            
-    
-            return res.status(200).json({ success: true});
+            }
+
+
+            return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
     }
 
-    if(action === 'checkStatus') {
-        const {products} = req.body;
+    if (action === 'checkStatus') {
+        const { products } = req.body;
         try {
             await connectMongo();
             const productsArray = []
-            for(let item of products) {
-                let product = await SoftoneProduct.findOne({SOFTONESTATUS: false, _id: item._id})
-                if(product) {
+            for (let item of products) {
+                let product = await SoftoneProduct.findOne({ SOFTONESTATUS: false, _id: item._id })
+                if (product) {
                     productsArray.push(product)
 
-                }   
+                }
             }
             return res.status(200).json({ success: true, result: productsArray });
         } catch (e) {
@@ -421,29 +421,67 @@ export default async function handler(req, res) {
 
 
     //IMAGES
-    if(action === "addImages") {
-        const {imagesURL, id} = req.body;
-        console.log(imagesURL)
-        const product = await SoftoneProduct.findOneAndUpdate(
-            { id: id }, // Using the passed 'id' variable
-            { $push: { images: imagesURL } }, // Push the 'imagesURL' to the 'images' array
-            { new: true } // To return the updated document
-        );
+    if (action === "addImages") {
+        const { imagesURL, id } = req.body;
 
-        console.log(product)
-        return res.status(200).json({message: "success"})
+
+        try {
+            await connectMongo();
+            // const product = await SoftoneProduct.findOne({ _id: id }, 'images'); // Fetch the document
+            //     const existingImages = product.images || [];
+            //     const removeduplicateImages = imagesURL.filter(url => existingImages.includes(url));
+
+
+            const updatedProduct = await SoftoneProduct.findOneAndUpdate(
+                { _id: id }, // Using the passed 'id' variable
+                {
+                    $set: { hasImage: true },
+                    $addToSet: { images: { $each: imagesURL } } // Push only the new URLs
+                },
+                { new: true } // To return the updated document
+            );
+            console.log(updatedProduct)
+            return res.status(200).json({ success: true });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ success: false, result: null });
+        }
+
+
+
     }
 
-    if(action === 'getImages') {
-        const {id} = req.body;
-        console.log(id)
+    if (action === 'getImages') {
+        const { id } = req.body;
+
         await connectMongo()
-        const product = await SoftoneProduct.findOne({id: id}, {images: 1, id: 0});
-        console.log(product)
-        return res.status(200).json({message: "success", product: product})
+        try {
+            let product = await SoftoneProduct.findOne({ _id: id }, { images: 1 });
+            console.log(product)
+            return res.status(200).json({ message: "success", result: product?.images })
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+
     }
-    if(action === "deleteImage") {
-        
+    if (action === "deleteImage") {
+        const { id, name } = req.body;
+        try {
+            await connectMongo();
+            const updatedProduct = await SoftoneProduct.findOneAndUpdate(
+                { _id: id }, // Using the passed 'id' variable
+                {
+                    $pull: {
+                        images: { name: name }
+                    }
+                },// Push only the new URLs
+                { new: true } // To return the updated document
+            );
+            console.log(updatedProduct)
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
     }
 }
 

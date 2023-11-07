@@ -598,9 +598,10 @@ function Product() {
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
             // paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
-            >
+            >   
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
+                <Column body={ImagesTemplate}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
                     : null}
                 <Column field="NAME" style={{ width: '400px' }} header="Όνομα" filter showFilterMenu={false} filterElement={ onSearchName} body={NameTemplate} ></Column>
@@ -650,7 +651,20 @@ function Product() {
 }
 
 
+const ImagesTemplate = ({_id, hasImage}) => {
+    const router = useRouter();
 
+    const onClick = () => {
+        if(!hasImage) return;
+        router.push(`/dashboard/images/product/${_id}`)
+    }
+    return (
+        <div className="flex justify-content-center">
+            <i className={`pi pi-image cursor-pointer ${hasImage ? "text-primary font-md" : "text-400"}`} style={{ fontSize: '1rem' }} onClick ={onClick}></i>
+        </div>
+    )
+
+}
 const PriceTemplate = ({ PRICER }) => {
     return (
         <div>
@@ -796,17 +810,3 @@ const GridPriceTemplate = ({ PRICER }) => {
 }
 
 
-const SortAvailable = () => {
-    const  { sortAvailability} = useSelector(store => store.products)
-    const dispatch = useDispatch();
-    const onSort = () => {
-        dispatch(setSortAvailability())
-    }
-    return (
-        <div className='ml-3'>
-        { sortAvailability === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
-        {sortAvailability === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
-        {sortAvailability === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
-    </div>
-    )
-}
