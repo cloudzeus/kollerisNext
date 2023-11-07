@@ -10,7 +10,7 @@ const headers = {
 }
 
 export async function uploadBunny(data, fileName) {
-    let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/${fileName}`, data , { headers: headers })
+    let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/images/${fileName}`, data , { headers: headers })
     return result.data
 }
 

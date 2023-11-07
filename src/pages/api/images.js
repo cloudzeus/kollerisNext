@@ -15,4 +15,13 @@ export default async function handler(req, res) {
         console.log(product)
         return res.status(200).json({message: "success"})
     }
+
+    if(action === 'getProductImages') {
+        const {id} = req.body;
+        console.log(id)
+        await connectMongo()
+        const product = await SoftoneProduct.findOne({id: id}, {images: 1, id: 0});
+        console.log(product)
+        return res.status(200).json({message: "success", product: product})
+    }
 }

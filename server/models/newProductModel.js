@@ -9,6 +9,7 @@ const softoneProduct = new mongoose.Schema({
     },
     MTRL: { type: String },
     DESCRIPTION: String,
+    DESCRIPTIION_ENG: String,
     ISACTIVE: String,
     NAME: String,
     CODE: String,
@@ -66,13 +67,14 @@ const softoneProduct = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'ImpaCodes'
     },
-    images: [],
+    images: [{
+        path: String,
+        name: String,
+        isLogo: Boolean,
+    }],
     descriptions: {
         en: String,
         de: String,
-        fr: String,
-        es: String,
-        gr: String,
     },
     MTRMARK_NAME: String,
     DIM1: String,
