@@ -11,12 +11,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle,  Container } from '@/componentsStyles/dialogforms';
+import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 
 import { useSession } from "next-auth/react"
-import AddDeleteImages from '@/components/GalleryListSmall';
-import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
-import DialogGallery from '@/components/DialogGallery';
+import TranslateInput from '@/components/Forms/TranslateInpit';
+import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
 
 const addSchema = yup.object().shape({
     // subGroupName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -28,11 +27,12 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
+    const [translateName, setTranslateName] = useState('')
     //This component has one Image only:
-    const [image, setImage] = useState([])
-    const [logo, setLogo] = useState([])
-    const [parent, setParent] = useState([])
+    
+    const handleTranslate =  async (value) => {
+        setTranslateName(value)
+    }
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -43,58 +43,44 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
-    
+
     useEffect(() => {
-        setLogo(gridRowData?.categoryIcon ? [gridRowData?.categoryIcon] : [])
-        setImage(gridRowData?.categoryImage ? [gridRowData?.categoryImage] : [])
+        // setLogo(gridRowData?.categoryIcon ? [gridRowData?.categoryIcon] : [])
+        // setImage(gridRowData?.categoryImage ? [gridRowData?.categoryImage] : [])
     }, [gridRowData])
 
 
-   
+
     const handleEdit = async (data) => {
-        console.log(gridRowData)
         let user = session.user.user.lastName
-        let newLogo = logo
-        if(logo.length === 0) {
-            newLogo = ''
+        console.log('edit data')
+        console.log(data)
+        const { categoryIcon, categoryImage, ...rest } = data;
 
-        }
-        let newImage = image[0]
-        if(image.length === 0) {
-            newImage = ''
 
-        }
-        const object = {
-            ...data,
-            categoryIcon: newLogo,
-            categoryImage: newImage,
-           
-        }
- 
 
         try {
-           
-            let resp = await axios.post('/api/product/apiCategories', 
-            {
-                action: "update", 
-                data: {...object, updatedFrom: user, }, 
-                id: gridRowData._id, 
-                
-               
-            })
-            // if(!resp.data.success) {
-            //     return showError()
-            // }
+
+            let resp = await axios.post('/api/product/apiCategories',
+                {
+                    action: "update",
+                    data: { ...rest, englishName: translateName },
+                    updatedFrom: user,
+                    id: gridRowData._id,
+
+
+                })
+
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-            
-            
-               
+
+
+
         } catch (e) {
             console.log(e)
         }
-       
+
     }
 
     const showSuccess = (message) => {
@@ -124,50 +110,133 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Group"
+                    header="Διόρθωση Κατηγορίας"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                        <SinglePhotoUpload state={logo} setState={setLogo}/>
-                   <FormTitle>Λεπτομέριες</FormTitle>
-              
-                   <Input
-                    label={'Όνομα Κατηγορίας'}
-                    name={'categoryName'}
-                    control={control}
-                    required
-                    error={errors.categoryName}
-                />
-              
-                {/* <FormTitle>Λογότυπο</FormTitle>
-                    <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={false}
-                    /> */}
 
-                <FormTitle>Φωτογραφίες</FormTitle>
-                {/* <AddDeleteImages 
-                        state={image}
-                        setState={setImage}
-                        multiple={false}
-                        singleUpload={false}
-                       
-                    /> */}
-                         <DialogGallery 
-                        state={image}
-                        setState={setImage}
-                        url="/api/product/apiCategories"
-                        id={gridRowData._id}
-                        user={session?.user?.user?.lastName}
+
+
+
+                    <Input
+                        label={'Όνομα Κατηγορίας'}
+                        name={'categoryName'}
+                        control={control}
+                        required
+                        error={errors.categoryName}
                     />
+                    <div>
+                    <TranslateInput
+                            label={'Όνομα κατηγορίας αγγλικά'}
+                            state={translateName}
+                            handleState={handleTranslate}
+                            targetLang="en-GB"
+                        />
+                    </div>
+
+
+                    <FormTitle>Φωτογραφίες</FormTitle>
+
+
+                    <div>
+                        <UploadImage id={gridRowData._id} image={gridRowData.categoryImage} />
+                    </div>
+                    <FormTitle>Λογότυπο</FormTitle>
+                    <UploadLogo id={gridRowData._id} />
+                   
                 </Dialog>
             </form>
         </Container>
+
+    )
+}
+
+
+const UploadImage = ({ id,  }) => {
+
+
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [visible, setVisible] = useState(false)
+    const [refetch, setRefetch] = useState(false)
+    const [data, setData] = useState(false)
+
+    const onAdd = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'addImage', imageName: uploadedFiles[0].name, id: id })
+        setRefetch(prev => !prev)
+        return data;
+    }
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'getImages', id: id })
+        setData(data.result.categoryImage)
+
+    }
+    const onDelete = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'deleteImage', id: id })
+        setRefetch(prev => !prev)
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [refetch])
+    return (
+        <div>
+            <SingleImageUpload
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                visible={visible}
+                data={data}
+                setVisible={setVisible}
+                onAdd={onAdd}
+                onDelete={onDelete}
+
+            />
+        </div>
+
+    )
+}
+const UploadLogo = ({ id }) => {
+
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [visible, setVisible] = useState(false)
+    const [refetch, setRefetch] = useState(false)
+    const [data, setData] = useState(false)
+
+    const onAdd = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'addLogo', imageName: uploadedFiles[0].name, id: id})
+        setRefetch(prev => !prev)
+        return data;
+    }
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'getImages', id: id })
+        setData(data.result.categoryIcon)
+
+    }
+    const onDelete = async () => {
+        let { data } = await axios.post('/api/product/apiCategories', { action: 'deleteLogo', id: id })
+        setRefetch(prev => !prev)
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [refetch])
+    return (
+        <div>
+            <SingleImageUpload
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                visible={visible}
+                data={data}
+                setVisible={setVisible}
+                onAdd={onAdd}
+                onDelete={onDelete}
+
+            />
+        </div>
 
     )
 }
@@ -192,10 +261,14 @@ const AddDialog = ({
         resolver: yupResolver(addSchema),
         defaultValues: {
             categoryName: '',
+            categoryImage: '',
+            categoryIcon: '',
         }
     });
     const { data: session, status } = useSession()
     const toast = useRef(null);
+    const [data, setData] = useState(false)
+    const [uploadedFiles, setUploadedFiles] = useState([])
     const [disabled, setDisabled] = useState(false)
     const [logo, setLogo] = useState('')
     const [image, setImage] = useState([])
@@ -204,14 +277,14 @@ const AddDialog = ({
         reset()
     }
 
-   
-  
+
+
 
 
     const handleAdd = async (data) => {
-     
+
         let user = session.user.user.lastName
-        const body ={
+        const body = {
             ...data,
             categoryIcon: logo[0],
             categoryImage: image[0],
@@ -221,7 +294,7 @@ const AddDialog = ({
 
         let res = await axios.post('/api/product/apiCategories', { action: 'create', data: body })
         console.log(res.data)
-        if(!res.data.success) return showError(res.data.error)
+        if (!res.data.success) return showError(res.data.error)
         // let parent = res.data.parent
         setDisabled(true)
         setSubmitted(true)
@@ -260,7 +333,6 @@ const AddDialog = ({
                 footer={productDialogFooter}
                 onHide={hideDialog}>
                 <FormTitle>Λεπτομέριες</FormTitle>
-              
                 <Input
                     label={'Όνομα Κατηγορίας'}
                     name={'categoryName'}
@@ -268,23 +340,13 @@ const AddDialog = ({
                     required
                     error={errors.categoryName}
                 />
-              
+                {/* <div>
+                    <UploadImage  />
+                </div>
                 <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    setState={setLogo}
-                    multiple={false}
-                    singleUpload={true}
-                    mb={'20px'} />
+                <UploadLogo  /> */}
 
 
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <PrimeUploads
-                    setState={setImage}
-                    multiple={false}
-                    mb={'30px'}
-                    singleUpload={true}
-                    />
-               
 
             </Dialog>
         </form>

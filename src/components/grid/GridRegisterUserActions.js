@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
+ 
     return (
         <>
             {actionFrom ? (
@@ -10,7 +11,6 @@ const RegisterUserActions = ({ actionFrom, at, backgroundColor, color }) => {
                         <Avatar icon={"pi pi-user"}  style={{ backgroundColor: backgroundColor, color: color, width: '20px', height: '20px', fontSize: '12px' }} shape="circle" />
                         <div className="right-div">
                             <span className="value">{actionFrom}</span>
-                            <span className="dateAt">{at.split('T')[0]}</span>
                         </div>
                     </Container>
 

@@ -6,6 +6,7 @@ import { model, models, Schema } from 'mongoose';
         type: String,
         required: true,
     },
+    englishName: String,
     categoryIcon: {
         type: String
     },
@@ -26,20 +27,10 @@ import { model, models, Schema } from 'mongoose';
             type: Boolean
         }
     },
-    localized: [{
-            fieldName: String,
-            translations: [
-                {
-                    locale: String,
-                    code: String,
-                    translation: String,
-                }
-            ]
-    }],
+  
     status: Boolean,
     updatedFrom: String,
-    createdFrom: String,
-    deletedFrom: String,
+   
     groups: [{ type: Schema.Types.ObjectId, ref: "MtrGroup" }],
 }, {
 
@@ -56,6 +47,7 @@ const MtrGroupSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    englishName: String,
     groupIcon: {
         type: String
     },
@@ -80,20 +72,9 @@ const MtrGroupSchema = new mongoose.Schema({
             type: String
         }
     },
-    localized: [{
-        fieldName: String,
-        translations: [
-            {
-                locale: String,
-                code: String,
-                translation: String,
-            }
-        ]
-    }],
+   
     status: Boolean,
     updatedFrom: String,
-    createdFrom: String,
-    deletedFrom: String,
 }, {
 
     timestamps: true,
@@ -106,6 +87,7 @@ const MtrSubGroupSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'MtrGroup'
     },
+    englishName: String,
     subGroupName: {
         type: String,
         required: true,

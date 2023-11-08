@@ -208,8 +208,9 @@ export default function Categories() {
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
                 <Column field="groupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }} ></Column>
                 <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate}  style={{ width: '50px' }} ></Column>
-                <Column field="category.categoryName" header="Κατηγορία" sortable ></Column>
-                <Column field="groupName" body={TranslateName} header="Όνομα Group" sortable ></Column>
+                <Column field="category.categoryName" header="Κατηγορία"  ></Column>
+                <Column field="groupName"  header="Όνομα Group" sortable ></Column>
+                <Column field="englishName"  header="Μετάφραση" sortable ></Column>
                
                 {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>

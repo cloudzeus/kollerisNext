@@ -10,22 +10,22 @@ const GridLogoTemplate = ({ logo }) => {
 
     return (
         <ImageDiv >
-            {/* {logo ? (
+            {logo ? (
                 <>
                     <div onClick={(e) => op.current.toggle(e)}>
-                        <Image
-                            src={src}
-                            alt={logo}
-                            fill={true}
-
-                        />
+                    <Image
+                    alt="product-images"
+                    src={`https://kolleris.b-cdn.net/images/${logo}`}
+                    fill={true}
+                    sizes="50px"
+                />
                     </div>
                     <OverlayImage op={op} logo={logo} />
                 </>
 
             ) : (
                 <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
-            )} */}
+            )}
 
         </ImageDiv>
 
