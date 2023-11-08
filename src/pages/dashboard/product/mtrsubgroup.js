@@ -92,11 +92,7 @@ export default function Categories() {
     };
 
 
-    const allowExpansion = (rowData) => {
-        return rowData
-
-    };
-
+   
 
 
 
@@ -109,24 +105,11 @@ export default function Categories() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <>
-                {/* <SyncBrand 
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            /> */}
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
+   
 
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -155,15 +138,19 @@ export default function Categories() {
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupIcon} />
     }
-
-
-    const imageTemplate = (data) => {
+    const ImageTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupImage} />
     }
-    
+
+     
+
+   
     const actionBodyTemplate = (rowData) => {
         return (
-            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
+        //     <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
+        <div>
+            <i className="pi pi-pencil" style={{marginRight: '5px'}} onClick={() => editProduct(rowData)}></i>
+        </div>
         )
     };
 
@@ -182,26 +169,13 @@ export default function Categories() {
 
     };
 
-    const TranslateName = ({_id, subGroupName, localized}) => {
-        return (
-            <TranslateField
-                url="/api/product/apiSubGroup"
-                id={_id}
-                value={subGroupName}
-                fieldName="
-                subGroupName"
-                translations={localized[0]?.translations}
-                index={0}
-                />
-        )
-    }
-  
+   
 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <StepHeader text="Υποομάδες" />
-            <Toolbar  left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <Toolbar  start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -216,16 +190,17 @@ export default function Categories() {
                 onFilter={(e) => setFilters(e.filters)}
                 loading={loading}
                 editMode="row"
+                className='p-datatable-sm'
                 selectOnEdit
             >
                 <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
-                <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
-                <Column field="subGroupName"  body={TranslateName} header="Όνομα Sub Group" sortable ></Column>
-                {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
-                <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                {/* <Column field="status" sortable header="Status" bodyStyle={{textAlign: 'center'}} style={{ width: '90px' }} body={ActiveTempate}></Column> */}
+                <Column field="subGroupImage" header="Φωτογραφία" body={ImageTemplate }  style={{ width: '50px' }}></Column>
+                <Column field="group.groupName" header="Κατηγορία" ></Column>
+                <Column field="subGroupName" header="Όνομα Sub Group"  ></Column>
+                <Column field="englishName" header="Μετάφραση"  ></Column>
+                <Column field="updatedFrom"  header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {user?.role === 'admin' ? (
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{width: '90px'}} ></Column>
+                <Column body={actionBodyTemplate} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{width: '40px'}} ></Column>
                 ) : null}
 
             </DataTable>

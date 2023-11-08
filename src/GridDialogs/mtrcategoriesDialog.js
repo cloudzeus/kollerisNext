@@ -118,9 +118,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
 
-
-
-
                     <Input
                         label={'Όνομα Κατηγορίας'}
                         name={'categoryName'}

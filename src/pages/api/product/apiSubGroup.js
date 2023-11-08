@@ -10,14 +10,11 @@ export default async function handler(req, res) {
 	let action = req.body.action;
 	
     if (action === 'findAll') {
-        console.log('find all SubGroups')
 		try {
 			await connectMongo();
             const subgroup = await SubMtrGroup.find({})
             .populate( 'group', 'groupName')
             
-            
-            console.log('find all groups: ' + JSON.stringify(subgroup))
 			return res.status(200).json({ success: true, result: subgroup });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -103,13 +100,14 @@ export default async function handler(req, res) {
       
 
        
-        let {originalGroup, cccSubgroup2, originalSubGroupName} = req.body
-        let body = req.body.data;
+        const {originalGroup, cccSubgroup2, data, originalSubGroupName, id} = req.body
+        // let body = req.body.data;
         let mtrgroupid;
-        let subgroupid = req.body.id
+        let subgroupid = id
         let originalGroupID = originalGroup._id
-        let newGroupID = body.groupid || originalGroupID
-       
+        let newGroupID = data.groupid || originalGroupID
+        
+        console.log(data.updatedFrom)
     
         try {
             //find mtrgroup id to update softone
@@ -126,27 +124,24 @@ export default async function handler(req, res) {
 	
         let obj = {
             group: newGroupID,
-            subGroupName: body.subGroupName,
-            subGroupIcon: body.subGroupIcon || '',
-            subGroupImage: body.subGroupImage,
-            softOne: body.softOne,
+            subGroupName: data.subGroupName,
+            softOne: data.softOne,
             status: true,
-            localized: body.localized,
-            updatedFrom: body?.updatedFrom,
-
+            updatedFrom: data.updatedFrom,
+            englishName: data.englishName,
         }
 
-        console.log('obj: ' + JSON.stringify(obj))
         let sonftoneObj = {
             username:"Service",
             password: "Service",
             cccSubgroup2: cccSubgroup2,
             short: cccSubgroup2,
-            name: body.subGroupName,
+            name: data.subGroupName,
             mtrgroup: mtrgroupid,
+          
         }
 
-		if(body?.subGroupName !== originalSubGroupName) {
+		if(data?.subGroupName !== originalSubGroupName) {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/updateCccGroup`;
 			let softoneResponse = await axios.post(URL, {...sonftoneObj})
             console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
@@ -201,71 +196,90 @@ export default async function handler(req, res) {
 
     }
 
-    if(action === "translate") {
-		let data = req.body.data;
-		console.log('------------------------------------------------')
-
-		let {id, fieldName, index} = req.body
-		
-
+    if(action === "getImages") {
+		const {id} = req.body;
+		console.log(id)
 		try {
 			await connectMongo();
-			const category = await SubMtrGroup.findOne({ _id: id  });
-			if(category.localized.length == 0) {
-				category.localized.push({
-					fieldName: fieldName,
-					translations: data
-				})
+			const result = await SubMtrGroup.findOne({_id: id}, {subGroupImage: 1, subGroupIcon: 1, _id: 0});
+			console.log(result )
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
 
-				
-
-			} 
-
-			if(category.localized.length > 0) {
-				category.localized.map((item) => {
-					if(item.fieldName == fieldName) {
-						item.translations = data;
-					}
-					return item;
-				})
-			
-				
-			}
-			const categoryUpdate = await SubMtrGroup.updateOne(
+		}
+	}
+	if(action === "addImage") {
+		const { imageName, id} = req.body;
+        
+		try {
+			await connectMongo();
+			let add = await SubMtrGroup.findOneAndUpdate(
 				{_id: id},
-				{$set: {localized: category.localized}}
+				{$set : {
+					subGroupImage: imageName
+				}}	
 			  	);
-
-                if(categoryUpdate.modifiedCount == 1 &&  categoryUpdate.modifiedCount == 1) {
-                    return res.status(200).json({ success: true, result: categoryUpdate, message: 'Η Γλώσσες προστέθηκαν'  });
-                } else {
-                    return res.status(200).json({ success: false, result: null, message: 'Η Γλώσσες δεν προστέθηκαν'  });
-                }
-
-		} catch(e) {
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
-
-    if (action === 'updateImages') {
-		
-		const {images, updatedFrom, id } = req.body
-
-		console.log(images, updatedFrom, id)
-		const filter = { _id: id };
-		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
+	if(action === 'deleteImage') {
+		const {id} = req.body;
+		console.log(id)
 		try {
 			await connectMongo();
-			const result = await SubMtrGroup.updateOne(filter, update);
-			console.log(result)
-			
-			return res.status(200).json({ success: true, result: result });
-		} catch (error) {
-			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής',result: null });
+			let deleted = await  SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupImage: ''
+				}}	
+			  	);
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
 		}
-    
+	} 
 
+    if(action === "addLogo") {
+		const { imageName, id} = req.body;
+		try {
+			await connectMongo();
+			let add = await SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupIcon: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
 	}
+	if(action === 'deleteLogo') {
+		const {id} = req.body;
+	
+		try {
+			await connectMongo();
+			let deleted = await  SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupIcon: ''
+				}}	
+			  	);
+
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+
+   
 }
 
 

@@ -20,10 +20,16 @@ import { useSession } from 'next-auth/react';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import TranslateField from '@/components/grid/GridTranslate';
 import StepHeader from '@/components/StepHeader';
+const dialogStyle = {
+    marginTop: '10vh', // Adjust the top margin as needed
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+
+};
 
 
-
-export default function Categories() {
+export default function Groups() {
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -141,7 +147,9 @@ export default function Categories() {
     
     const actionBodyTemplate = (rowData) => {
         return (
-            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
+            <div>
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(rowData)}></i>
+            </div>
         )
     };
 
@@ -152,13 +160,7 @@ export default function Categories() {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
-    const dialogStyle = {
-        marginTop: '10vh', // Adjust the top margin as needed
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-
-    };
+  
 
 
     const RowExpansionTemplate = (data) => {
@@ -166,18 +168,7 @@ export default function Categories() {
     }
     
 
-    const TranslateName = ({_id, groupName, localized}) => {
-        return (
-            <TranslateField
-                url="/api/product/apiGroup"
-                id={_id}
-                value={groupName}
-                fieldName="groupName"
-                translations={localized[0]?.translations}
-                index={0}
-                />
-        )
-    }
+ 
 
     return (
         <AdminLayout >
@@ -216,7 +207,7 @@ export default function Categories() {
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {/* <Column field="status" sortable header="Status" style={{ width: '90px' }}  bodyStyle={{ textAlign: 'center' }}  body={ActiveTempate}></Column> */}
                 {user?.role === 'admin' ? (
-                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '80px' }} ></Column>
+                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }} ></Column>
                 ) : null}
 
           

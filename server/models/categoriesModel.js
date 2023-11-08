@@ -113,19 +113,9 @@ const MtrSubGroupSchema = new mongoose.Schema({
             type: String,
         }
     },
-     localized: [{
-            fieldName: String,
-            translations: [
-                {
-                    locale: String,
-                    code: String,
-                    translation: String,
-                }
-            ]
-    }],
+   
     status: Boolean,
     updatedFrom: String,
-    createdFrom: String,
 }, {
 
     timestamps: true,
