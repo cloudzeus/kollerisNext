@@ -655,7 +655,6 @@ const ImagesTemplate = ({_id, hasImage}) => {
     const router = useRouter();
 
     const onClick = () => {
-        if(!hasImage) return;
         router.push(`/dashboard/images/product/${_id}`)
     }
     return (

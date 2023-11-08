@@ -36,8 +36,9 @@ const TopLayer = () => {
         setData(images)
     }
 
-    const onDelete = async (name) => {
-        let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", id:id, name: name })
+    const onDelete = async (name, _id) => {
+        //THis is not the product id but the image id
+        let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId:id, imageId :_id, name: name })
         setRefetch(prev => !prev)
     }
 

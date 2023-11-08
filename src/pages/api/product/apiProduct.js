@@ -465,14 +465,16 @@ export default async function handler(req, res) {
 
     }
     if (action === "deleteImage") {
-        const { id, name } = req.body;
+        const {parentId, imageId, name } = req.body;
         try {
             await connectMongo();
             const updatedProduct = await SoftoneProduct.findOneAndUpdate(
-                { _id: id }, // Using the passed 'id' variable
+                { _id: parentId }, // Using the passed 'id' variable
                 {
                     $pull: {
-                        images: { name: name }
+                        images: { 
+                            _id:  imageId,
+                            name: name }
                     }
                 },// Push only the new URLs
                 { new: true } // To return the updated document

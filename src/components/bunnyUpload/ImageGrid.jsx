@@ -11,12 +11,17 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
+import { set } from 'mongoose';
 
 
 
 export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, hasLogo, onAdd }) => {
     const [visible, setVisible] = useState(false)
 
+    useEffect(() => {
+        console.log(uploadedFiles)
+        setUploadedFiles([])
+    }, [])
     //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
@@ -38,11 +43,12 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, has
     }
     const header = Header()
 
-    const Actions = ({ name, }) => {
-
+    const Actions = ({ name, _id }) => {
+        console.log(name)
+        console.log(_id)
         return (
             <div>
-                <i onClick={() => onDelete(name)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
+                <i onClick={() => onDelete(name, _id)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
             </div>
         )
     }
@@ -116,6 +122,8 @@ const ImageTemplate = ({ name }) => {
 const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAdd }) => {
     const [loading, setLoading] = useState(false)
     const toast = useRef(null);
+
+
     const showError = (message) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
     }
@@ -184,7 +192,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
     return (
         <Dialog header="Uploader" visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
             <Toast ref={toast} />
-            <div {...getRootProps()}>
+            <div className='cursor-pointer' {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Button {...getInputProps()} label="drag and drop" />
                 <div className='h-6rem border-round p-3 pointer-cursor border-1 border-dashed flex align-items-center justify-content-center'>
@@ -201,8 +209,6 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
                     setUploadedFiles={setUploadedFiles} />
             ))}
             {uploadedFiles.length ? (<Button loading={loading} label="Ολοκλήρωση" onClick={onSubmit} className='mt-2' />) : null}
-          
-
         </Dialog>
 
 
