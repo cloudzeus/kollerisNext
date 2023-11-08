@@ -70,7 +70,6 @@ export default function TemplateDemo() {
     const logoTemplate = (data) => {
         return (
             <GridLogoTemplate logo={data?.logo} />
-
         )
     }
     //TEMPLATES
@@ -212,9 +211,6 @@ export default function TemplateDemo() {
                 
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" sortable></Column>
-                <Column field="minItemsOrder"  header="Min items order" sortable></Column>
-                <Column field="minValueOrder"  header="Μin value order" sortable></Column>
-                <Column field="minYearPurchases"  header="Μin year purchases" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {user?.role === 'admin' ? (
                     <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
