@@ -66,10 +66,7 @@ const supplierSchema = new mongoose.Schema({
     },
     updatedFrom: String,
     ORDERSTATUS: Boolean,
-    catalog: {
-      type: mongoose.Schema.Types.ObjectId,  // Assuming catalog references the Catalogs model
-      ref: 'Catalogs',  // Reference to the Catalogs model
-  },
+    catalogName: String,
   },
   {
     timestamps: true,

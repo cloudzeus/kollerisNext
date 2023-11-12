@@ -19,7 +19,17 @@ import { setSelectedSupplier } from '@/features/supplierOrderSlice';
 import styled from 'styled-components';
 import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalogSlice';
 import * as XLSX from 'xlsx';
-
+import { uploadBunny, uploadBunnyFolderName } from '@/utils/bunny_cdn';
+import Link from 'next/link';
+function modifyName(name) {
+    // Remove symbols from the name using a regular expression
+    const cleanedName = name.replace(/[^\w\s]/g, '');
+    // Generate a random number between 1 and 100 (you can adjust the range as needed)
+    const randomNumber = Math.floor(Math.random() * 100) + 1;
+    // Append the random number to the cleaned name
+    const modifiedName = `${cleanedName}${randomNumber}`;
+    return modifiedName;
+}
 
 export default function Page() {
     const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder) 
@@ -219,13 +229,21 @@ export default function Page() {
     }, [gridData])
 
 
-    const handleFileUpload = (e, rowData) => {
+    const handleFileUpload = async (e, rowData) => {
         setFileLoading(true)
+        let fileName = e.target.files[0].name
+        let save = await axios.post('/api/suppliers', {action: 'saveCatalog', catalogName: fileName, id: rowData._id})
+        console.log('save')
+        console.log(save)
         dispatch(setSelectedSupplier(rowData))
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
+
             const data = e.target.result;
+            let upload = await uploadBunnyFolderName(data, fileName , 'catalogs')
+            console.log('upload')
+            console.log(upload)
             const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
@@ -235,14 +253,15 @@ export default function Page() {
             if (parsedData.length > 0) {
                 const firstRow = parsedData[0];
                 const secondRow = parsedData[1];
-                const value = Object.values(secondRow)[0];
+                // const value = Object.values(secondRow)[0];
                 const headers = Object.keys(firstRow).map((key) => ({
                     field: key,
                 }));
                 dispatch(setHeaders(headers))
                 setFileLoading(false)
                 router.push('/dashboard/catalogs/upload-catalog')
-
+                let name = modifyName(rowData.NAME)
+              
             }
         };
     };
@@ -315,8 +334,9 @@ export default function Page() {
                 showGridlines
             >   
                 <Column body={ActionTemplate} style={{width: '50px'}}></Column>
+                
                 <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} header="Order Status" style={{minWidth: '70px'}}></Column>
-                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} header="Ονομα"></Column>
+                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} body={NameTemplate} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>
                 <Column field="EMAIL" filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
@@ -347,7 +367,21 @@ export default function Page() {
 
 
 
-
+const NameTemplate = ({NAME, catalogName}) => {
+    return (
+        <div className='flex align-items-center'>
+            {catalogName ? (
+                <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
+                <i className="pi pi-file-pdf mr-2 text-red-500 mr-1"></i>
+    
+               </Link>
+            ) : null}
+            <span>{NAME}</span>
+           
+        </div>
+    
+    )
+}
 
 
 

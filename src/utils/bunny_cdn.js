@@ -13,6 +13,10 @@ export async function uploadBunny(data, fileName) {
     let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/images/${fileName}`, data , { headers: headers })
     return result.data
 }
+export async function uploadBunnyFolderName(data, fileName, folderName) {
+    let result = await axios.put(`https://${region}.bunnycdn.com/${storageZoneName}/${folderName}/${fileName}`, data , { headers: headers })
+    return result.data
+}
 
 
 
