@@ -28,12 +28,9 @@ const markesSchema = new mongoose.Schema({
             videoUrl:String
         }
     ],
-    photosPromoList:[
-        {
-            name:String,
-            photosPromoUrl:String
-        }
-    ],
+    images: [{
+        name: String,
+    }],
     pimAccess:{
         pimUrl:String,
         pimUserName:String,
@@ -54,14 +51,7 @@ const markesSchema = new mongoose.Schema({
         NAME: String,
         ISACTIVE:Number
     },
-    localized: [{
-        field: [{
-            fieldName: String,
-            translation: String
-        }],
-        locale: String,
-        code: String,
-    }],
+
     updatedFrom: String,
     
   

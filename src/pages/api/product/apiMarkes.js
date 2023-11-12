@@ -188,25 +188,7 @@ export default async function handler(req, res) {
 
 
 	}
-	if (action === 'updateImages') {
-		
-		const {images, updatedFrom, id } = req.body
 
-		console.log(images, updatedFrom, id)
-		const filter = { _id: id };
-		const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
-		try {
-			await connectMongo();
-			const result = await Markes.updateOne(filter, update);
-			console.log(result)
-			
-			return res.status(200).json({ success: true, result: result });
-		} catch (error) {
-			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
-		}
-    
-
-	}
 	if (action === 'update') {
 		
 		let mtrmark = req.body.mtrmark;
@@ -285,6 +267,98 @@ export default async function handler(req, res) {
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null});
+		}
+	}
+
+	if (action === "addImages") {
+        const { imagesURL, id } = req.body;
+
+
+        try {
+            await connectMongo();
+
+
+            const updatedProduct = await Markes.findOneAndUpdate(
+                { _id: id }, // Using the passed 'id' variable
+                {
+                    $addToSet: { images: { $each: imagesURL } } // Push only the new URLs
+                },
+                { new: true } // To return the updated document
+            );
+            console.log(updatedProduct)
+            return res.status(200).json({ success: true });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ success: false, result: null });
+        }
+
+
+
+    }
+
+    if (action === 'getImages') {
+        const { id } = req.body;
+
+        await connectMongo()
+        try {
+            let result = await Markes.findOne({ _id: id }, { images: 1 });
+            console.log(result)
+            return res.status(200).json({ message: "success", result: result?.images })
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+
+    }
+    if (action === "deleteImage") {
+        const {parentId, imageId, name } = req.body;
+        try {
+            await connectMongo();
+            const updatedProduct = await Markes.findOneAndUpdate(
+                { _id: parentId }, // Using the passed 'id' variable
+                {
+                    $pull: {
+                        images: { 
+                            _id:  imageId,
+                            name: name }
+                    }
+                },// Push only the new URLs
+                { new: true } // To return the updated document
+            );
+            console.log(updatedProduct)
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false, result: null });
+        }
+    }
+	if(action === "getLogo") {
+		const {id} = req.body;
+		console.log('id')
+		console.log(id)
+		try {
+			await connectMongo();
+			let response =  await Markes.findOne({_id: id}, {logo: 1});
+			console.log('result')
+			console.log(response)
+			return res.status(200).json({success: true, result: response.logo});
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === "addLogo") {
+		const {id, logo} = req.body;
+		try {
+			await connectMongo();
+			const updatedProduct = await Markes.findOneAndUpdate(
+				{ _id: id }, // Using the passed 'id' variable
+				{
+					$set: { logo: logo } // Push only the new URLs
+				},
+				{ new: true } // To return the updated document
+			);
+			console.log(updatedProduct)
+			return res.status(200).json({ success: true });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
 		}
 	}
 }

@@ -15,13 +15,14 @@ import { setGridRowData } from '@/features/grid/gridSlice';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-
 import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';
 import GridExpansionTemplate from '@/components/markes/GridExpansionTemplate';
 import MarkesActions from '@/components/markes/MarkesActions';
 import { setSelectedMarkes } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
+import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
+
 export default function TemplateDemo() {
     const router = useRouter()
     const dispatch = useDispatch();
@@ -106,7 +107,7 @@ export default function TemplateDemo() {
     const rowExpansionTemplate = (data) => {
       
         return (
-            < GridExpansionTemplate data={data} setSubmitted={setSubmitted}/>
+            < Images id={data._id}/>
         );
     };
 
@@ -139,31 +140,10 @@ export default function TemplateDemo() {
 
    
 
-    const onOrder = async (rowData) => {
-        let mtrmark = rowData?.softOne?.MTRMARK
-        let {data} = await axios.post('/api/createOrder', {action: 'findOnePending', mtrmark: mtrmark})
-        // has one active order. There will always be a max of one active order.
-        if(data.result !== 0) {
-            showError('Υπάρχει ήδη ενεργή παραγγελία για αυτή τη μάρκα')
-            return;
-        }
-        
-        dispatch(setSelectedMarkes({
-            NAME: rowData?.softOne?.NAME,
-            mtrmark: mtrmark,
-            minItemsOrder: rowData?.minItemsOrder,
-            minValueOrder: rowData?.minValueOrder,
-
-        }))
-        router.push('/dashboard/supplierOrder/supplier')
-    }
+ 
            
     // CUSTOM TEMPLATES FOR COLUMNS
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <MarkesActions  onEdit={editProduct} onOrder={onOrder} rowData={rowData} />
-        )
-    }
+  
 
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
@@ -179,7 +159,13 @@ export default function TemplateDemo() {
         alignItems: 'flex-start',
 
     };
-    
+    const Actions = (product) => {
+        return (
+            <div>
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(product)}></i>
+            </div>
+        )
+    }
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -213,7 +199,7 @@ export default function TemplateDemo() {
                 <Column field="softOne.NAME" header="Ονομα" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {user?.role === 'admin' ? (
-                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
+                    <Column body={Actions} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
 
             </DataTable>
@@ -260,6 +246,60 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 
+const Images = ({id}) => {
+    console.log(id)
+    const router = useRouter();
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [data, setData] = useState([])
+    const [refetch, setRefetch] = useState(false)
+
+    const createImagesURL =  (files) => {
+        let imagesNames = [];
+        for (let file of files) {
+            imagesNames.push({name: file.name})
+        }
+        return imagesNames;
+    }
+
+
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiMarkes', { action: "getImages", id: id })
+        let images = data.result
+        setData(images)
+    }
+
+    const onDelete = async (name, _id) => {
+        //THis is not the product id but the image id
+        let { data } = await axios.post('/api/product/apiMarkes', { action: "deleteImage", parentId:id, imageId :_id, name: name })
+        setRefetch(prev => !prev)
+    }
+
+    const onAdd = async () => {
+        let imagesURL = createImagesURL(uploadedFiles)
+        let { data } = await axios.post('/api/product/apiMarkes', { action: 'addImages', id: id, imagesURL: imagesURL})
+         setRefetch(prev => !prev)
+        return data;
+    }
+
+
+    useEffect(() => {
+        handleFetch()
+    }, [id, refetch])
+    return (
+        <div className='p-4'>
+              <ImageGrid
+            data={data}
+            uploadedFiles={uploadedFiles}
+            setUploadedFiles={setUploadedFiles}
+            onDelete={onDelete}
+            onAdd={onAdd}
+            
+        />
+        </div>
+      
+    )
+}
 
 
 

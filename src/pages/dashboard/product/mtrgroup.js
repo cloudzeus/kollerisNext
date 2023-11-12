@@ -18,8 +18,12 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import { useSession } from 'next-auth/react';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-import TranslateField from '@/components/grid/GridTranslate';
 import StepHeader from '@/components/StepHeader';
+import { EditDialog as SubGroupEdit } from '@/GridDialogs/mtrsubgroupDialog';
+
+
+
+
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -254,45 +258,95 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 //The component for the nested grid:
 const RowExpansionGrid = ({ id }) => {
-    const [data, setData] = useState(false)
-    const [loading, setLoading] = useState(false)
-    // console.log('GROUPS: ' + JSON.stringify(groups))
-    const logoTemplate = (data) => {
-        return <GridLogoTemplate logo={data?.groupIcon} />
-    }
+    const dispatch = useDispatch()
+    const { data: session } = useSession()
+    let user = session?.user?.user;
+    const [editDialog, setEditDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
 
     const handleFetch = async () => {
         setLoading(true);
         let res = await axios.post('/api/product/apiCategories', { action: 'findSubGroups', groupId: id })
         setData(res.data.result)
-        console.log('subgroups')
-        console.log(res.data.result)
         setLoading(false);
     }
 
     useEffect(() => {
         handleFetch()
-    }, [])
+    }, [submitted])
+
+    const logoTemplate = (data) => {
+        return <GridLogoTemplate logo={data.subGroupIcon} />
+    }
+
+    const editProduct = async (product) => {
+        setEditDialog(true)
+        setSubmitted(false);
+        dispatch(setGridRowData(product))
+    };
+
+
+
+
+    const hideDialog = () => {
+        setEditDialog(false);
+    };
+
+    const openNew = () => {
+        setSubmitted(false);
+        setAddDialog(true);
+    };
+
+    const Actions = (product) => {
+        return (
+            <div>
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(product)}></i>
+            </div>
+        )
+    }
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
+
     return (
         <SubGridStyles>
             <span className="subgrid-title" >Subgroups:</span>
             <div className="data-table">
-                <DataTable
-                    loading={loading}
+            <Toolbar start={leftToolbarTemplate} ></Toolbar>
+
+            <DataTable
                     value={data}
+                    loading={loading}
+                    showGridlines
+                    dataKey="_id"
+                    removableSort
                     rows={8}
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     paginator
-                    srollable
-                    showGridlines
-                    dataKey="subGroupName"
-
                 >
-                    <Column field="subGroupIcon" body={logoTemplate} style={{ width: '50px' }} header="Λογότυπο"></Column>
-                    <Column field="subGroupName" header="'Ονομα"></Column>
-
+                    <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
+                    <Column field="subGroupName" header="Softone Όνομα"></Column>
+                    <Column field="englishName" header="Μετάφραση"></Column>
+                    <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    {user?.role === 'admin' ? (
+                        <Column body={Actions} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                    ) : null}
                 </DataTable>
             </div>
+            < SubGroupEdit
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+
+            />
         </SubGridStyles>
     );
 };

@@ -76,9 +76,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     originalCategory: originalCategory,
                     newCategory: newCategory,
                 })
-          
+                console.log('edit response')
+                console.log(resp.data)
             setSubmitted(prev=> !prev)
-            showSuccess(resp.data.message)
+            // showSuccess(resp.data.message)
             hideDialog()
 
 
@@ -263,7 +264,8 @@ const addSchema = yup.object().shape({
 const AddDialog = ({
     dialog,
     hideDialog,
-    setSubmitted
+    setSubmitted,
+   
 }) => {
 
 
@@ -308,8 +310,6 @@ const AddDialog = ({
         let user = session.user.user.lastName
         const body = {
             ...data,
-            groupIcon: logo[0],
-            groupImage: images[0],
             createdFrom: user
         }
 
@@ -348,7 +348,7 @@ const AddDialog = ({
                 visible={dialog}
                 style={{ width: '32rem' }}
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                header="Προσθήκη ΜTRGroup"
+                header="Προσθήκη Ομάδας"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
@@ -361,7 +361,7 @@ const AddDialog = ({
                     label={'Κατηγορία'}
                     options={parent}
                     optionLabel={'label'}
-                    placeholder='label'
+                    placeholder='Επίλεξε κατηγορία'
                     optionValue={'value._id'}
                     error={errors.categoryName}
                 />
@@ -372,22 +372,6 @@ const AddDialog = ({
                     control={control}
                     required
                     error={errors.groupName}
-                />
-
-                <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    setState={setLogo}
-                    multiple={false}
-                    singleUpload={true}
-                    mb={'20px'} />
-
-
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <PrimeUploads
-                    setState={setImages}
-                    multiple={false}
-                    mb={'30px'}
-                    singleUpload={true}
                 />
             </Dialog>
         </form>

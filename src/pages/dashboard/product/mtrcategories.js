@@ -11,7 +11,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/mtrcategoriesDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import {  SubGridStyles } from '@/componentsStyles/grid';
+import { SubGridStyles } from '@/componentsStyles/grid';
 
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
@@ -22,7 +22,7 @@ import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
 import { AddDialog as GroupAdd, EditDialog as GroupEdit } from '@/GridDialogs/mtrgroupDialog';
-import {EditDialog as SubGroupEdit} from '@/GridDialogs/mtrsubgroupDialog';
+import { EditDialog as SubGroupEdit, AddDialog as SubGroupAdd } from '@/GridDialogs/mtrsubgroupDialog';
 
 
 export default function Categories() {
@@ -42,7 +42,7 @@ export default function Categories() {
 
     });
     //Set the toggled columns
-    const { data: session } =  useSession()
+    const { data: session } = useSession()
     let user = session?.user?.user;
 
 
@@ -150,8 +150,8 @@ export default function Categories() {
         return (
             // <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
             <div>
-                 <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(rowData)}></i>
-                 {/* <i className="pi pi-image ml-3 cursor-pointer" onClick={() => router.push('/dashboard/')}></i> */}
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(rowData)}></i>
+                {/* <i className="pi pi-image ml-3 cursor-pointer" onClick={() => router.push('/dashboard/')}></i> */}
             </div>
         );
     };
@@ -177,8 +177,8 @@ export default function Categories() {
     }
 
 
-   
-   
+
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -208,12 +208,12 @@ export default function Categories() {
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
                 <Column field="englishName" header="Mετάφραση" ></Column>
-                <Column field="updatedFrom" header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column field="updatedFrom" header="updatedFrom" body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
                 {user?.role === 'admin' ? (
-                   <Column body={actionBodyTemplate} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                    <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
                 ) : null}
-                
+
 
             </DataTable>
             <EditDialog
@@ -255,7 +255,7 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 //The component for the nested grid:
-const RowExpansionGrid = ({id }) => {
+const RowExpansionGrid = ({ id }) => {
     const dispatch = useDispatch();
 
     const [data, setData] = useState([])
@@ -263,17 +263,18 @@ const RowExpansionGrid = ({id }) => {
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const { data: session } =  useSession()
+    const [addDialog, setAddDialog] = useState(false);
+    const { data: session } = useSession()
     let user = session?.user?.user;
 
     const [expanded, setExpanded] = useState(null);
-       
+
     const handleFetch = async () => {
         setLoading(true);
         let res = await axios.post('/api/product/apiCategories', { action: 'findGroups', categoryId: id })
         setData(res.data.result)
         setLoading(false);
-    
+
     }
 
     useEffect(() => {
@@ -286,20 +287,26 @@ const RowExpansionGrid = ({id }) => {
 
     // }, [categoryName])
 
+
     const logoTemplate = (data) => {
-        return <GridLogoTemplate logo={data?.groupIcon} />
+        return <GridLogoTemplate logo={data.groupIcon} />
+    }
+
+
+    const imageTemplate = (data) => {
+        return <GridLogoTemplate logo={data.groupImage} />
     }
 
     //function to set data to the subnested grid:
     const SubRowExpansionTemplate = (data) => {
-        return <SubRowExpansionGrid id={data._id}/>
+        return <SubRowExpansionGrid id={data._id} />
     }
 
-    const Actions  = (product) => {
+    const Actions = (product) => {
         return (
             <div>
-                <i className="pi pi-pencil cursor-pointer"  onClick={() => editProduct(product)}></i>
-           </div>
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(product)}></i>
+            </div>
         )
     }
 
@@ -311,28 +318,39 @@ const RowExpansionGrid = ({id }) => {
 
     //Add product
     const openNew = () => {
+        setAddDialog(true)
         setSubmitted(false);
     };
 
 
     const hideDialog = () => {
+        setAddDialog(false)
         setEditDialog(false);
     };
 
-  
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
 
 
-    return ( 
+
+    return (
         <SubGridStyles>
-            <span className="subgrid-title" >Groups:</span>
+            <span className="subgrid-title" >Ομάδα:</span>
             <div className="data-table">
+                <Toolbar start={leftToolbarTemplate} ></Toolbar>
+
                 <DataTable
                     loading={loading}
                     value={data}
                     paginator
-                rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                showGridlines
+                    rows={8}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    showGridlines
                     srollable
                     dataKey="_id"
                     rowExpansionTemplate={SubRowExpansionTemplate}
@@ -340,13 +358,14 @@ const RowExpansionGrid = ({id }) => {
                     onRowToggle={(e) => setExpanded(e.data)}
                 >
                     <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
-                    <Column field="groupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
+                    <Column field="groupIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
+                    <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate} style={{ width: '50px' }} ></Column>
                     <Column field="groupName" header="'Ονομα"></Column>
-                    <Column field="updatedFrom"  header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                    <Column field="englishName"  header="Μετάφραση"></Column>
+                    <Column field="updatedFrom" header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    <Column field="englishName" header="Μετάφραση"></Column>
                     {user?.role === 'admin' ? (
-                   <Column body={Actions} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
-                ) : null}
+                        <Column body={Actions} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                    ) : null}
                 </DataTable>
             </div>
             <GroupEdit
@@ -356,22 +375,28 @@ const RowExpansionGrid = ({id }) => {
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
-            /> 
-           
+            />
+            <GroupAdd
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
+
         </SubGridStyles>
     );
 };
 
 const SubRowExpansionGrid = ({ id }) => {
     const dispatch = useDispatch()
-    const { data: session } =  useSession()
+    const { data: session } = useSession()
     let user = session?.user?.user;
     const [editDialog, setEditDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false);
+    const [addDialog, setAddDialog] = useState(false);
 
-    
     const handleFetch = async () => {
         setLoading(true);
         let res = await axios.post('/api/product/apiCategories', { action: 'findSubGroups', groupId: id })
@@ -393,54 +418,75 @@ const SubRowExpansionGrid = ({ id }) => {
         dispatch(setGridRowData(product))
     };
 
-   
+
 
 
     const hideDialog = () => {
         setEditDialog(false);
+        setAddDialog(false)
     };
 
-    
-    const Actions  = (product) => {
+    const openNew = () => {
+        setSubmitted(false);
+        setAddDialog(true);
+    };
+
+    const Actions = (product) => {
         return (
             <div>
-                <i className="pi pi-pencil cursor-pointer"  onClick={() => editProduct(product)}></i>
-           </div>
+                <i className="pi pi-pencil cursor-pointer" onClick={() => editProduct(product)}></i>
+            </div>
         )
     }
-
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            </div>
+        );
+    };
 
     return (
-       <>
-         < SubGridStyles>
-            <span className="subgrid-title" >SubGroups:</span>
-            <DataTable
-                value={data}
-                loading={loading}
-                showGridlines
-                dataKey="_id"
-                removableSort
-                rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                paginator
-            >
-                <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
-                <Column field="subGroupName" header="Softone Όνομα"></Column>
-                <Column field="englishName" header="Μετάφραση"></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                {user?.role === 'admin' ? (
-                   <Column body={Actions} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
-                ) : null}
-            </DataTable>
-        </ SubGridStyles>
-            < SubGroupEdit
-            dialog={editDialog}
-            setDialog={setEditDialog}
-            hideDialog={hideDialog}
-            setSubmitted={setSubmitted}
+        <>
+            < SubGridStyles>
 
-        />
-       </>
+                <span className="subgrid-title" >SubGroups:</span>
+                <Toolbar start={leftToolbarTemplate}></Toolbar>
+                <DataTable
+                    value={data}
+                    loading={loading}
+                    showGridlines
+                    dataKey="_id"
+                    removableSort
+                    rows={8}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    paginator
+                >
+                    <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
+                    <Column field="subGroupName" header="Softone Όνομα"></Column>
+                    <Column field="englishName" header="Μετάφραση"></Column>
+                    <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    {user?.role === 'admin' ? (
+                        <Column body={Actions} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                    ) : null}
+                </DataTable>
+            </ SubGridStyles>
+            < SubGroupEdit
+                dialog={editDialog}
+                setDialog={setEditDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+
+            />
+             <SubGroupAdd
+                dialog={addDialog}
+                setDialog={setAddDialog}
+                hideDialog={hideDialog}
+                setSubmitted={setSubmitted}
+            />
+          
+
+        </>
     )
 
 }

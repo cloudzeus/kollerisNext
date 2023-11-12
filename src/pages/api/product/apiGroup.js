@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
-import { object } from "yup";
-import { original } from "@reduxjs/toolkit";
+
 export default async function handler(req, res) {
 
 	
@@ -112,58 +111,64 @@ export default async function handler(req, res) {
 		console.log(newCategory)
         //CONSTRUCT OBJECT TO UPDATE MONGO DB:
         let obj = {
-            category: originalCategory,
+            category: newCategory,
             groupName:data.groupName,
             softOne: data.softOne,
             updatedFrom: data?.updatedFrom,
             englishName: data.englishName,
         }
         //CONSTRUCT OBJECT TO UPDATE SOFTONE:
-        let sonftoneObj = {
-            mtrgroup: data.softOne.MTRGROUP,
-            username: "Service",
-            password: "Service",
+        let softoneObj = {
+			mtrgroup: data.softOne.MTRGROUP,
+			username:"Service",
+			password:"Service",
             name: data.softOne.NAME,
-            company: '1001',
+            company: 1001,
             mtrcategory: data.category.softOne.MTRCATEGORY,
+			isactive: 1
         }
-		console.log('obj: ' + JSON.stringify( sonftoneObj))
+      
+		console.log('obj: ' + JSON.stringify( softoneObj))
         //UPDATE SOFTONE:
-		// if(data.softOne.NAME) {
-		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
-		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
-        //     // console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+		if(data.softOne.NAME) {
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+			let softoneResponse = await axios.post(URL, softoneObj)
+            console.log('softoneresponse')
+			console.log(softoneResponse.data)
             
-		// }
+		}
 		
        
-		// try {
-		// 	await connectMongo();
-        //     const updatedGroup = await MtrGroup.findOneAndUpdate(
-        //         { _id: groupid },
-        //         obj,
-        //         { new: true }
-        //       );
+		try {
+			await connectMongo();
+            const updatedGroup = await MtrGroup.findOneAndUpdate(
+                { _id: groupid },
+                obj,
+                { new: true }
+              );
             
-        //     // WHEN we change the category of the grou we need to push it to the new category, and pull it from the old category
-        //     const updatedCategory = await MtrCategory.updateOne({_id: newCategory}, {$push: {groups: groupid}})
-        //     const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: groupid}})
-		// 	console.log('pull from old category: ' + JSON.stringify(pull))
+            // WHEN we change the category of the grou we need to push it to the new category, and pull it from the old category
+
+            const updatedCategory = await MtrCategory.updateOne({_id: newCategory}, {$push: {groups: groupid}})
+			console.log('push to new category: ' + JSON.stringify(updatedCategory))
+            const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: groupid}})
+			
+			console.log('pull from old category: ' + JSON.stringify(pull))
          
-        //     let message;
+            let message;
 
 
-        //     if(updatedCategory) {
-        //         message = `Η κατηγορία ενημερώθηκε. Μία εγγραφή προστέθηκε στην νέα κατηγορία`
-        //     }
-        //     if(pull) {
-        //         message += ` Επιτυχής αφαίρεση από την παλιά κατηγορία ${data.category.softOne.NAME} `
-        //     }
+            if(updatedCategory) {
+                message = `Η κατηγορία ενημερώθηκε. Μία εγγραφή προστέθηκε στην νέα κατηγορία`
+            }
+            if(pull) {
+                message += ` Επιτυχής αφαίρεση από την παλιά κατηγορία ${data.category.softOne.NAME} `
+            }
            
-		// 	return res.status(200).json({ success: true, result: updatedGroup, message: message });
-		// } catch (error) {
-		// 	return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
-		// }
+			return res.status(200).json({ success: true, result: updatedGroup, message: message });
+		} catch (error) {
+			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
+		}
     
 	
 		

@@ -10,7 +10,7 @@ import { Toast } from 'primereact/toast';
 
 
 
-const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd, setRefetch }) => {
+const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd }) => {
     const [visible, setVisible] = useState(false)
     useEffect(() => {
         setUploadedFiles([])

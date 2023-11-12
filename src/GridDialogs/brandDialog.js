@@ -13,11 +13,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-import SinglePhotoUpload from '@/components/Forms/SinglePhotoUpload';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
-import AddDeleteImages from '@/components/GalleryListSmall';
-import DialogGallery from '@/components/DialogGallery';
+import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
 import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
@@ -25,7 +23,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session } = useSession()
     const [images, setImages] = useState([])
     const [logo, setLogo] = useState()
-   
+
     const toast = useRef(null);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: gridRowData });
     const [videoList, setVideoList] = useState(gridRowData?.videoPromoList)
@@ -41,36 +39,18 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     useEffect(() => {
         setVideoList(gridRowData?.videoPromoList)
         //handle images:
-        let newArray = []
-        if (gridRowData?.photosPromoList) {
-
-            for (let image of gridRowData?.photosPromoList) {
-                newArray.push(image.photosPromoUrl)
-            }
-            setImages(newArray)
-        }
-
+     
         //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
-        setLogo(gridRowData?.logo ? [gridRowData?.logo] : [])
     }, [gridRowData])
 
 
     const handleEdit = async (data) => {
 
-
-        let newImages = []
-        for (let image of images) {
-            let obj = {
-                name: image,
-                photosPromoUrl: image
-            }
-            newImages.push(obj)
-        }
+      
         const object = {
             ...data,
             videoPromoList: videoList,
-            logo: logo,
-            photosPromoList: newImages
+        
         }
 
         try {
@@ -125,8 +105,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
 
-                    <SinglePhotoUpload state={logo} setState={setLogo} />
-                    <FormTitle>Λεπτομέριες</FormTitle>
                     <Input
                         label={'Όνομα'}
                         name={'softOne.NAME'}
@@ -140,38 +118,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         name={'description'}
                         control={control}
                     />
-                
-                    <PrimeInputNumber
-                        label={'Min value order'}
-                        name={'minValueOrder'}
-                        control={control}
-                    />
-                    <PrimeInputNumber
-                        label={'Min item order'}
-                        name={'minItemsOrder'}
-                        control={control}
-                    />
-                    <PrimeInputNumber
-                        label={'Min year purchases'}
-                        name={'minYearPurchases'}
-                        control={control}
-                    />
-                    <Input
-                        label={'Min year purchases'}
-                        name={'minYearPurchases'}
-                        control={control}
-                    />
-                    < Divider />
 
-                    <FormTitle>Φωτογραφίες</FormTitle>
-                    <DialogGallery
-                        images={images}
-                        state={images}
-                        setState={setImages}
-                        url="/api/product/apiMarkes"
-                        id={gridRowData._id}
-                        user={session?.user?.user?.lastName}
-                    />
+                  
+                  
+                    <div>
+                        <FormTitle>Λογότυπο</FormTitle>
+                        <UploadLogo id={gridRowData._id}  />
+                    </div>
 
                     < Divider />
                     <FormTitle>Βίντεο</FormTitle>
@@ -229,6 +182,54 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 </Dialog>
             </form>
         </Container>
+
+    )
+}
+
+
+
+
+const UploadLogo = ({ id }) => {
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [visible, setVisible] = useState(false)
+    const [refetch, setRefetch] = useState(false)
+    const [data, setData] = useState(false)
+    console.log('id')
+    console.log(id)
+    const onAdd = async () => {
+        let { data } = await axios.post('/api/product/apiMarkes', { action: 'addLogo', logo: uploadedFiles[0].name, id: id })
+        setRefetch(prev => !prev)
+        return data;
+    }
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiMarkes', { action: 'getLogo', id: id })
+        console.log('data ------------')
+        console.log(data)
+        setData(data.result)
+
+    }
+    const onDelete = async () => {
+        let { data } = await axios.post('/api/product/apiMarkes', { action: 'deleteLogo', id: id })
+        setRefetch(prev => !prev)
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [refetch, id])
+    return (
+        <div>
+            <SingleImageUpload
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                visible={visible}
+                data={data}
+                setVisible={setVisible}
+                onAdd={onAdd}
+                onDelete={onDelete}
+
+            />
+        </div>
 
     )
 }
@@ -364,34 +365,8 @@ const AddDialog = ({
                     formData={videoList}
                     mb={'20px'}
                 />
-                <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    singleUpload={true}
-                    state={logo}
-                    setState={setLogo}
-                    multiple={false}
-                    mb={'20px'} />
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <PrimeUploads
-                    state={images}
-                    setState={setImages}
-                    multiple={true}
-                    mb={'30px'} />
-                <Input
-                    label={'Min items order'}
-                    name={'minItemsOrder'}
-                    control={control}
-                />
-                <Input
-                    label={'Min value order'}
-                    name={'minValueOrder'}
-                    control={control}
-                />
-                <Input
-                    label={'Min year purchases'}
-                    name={'minYearPurchases'}
-                    control={control}
-                />
+             
+            
                 <FormTitle>Pim Access</FormTitle>
                 <Input
                     label={'Pim URL'}
