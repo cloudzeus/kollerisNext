@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { MtrGroup, MtrCategory, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
+import { connect } from "mongoose";
+import Groups from "@/pages/dashboard/product/mtrgroup";
 
 export default async function handler(req, res) {
 
@@ -100,67 +102,38 @@ export default async function handler(req, res) {
 		}
 	}
 	
-
-	if(action === "translate") {
-		let data = req.body.data;
-		console.log('------------------------------------------------')
-
-		let {id, fieldName, index} = req.body
-		
-
+	if(action === "findGroups") {
+		const {categoryId} = req.body;
 		try {
 			await connectMongo();
-			const category = await MtrCategory.findOne({ _id: id  });
-			if(category.localized.length == 0) {
-				category.localized.push({
-					fieldName: fieldName,
-					translations: data
-				})
-
-				
-
-			} 
-
-			if(category.localized.length > 0) {
-				category.localized.map((item) => {
-					if(item.fieldName == fieldName) {
-						item.translations = data;
-					}
-					return item;
-				})
-			
-				
-			}
-			const categoryUpdate = await MtrCategory.updateOne(
-				{_id: id},
-				{$set: {localized: category.localized}}
-			  	);
-
-			return res.status(200).json({ success: true, result: categoryUpdate  });
-		} catch(e) {
+			let groups = await  MtrGroup.find({category: categoryId})
+			.populate({
+                path: 'category',
+            
+            })
+            .populate({
+                path: 'subGroups',
+            
+            })
+			return res.status(200).json({ success: true, result: groups });
+		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
-	// if (action === 'updateImages') {
-		
-	// 	const {images, updatedFrom, id } = req.body
+	if(action === "findSubGroups") {
+		const {groupId} = req.body;
+		try {
+			await connectMongo();
+			let result = await SubMtrGroup.find({group: groupId})
+			.populate( 'group', 'groupName')
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 
-	// 	console.log(images, updatedFrom, id)
-	// 	const filter = { _id: id };
-	// 	const update = { $set:  { photosPromoList: images,  updatedFrom: updatedFrom}  };
-	// 	try {
-	// 		await connectMongo();
-	// 		const result = await MtrCategory.updateOne(filter, update);
-	// 		console.log(result)
-			
-	// 		return res.status(200).json({ success: true, result: result });
-	// 	} catch (error) {
-	// 		return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
-	// 	}
-    
 
-	// }
-
+	
 
 	if(action === "getImages") {
 		const {id, createNew} = req.body;

@@ -13,7 +13,6 @@ export default async function handler(req, res) {
 	
 
     if (action === 'findAll') {
-        console.log('find all MtrGroup')
 		try {
 			await connectMongo();
             const mtrgroup = await MtrGroup.find({})
@@ -104,9 +103,13 @@ export default async function handler(req, res) {
 	}
     if (action === 'update') {
         const {originalCategory, newCategory, data, groupid} = req.body;
-        console.log(data)
+        // console.log(data)
         console.log('GROUP ID')
         console.log(groupid)
+		console.log('original category id')
+		console.log(originalCategory)
+		console.log('new category id')
+		console.log(newCategory)
         //CONSTRUCT OBJECT TO UPDATE MONGO DB:
         let obj = {
             category: originalCategory,
@@ -124,41 +127,43 @@ export default async function handler(req, res) {
             company: '1001',
             mtrcategory: data.category.softOne.MTRCATEGORY,
         }
+		console.log('obj: ' + JSON.stringify( sonftoneObj))
         //UPDATE SOFTONE:
-		if(data.softOne.NAME) {
-			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
-			let softoneResponse = await axios.post(URL, {...sonftoneObj})
-            console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+		// if(data.softOne.NAME) {
+		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
+        //     // console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
             
-		}
+		// }
 		
        
-		try {
-			await connectMongo();
-            const updatedGroup = await MtrGroup.findOneAndUpdate(
-                { _id: groupid },
-                obj,
-                { new: true }
-              );
+		// try {
+		// 	await connectMongo();
+        //     const updatedGroup = await MtrGroup.findOneAndUpdate(
+        //         { _id: groupid },
+        //         obj,
+        //         { new: true }
+        //       );
             
-            // WHEN we change the category of the grou we need to push it to the new category, and pull it from the old category
-            const updatedCategory = await MtrCategory.updateOne({_id: newCategory}, {$push: {groups: groupid}})
-            const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: groupid}})
+        //     // WHEN we change the category of the grou we need to push it to the new category, and pull it from the old category
+        //     const updatedCategory = await MtrCategory.updateOne({_id: newCategory}, {$push: {groups: groupid}})
+        //     const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: groupid}})
+		// 	console.log('pull from old category: ' + JSON.stringify(pull))
          
-            let message;
+        //     let message;
 
 
-            if(updatedCategory) {
-                message = `Η κατηγορία ενημερώθηκε. Μία εγγραφή προστέθηκε στην νέα κατηγορία`
-            }
-            if(pull) {
-                message += ` Επιτυχής αφαίρεση από την παλιά κατηγορία ${data.category.softOne.NAME} `
-            }
+        //     if(updatedCategory) {
+        //         message = `Η κατηγορία ενημερώθηκε. Μία εγγραφή προστέθηκε στην νέα κατηγορία`
+        //     }
+        //     if(pull) {
+        //         message += ` Επιτυχής αφαίρεση από την παλιά κατηγορία ${data.category.softOne.NAME} `
+        //     }
            
-			return res.status(200).json({ success: true, result: updatedGroup, message: message });
-		} catch (error) {
-			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
-		}
+		// 	return res.status(200).json({ success: true, result: updatedGroup, message: message });
+		// } catch (error) {
+		// 	return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
+		// }
     
 	
 		

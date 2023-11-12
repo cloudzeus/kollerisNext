@@ -11,7 +11,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/mtrgroupDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import {   SubGridStyles } from '@/componentsStyles/grid';
+import { SubGridStyles } from '@/componentsStyles/grid';
 import GridActions from '@/components/grid/GridActions';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
@@ -39,7 +39,7 @@ export default function Groups() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
-    const { data: session } =  useSession()
+    const { data: session } = useSession()
     let user = session?.user?.user;
 
     const [filters, setFilters] = useState({
@@ -67,7 +67,7 @@ export default function Groups() {
 
 
 
-   
+
 
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
@@ -108,7 +108,7 @@ export default function Groups() {
         );
     };
 
-   
+
 
 
     const editProduct = async (product) => {
@@ -138,13 +138,13 @@ export default function Groups() {
 
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.groupIcon} />
-     }
+    }
 
 
     const imageTemplate = (data) => {
         return <GridLogoTemplate logo={data.groupImage} />
-     }
-    
+    }
+
     const actionBodyTemplate = (rowData) => {
         return (
             <div>
@@ -160,21 +160,21 @@ export default function Groups() {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
     }
 
-  
+
 
 
     const RowExpansionTemplate = (data) => {
-        return <RowExpansionGrid subGroups={data.subGroups} />
+        return <RowExpansionGrid id={data._id} />
     }
-    
 
- 
+
+
 
     return (
         <AdminLayout >
             <Toast ref={toast} />
             <StepHeader text="Oμάδες" />
-            <Toolbar  start={leftToolbarTemplate} ></Toolbar>
+            <Toolbar start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -197,12 +197,12 @@ export default function Groups() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="groupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }} ></Column>
-                <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate}  style={{ width: '50px' }} ></Column>
+                <Column field="groupIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
+                <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="category.categoryName" header="Κατηγορία"  ></Column>
-                <Column field="groupName"  header="Όνομα Group" sortable ></Column>
-                <Column field="englishName"  header="Μετάφραση" sortable ></Column>
-               
+                <Column field="groupName" header="Όνομα Group" ></Column>
+                <Column field="englishName" header="Μετάφραση"></Column>
+
                 {/* <Column field="createdFrom" sortable header="createdFrom" style={{ width: '90px' }} body={CreatedFromTemplate}></Column> */}
                 <Column field="updatedFrom" sortable header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 {/* <Column field="status" sortable header="Status" style={{ width: '90px' }}  bodyStyle={{ textAlign: 'center' }}  body={ActiveTempate}></Column> */}
@@ -210,7 +210,6 @@ export default function Groups() {
                     <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }} ></Column>
                 ) : null}
 
-          
 
             </DataTable>
             <EditDialog
@@ -234,20 +233,6 @@ export default function Groups() {
 }
 
 
-const ActiveTempate = ({ status }) => {
-
-    return (
-        <div>
-            {status ? (
-                <Tag severity="success" value=" active "></Tag>
-            ) : (
-                <Tag severity="danger" value="deleted" ></Tag>
-            )}
-
-        </div>
-    )
-
-}
 
 
 
@@ -264,78 +249,54 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
     )
 }
-const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={createdFrom}
-            at={createdAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--green-400)'
-        />
-
-    )
-}
 
 
 
 //The component for the nested grid:
-const RowExpansionGrid = ({ subGroups }) => {
+const RowExpansionGrid = ({ id }) => {
+    const [data, setData] = useState(false)
+    const [loading, setLoading] = useState(false)
     // console.log('GROUPS: ' + JSON.stringify(groups))
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data?.groupIcon} />
     }
-  
-   
+
+    const handleFetch = async () => {
+        setLoading(true);
+        let res = await axios.post('/api/product/apiCategories', { action: 'findSubGroups', groupId: id })
+        setData(res.data.result)
+        console.log('subgroups')
+        console.log(res.data.result)
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [])
     return (
-        <>
-            {subGroups.length > 0 ? (
-                 <SubGridStyles>
-                 <span className="subgrid-title" >Subgroups:</span>
-                 <div className="data-table">
-                     <DataTable
-                         value={subGroups}
-                         rows={8}
-                         srollable
-                         showGridlines
-                         dataKey="_id"
-     
-                         >
-                         <Column field="subGroupIcon" body={logoTemplate}  style={{ width: '50px' }} header="Λογότυπο"></Column>
-                         <Column field="subGroupName" header="'Ονομα"></Column>
-     
-                     </DataTable>
-                 </div>
-             </SubGridStyles>
-            ): <p>Δεν υπάρχουν subGroups</p>}
-        </>
+        <SubGridStyles>
+            <span className="subgrid-title" >Subgroups:</span>
+            <div className="data-table">
+                <DataTable
+                    loading={loading}
+                    value={data}
+                    rows={8}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    paginator
+                    srollable
+                    showGridlines
+                    dataKey="subGroupName"
+
+                >
+                    <Column field="subGroupIcon" body={logoTemplate} style={{ width: '50px' }} header="Λογότυπο"></Column>
+                    <Column field="subGroupName" header="'Ονομα"></Column>
+
+                </DataTable>
+            </div>
+        </SubGridStyles>
     );
 };
 
-const SubRowExpansionGrid = ({ subGroups }) => {
-    console.log('SUBGROUPS: ' + JSON.stringify(subGroups))
-
-    return (
-        < SubGridStyles>
-            <span className="subgrid-title" >SubGroups:</span>
-            <DataTable
-                value={subGroups}
-                showGridlines
-                dataKey="_id"
-                removableSort
-            >
-                <Column field="subGroupName" header="Softone Όνομα"></Column>
-                <Column field="subGroupIcon" header="Λογότυπο"></Column>
-                <Column field="subGroupImage" header="Φωτογραφία"></Column>
-                <Column field="createdAt" header="createdAt"></Column>
-                {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
-            </DataTable>
-        </ SubGridStyles>
-    )
-
-}
 
 
 

@@ -22,8 +22,7 @@ import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';
 import { useRouter } from 'next/router';
 import { AddDialog as GroupAdd, EditDialog as GroupEdit } from '@/GridDialogs/mtrgroupDialog';
-
-
+import {EditDialog as SubGroupEdit} from '@/GridDialogs/mtrsubgroupDialog';
 
 
 export default function Categories() {
@@ -49,24 +48,20 @@ export default function Categories() {
 
 
     const handleFetch = async () => {
+        setLoading(true)
         let res = await axios.post('/api/product/apiCategories', { action: 'findAll' })
         setData(res.data.result)
-        
+        setLoading(false)
     }
 
 
 
     useEffect(() => {
         handleFetch()
-    }, [])
-
-
-
-    //Refetch on add edit:
-    useEffect(() => {
-        console.log('submitted: ' + submitted)
-        if (submitted) handleFetch()
     }, [submitted])
+
+
+
 
 
 
@@ -178,10 +173,7 @@ export default function Categories() {
 
 
     const RowExpansionTemplate = (data) => {
-        console.log('sefseesoifesliufhseiufhesiufhui')
-        console.log(data.categoryName)
-        let categoryName = data.categoryName
-        return <RowExpansionGrid groups={data.groups}  categoryName={categoryName}/>
+        return <RowExpansionGrid id={data._id} />
     }
 
 
@@ -244,20 +236,6 @@ export default function Categories() {
 }
 
 
-const ActiveTempate = ({ status }) => {
-
-    return (
-        <div>
-            {status ? (
-                <Tag severity="success" value=" active "></Tag>
-            ) : (
-                <Tag severity="danger" value="deleted" ></Tag>
-            )}
-
-        </div>
-    )
-
-}
 
 
 
@@ -277,8 +255,11 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 //The component for the nested grid:
-const RowExpansionGrid = ({ groups, categoryName }) => {
+const RowExpansionGrid = ({id }) => {
     const dispatch = useDispatch();
+
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false);
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -287,10 +268,23 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
 
     const [expanded, setExpanded] = useState(null);
        
-    useEffect(() => {
-        setEditData()
+    const handleFetch = async () => {
+        setLoading(true);
+        let res = await axios.post('/api/product/apiCategories', { action: 'findGroups', categoryId: id })
+        setData(res.data.result)
+        setLoading(false);
+    
+    }
 
-    }, [categoryName])
+    useEffect(() => {
+        handleFetch()
+    }, [submitted])
+
+
+    // useEffect(() => {
+    //     setEditData()
+
+    // }, [categoryName])
 
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data?.groupIcon} />
@@ -298,7 +292,7 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
 
     //function to set data to the subnested grid:
     const SubRowExpansionTemplate = (data) => {
-        return <SubRowExpansionGrid subGroups={data.subGroups} />
+        return <SubRowExpansionGrid id={data._id}/>
     }
 
     const Actions  = (product) => {
@@ -310,16 +304,22 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
     }
 
     const editProduct = async (product) => {
-        dispatch(setGridRowData(product))
         setSubmitted(false);
         setEditDialog(true)
+        dispatch(setGridRowData(product))
     };
 
-  
+    //Add product
+    const openNew = () => {
+        setSubmitted(false);
+    };
+
 
     const hideDialog = () => {
         setEditDialog(false);
     };
+
+  
 
 
     return ( 
@@ -327,10 +327,13 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
             <span className="subgrid-title" >Groups:</span>
             <div className="data-table">
                 <DataTable
-                    value={groups}
-                    rows={8}
+                    loading={loading}
+                    value={data}
+                    paginator
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                showGridlines
                     srollable
-                    showGridlines
                     dataKey="_id"
                     rowExpansionTemplate={SubRowExpansionTemplate}
                     expandedRows={expanded}
@@ -339,10 +342,11 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
                     <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
                     <Column field="groupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
                     <Column field="groupName" header="'Ονομα"></Column>
-                    <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                    {/* {user?.role === 'admin' ? (
+                    <Column field="updatedFrom"  header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    <Column field="englishName"  header="Μετάφραση"></Column>
+                    {user?.role === 'admin' ? (
                    <Column body={Actions} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
-                ) : null} */}
+                ) : null}
                 </DataTable>
             </div>
             <GroupEdit
@@ -358,29 +362,85 @@ const RowExpansionGrid = ({ groups, categoryName }) => {
     );
 };
 
-const SubRowExpansionGrid = ({ subGroups }) => {
+const SubRowExpansionGrid = ({ id }) => {
+    const dispatch = useDispatch()
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
+    const [editDialog, setEditDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false);
 
+    
+    const handleFetch = async () => {
+        setLoading(true);
+        let res = await axios.post('/api/product/apiCategories', { action: 'findSubGroups', groupId: id })
+        setData(res.data.result)
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [submitted])
 
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupIcon} />
     }
+
+    const editProduct = async (product) => {
+        setEditDialog(true)
+        setSubmitted(false);
+        dispatch(setGridRowData(product))
+    };
+
+   
+
+
+    const hideDialog = () => {
+        setEditDialog(false);
+    };
+
+    
+    const Actions  = (product) => {
+        return (
+            <div>
+                <i className="pi pi-pencil cursor-pointer"  onClick={() => editProduct(product)}></i>
+           </div>
+        )
+    }
+
+
     return (
-        < SubGridStyles>
+       <>
+         < SubGridStyles>
             <span className="subgrid-title" >SubGroups:</span>
             <DataTable
-                value={subGroups}
+                value={data}
+                loading={loading}
                 showGridlines
                 dataKey="_id"
                 removableSort
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                paginator
             >
                 <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
                 <Column field="subGroupName" header="Softone Όνομα"></Column>
-                <Column field="status" header="Status" body={ActiveTempate} ></Column>
-                {/* <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-            <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-            <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column> */}
+                <Column field="englishName" header="Μετάφραση"></Column>
+                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                {user?.role === 'admin' ? (
+                   <Column body={Actions} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
+                ) : null}
             </DataTable>
         </ SubGridStyles>
+            < SubGroupEdit
+            dialog={editDialog}
+            setDialog={setEditDialog}
+            hideDialog={hideDialog}
+            setSubmitted={setSubmitted}
+
+        />
+       </>
     )
 
 }

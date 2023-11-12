@@ -42,10 +42,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     
     
     useEffect(() => {
+        setTranslateName(gridRowData?.englishName)
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiGroup', { action: 'findCategoriesNames' })
             setParent(res.data.result)
-
+            
         }
         handleFetch()
         // setCategory({categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}})

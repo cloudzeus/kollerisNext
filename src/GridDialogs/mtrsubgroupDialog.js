@@ -25,10 +25,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
     //This component has one Image only:
-    const [image, setImage] = useState([gridRowData?.subGroupImage])
-    const [logo, setLogo] = useState([gridRowData?.subGroupIcon])
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -49,13 +46,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiSubGroup', { action: 'findGroupNames' })
             setParent(res.data.result)
+         
 
         }
         handleFetch()
-
+        setTranslateName(gridRowData?.englishName)
         //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
-        setLogo(gridRowData?.subGroupIcon ? [gridRowData?.subGroupIcon] : [])
-        setImage(gridRowData?.subGroupImage ? [gridRowData?.subGroupImage] : [])
+       
     }, [gridRowData])
 
 
