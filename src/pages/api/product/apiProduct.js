@@ -485,6 +485,13 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, result: null });
         }
     }
+
+        if(action === "csvImages") {
+            const {data}= req.body;
+            console.log(data)
+            console.log('images')
+    
+        }
 }
 
 

@@ -248,6 +248,7 @@ export default function Page() {
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const parsedData = XLSX.utils.sheet_to_json(sheet);
+            console.log(parsedData)
             dispatch(setGridData(parsedData))
 
             if (parsedData.length > 0) {

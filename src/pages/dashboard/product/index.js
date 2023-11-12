@@ -26,6 +26,7 @@ import { useRouter } from 'next/router';
 import StepHeader from '@/components/StepHeader';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import XLSXDownloadButton from '@/components/exportCSV/Product';
+import MassiveImageUpload from '@/components/MassiveImageUpload';
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -566,6 +567,7 @@ function Product() {
             <div className='flex flex-column'>
                 <Button label="Προσφορές πολλαπλών επιλογών" outlined severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")} />
                 <Button label="Προσφορές σε πελάτη" outlined severity='secondary'  className='mb-3 mt-1 w-20rem' onClick={() => router.push("/dashboard/offer")} />
+                < MassiveImageUpload />
             </div>
             </OverlayPanel>
            
