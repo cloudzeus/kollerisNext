@@ -14,19 +14,32 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
+  const [state, setState] = {
+    TRDR: null,
+    NAME: null,
+    EMAIL: null,
+    minOrderValue: null,
+  }
   const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
   const {id} = router.query
-  let TRDR = id[0];
-  let NAME = id[1];
-  let EMAIL = id[2];
-  let minOrderValue= parseInt(id[3]);
-  console.log(minOrderValue)
-  console.log(id)
+  
+  
+
+
   useEffect(() => {
     dispatch(setSelectedProducts([]))
-   
-  }, [selectedSupplier])
+    let TRDR = id[0];
+    let NAME = id[1];
+    let EMAIL = id[2];
+    let minOrderValue= parseInt(id[3]);
+    setState({
+      TRDR: TRDR,
+      NAME: NAME,
+      EMAIL: EMAIL,
+      minOrderValue: minOrderValue,
+    })
+  }, [selectedSupplier, id])
 
 
 
@@ -39,12 +52,12 @@ const ChooseProducts = () => {
     let { data } = await axios.post('/api/createOrder', {
       action: 'createBucket',
       products: mtrLines,
-      email: EMAIL,
-      TRDR: TRDR,
-      NAME: NAME,
-      minOrderValue: minOrderValue,
+      email: state.EMAIL,
+      TRDR: state.TRDR,
+      NAME: state.NAME,
+      minOrderValue: state.minOrderValue,
     })
-    router.push(`/dashboard/suppliers/order/${TRDR}`)
+    router.push(`/dashboard/suppliers/order/${state.TRDR}`)
   }
   return (
     <AdminLayout>
