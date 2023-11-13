@@ -58,7 +58,7 @@ const Page = () => {
     useEffect(() => {
         
         let nameCondition = mongoKeys.some(key => key.related === 'NAME');
-        let codeCondition = mongoKeys.some(key => key.related === 'CODE');
+        let codeCondition = mongoKeys.some(key => key.related === 'CODE1');
         if (nameCondition && codeCondition) {
             setIsSubmit(true); // Set isSubmit to true if 'name' or 'code' condition is met
         } else {
@@ -123,19 +123,12 @@ const OurDatabaseKeys = [
         key: 'description',
         value: 'Περιγραφή'
     },
-    {
-        key: 'CODE',
-        value: 'EANCODE'
-    },
+  
     {
         key: 'CODE1',
-        value: 'Κωδικός εργοστασίου'
+        value: 'EANCODE'
     },
-    {
-        key: 'CODE2',
-        value: 'Κωδικός ----'
-    },
-
+   
     {
         key: 'COUNTRY',
         value: 'Χώρα'

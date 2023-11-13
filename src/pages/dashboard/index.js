@@ -16,4 +16,9 @@ const Page = () => {
   )
 }
 
+
+const ProductsStats  = () => {
+    
+}
+
 export default Page;

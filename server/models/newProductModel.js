@@ -83,6 +83,10 @@ const softoneProduct = new mongoose.Schema({
     MTRUNIT4: String,
     MU31: String,
     MU41: String,
+    // uploadedNew: Boolean,
+    // uploadedUpdated: Boolean,
+    // uploadedDate: String,
+   
 },
 
 {
