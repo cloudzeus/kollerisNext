@@ -14,12 +14,12 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const [state, setState] = {
+  const [state, setState] = useState({
     TRDR:'',
     NAME:'',
     EMAIL: '',
     minOrderValue: 0,
-  }
+  })
   const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
   const {id} = router.query
