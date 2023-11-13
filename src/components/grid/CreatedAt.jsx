@@ -1,15 +1,17 @@
+import format from "date-fns/format";
+import el from "date-fns/locale/el";
+
+
 const CreatedAt = ({ createdAt }) => {
-    const date = createdAt.split('T')[0];
-    const time = createdAt.split('T')[1].split('.')[0];
-    const newtime = time.slice(0, 5)
+    const currentDate = new Date(createdAt);
+    const formattedDate = format(currentDate, 'dd-MM-yyyy HH:mm:ss', { locale: el });
     return (
         <div className='flex align-items-center'>
-            <i className="pi pi-calendar mr-2 text-primary" style={{ fontSize: '13px' }}></i>
-            <div>
-                <span className="font-medium mr-2">{date}</span>
-                <span>{newtime}</span>
-            </div>
+        <i className="pi pi-calendar mr-2 text-primary" style={{ fontSize: '13px' }}></i>
+        <div>
+            <span className="font-medium mr-2">{formattedDate}</span>
         </div>
+    </div>
     )
 }
 

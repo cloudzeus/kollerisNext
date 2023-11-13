@@ -35,7 +35,7 @@ const SidebarList = () => {
     return (
         <ul>
             {/* PRODUCTS */}
-            <SidebarHeader  title={'Προϊόντα'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
+            <SidebarHeader title={'Προϊόντα'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
             {activeTab == 1 ? (
                 <div >
                     <SidebarSubItem title={'Προϊον'} goTo={'/dashboard/product'} />
@@ -46,30 +46,29 @@ const SidebarList = () => {
                     <SidebarSubItem title={'Υποομάδες'} goTo={'/dashboard/product/mtrsubgroup'} />
                 </div>
             ) : null}
-              {/* TIMIKATALOGOI */}
-            <SidebarHeader  title={'Τιμοκατάλογοι'} id={2} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
-            {activeTab == 2 ? (
-                <div >
-                    <SidebarSubItem title={'Upload Κατάλογοι'} goTo={'/dashboard/catalogs'} />
-                    <SidebarSubItem title={'Αποθηκευμένοι Κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
 
-                </div>
-            ) : null}
 
             {/* CLIENTS */}
-            <SidebarHeader  title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            <SidebarHeader title={'Πελάτες'} id={3} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 3 ? (
                 <div >
-                      <SidebarSubItem title={'Λίστα πελατών'} goTo={'/dashboard/clients'} />
+                    <SidebarSubItem title={'Λίστα πελατών'} goTo={'/dashboard/clients'} />
                     <SidebarSubItem title={'Προσφορές'} goTo={'/dashboard/offer'} />
                     <SidebarSubItem title={'Προσφορές Πολλ. Επιλογών'} goTo={'/dashboard/multi-offer'} />
 
                 </div>
             ) : null}
-                {/* CLIENTS */}
-                <SidebarItem title={'Προμηθευτές'} goTo={'/dashboard/suppliers'} />
-                    {/* CLIENTS */}
-           
+
+            <SidebarHeader title={' Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
+            {activeTab == 4 ? (
+                <div >
+
+                    <SidebarSubItem title={'Λίστα Προμηθευτών'} goTo={'/dashboard/suppliers'} />
+                    <SidebarSubItem title={'Όλοι οι κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
+
+
+                </div>
+            ) : null}
             <SidebarItem title={'Χρήστες'} goTo={'/dashboard/users'} />
             <SidebarItem title={'Impas'} goTo={'/dashboard/info/impas'} />
         </ul>
@@ -77,7 +76,7 @@ const SidebarList = () => {
 }
 
 
-const SidebarHeader = ({id, setActiveTab, activeTab, title, dropdown }) => {
+const SidebarHeader = ({ id, setActiveTab, activeTab, title, dropdown }) => {
     const [activeIcon, setActiveIcon] = useState(false)
     const router = useRouter()
     const handleClick = () => {
@@ -97,7 +96,7 @@ const SidebarHeader = ({id, setActiveTab, activeTab, title, dropdown }) => {
 
 
 
-const SidebarItem = ({title, goTo }) => {
+const SidebarItem = ({ title, goTo }) => {
     const router = useRouter()
     const handleClick = () => {
         router.push(goTo)

@@ -233,8 +233,7 @@ export default function Page() {
         setFileLoading(true)
         let fileName = e.target.files[0].name
         let save = await axios.post('/api/suppliers', {action: 'saveCatalog', catalogName: fileName, id: rowData._id})
-        console.log('save')
-        console.log(save)
+      
         dispatch(setSelectedSupplier(rowData))
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
@@ -242,8 +241,7 @@ export default function Page() {
 
             const data = e.target.result;
             let upload = await uploadBunnyFolderName(data, fileName , 'catalogs')
-            console.log('upload')
-            console.log(upload)
+         
             const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
@@ -253,15 +251,13 @@ export default function Page() {
 
             if (parsedData.length > 0) {
                 const firstRow = parsedData[0];
-                const secondRow = parsedData[1];
-                // const value = Object.values(secondRow)[0];
                 const headers = Object.keys(firstRow).map((key) => ({
                     field: key,
                 }));
                 dispatch(setHeaders(headers))
                 setFileLoading(false)
                 router.push('/dashboard/catalogs/upload-catalog')
-                let name = modifyName(rowData.NAME)
+                
               
             }
         };

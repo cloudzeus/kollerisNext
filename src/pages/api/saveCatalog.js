@@ -1,5 +1,6 @@
 import connectMongo from "../../../server/config";
 import { Catalogs } from "../../../server/models/catalogsModle";
+import Supplier from "../../../server/models/suppliersSchema";
 
 export default async function handler(req, res) {
     const {action} = req.body;
@@ -22,8 +23,7 @@ export default async function handler(req, res) {
     if(action === 'findAll') {
         try {
             await connectMongo();
-            let find = await Catalogs.find({})
-            console.log(find)
+            let find = await Supplier.find({ catalogName:  {$exists: true, $ne: ''}   })
             return res.status(200).json({result: find, error: null });
         } catch (e) {
             return res.status(500).json({result: null, error: "catalog not saved in the database" });

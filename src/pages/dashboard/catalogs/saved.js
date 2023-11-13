@@ -5,7 +5,9 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import * as xlsx from 'xlsx';
-
+import CreatedAt from '@/components/grid/CreatedAt';
+import Link from 'next/link';
+import StepHeader from '@/components/StepHeader';
 
 
 const Saved = () => {
@@ -25,19 +27,36 @@ const Saved = () => {
 
 
 
-
+    const Actions  = ({catalogName, TRDR}) => {
+        const onDelete = async () => {
+            console.log(url)
+            let {data} = await axios.post('/api/saveCatalog', {url: url, action: 'delete'})
+            setSubmitted(true)
+            
+        }
+        return (
+            <div>
+                <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
+                <i className="pi pi-download mr-2  mr-3"></i>
+               </Link>
+                <i className="pi pi-trash mr-2 text-red-500 mr-1"></i>
+            </div>
+        )
+    }
 
     return (
         <AdminLayout>
             <div>
+                <StepHeader text="Κατάλογοι" />
                 <DataTable
                     loading={loading}
                     paginator
                     rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
                     value={catalogs}
                     tableStyle={{ minWidth: '50rem' }}>
-                    <Column header="Τιμοκατάλογοι" field="url" />
-                    <Column body={({url}) => <ActionTemplate url={url} setSubmitted={setSubmitted} />} style={{ textAlign: 'end' }} />
+                        <Column header="Όνομα Προμηθευτή" field="NAME" />
+                        <Column header="Κατάλογος" field="catalogName" />
+                        <Column body={Actions} style={{ textAlign: 'end' }} />
                 </DataTable>
             </div>
         </AdminLayout>
