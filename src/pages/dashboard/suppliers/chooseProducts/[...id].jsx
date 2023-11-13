@@ -10,7 +10,7 @@ import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
 import { setSelectedProducts } from '@/features/productsSlice';
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
-;
+
 const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
