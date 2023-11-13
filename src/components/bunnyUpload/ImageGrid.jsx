@@ -15,7 +15,7 @@ import { set } from 'mongoose';
 
 
 
-export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, hasLogo, onAdd }) => {
+export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, hasLogo, onAdd, loading }) => {
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
@@ -58,6 +58,7 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, has
             value={data}
             tableStyle={{ minWidth: '50rem' }}
             header={header}
+            loading={loading}
         >
             <Column body={ImageTemplate} field="path" header="Φωτογραφία"></Column>
             {hasLogo ? (<Column body={Logo} field="path" header="Φωτογραφία"></Column>) : null}

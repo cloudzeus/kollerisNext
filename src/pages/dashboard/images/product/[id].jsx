@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+
 import { Button } from 'primereact/button';
-import { useDropzone } from 'react-dropzone';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
-import { uploadBunny } from '@/utils/bunny_cdn';
+
 import axios from 'axios';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import Image from 'next/image';
-import styled from 'styled-components';
+
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
@@ -18,6 +12,7 @@ const TopLayer = () => {
     const { id } = router.query;
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
 
     const createImagesURL =  (files) => {
@@ -31,9 +26,11 @@ const TopLayer = () => {
 
 
     const handleFetch = async () => {
+        setLoading(true)
         let { data } = await axios.post('/api/product/apiProduct', { action: "getImages", id: id })
         let images = data.result
         setData(images)
+        setLoading(false)
     }
 
     const onDelete = async (name, _id) => {
@@ -58,6 +55,7 @@ const TopLayer = () => {
             <Button className='mb-3' icon="pi pi-arrow-left" label="Πίσω" onClick={() => router.back()} />
               <ImageGrid
             data={data}
+            loading={loading}
             uploadedFiles={uploadedFiles}
             setUploadedFiles={setUploadedFiles}
             onDelete={onDelete}
