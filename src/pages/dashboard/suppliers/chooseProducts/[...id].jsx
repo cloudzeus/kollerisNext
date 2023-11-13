@@ -15,10 +15,10 @@ const ChooseProducts = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const [state, setState] = {
-    TRDR: null,
-    NAME: null,
-    EMAIL: null,
-    minOrderValue: null,
+    TRDR:'',
+    NAME:'',
+    EMAIL: '',
+    minOrderValue: 0,
   }
   const {  inputEmail, selectedSupplier } = useSelector(state => state.supplierOrder)
   const {mtrLines, selectedProducts} = useSelector(state => state.products)
