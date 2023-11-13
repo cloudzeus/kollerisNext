@@ -465,16 +465,17 @@ export default async function handler(req, res) {
 
     }
     if (action === "deleteImage") {
-        const {parentId, imageId, name } = req.body;
+        const { parentId, imageId, name } = req.body;
         try {
             await connectMongo();
             const updatedProduct = await SoftoneProduct.findOneAndUpdate(
                 { _id: parentId }, // Using the passed 'id' variable
                 {
                     $pull: {
-                        images: { 
-                            _id:  imageId,
-                            name: name }
+                        images: {
+                            _id: imageId,
+                            name: name
+                        }
                     }
                 },// Push only the new URLs
                 { new: true } // To return the updated document
@@ -486,12 +487,35 @@ export default async function handler(req, res) {
         }
     }
 
-        if(action === "csvImages") {
-            const {data}= req.body;
-            console.log(data)
-            console.log('images')
-    
+    if (action === "csvImages") {
+        const { data } = req.body;
+        console.log(data)
+        console.log('images')
+        let erp = data['Erp Code'];
+        let image = data['Image Name'];
+        console.log(erp)
+        console.log(image)
+        try {
+            const updatedDocument = await SoftoneProduct.findOneAndUpdate(
+                { CODE: `${erp}`  },
+                {
+                    $push: {
+                        images: [{ name: image }]
+                    },
+                    $set: {
+                        hasImage: true
+                    }
+                },
+                { new: true, projection: { _id: 0, NAME: 1, CODE: 1, updatedAt: 1, images: { $slice: -1 }}}
+            );
+
+            console.log(updatedDocument);
+            return res.status(200).json({ success: true, result: updatedDocument });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ success: false, result: null });
         }
+    }
 }
 
 
