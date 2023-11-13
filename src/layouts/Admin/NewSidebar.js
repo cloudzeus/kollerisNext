@@ -16,8 +16,9 @@ const NewSidebar = () => {
     return (
         <Container>
             <div className='top'>
-                {/* <Image src="/uploads/DGSOFTWhiteIcon.svg" width={30} height={30} alt="dgsoft-logo" /> */}
-                <h1>Kolleris<span className='kolleris'>.</span></h1>
+                <Image src="/uploads/logoPlain.png" width={200} height={50} alt="dgsoft-logo" />
+                {/* <h1>Kolleris<span className='kolleris'>.</span></h1> */}
+
                 <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem' }}></i>
 
             </div>
@@ -130,7 +131,7 @@ const Container = styled.div`
   
     .top {
         height: 70px;
-        background-color: #282E38;
+        background-color:#020202;
         display: flex;
         align-items: center;
         justify-content: center;
