@@ -561,7 +561,7 @@ function Product() {
             <div>
                 <StepHeader text="Προϊόντα" />
             </div>
-            <Button className='mb-3' type="button" severity="secondary" icon="pi pi-bars" label="Προσφορές" onClick={(e) => op.current.toggle(e)} />
+            <Button className='mb-3' type="button" severity="secondary" icon="pi pi-bars" label="Menu" onClick={(e) => op.current.toggle(e)} />
 
             <OverlayPanel ref={op}>
             <div className='flex flex-column'>

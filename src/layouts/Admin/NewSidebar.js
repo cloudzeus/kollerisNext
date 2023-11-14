@@ -36,6 +36,7 @@ const SidebarList = () => {
     return (
         <ul>
             {/* PRODUCTS */}
+            <SidebarItem title={'Dahsboard'} goTo={'/dashboard'} logo />
             <SidebarHeader title={'Προϊόντα'} id={1} setActiveTab={setActiveTab} activeTab={activeTab} dropdown />
             {activeTab == 1 ? (
                 <div >
@@ -97,7 +98,7 @@ const SidebarHeader = ({ id, setActiveTab, activeTab, title, dropdown }) => {
 
 
 
-const SidebarItem = ({ title, goTo }) => {
+const SidebarItem = ({ title, goTo, logo }) => {
     const router = useRouter()
     const handleClick = () => {
         router.push(goTo)
@@ -114,7 +115,7 @@ const SidebarSubItem = ({ title, goTo }) => {
     const router = useRouter()
 
     return (
-        <li onClick={() => router.push(goTo)} className={` sub-item`}>
+        <li onClick={() => router.push(goTo)} className={`sub-item`}>
             <span className='ml-3'>{title}</span>
         </li>
 
@@ -178,7 +179,6 @@ const Container = styled.div`
         li.sidebar-item {
             padding: 15px;
             background-color: #2d353f;
-        
         }
 
         li:hover {

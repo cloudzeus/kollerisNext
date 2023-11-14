@@ -3,12 +3,10 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentPage, setReturnedProducts } from '@/features/catalogSlice';
 import axios from 'axios';
 import StepHeader from '@/components/StepHeader';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-import { mongo } from 'mongoose';
 
 const StepshowData = () => {
   const [returnedProducts, setReturnedProducts] = useState([])

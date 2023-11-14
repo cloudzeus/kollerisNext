@@ -21,15 +21,7 @@ import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalo
 import * as XLSX from 'xlsx';
 import { uploadBunny, uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import Link from 'next/link';
-function modifyName(name) {
-    // Remove symbols from the name using a regular expression
-    const cleanedName = name.replace(/[^\w\s]/g, '');
-    // Generate a random number between 1 and 100 (you can adjust the range as needed)
-    const randomNumber = Math.floor(Math.random() * 100) + 1;
-    // Append the random number to the cleaned name
-    const modifiedName = `${cleanedName}${randomNumber}`;
-    return modifiedName;
-}
+
 
 export default function Page() {
     const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder) 

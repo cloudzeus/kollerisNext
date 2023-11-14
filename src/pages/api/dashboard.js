@@ -3,27 +3,34 @@ import SoftoneProduct from "../../../server/models/newProductModel";
 import UploadedProduct from "../../../server/models/uploadedProductsModel";
 
 
-export default async function handler(res, req) {
-    const action = req.query.action;
+export default async function handler(req, res) {
+    const {action} = req.body;
 
     if(action == 'getStats') {
-        try {
+        try {   
+            console.log()
             await connectMongo();
-            let findProductDescriptions = await SoftoneProduct.find({})
-        } catch (e) {
-            return res.status(500).json({message: 'getStats'})
-        }
-        return res.status(200).json({message: 'getStats'})
-    }
+            let totalRecords = await SoftoneProduct.countDocuments({});
+        
+            let withImages = await SoftoneProduct.countDocuments({hasImage: true});
+            let inSoftone = await SoftoneProduct.countDocuments({SOFTONESTATUS: true});
 
-    if(action === "getUploadedProducts") {
-        const {skip, limit} = req.query;
-        try {
-            await connectMongo();
-            let result = await UploadedProduct.find({}).skip(skip).limit(limit).sort({createdAt: -1})
+            let imageStat = (withImages / totalRecords) * 100;
+            let inSoftoneStat = (inSoftone  / totalRecords) * 100;
+            let result = {
+                imageStat: imageStat,
+                totalWithImages: withImages,
+                softoneStat: 0,
+                totalProducts: totalRecords,
+                inSoftoneStat: inSoftoneStat,
+                inSoftone: inSoftone,
+
+            }
             return res.status(200).json({success: true, result: result})
         } catch (e) {
             return res.status(500).json({success: false, result: null})
         }
     }
+
+ 
 }

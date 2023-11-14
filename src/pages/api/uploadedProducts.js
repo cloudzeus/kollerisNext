@@ -15,4 +15,17 @@ export default async function handler(req, res) {
             return res.status(500).json({success: false, result: null})
         }
     }
+
+    if(action === "fetchAll") {
+        const {skip, limit} = req.body;
+        try {
+            await connectMongo();
+            let totalRecords = await UploadedProduct.countDocuments({});
+            let result = await UploadedProduct.find({}).skip(skip).limit(limit).sort({createdAt: -1});
+
+            return res.status(200).json({success: true, result: result, totalRecords: totalRecords})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
 }
