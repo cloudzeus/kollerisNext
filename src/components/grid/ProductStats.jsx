@@ -55,7 +55,7 @@ const ProgressDiv = ({color, total, text, value}) => {
                     </div>
                   
                     <div className='w-2rem'>
-                    <span className='font-bold text-xs' >{`${value.toFixed(2)}%`}</span>
+                    <span className='font-bold text-xs' >{`${value && value.toFixed(2)}%`}</span>
                     </div>
                 </div>
             </div>
