@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react'
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { useSession, signIn, signOut } from "next-auth/react"
-import { StyleClass } from 'primereact/styleclass';
 import UploadedProductsGrid from '@/components/grid/UploadedProductsGrid';
 import ProductStats from '@/components/grid/ProductStats';
 import StepHeader from '@/components/StepHeader';
 const Page = () => {
-  const session = useSession();
 
 
   return (
