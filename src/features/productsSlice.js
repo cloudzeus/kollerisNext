@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     selectedProducts: [],
+    submitted: false,
     mtrLines: [],
     orderLines: [],
     loading: false,
@@ -59,6 +60,9 @@ const productsSlice = createSlice({
 			state.mtrLines = updateMTRLINES;
 
 		},
+        setSubmitted: (state) => {
+            state.submitted = !state.submitted;
+        },
         deleteSelectedProduct: (state, {payload}) => {
 			state.selectedProducts = state.selectedProducts.filter(product => product._id !== payload);
 		},
@@ -230,7 +234,8 @@ export const {
     removeProductForSoftone,
     setSoftoneFilter,
     setSortAvailability,
-    setSortPrice
+    setSortPrice,
+    setSubmitted
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

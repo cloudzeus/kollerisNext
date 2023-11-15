@@ -26,16 +26,14 @@ export default async function handler(req, res) {
 
     if (action === "create") {
         const { data } = req.body;
-        let MTRL = null;
-        let SOFTONESTATUS = false
-        if (MTRL) {
-            SOFTONESTATUS = true;
-        }
+        console.log('create data')
+        console.log(data)
         try {
             await connectMongo();
             let product = await SoftoneProduct.create({
                 ...data,
-                SOFTONESTATUS: SOFTONESTATUS,
+                SOFTONESTATUS: false,
+                hasImage: false,
             });
 
             return res.status(200).json({ success: true, result: product });
@@ -48,7 +46,6 @@ export default async function handler(req, res) {
         let { data } = req.body;
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
-
             MTRL: data.MTRL,
             NAME: data.NAME,
             CODE: data.CODE,
@@ -58,7 +55,7 @@ export default async function handler(req, res) {
             MTRCATEGORY: data.category.softOne.MTRCATEGORY,
             MTRGROUP: data.group.softOne.MTRGROUP,
             CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2,
-            MTRMARK: data.MTRMARK.toString(),
+            MTRMARK: data.MTRMARK && data.MTRMARK.toString(),
             MTRMANFCTR: data.MTRMANFCTR,
             VAT: data.vat.VAT,
             COUNTRY: data.MTRMANFCTR,
@@ -91,7 +88,8 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-
+        console.log('response softone')
+        console.log(responseJSON)
 
         if (!responseJSON.success) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
@@ -106,7 +104,7 @@ export default async function handler(req, res) {
                 MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
                 MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
                 CCCSUBGOUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
-                MTRMANFCTR: data.MTRMANFCTR.toString(),
+                MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
                 VAT: data.vat.VAT,
                 COUNTRY: data.COUNTRY,
                 INTRASTAT: data.INTRASTAT,
@@ -126,6 +124,7 @@ export default async function handler(req, res) {
                 SUBGROUP_NAME: data.category.subGroupName,
                 SOFTONESTATUS: true,
                 descriptions: data.descriptions,
+                COST: data?.COST,
             }
         })
         return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });

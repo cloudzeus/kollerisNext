@@ -22,6 +22,7 @@ const PrimeInputNumber = ({ label, name, mb, mt, control, required, error, type,
                         </label>
                         <span >
                             <InputNumber
+                                minFractionDigits={2} maxFractionDigits={2}
                                 type={type}
                                 id={field.name}
                                 value={field.value}

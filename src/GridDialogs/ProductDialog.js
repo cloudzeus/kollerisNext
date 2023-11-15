@@ -14,6 +14,8 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { Dropdown } from 'primereact/dropdown';
 import { useSession } from "next-auth/react"
 import TranslateInput from '@/components/Forms/TranslateInpit';
+import { setSubmitted } from '@/features/productsSlice';
+import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 
 const addSchema = yup.object().shape({
     // name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -22,8 +24,9 @@ const addSchema = yup.object().shape({
 
 
 
-const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
+const EditDialog = ({ dialog, hideDialog }) => {
     const { data: session, status } = useSession()
+    const dispatch = useDispatch()
     const [tranlateBtn, setTranslateBtn] = useState(false)
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
@@ -41,23 +44,23 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             fr: '',
         }
     )
-       
-    
+
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
-   
+
     const handleEnglish = async (value) => {
         setDescriptions({ ...descriptions, en: value })
     }
-   
+
 
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
-     
+
         setDescriptions(prev => {
             return {
                 de: gridRowData?.descriptions?.de,
@@ -68,22 +71,21 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             }
         })
         setSelectState({
-            category: {categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}},
-            group: {groupName: gridRowData?.GROUP_NAME , softOne: {MTRGROUP: gridRowData?.MTRGROUP}},
-            subgroup: {subGroupName: gridRowData?.SUBGROUP_NAME , softOne: {cccSubgroup2: gridRowData?.CCCSUBGOUP2}},
-            vat: {VAT: gridRowData?.VAT},
-           
+            category: { categoryName: gridRowData?.CATEGORY_NAME, softOne: { MTRCATEGORY: gridRowData?.MTRCATEGORY } },
+            group: { groupName: gridRowData?.GROUP_NAME, softOne: { MTRGROUP: gridRowData?.MTRGROUP } },
+            subgroup: { subGroupName: gridRowData?.SUBGROUP_NAME, softOne: { cccSubgroup2: gridRowData?.CCCSUBGOUP2 } },
+            vat: { VAT: gridRowData?.VAT },
+
         })
     }, [gridRowData, reset]);
 
-    
+
 
 
 
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
-        console.log('dataa')
-        console.log(data)
+
 
         try {
             let resp = await axios.post('/api/product/apiProduct', {
@@ -100,7 +102,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                 showError(resp.data?.error)
                 return;
             }
-            setSubmitted(true)
+            dispatch(setSubmitted())
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
 
@@ -143,8 +145,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >   
-                 <Categories
+                >
+                    <Categories
                         state={selectState.category}
                         setState={setSelectState}
                     />
@@ -176,12 +178,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         name={'DESCRIPTION'}
                         control={control}
                     />
-                    <Input
-                        label={'Κωδικός ΕΑΝ'}
-                        name={'CODE'}
-                        control={control}
-                    //    error={errors.NAME}
-                    />
+                  
                     <Input
                         label={'Τιμή Κόστους'}
                         name={'COST'}
@@ -190,45 +187,24 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     />
 
                     <Input
-                        label={'Κωδικός εργοστασίου'}
+                        label={'ΕΑΝCODE'}
                         name={'CODE1'}
                         control={control}
                     />
                     <Input
-                        label={'Κωδικός 2'}
+                        label={'Κωδικός Προϊόντος'}
                         name={'CODE2'}
                         control={control}
                     />
-                 
                     <Input
                         label={'Τιμή ΛΙΑΝΙΚΗΣ'}
                         name={'PRICER'}
                         control={control}
                     />
+                   
                     <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
-                        name={'PRICER01'}
-                        control={control}
-                    />
-                       <Input
                         label={'Τιμή Scroutz'}
                         name={'PRICE05'}
-                        control={control}
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
-                        name={'PRICER02'}
-                        control={control}
-                       
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
-                        name={'PRICER03'}
-                        control={control}
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
-                        name={'PRICER04'}
                         control={control}
                     />
                     <Input
@@ -236,19 +212,14 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         name={'PRICEW'}
                         control={control}
                     />
-                 
+
                     <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                    <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
-                    {tranlateBtn ? (
-                        <>
                             <TranslateInput
                                 label={'Περιγραφή Aγγλική'}
                                 state={descriptions.en}
                                 handleState={handleEnglish}
                                 targetLang="en-GB"
                             />
-                        </>
-                    ) : null}
                 </Dialog>
             </form>
         </Container>
@@ -259,48 +230,34 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
-const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
-    const [translateBtn, setTranslateBtn] = useState(false)
+const AddDialog = ({ dialog, hideDialog }) => {
+    const dispatch = useDispatch()
     const [showInputs, setShowInputs] = useState(false)
+    const [englishDescription, setEnlgishDescription] = useState('')
     const [selectState, setSelectState] = useState({
         category: null,
         group: null,
         subgroup: null,
+        vat: null
     })
 
 
     const { control, formState: { errors }, handleSubmit, reset } = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
-           descriptions: {
-                en: '',
-           },
-           NAME: '',
+            NAME: '',
             DESCRIPTION: '',
             CODE: '',
             CODE1: '',
             CODE2: '',
-            VAT: '',
-            PRICER: '',
-            PRICER01: '',
-            PRICER02: '',
-            PRICER03: '',
-            PRICER04: '',
-            PRICEW: '',
-            PRICE05: '',
+            PRICER: 0,
+            PRICEW: 0,
+            PRICE05: 0,
             COST: 0,
         }
     });
 
-
     const toast = useRef(null);
-    const { gridRowData } = useSelector(store => store.grid)
-    const [descriptions, setDescriptions] = useState(
-        {
-            en: '',
-        }
-    )
-
   
 
     useEffect(() => {
@@ -309,7 +266,7 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     useEffect(() => {
-        if(selectState.category && selectState.group ) setShowInputs(true)
+        if (selectState.category && selectState.group) setShowInputs(true)
         else setShowInputs(false)
     }, [selectState])
 
@@ -326,7 +283,8 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }
 
     const handleAdd = async (data) => {
-        
+        console.log(englishDescription)
+
         let obj = {
             MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
             CATEGORY_NAME: selectState.category?.categoryName,
@@ -334,16 +292,15 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
             GROUP_NAME: selectState.group?.groupName,
             CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2,
             SUBGROUP_NAME: selectState.subgroup?.subGroupName,
-            descriptions: descriptions,
+            DESCRIPTION_ENG: englishDescription,
+            ...data
         }
         let res = await axios.post('/api/product/apiProduct', {
             action: 'create',
-            data: {
-                ...data,
-                ...obj,
-            }
+            data: obj
         })
         hideDialog()
+        dispatch(setSubmitted())
         reset();
     }
     const productDialogFooter = (
@@ -355,18 +312,15 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
-    const handleGerman = async (value) => {
-        setDescriptions({ ...descriptions, de: value })
-    }
-    const handleEnglish = async (value) => {
-        setDescriptions({ ...descriptions, en: value })
-    }
-    const handleSpanish = async (value) => {
-        setDescriptions({ ...descriptions, es: value })
-    }
-   
 
-  
+    const handleEnglish = async (value) => {
+        console.log(value)
+        setEnlgishDescription(value)
+    }
+
+
+
+
 
     return (
         < Container>
@@ -382,7 +336,8 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >
+                >   
+                 <FormTitle>ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ:</FormTitle>
                     <Categories
                         state={selectState.category}
                         setState={setSelectState}
@@ -397,114 +352,71 @@ const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
                     />
-                     <div>
-                  {showInputs ? (
-                        <div>
-                                 <Input
-                        label={"Όνομα"}
-                        name={'NAME'}
-                        control={control}
-                        required
-                    />
-                    <TextAreaInput
-                        autoResize={true}
-                        label={'Ελληνική Περιγραφή'}
-                        name={'DESCRIPTION'}
-                        control={control}
-                    />
-                    <Input
-                        label={'Κωδικός ΕΑΝ'}
-                        name={'CODE'}
-                        control={control}
-                        required
-                    //    error={errors.NAME}
-                    />
-                      <Input
-                        label={'Τιμή Κόστους'}
-                        name={'COST'}
-                        control={control}
-                        required
-                       error={errors.cost}
-                    />
+                    <div>
+                        {showInputs ? (
+                            <div>   
+                                  <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
+                                <Input
+                                    label={"Όνομα"}
+                                    name={'NAME'}
+                                    control={control}
+                                    required
+                                />
+                                <TextAreaInput
+                                    autoResize={true}
+                                    label={'Ελληνική Περιγραφή'}
+                                    name={'DESCRIPTION'}
+                                    control={control}
+                                />
+                                <TranslateInput
+                                    label={'Περιγραφή Aγγλική'}
+                                    state={englishDescription}
+                                    handleState={handleEnglish}
+                                    targetLang="en-GB"
+                                />
+                                 <FormTitle>ΤΙΜΕΣ:</FormTitle>
+                                 <PrimeInputNumber 
+                                      label={'Τιμή Κόστους'}
+                                      name={'COST'}
+                                      control={control}
+                                      required
+                                      error={errors.cost}
+                                />
+                                   <PrimeInputNumber 
+                                     label={'Τιμή Λιανικής'}
+                                     name={'PRICER'}
+                                     control={control}
+                                />
+                               
+                                 <PrimeInputNumber 
+                                    label={'Τιμή Αποθήκης'}
+                                    name={'PRICEW'}
+                                    control={control}
+                                />
+                                <PrimeInputNumber 
+                                    label={'Τιμή Scroutz'}
+                                    name={'PRICE05'}
+                                    control={control}
+                                />
+                                <Input
+                                    label={'ΕAN CODE'}
+                                    name={'CODE1'}
+                                    control={control}
+                                />
+                                <Input
+                                    label={'Kωδικός Προϊόντος'}
+                                    name={'CODE2'}
+                                    control={control}
+                                    required
+                                />
+                                    <OptionsVat
+                                    state={selectState.vat}
+                                    setState={setSelectState}
+                                />
+                            </div>
+                        ) : null}
+                    </div>
 
-
-                    <Input
-                        label={'Κωδικός εργοστασίου'}
-                        name={'CODE1'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Κωδικός 2'}
-                        name={'CODE2'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'VAT'}
-                        name={'VAT'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ'}
-                        name={'PRICER'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 01'}
-                        name={'PRICER01'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 02'}
-                        name={'PRICER02'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 03'}
-                        name={'PRICER03'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ 04'}
-                        name={'PRICER04'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή ΑΠΟΘΗΚΗΣ'}
-                        name={'PRICEW'}
-                        control={control}
-                        required
-                    />
-                    <Input
-                        label={'Τιμή Scroutz'}
-                        name={'PRICE05'}
-                        control={control}
-                        required
-                    />
-                    <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                    <Button label="Eμφάνιση" severity="secondary" className='mb-2' onClick={() => setTranslateBtn(prev => !prev)} />
-                    {translateBtn ? (
-                        <>
-                           
-                            <TranslateInput
-                                label={'Περιγραφή Aγγλική'}
-                                state={descriptions.en}
-                                handleState={handleEnglish}
-                                targetLang="en-GB"
-                            />
-                        </>
-                    ) : null}
-                        </div>
-                    ) : null}
-            </div>
-               
                 </Dialog>
             </form>
         </Container>
@@ -540,8 +452,6 @@ const Categories = ({ state, setState }) => {
 }
 
 
-
-
 const Groups = ({ state, setState, id }) => {
     const [groupOptions, setGroupOptions] = useState([])
 
@@ -571,7 +481,7 @@ const SubGroups = ({ state, setState, id }) => {
             action: 'findSubGroups',
             groupID: id
         })
-       
+
         setsubGroupOptions(data.result)
     }
     useEffect(() => {
@@ -591,14 +501,14 @@ const OptionsVat = ({ state, setState}) => {
     const [data, setData] = useState([])
 
     const VatTemplate = ((option) => {
-        for(let item of data) {
-            if(item.VAT === option.VAT) {
+        for (let item of data) {
+            if (item.VAT === option.VAT) {
                 return (
-                    <p>{option.VAT + " -- " +  item.NAME}</p>
+                    <p>{option.VAT + " -- " + item.NAME}</p>
                 )
             }
         }
-      
+
         return (
             <div className="flex align-items-center">
                 <div>{option.VAT}</div>
@@ -606,15 +516,15 @@ const OptionsVat = ({ state, setState}) => {
         );
     })
 
-    
+
     const handleFetch = async () => {
         let { data } = await axios.post('/api/product/apiProductFilters', {
             action: 'findVats',
         })
         let newArray = [];
-        for(let item of data.result) {
-            newArray.push({VAT: item.VAT})
-        }   
+        for (let item of data.result) {
+            newArray.push({ VAT: item.VAT })
+        }
         setData(data.result)
         setVatOptions(newArray)
     }
@@ -626,7 +536,7 @@ const OptionsVat = ({ state, setState}) => {
         <div className="card mb-3">
             <span className='mb-2 block'>Aλλαγή ΦΠΑ</span>
 
-            <Dropdown  itemTemplate={VatTemplate} value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="VAT"
+            <Dropdown itemTemplate={VatTemplate} value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="VAT"
                 placeholder="ΦΠΑ" className="w-full" />
         </div>
     )

@@ -39,7 +39,7 @@ import {
     setSearchTerm,
     setSort,
     setSoftoneFilter,
-    setSortAvailability,
+    setSubmitted,
     setMarka,
     setSortPrice,
     setSelectedProducts
@@ -133,7 +133,7 @@ function Product() {
     const router = useRouter();
     const { data: session } = useSession()
     let user = session?.user?.user;
-    const { submitted, setSubmitted } = useContext(ProductQuantityContext)
+    // const { submitted, setSubmitted } = useContext(ProductQuantityContext)
     const [data, setData] = useState([]);
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
@@ -142,7 +142,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
-    const {selectedProducts, mtrLines, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
+    const {selectedProducts,  submitted , filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
 
@@ -199,7 +199,7 @@ function Product() {
         marka,
         softoneFilter, 
         sortAvailability, 
-        setSubmitted,
+        submitted,
         codeSearch,
         filterImpa,
         sortPrice,
@@ -595,7 +595,7 @@ function Product() {
                 rowsPerPageOptions={[50, 100, 200, 500]}
                 value={data}
                 showGridlines
-                dataKey="MTRL"
+                dataKey="_id"
                 filterDisplay="row"
                 loading={loading}
                 removableSort
@@ -603,7 +603,6 @@ function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
-            // paginatorTemplate="RowsPerPageDropdown  PrevPageLink CurrentPageReport NextPageLink "
             >   
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>

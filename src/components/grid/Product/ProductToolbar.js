@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState, createContext, useContext } from 'react'
+import React, { useEffect,  useState,  useContext } from 'react'
 import { Toolbar } from 'primereact/toolbar';
-
 import { Button } from 'primereact/button';
 import styled from 'styled-components';
 import { Sidebar } from 'primereact/sidebar';
@@ -11,12 +10,9 @@ import { Badge } from 'primereact/badge';
 import SelectImpas from './SelectImpas';
 import Offer from './Offer';
 import WhareHouseActions from './WhareHouseActions';
-import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/ProductGridContext';
-import ManufctOrder from './ManufctOrder';
-import SelectedProducts from '../SelectedProducts';
+import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedProducts, setMtrLines } from '@/features/productsSlice';
-
+import { setMtrLines } from '@/features/productsSlice';
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
     return (
@@ -30,7 +26,6 @@ const ProductToolbar = () => {
 const RightSide = () => {
     // const {selectedProducts} = useContext(ProductQuantityContext)
     const {selectedProducts} = useSelector(state => state.products)
-
 
     const CalculateBasket = () => {
         let total = 0
@@ -57,7 +52,7 @@ const RightSide = () => {
 
 //TOOLBAR LEFT SIDE:
 const LeftSide = () => {
-    const { setSelectedProducts, activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
+    const {  activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
     const {selectedProducts} = useSelector(state => state.products)
     const [showMenu, setShowMenu] = useState(false)
     const onMultipleActions = () => {
@@ -113,7 +108,6 @@ const LeftSide = () => {
                         {activeIndex === 2 ? (<SelectImpas />) : null}
                         {activeIndex === 3 ? (<Offer />) : null}
                         {activeIndex === 4 ? (<WhareHouseActions/>) : null}
-                        {activeIndex === 5 ? (<ManufctOrder/>) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>
@@ -199,10 +193,7 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL, _id }) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
     const {selectedProducts, mtrLines} = useSelector(state => state.products)
-    console.log('selected products')
-    console.log(selectedProducts)
-    console.log('mtrllines')
-    console.log(mtrLines)
+   
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: MTRL, QTY1: quantity }))
     }, [quantity])

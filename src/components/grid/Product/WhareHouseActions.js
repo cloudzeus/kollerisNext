@@ -8,6 +8,7 @@ import { Button } from 'primereact/button'
 import { ProductQuantityContext } from '@/_context/ProductGridContext'
 import { Message } from 'primereact/message';
 import axios from 'axios'
+import { setSubmitted } from '@/features/productsSlice';
 
 const WhareHouseActions = () => {
     const { 
@@ -15,7 +16,6 @@ const WhareHouseActions = () => {
         importWarehouse, 
         exportWarehouse,
         diathesimotita,
-        setSubmitted,
     } = useContext(ProductQuantityContext)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)
@@ -56,7 +56,7 @@ const WhareHouseActions = () => {
         if(data?.resultExport) {
             setResultExport(data.resultExport)
         }
-        setSubmitted(prev => !prev)
+        dispatch(setSubmitted())
     }
    
 

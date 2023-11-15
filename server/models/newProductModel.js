@@ -3,13 +3,10 @@ import { model, models, Schema } from 'mongoose';
 import { ImpaCodes } from './impaSchema';
 
 const softoneProduct = new mongoose.Schema({
-    product: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product',
-    },
+   
     MTRL: { type: String },
     DESCRIPTION: String,
-    DESCRIPTIION_ENG: String,
+    DESCRIPTION_ENG: String,
     ISACTIVE: String,
     NAME: String,
     CODE: String,
@@ -57,12 +54,11 @@ const softoneProduct = new mongoose.Schema({
         DESVMEVMENA: String,
         date: String,
     },
-    SOFTONESTATUS: Boolean,
-    ATTRIBUTES: [{
-        name: String,
-        value: String,
-    }],
-    UPDATEFROM: String,
+    SOFTONESTATUS: {
+        type: Boolean,
+        default: false
+    },
+    UPDATEDFROM: String,
     impas: {
         type: Schema.Types.ObjectId,
         ref: 'ImpaCodes'
@@ -70,11 +66,11 @@ const softoneProduct = new mongoose.Schema({
     images: [{
         name: String,
     }],
-    hasImage: Boolean,
-    descriptions: {
-        en: String,
-        de: String,
+    hasImage: {
+        type: Boolean,
+        default: false,
     },
+  
     MTRMARK_NAME: String,
     DIM1: String,
     DIM2: String,
@@ -83,10 +79,6 @@ const softoneProduct = new mongoose.Schema({
     MTRUNIT4: String,
     MU31: String,
     MU41: String,
-    // uploadedNew: Boolean,
-    // uploadedUpdated: Boolean,
-    // uploadedDate: String,
-   
 },
 
 {

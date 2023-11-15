@@ -7,10 +7,10 @@ import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/Prod
 import { useSelector, useDispatch } from 'react-redux'
 import { setSingleProductForSoftone } from '@/features/productsSlice'
 import { Toast } from 'primereact/toast'
+import { setSelectedProducts } from '@/features/supplierOrderSlice'
 
 const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
-  const { setActiveIndex, setVisible, setSelectedProducts } = useContext(ProductQuantityContext)
-  const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
+  const { setActiveIndex, setVisible } = useContext(ProductQuantityContext)
   const toast = useRef(null)
   const dispatch = useDispatch()
   const router = useRouter();
@@ -24,21 +24,22 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
   }
 
   const handleChangeClass = () => {
-    setSelectedProducts([rowData])
+    dispatch(setSelectedProducts([rowData]))
     setVisible(true)
     setActiveIndex(1)
   }
 
   const handleChangeAvailability = () => {
-    setSelectedProducts([rowData])
+    dispatch(setSelectedProducts([rowData]))
     setVisible(true)
     setActiveIndex(4)
   }
   const handleImpaChange = () => {
-    setSelectedProducts([rowData])
+    dispatch(setSelectedProducts([rowData]))
     setVisible(true)
     setActiveIndex(2)
   }
+
 
   const handleAddToSoftone = () => {
     if(rowData.SOFTONESTATUS) {

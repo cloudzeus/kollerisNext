@@ -4,11 +4,6 @@ import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown'
 
 
-// const [selectState, setSelectState] = useState({
-//     category: null,
-//     group: null,
-//     subgroup: null,
-// })
 
 
 export const Categories = ({ state, setState }) => {

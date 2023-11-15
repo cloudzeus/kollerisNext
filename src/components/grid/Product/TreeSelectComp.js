@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { ProductQuantityContext } from '@/_context/ProductGridContext';
+import { setSubmitted } from '@/features/productsSlice';
 const TreeSelectComp = () => {
 
-    const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
+    // const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
 
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState(null);
@@ -58,8 +59,9 @@ const TreeSelectDropDown = ({
     group,
     subgroup,
 }) => {
-    const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
-
+    // const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
+    const {selectedProducts} = useSelector(state => state.products)
+    const dispatch = useDispatch();
     const [data, setData] = useState(null);
     const toast = useRef(null);
 
@@ -166,7 +168,7 @@ const TreeSelectDropDown = ({
                     showError(item?.name, 'ΤΟ ΠΡΟΪΟΝ ΔΕΝ ΕΧΕΙ MTRL. ΠΡΟΣΘΕΣΤΕ ΤΟ ΣΤΟ SOFTONE')
                 }
               
-                setSubmitted(true)
+                dispatch(setSubmitted())
 
             })
           
