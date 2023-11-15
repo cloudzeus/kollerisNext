@@ -10,14 +10,12 @@ import { Message } from 'primereact/message';
 import axios from 'axios'
 
 const WhareHouseActions = () => {
-
     const { 
         selectedProducts, 
         importWarehouse, 
         exportWarehouse,
         diathesimotita,
         setSubmitted,
-        setDiathesimotita,
     } = useContext(ProductQuantityContext)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)
@@ -72,7 +70,6 @@ const WhareHouseActions = () => {
                     <Column field="availability.DIATHESIMA" body={Template} header="Προϊόν" ></Column>
                 </DataTable>
                 <Button label="Αποθήκευση" className='mt-3' onClick={handleSubmit} />
-                
                   <div className=''>
                   {resultImport ? (
                         <div className=" bg-yellow-400 p-2 mt-2 border-round">
@@ -96,7 +93,9 @@ const WhareHouseActions = () => {
 }
 
 
-const Template = ({ categoryName, name, availability, MTRL }) => {
+const Template = ({ 
+    CATEGORY_NAME
+    , NAME, availability, MTRL }) => {
     const {setExportWarehouse, setImportWarehouse, setDiathesimotita} = useContext(ProductQuantityContext)
 
     let available = parseInt(availability?.DIATHESIMA)
@@ -111,7 +110,7 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
         
        if(available > value) {
             return (
-                <Message severity="warn" text="Eξαγωγή στην αποθήκη" className='wharehouse-msg my-2' />
+                <Message severity="warn" text="Eξαγωγή από την αποθήκη" className='wharehouse-msg my-2' />
 
             )
        }
@@ -156,25 +155,18 @@ const Template = ({ categoryName, name, availability, MTRL }) => {
             });
         }
        
-        
-        
-        
-        
-      
-
     }
-
 
 
     return (
         <ProductBasket>
             <div className='mb-3'>
                 <div>
-                    <p className='text-md text-900 font-semibold'>{name}</p>
+                    <p className='text-md text-900 font-semibold'>{NAME}</p>
                 </div>
                 <div className='details'>
                     <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
-                    <p className='text-xs'>{categoryName}</p>
+                    <p className='text-xs'>{ CATEGORY_NAME}</p>
                 </div>
                 <div className='my-2 inline-flex surface-200 p-2 border-round'>
                     <p className=" ">Διαθέσιμα στην σύστημα:</p>

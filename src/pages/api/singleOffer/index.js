@@ -11,6 +11,7 @@ import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 export default async function handler(req, res) {
     const action = req.body.action
     if (action === 'createOrder') {
+        console.log('create offer')
         const { data, email, name, TRDR, createdFrom } = req.body;
         console.log(data)
         console.log(email, name, TRDR)

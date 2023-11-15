@@ -13,28 +13,24 @@ import Offer from './Offer';
 import WhareHouseActions from './WhareHouseActions';
 import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/ProductGridContext';
 import ManufctOrder from './ManufctOrder';
-
+import SelectedProducts from '../SelectedProducts';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProducts, setMtrLines } from '@/features/productsSlice';
 
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
-    const startContent = () => {
-        return <LeftSide />
-    }
-
-    const endContent = () => {
-        return <RightSide />
-    }
-
     return (
         <div>
-            <Toolbar start={startContent} end={endContent} />
+            <Toolbar start={LeftSide} end={RightSide} />
         </div>
     )
 }
 
 //TOOLBAR RIGHT SIDE:
 const RightSide = () => {
-    const {selectedProducts} = useContext(ProductQuantityContext)
+    // const {selectedProducts} = useContext(ProductQuantityContext)
+    const {selectedProducts} = useSelector(state => state.products)
+
 
     const CalculateBasket = () => {
         let total = 0
@@ -61,7 +57,8 @@ const RightSide = () => {
 
 //TOOLBAR LEFT SIDE:
 const LeftSide = () => {
-    const {selectedProducts, setSelectedProducts, activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
+    const { setSelectedProducts, activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
+    const {selectedProducts} = useSelector(state => state.products)
     const [showMenu, setShowMenu] = useState(false)
     const onMultipleActions = () => {
         setVisible(true)
@@ -129,8 +126,8 @@ const LeftSide = () => {
 
 //FIRST SCREEN OF THE
 const FirstScreen = () => {
-    const {selectedProducts} = useContext(ProductQuantityContext)
-
+    // const {selectedProducts} = useContext(ProductQuantityContext)
+    const {selectedProducts} = useSelector(state => state.products)
     const CalculateBasket = () => {
         let total = 0
         selectedProducts && selectedProducts.forEach((item) => {
@@ -196,62 +193,30 @@ const MenuBtn = ({ label, onClick }) => {
 
 
 
-const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
+const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL, _id }) => {
+
     const [total, setTotal] = useState(PRICER)
     const [quantity, setQuantity] = useState(1)
-    const { 
-        setMtrLines, 
-        mtrlines, 
-        selectedProducts, 
-        setSelectedProducts 
-    } = useContext(ProductQuantityContext);
-  
-   
-   
+    const dispatch = useDispatch();
+    const {selectedProducts, mtrLines} = useSelector(state => state.products)
+    console.log('selected products')
+    console.log(selectedProducts)
+    console.log('mtrllines')
+    console.log(mtrLines)
+    useEffect(() => {
+        dispatch(setMtrLines({ MTRL: MTRL, QTY1: quantity }))
+    }, [quantity])
+
 
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
-        setMtrLines(prev => {
-            return prev.map(item => {
-                if (item.MTRL === MTRL) {
-                    return { ...item, QTY1: item.QTY1 + 1 };
-                }
-                return item;
-            });
-        });
-     
     }
-
-    useEffect(() => {
-        setMtrLines(prev => {
-         
-            if (prev.some(item => item.MTRL === MTRL)) {
-                return prev; 
-            }
-            return [...prev, { MTRL: mtrlines, QTY1: 1}];
-        });
-    }, [quantity, MTRL, setMtrLines, mtrlines])
-
-
     const decreaseQuantity = () => {
         if (quantity === 1) return
-
         setQuantity(prev => prev - 1)
-        setMtrLines(prev => {
-            return prev.map(item => {
-                if (item.MTRL === MTRL) {
-                    return { ...item, QTY1: item.QTY1 - 1 };
-                }
-                return item;
-            });
-        });
-        
+
     }
 
-    const remove = () => {
-        let newArray = selectedProducts.filter((product) => product._id !== id)
-        setSelectedProducts(newArray)
-    }
     useEffect(() => {
         setTotal(parseInt(PRICER) * quantity)
     }, [quantity, PRICER])
@@ -283,7 +248,6 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL }) => {
                         <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
                     </div>
                 </div>
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={remove} ></Button>
             </div>
         </ProductBasket>
     )

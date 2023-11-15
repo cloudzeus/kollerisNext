@@ -101,7 +101,7 @@ const SendEmailTemplate = ({ email, mt,  clientName, SALDOCNUM, createdAt, produ
             >
                 <div className="flex flex-column gap-2">
                     <label className='font-bold' htmlFor="username">Προς:</label>
-                    <InputText value={email} disabled={true} />
+                    <InputText value={email}  />
                 </div>
                 <div className="flex flex-column gap-2 mt-2">
                     <label className='font-bold mb01' htmlFor="username">Κοινοποίηση:</label>

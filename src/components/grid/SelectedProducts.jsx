@@ -45,17 +45,14 @@ const CalculateTemplate = (item) => {
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: item.MTRL, QTY1: quantity }))
     }, [quantity])
+
+
     const increaseQuantity = () => {
         setQuantity(prev => prev + 1)
-        // dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity + 1 }))
     }
-
-
-
     const decreaseQuantity = () => {
         if (quantity === 1) return
         setQuantity(prev => prev - 1)
-        // dispatch(setMtrLines({ MTRL: item.MTRL, QUANTITY: quantity - 1 }))
 
     }
 

@@ -42,7 +42,10 @@ import {
     setSortAvailability,
     setMarka,
     setSortPrice,
+    setSelectedProducts
 } from "@/features/productsSlice";
+
+
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -130,7 +133,7 @@ function Product() {
     const router = useRouter();
     const { data: session } = useSession()
     let user = session?.user?.user;
-    const { selectedProducts, setSelectedProducts, submitted, setSubmitted } = useContext(ProductQuantityContext)
+    const { submitted, setSubmitted } = useContext(ProductQuantityContext)
     const [data, setData] = useState([]);
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
@@ -139,7 +142,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
-    const {filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
+    const {selectedProducts, mtrLines, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort,  softoneFilter, sortAvailability, marka, sortPrice} = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
 
@@ -331,7 +334,8 @@ function Product() {
         setClassDialog(false)
     };
     const onSelection = (e) => {
-        setSelectedProducts(e.value)
+        // setSelectedProducts(e.value)
+        dispatch(setSelectedProducts(e.value))
     }
 
 

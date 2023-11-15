@@ -1,6 +1,4 @@
-import React, { useState, useContext, lazy } from 'react'
-import { DataTable } from 'primereact/datatable'
-import { Column } from 'primereact/column'
+import React, { useState, useContext, useRef } from 'react'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { InputText } from 'primereact/inputtext'
@@ -9,79 +7,18 @@ import { ProductQuantityContext } from '@/_context/ProductGridContext'
 import CustomersGrid from '../clientGrid'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSelectedClient } from '@/features/impaofferSlice'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import { Toast } from 'primereact/toast'
+
 const Offer = () => {
-    const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch();
     const { selectedClient } = useSelector(state => state.impaoffer)
-    const [filteredData, setFilteredData] = useState([])
-    const [totalRecords, setTotalRecords] = useState(0)
-    const [searchTerm, setSearchTerm] = useState('')
-    const [lazyState, setlazyState] = useState({
-        first: 0,
-        rows: 15,
-      
-
-    });
-    const [rowClick, setRowClick] = useState(true);
-
-
-    const onSelection = (e) => {
-        dispatch(setSelectedClient(e.value))
-    }
-
-    const onPage = (event) => {
-        setlazyState(event);
-    };
-
-
-    const onSearch = async (event) => {
-        const value = event.target.value;
-        setSearchTerm(value)
-
-    };
-
-    useEffect(() => {
-        let handleSearch = async () => {
-            setLoading(true)
-            let res = await axios.post('/api/clients/apiClients', { action: 'search', searchTerm: searchTerm, skip: lazyState.first, limit: lazyState.rows })
-            console.log(res.data)
-            setFilteredData(res.data.result)
-            setTotalRecords(res.data.totalRecords)
-            setLoading(false)
-        }
-        handleSearch();
-    }, [searchTerm, lazyState.first, lazyState.rows])
-
-
-
-
-    const renderHeader = () => {
-        return (
-            <div className="flex">
-                <div className="">
-                    <span className="p-input-icon-left mr-3">
-                        <i className="pi pi-search" />
-                        <InputText type="search" value={searchTerm} onChange={onSearch} placeholder="Αναζήτηση" />
-                    </span>
-                </div>
-            </div>
-
-        );
-    };
-
-
-
-    const header = renderHeader();
-
     return (
         <div>
-            <div className='box'>
-
-            </div>
             {!selectedClient ? (
                 <CustomersGrid />
             ) : (
-                <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient}  />
+                <AfterClientSelection selectedClient={selectedClient} setSelectedClient={setSelectedClient} />
             )}
         </div>
     )
@@ -89,13 +26,28 @@ const Offer = () => {
 
 
 const AfterClientSelection = () => {
-    const dispatch = useDispatch();
-    const {selectedProducts} = useContext(ProductQuantityContext)
-    const { mtrlines } = useContext(ProductQuantityContext);
-    const [saldoc, setSaldoc] = useState(null)
     const { selectedClient } = useSelector(state => state.impaoffer)
+    const { selectedProducts, mtrLines } = useSelector(state => state.products)
+    const { data: session } = useSession();
+    const user = session?.user?.user;
+    const toast = useRef(null);
+    const [loading, setLoading] = useState(false)
+    // const [saldoc, setSaldoc] = useState(null)
+    const dispatch = useDispatch();
+    const router = useRouter()
+
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
+    }
+
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+    }
 
     const CalculateBasket = () => {
+
+
+
         let total = 0
         selectedProducts && selectedProducts.forEach((item) => {
             total += parseInt(item.PRICER)
@@ -106,19 +58,33 @@ const AfterClientSelection = () => {
     }
 
     const sendOffer = async () => {
-        console.log(selectedClient)
-        // const obj = {
-        //     TRDR: parseInt(selectedClient.TRDR),
-        //     MTRLINES: mtrlines,
-        // }
+        setLoading(true)
+        console.log('click')
+        const { data } = await axios.post('/api/singleOffer', {
+            action: "createOrder",
+            data: mtrLines,
+            email: selectedClient?.EMAIL,
+            name: selectedClient?.NAME,
+            TRDR: selectedClient?.TRDR,
+            createdFrom: user?.lastName
+        })
 
-        // let { data } = await axios.post('/api/clients/apiClients', { action: 'sendOffer', data: obj })
-        // setSaldoc(data.result)
+
+        console.log(data)
+
+        if (!data.success) {
+            showError(data.error)
+            return;
+        }
+        setLoading(false)
+        showSuccess('Η προσφορά δημιουργήθηκε με επιτυχία')
+        router.push('/dashboard/offer')
     }
 
 
     return (
         <div>
+            <Toast ref={toast} />
             <Button label="Eπίλεξε Πελάτη" severity="warning" onClick={() => dispatch(setSelectedClient(null))} />
             <div className='surface-100 p-4 mt-3 mb-2 border-round'>
                 <p className='text-lg font-bold '>Λεπτομέριες Πελάτη</p>
@@ -145,14 +111,14 @@ const AfterClientSelection = () => {
 
                 </div>
             </div>
-            {saldoc ? (
+            {/* {saldoc ? (
                 <div className='bg-yellow-400 inline-flex p-3'>
                     <p>Αριθμός Προσφοράς:</p>
                     <p className='font-bold ml-2 border-round'>{saldoc && saldoc.SALDOCNUM}</p>
                 </div>
             ) :
-            (<Button onClick={sendOffer} className='w-full mt-2' label="Aποστολή Προσφοράς" />)}
-
+                (<Button onClick={sendOffer} className='w-full mt-2' label="Aποστολή Προσφοράς" />)} */}
+            <Button loading={loading} onClick={sendOffer} className='w-200 mt-2' label="Ολοκλήρωση" />
         </div>
     )
 }
