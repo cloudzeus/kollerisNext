@@ -32,7 +32,7 @@ function XLSXDownloadButton({products}) {
       };
       return (
         <div >
-            <Button disabled={!products?.length} label="Download XLSX" severity="success" icon="pi pi-download" onClick={handleDownload} />
+            <Button disabled={!products?.length} label="xlsx" severity="success" icon="pi pi-download" onClick={handleDownload} />
         </div>
       )
   };

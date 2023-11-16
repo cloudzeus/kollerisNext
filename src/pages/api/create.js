@@ -496,30 +496,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true });
     }
 
-    if (action === "updateProduct") {
-        await connectMongo();
-        try {
-            let find = await SoftoneProduct.find({ NAME: 'ΤΡΥΠΑΝΙ SDS PLUS 22x1000mm 4932367029 MILWAUKEE' })
-            console.log(find)
-            let update = await SoftoneProduct.findOneAndUpdate({ _id: find._id }, {
-                $set: {
-                    PRICER: parseFloat(find.PRICER),
-                    PRICEW: parseFloat(find.PRICEW),
-                    PRICER02: parseFloat(find.PRICER02),
-                    PRICER05: parseFloat(find.PRICER05),
-                },
-
-            },
-                {
-                    new: true
-                })
-            // console.log(update)
-
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(400).json({ success: false });
-        }
-    }
+   
     if (action === "activeImpas") {
         await connectMongo();
         try {
@@ -550,7 +527,145 @@ export default async function handler(req, res) {
         }
        
     }
+
+    if(action === "updateProduct") {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+
+        let buffer = await translateData(response)
+        await connectMongo();
+        try {
+
+            for(let item of buffer.result) {
+                   let obj = {
+                    MTRMARK: item.MTRMARK ? parseInt(item.MTRMARK) : 0,
+                    MTRCATEGORY: item.MTRCATEGORY ? parseInt(item.MTRCATEGORY) : 0,
+                    MTRGROUP: item.MTRGROUP ? parseInt(item.MTRGROUP) : 0,
+                    CCCSUBGOUP2: item.CCCSUBGOUP2 ? parseInt(item.CCCSUBGOUP2) : 0,
+                    MTRMARK_NAME: item.MTRMARK_NAME || '',
+                    GROUP_NAME: item.MTRGROUP_NAME || '',
+                    MMTRMANFCTR_NAME: item.MMTRMANFCTR_NAME || '',
+                    SUBGROUP_NAME: item.CCCSUBGOUP2_NAME || '',
+                    CATEGORY_NAME: item.MTRCATEGORY_NAME || '',
+                    isSkroutz: item.SKROUTZ == 0 ? false : true,
+                    PRICER: item.PRICER ? parseInt(item.PRICER) : 0,
+                    PRICEW: item.PRICEW ? parseInt(item.PRICEW) : 0,
+                    PRICER02: item.PRICE02 ? parseInt(item.PRICE02) : 0,
+                    PRICE05: item.PRICE05 ? parseInt(item.PRICE05) : 0,
+                    COST: 0,
+                    VAT: item.VAT || '',
+                    NAME: item.NAME,
+                    MTRMANFCTR: item.MTRMANFCTR,
+                    WIDTH: item.WIDTH || "0",
+                    HEIGHT: item.HEIGHT || "0",
+                    LENGTH: item.LENGTH || "0",
+                    GWEIGHT: item.GWEIGHT || "0",
+                    VOLUME: item.VOLUME || "0",
+                    STOCK: item.STOCK || "0",
+                    SOFTONESTATUS: true,
+                    ISACTIVE: item.ISACTIVE,
+                    CODE: item.CODE || '',
+                    CODE1: item.CODE1 || '',
+                    CODE2: item.CODE2 || '',
+                    MTRUNIT1: item.MTRUNIT1 || '',
+                    MTRUNIT3: item.MTRUNIT3 || '',
+                    MTRUNIT4: item.MTRUNIT4 || '',
+                    DIM1: item.DIM1 || '',
+                    DIM2: item.DIM2 || '',
+                    DIM3: item.DIM3 || '',
+                    MU31: item.MU31 || '',
+                    MU41: item.MU41 || '',
+                    UPDDATE: item.UPDDATE || '',
+                    SOCURRENCY: item.SOCURRENCY || '',
+                }
+
+                let find = await SoftoneProduct.findOne({MTRL: item.MTRL})
+                if(!find) {
+                    let create = await SoftoneProduct.create(obj)
+                    console.log('new')
+                    console.log(create)
+                }
+                // let obj = {
+                //     MTRMARK: item.MTRMARK ? parseInt(item.MTRMARK) : 0,
+                //     MTRCATEGORY: item.MTRCATEGORY ? parseInt(item.MTRCATEGORY) : 0,
+                //     MTRGROUP: item.MTRGROUP ? parseInt(item.MTRGROUP) : 0,
+                //     CCCSUBGOUP2: item.CCCSUBGOUP2 ? parseInt(item.CCCSUBGOUP2) : 0,
+                //     MTRMARK_NAME: item.MTRMARK_NAME || '',
+                //     GROUP_NAME: item.MTRGROUP_NAME || '',
+                //     MMTRMANFCTR_NAME: item.MMTRMANFCTR_NAME || '',
+                //     SUBGROUP_NAME: item.CCCSUBGOUP2_NAME || '',
+                //     CATEGORY_NAME: item.MTRCATEGORY_NAME || '',
+                //     isSkroutz: item.SKROUTZ == 0 ? false : true,
+                // }
+                
+                // let update = await SoftoneProduct.findOneAndUpdate({MTRL:  item.MTRL}, 
+                //     {$set: obj}
+                //     )
+                // console.log(update)
+            }
+          
+            
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
+    if(action === 'updateProduct2') {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+
+        let buffer = await translateData(response)
+        await connectMongo();
+        try {
+
+            for(let item of buffer.result) {
+                console.log(item.CCCSUBGOUP2)
+                console.log(item.CCCCSUBGOUP2_NAME)
+                let obj = {
+                    SUBGROUP_NAME: item.CCCCSUBGOUP2_NAME || '',
+                }
+                
+                let update = await SoftoneProduct.findOneAndUpdate({MTRL:  item.MTRL}, 
+                    {$set: obj}
+                    )
+                console.log(update)
+            }
+          
+            
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
+
+    if(action === 'deleteImages') {
+        await connectMongo();
+        try {
+            let update = await SoftoneProduct.updateMany({}, {
+                $set: {
+                    images: []
+                }
+            })
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
 }
+
+
 
 
 

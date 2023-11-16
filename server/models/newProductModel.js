@@ -5,6 +5,10 @@ import { ImpaCodes } from './impaSchema';
 const softoneProduct = new mongoose.Schema({
    
     MTRL: { type: String },
+    ΑCTIVE_PRODUCT: {
+        type: Boolean,
+        default: true
+    },
     DESCRIPTION: String,
     DESCRIPTION_ENG: String,
     ISACTIVE: String,
@@ -32,7 +36,6 @@ const softoneProduct = new mongoose.Schema({
         type: Number,
         default: 0
     },
-  
     VAT: String,
     COUNTRY: String,
     INTRASTAT: String,
@@ -72,6 +75,7 @@ const softoneProduct = new mongoose.Schema({
     },
   
     MTRMARK_NAME: String,
+    MMTRMANFCTR_NAME: String,
     DIM1: String,
     DIM2: String,
     DIM3: String,
@@ -79,6 +83,10 @@ const softoneProduct = new mongoose.Schema({
     MTRUNIT4: String,
     MU31: String,
     MU41: String,
+    isSkroutz: {
+        type: Boolean,
+        default: false
+    },
 },
 
 {

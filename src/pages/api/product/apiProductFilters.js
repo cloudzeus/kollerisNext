@@ -22,8 +22,6 @@ export default async function handler(req, res) {
         await connectMongo();
 
         let { groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter, mtrmark, } = req.body;
-
-
         let totalRecords;
         let softonefind;
         if (!categoryID && !groupID && !subgroupID && searchTerm == '') {

@@ -136,6 +136,9 @@ const productsSlice = createSlice({
             state.category = null;
             state.group = null;
             state.subgroup = null;
+            state.softoneFilter = null;
+            state.marka = null;
+
         },
         setSearchTerm: (state, {payload}) => {
             state.searchTerm = payload;

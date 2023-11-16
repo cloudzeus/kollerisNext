@@ -27,7 +27,7 @@ const Upload = () => {
     const router = useRouter();
     const { gridData, headers } = useSelector((state) => state.catalog)
 
-
+    console.log(gridData.length)
 
     useEffect(() => {
         if (!gridData.length) {
@@ -38,17 +38,11 @@ const Upload = () => {
 
     const handleAdd = async () => {
         setLoading(true)
-
-        let items = 0;
-        let _data = []
-        while (items < 3) {
-            let { data } = await axios.post('/api/product/apiProduct', { action: "csvImages", data: gridData[items] })
+        for(let i = 0; i <gridData.length; i++){
+            let { data } = await axios.post('/api/product/apiProduct', { action: "csvImages", data: gridData[i] })
             console.log(data.result)
-            items += 1;
-            _data.push(data.result)
+            setReturendData(prev => [...prev, data.result])
         }
-      
-        setReturendData(_data)
         setLoading(false)
     }
 
