@@ -632,6 +632,11 @@ function Product() {
 const ImagesTemplate = ({ _id, images }) => {
     const router = useRouter();
     const imageOp = useRef(null)
+    const [isLoading, setIsLoading] = useState(true);
+
+    const onImageLoad = () => {
+        setIsLoading(false);
+    };
     let image = images[0]?.name;
     const onClick = () => {
         router.push(`/dashboard/images/product/${_id}`)
@@ -646,22 +651,25 @@ const ImagesTemplate = ({ _id, images }) => {
                             src={`https://kolleris.b-cdn.net/images/${image}`}
                             fill={true}
                             sizes="50px"
+                            onLoad={onImageLoad}
                         />
                     </ImageDiv>
-                    <OverlayPanel ref={imageOp}>
+                
+                </div>
+
+            ) : (
+                <i className="pi pi-image text-400" style={{ fontSize: '1rem' }}></i>
+            )}
+                <OverlayPanel style={{width: '200px'}} ref={imageOp}>
                         <ImageOverlay>
                             <Image
                                 alt="product-images"
                                 src={`https://kolleris.b-cdn.net/images/${image}`}
                                 fill={true}
-                                sizes="200px"
+                                sizes="100vw"
                             />
                         </ImageOverlay>
-                       
                     </OverlayPanel>
-                </div>
-
-            ) : null}
             {/* <i className={`pi pi-image cursor-pointer ${hasImage ? "text-primary font-md" : "text-400"}`} style={{ fontSize: '1rem' }} onClick={onClick}></i> */}
         </div>
     )
@@ -973,12 +981,13 @@ const ImageOverlay = styled.div`
     background-color: white;
     border-radius: 4px;
     overflow: hidden;
-    border: 1px solid #d9d9d8;
-    position: relative;
-    width: 200px;
-    min-height: 200px;
+    position: unset !important;
+    width: 100%;
+    height: 100%;
     img {
-        object-fit: cover;
-        object-position: center;
+        object-fit: contain;
+        width: 100% !important;
+        position: relative !important;
+        height: unset !important;
     }
 `

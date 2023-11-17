@@ -655,12 +655,121 @@ export default async function handler(req, res) {
         try {
             let update = await SoftoneProduct.updateMany({}, {
                 $set: {
-                    images: []
+                    images: [],
+                    hasImage: false
                 }
             })
             return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false });
+        }
+    }
+
+    if(action === 'fixGroups') {
+     
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/getMtrGroup`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+                company: 1001,
+                sodtype: 51,
+
+            })
+        });
+        let buffer = await translateData(response)
+        for(let item of buffer.result) {
+            let group = await MtrGroup.findOne({'softOne.MTRGROUP': item.MTRGROUP})
+            if(!group) {
+                // console.log('groups that doesnt exist')
+                // console.log(item)
+                let category = await MtrCategory.findOne({'softOne.MTRCATEGORY': item.cccMTRCATEGORY})
+                // console.log('category')
+                // console.log(category)
+                let id = category?._id;
+                console.log('id')
+                console.log(id)
+            
+                let obj = {
+                    groupName: item.NAME,
+                    groupIcon: "",
+                    groupImage: "",
+                    status: true,
+                    softOne: {
+                        MTRGROUP: item.MTRGROUP,
+                        CODE: item.CODE,
+                        NAME: item.NAME,
+                        ISACTIVE: item.ISACTIVE,
+                        MTRCATEGORY: item.cccMTRCATEGORY,
+                    }
+                }
+                
+                let insert = await MtrGroup.create(obj)
+                let push = await MtrCategory.findOneAndUpdate({
+                    _id: id
+                }, {
+                    $addToSet: {
+                        groups: insert._id
+                    }
+                }, {
+                    new: true
+                })
+                console.log('push to categories')
+                console.log(push)
+            }
+        }
+      
+        return res.status(200).json({ success: true });
+    }
+
+    if(action === "fixSubgroups") {
+        //   add subgroups
+        let URL2 = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/getCccGroup`
+        const responseSub = await fetch(URL2, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+                company: 1001,
+                sodtype: 51,
+
+            })
+        });
+        let buffer2 = await translateData(responseSub)
+        for(let item of buffer2.result) {
+            let subgroup = await SubMtrGroup.findOne({'softOne.cccSubgroup2': item.cccSubgroup2})
+            if(!subgroup) {
+
+                let group = await MtrGroup.findOne({'softOne.MTRGROUP': parseInt(item.MTRGROUP)})
+                let id = group?._id;
+                let create = await SubMtrGroup.create({
+                    group: id,
+                    subGroupName: item.name,
+                    subGroupIcon: "",
+                    subGroupImage: "",
+                    softOne: {
+                        cccSubgroup2: item.cccSubgroup2,
+                        short: item.short,
+                        name: item.name,
+                        MTRGROUP: item.MTRGROUP,
+                    }
+                })
+                console.log('created sub group')
+                console.log(create)
+
+                let push = await MtrGroup.findOneAndUpdate({
+                    _id: id
+                }, {
+                    $addToSet: {
+                        subGroups: create._id
+                    }
+                }, {
+                    new: true
+                })
+                console.log('pushed to groups ')
+                console.log(push)
+            }
         }
     }
 }

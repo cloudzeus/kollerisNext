@@ -27,7 +27,6 @@ const Upload = () => {
     const router = useRouter();
     const { gridData, headers } = useSelector((state) => state.catalog)
 
-    console.log(gridData.length)
 
     useEffect(() => {
         if (!gridData.length) {
@@ -38,8 +37,9 @@ const Upload = () => {
 
     const handleAdd = async () => {
         setLoading(true)
-        for(let i = 0; i <gridData.length; i++){
-            let { data } = await axios.post('/api/product/apiProduct', { action: "csvImages", data: gridData[i] })
+        for(let i = 0; i < gridData.length; i++){
+        // for(let i = 0; i < 4; i++){
+            let { data } = await axios.post('/api/product/apiProduct', { action: "csvImages", data: gridData[i], index: i, total: gridData.length},)
             console.log(data.result)
             setReturendData(prev => [...prev, data.result])
         }
@@ -82,10 +82,15 @@ const Upload = () => {
                     <DataTable
                         value={returnedData}
                         tableStyle={{ minWidth: '50rem' }}
+                        rows={10}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        paginator
+
                     >
                         <Column header="Προϊόν" field='NAME' />
                         <Column header="Κωδικός" field='CODE' />
                         <Column header="Κωδικός" body={Image} />
+                        <Column header="Num" field={'updatedToTotal'}/>
                         <Column header="UpdatedAt" field='updatedAt' body={UpdatedAt} />
                     </DataTable>
                 </div>

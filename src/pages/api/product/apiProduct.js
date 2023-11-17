@@ -487,13 +487,12 @@ export default async function handler(req, res) {
     }
 
     if (action === "csvImages") {
-        const { data } = req.body;
-        console.log(data)
-        console.log('images')
+        const { data, index, total } = req.body;
+
+       
         let erp = data['Erp Code'];
         let image = data['Image Name'];
-        console.log(erp)
-        console.log(image)
+      
         try {
             const updatedDocument = await SoftoneProduct.findOneAndUpdate(
                 { CODE: `${erp}`  },
@@ -507,9 +506,18 @@ export default async function handler(req, res) {
                 },
                 { new: true, projection: { _id: 0, NAME: 1, CODE: 1, updatedAt: 1, images: { $slice: -1 }}}
             );
+            console.log('updated')
+            console.log(updatedDocument.NAME)
+            let _newdoc = {
+                NAME: updatedDocument.NAME,
+                CODE: updatedDocument.CODE,
+                updatedAt: updatedDocument.updatedAt,
+                images: updatedDocument.images,
+                updatedToTotal: `${index}/${total}`
+            }
 
-            console.log(updatedDocument);
-            return res.status(200).json({ success: true, result: updatedDocument });
+            console.log(_newdoc)
+            return res.status(200).json({ success: true, result: _newdoc });
         } catch (error) {
             console.error(error);
             return res.status(400).json({ success: false, result: null });
