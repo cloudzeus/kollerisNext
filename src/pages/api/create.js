@@ -772,6 +772,36 @@ export default async function handler(req, res) {
             }
         }
     }
+
+    if(action === "noGroups") {
+        let noGroups = []
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+                company: 1001,
+                sodtype: 51,
+
+            })
+        });
+        let buffer = await translateData(response)
+        for(let item of buffer.result) {
+            if(item?.MTRCATEGORY) {
+                if(!item?.MTRGROUP) {
+                    noGroups.push({
+                        name: item.NAME,
+                        MTRL: item.MTRL,
+                        MTRCATEGORY: item.MTRCATEGORY,
+                        group: 'no group'
+                    })
+                }
+            }
+        }
+        console.log(noGroups)
+        return res.status(200).json({ success: true, total: noGroups.length, result: noGroups,});
+    }
 }
 
 

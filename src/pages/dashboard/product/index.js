@@ -141,6 +141,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
+    const [imagesFilter, setImagesFilter] = useState(null)
     const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
@@ -174,6 +175,7 @@ function Product() {
                 codeSearch: codeSearch,
                 filterImpa: filterImpa,
                 sortPrice: sortPrice,
+                withImages: imagesFilter,
             },
             )
             setData(data.result);
@@ -202,6 +204,7 @@ function Product() {
         codeSearch,
         filterImpa,
         sortPrice,
+        imagesFilter,
     ])
 
 
@@ -269,6 +272,10 @@ function Product() {
             dispatch(resetSelectedFilters())
             setFilterImpa(0)
         }
+        const handleClose = (e) => {
+            op2.current.hide()
+        }
+      
 
         return (
             <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
@@ -310,6 +317,11 @@ function Product() {
                                         style={{ minWidth: '14rem', fontSize: '12px' }}
                                     />
                                 </div>
+
+                            </div>
+                            <div className='mb-2 ' >
+                                <span className='font-bold block mb-2'>Φίλτρο Εικόνας:</span>
+                                <WithImages value={imagesFilter} setState={setImagesFilter} />
                             </div>
 
                         </OverlayPanel>
@@ -667,6 +679,7 @@ const ImagesTemplate = ({ _id, images }) => {
                                 src={`https://kolleris.b-cdn.net/images/${image}`}
                                 fill={true}
                                 sizes="100vw"
+                                loading="lazy"
                             />
                         </ImageOverlay>
                     </OverlayPanel>
@@ -932,6 +945,34 @@ const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
 
 
 
+const WithImages = ({value, setState}) => {
+    const options = [
+        {name: 'Με φωτογραφία', value: true},
+        {name: 'Χωρίς φωτογραφία', value: false},
+        {name: 'Χωρίς φίλτρο', value: null}
+    ]
+
+    const onChange = (e) => {
+        setState(e.value)
+    }
+    return (
+        <div className='flex align-items-center'>
+            <Dropdown
+                emptyMessage="Δεν υπάρχουν Μάρκες"
+                size="small"
+                filter
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="name"
+                placeholder="Φίλτρο Φωτογραφίας"
+                className="p-column-filter grid-filter"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setState({name: 'Χωρίς φίλτρο', value: null})} ></i>
+        </div>
+    )
+}
 const MarkesFilter = ({ value, options, onChange }) => {
     const dispatch = useDispatch();
     useEffect(() => {
