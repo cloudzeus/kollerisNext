@@ -184,7 +184,8 @@ export default async function handler(req, res) {
             SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
-
+        console.log('obj')
+        console.log(OBJ)
         await connectMongo()
 
         async function updateSoft(item) {
@@ -203,13 +204,17 @@ export default async function handler(req, res) {
             });
 
             let respJSON = await response.json()
+            console.log('softone update')
+            console.log(respJSON)
             return respJSON;
         }
 
         try {
             let results = [];
             if (gridData) {
+              
                 for (let item of gridData) {
+                    console.log(item)
                     if (!item.hasOwnProperty('MTRL')) {
                         results.push({ name: item?.NAME, updated: false, mtrl: false })
                     }
@@ -219,7 +224,13 @@ export default async function handler(req, res) {
                     }, {
                         ...OBJ
                     })
-
+                    // let result = await SoftoneProduct.findOneAndUpdate({
+                    //     MTRL: MTRLID
+                    // }, {
+                    //     $set: OBJ
+                    // }, { new: true })
+                    console.log('result')
+                    console.log(result)
                     if (result.modifiedCount > 0 && item.hasOwnProperty('MTRL')) {
                         results.push({ name: item.NAME, updated: true, mtrl: true })
                     }

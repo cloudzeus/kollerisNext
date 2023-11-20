@@ -8,8 +8,7 @@ import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { setSubmitted } from '@/features/productsSlice';
 const TreeSelectComp = () => {
 
-    // const {selectedProducts, setSubmitted} = useContext(ProductQuantityContext)
-
+    const {selectedProducts} = useSelector(state => state.products)
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState(null);
 
@@ -64,7 +63,7 @@ const TreeSelectDropDown = ({
     const dispatch = useDispatch();
     const [data, setData] = useState(null);
     const toast = useRef(null);
-
+   
     const showSuccess = (name) => {
         toast.current.show({severity:'success', detail:`Επιτυχής Ενημέρωση MTRL : ${name}`, life: 3000});
     }
@@ -155,6 +154,7 @@ const TreeSelectDropDown = ({
             subgroupid:subgroup?.subgroupId,
             subGroupName: subgroup?.name
         })
+        dispatch(setSubmitted())
             if(!res.data.success) {
                 res.data.result.map((item) => {
                     showError(item?.name)
@@ -168,9 +168,9 @@ const TreeSelectDropDown = ({
                     showError(item?.name, 'ΤΟ ΠΡΟΪΟΝ ΔΕΝ ΕΧΕΙ MTRL. ΠΡΟΣΘΕΣΤΕ ΤΟ ΣΤΟ SOFTONE')
                 }
               
-                dispatch(setSubmitted())
-
             })
+         
+
           
     }
 

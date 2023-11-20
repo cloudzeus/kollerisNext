@@ -7,7 +7,7 @@ import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/Prod
 import { useSelector, useDispatch } from 'react-redux'
 import { setSingleProductForSoftone } from '@/features/productsSlice'
 import { Toast } from 'primereact/toast'
-import { setSelectedProducts } from '@/features/supplierOrderSlice'
+import { setSelectedProducts } from '@/features/productsSlice'
 
 const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
   const { setActiveIndex, setVisible } = useContext(ProductQuantityContext)
@@ -24,6 +24,7 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
   }
 
   const handleChangeClass = () => {
+    console.log(rowData)
     dispatch(setSelectedProducts([rowData]))
     setVisible(true)
     setActiveIndex(1)
