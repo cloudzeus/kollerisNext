@@ -167,8 +167,7 @@ export default async function handler(req, res) {
             withImages,
         } = req.body;
         
-        console.log('withImages')
-        console.log(withImages)
+       
         try {
             await connectMongo();
     
@@ -252,8 +251,7 @@ export default async function handler(req, res) {
                 .limit(limit)
             }
             
-            console.log('softonefind')
-            console.log(  softonefind[0])
+          
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {
             return res.status(400).json({ success: false, error: e.message });

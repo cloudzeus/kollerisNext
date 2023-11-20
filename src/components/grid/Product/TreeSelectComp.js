@@ -143,16 +143,22 @@ const TreeSelectDropDown = ({
     }
 
     const onSubmit = async () => {
-        setSubmitted(false)
-        let res = await axios.post('/api/product/apiProduct', { 
-            action: 'updateClass', 
+
+        let obj = {
             gridData: selectedProducts, 
             categoryid: category?.categoryId, 
             categoryName: category?.name,
             groupid: group?.groupId, 
             groupName: group?.name,
-            subgroupid:subgroup?.subgroupId,
-            subGroupName: subgroup?.name
+            subgroupid:subgroup?.subgroupId || 0,
+            subGroupName: subgroup?.name || ""
+        }
+        console.log('update obj')
+        console.log(obj)
+        setSubmitted(false)
+        let res = await axios.post('/api/product/apiProduct', { 
+            action: 'updateClass', 
+            ...obj
         })
         dispatch(setSubmitted())
             if(!res.data.success) {

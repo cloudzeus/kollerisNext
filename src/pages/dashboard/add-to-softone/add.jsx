@@ -13,6 +13,8 @@ import { Categories, Groups, SubGroups, Brands, VatSelect, ManufacturerSelect } 
 import { FormTitle } from "@/componentsStyles/dialogforms";
 import { useRouter } from "next/router";
 import { removeProductForSoftone } from "@/features/productsSlice";
+import { Dropdown } from "primereact/dropdown";
+
 const addSchema = yup.object().shape({
     // name: yup.string().required('Συμπληρώστε το όνομα'),
     NAME: yup.string().required('Συμπληρώστε το όνομα'),
@@ -24,8 +26,7 @@ const addSchema = yup.object().shape({
 const Page = () => {
     const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
 
-
-  
+ 
     const dispatch = useDispatch();
     const router = useRouter();
     const toast = useRef(null);
@@ -38,6 +39,12 @@ const Page = () => {
         manufacturer: null,
     })
 
+    console.log('single product')
+    console.log(singleProductForSoftone)
+    useEffect(() => {
+        
+        console.log(selectState)
+    }, [selectState])
 
     useEffect(() => {
         if(!singleProductForSoftone) {
@@ -68,9 +75,9 @@ const Page = () => {
             CODE: singleProductForSoftone?.CODE || "",
             CODE1: singleProductForSoftone?.CODE1 || "",
             CODE2: singleProductForSoftone?.CODE2 || "",
-            PRICER: singleProductForSoftone?.PRICER || "",
-            PRICEW: singleProductForSoftone?.PRICEW || "",
-            PRICE05: singleProductForSoftone?.PRICE05 || "",
+            PRICER: singleProductForSoftone?.PRICER04,
+            PRICEW: singleProductForSoftone?.PRICEW ,
+            PRICE05: singleProductForSoftone?.PRICE05 ,
             PRICER01: '',
             PRICER02: '',
             PRICER03: '',
@@ -85,7 +92,7 @@ const Page = () => {
             MU41: 1,
             GWEIGHT: '',
             COUNTRY: '',
-            MTRMARK_NAME: singleProductForSoftone?.MTRMARK_NAME || '',	
+            // MTRMARK_NAME: singleProductForSoftone?.MTRMARK_NAME || '',	
         }
     });
     const showSuccess = () => {
@@ -125,6 +132,7 @@ const Page = () => {
             CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
             MTRMARK: selectState.brand?.softOne?.MTRMARK,
             MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
+            VAT: selectState.vat?.VAT,
            
         }
 
@@ -144,6 +152,12 @@ const Page = () => {
             mongoData: mongoObj,
             id: singleProductForSoftone?._id,
         })
+        console.log('res data')
+        console.log(res.data)
+        if(!res.data.success) {
+            showError(res.data.message)
+            return;
+        }
         if (res.data.success) {
             dispatch(removeProductForSoftone(singleProductForSoftone?._id))
             router.back();
@@ -193,13 +207,17 @@ const Page = () => {
                             state={selectState.manufacturer}
                             setState={setSelectState}
                         />
-                         <Input
+                         {/* <Input
                                 label={'Μάρκα'} 
                                 name={'MTRMARK_NAME'}
                                 control={control}
-                            />
+                            /> */}
                         <div>
                             <FormTitle>Λοιπά Υποχρεωτικά Πεδία</FormTitle>
+                            <OptionsVat
+                                    state={selectState.vat}
+                                    setState={setSelectState}
+                                />
                             <Input
                                 label={'MTRUNIT1'}
                                 name={'MTRUNIT1'}
@@ -314,7 +332,51 @@ const Page = () => {
 }
 
 
+const OptionsVat = ({ state, setState}) => {
+    const [vatOptions, setVatOptions] = useState([])
+    const [data, setData] = useState([])
 
+    const VatTemplate = ((option) => {
+        for (let item of data) {
+            if (item.VAT === option.VAT) {
+                return (
+                    <p>{option.VAT + " -- " + item.NAME}</p>
+                )
+            }
+        }
+
+        return (
+            <div className="flex align-items-center">
+                <div>{option.VAT}</div>
+            </div>
+        );
+    })
+
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiProductFilters', {
+            action: 'findVats',
+        })
+        let newArray = [];
+        for (let item of data.result) {
+            newArray.push({ VAT: item.VAT })
+        }
+        setData(data.result)
+        setVatOptions(newArray)
+    }
+    useEffect(() => {
+        handleFetch();
+    }, [])
+
+    return (
+        <div className="card mb-3">
+            <span className='mb-2 block'>Aλλαγή ΦΠΑ</span>
+
+            <Dropdown itemTemplate={VatTemplate} value={state} onChange={(e) => setState(prev => ({ ...prev, vat: e.value }))} options={vatOptions} optionLabel="VAT"
+                placeholder="ΦΠΑ" className="w-full" />
+        </div>
+    )
+}
 
 
 

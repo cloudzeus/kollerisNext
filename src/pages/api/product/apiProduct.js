@@ -34,6 +34,12 @@ export default async function handler(req, res) {
                 ...data,
                 SOFTONESTATUS: false,
                 hasImage: false,
+                ΑCTIVE_PRODUCT: true,
+                availability: {
+                    DIATHESIMA: '0',
+                    SEPARAGELIA: '0',
+                    DESVMEVMENA: '0',
+                }
             });
 
             return res.status(200).json({ success: true, result: product });
@@ -367,6 +373,7 @@ export default async function handler(req, res) {
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
         // console.log(mongoData)
+        console.log(data)
         try {
             const filteredObject = {};
 
@@ -375,7 +382,8 @@ export default async function handler(req, res) {
                     filteredObject[key] = data[key];
                 }
             }
-
+            console.log('filtered object')
+            console.log(filteredObject)
             await connectMongo();
 
             async function createSoftone() {
@@ -389,9 +397,14 @@ export default async function handler(req, res) {
                     })
                 });
                 let responseJSON = await response.json();
+                console.log('response softone')
+                console.log(responseJSON)
                 return responseJSON;
             }
             let responseJSON = await createSoftone();
+            if(responseJSON.success == false) {
+                return res.status(200).json({ success: false, error: 'Δεν προστέθηκε στο softOne' });
+            }
             if (responseJSON.success) {
                 let update = await SoftoneProduct.findOneAndUpdate({ _id: id },
                     {
