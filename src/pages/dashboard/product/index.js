@@ -118,7 +118,7 @@ const columns = [
         id: 13,
     },
     {
-        header: 'Όνομα',
+        header: 'Minimized',
         id: 15,
     },
 
@@ -288,7 +288,7 @@ function Product() {
             if(visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
             else   setVisibleColumns([
                 {
-                    header: 'Όνομα',
+                    header: 'Minimized',
                     id: 15,
                 }
             ])

@@ -29,8 +29,8 @@ const ProductStats = () => {
     <div className='bg-white p-4 border-round'>
          <div className="card">
             <div className='mb-3'>
-                <p className='text-lg'>Σύνολο Προϊόντων:</p>
-                <span className='font-bold text-sm'>{state.totalProducts}</span>
+                <p className='text-lg font-bold'>Σύνολο Προϊόντων:</p>
+                <span className='text-sm'>{state.totalProducts}</span>
                 
             </div>
             <ProgressDiv  value={state.imageStat} total={state.totalWithImages} text="Προϊόντα με φωτογραφίες" />

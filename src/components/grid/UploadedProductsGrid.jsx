@@ -37,10 +37,10 @@ const UploadedProductsGrid = () => {
             <div className=' p-1 mb-4 font-medium'>
                 <span className='text-lg font-bold letter-spacing-1 '>ΠΡΟΙΟΝΤΑ ΑΠΟ ΚΑΤΑΛΟΓΟ</span>
                 <div>
-                    <span className='text-sm'>Ο τελευταίος κατάλογος ανέβηκε </span>
-                    <span className='text-sm font-bold  text-orange-600'>{ data.length && data[0].createdAt.split('T')[0]} </span>
-                    <span className='text-sm'>στον προμηθευτή </span>
-                    <span className='text-sm font-bold text-orange-600'>{data.length && data[0].SUPPLIER_NAME} </span>
+                    <span className='text-sm font-light'>Ο τελευταίος κατάλογος ανέβηκε </span>
+                    <span className='text-sm font-bold '>{ data.length && data[0].createdAt.split('T')[0]} </span>
+                    <span className='text-sm font-light'>στον προμηθευτή </span>
+                    <span className='text-sm font-bold '>{data.length && data[0].SUPPLIER_NAME} </span>
                 </div>
 
             </div>

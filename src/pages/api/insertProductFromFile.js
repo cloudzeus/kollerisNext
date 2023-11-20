@@ -108,16 +108,15 @@ export default async function handler(req, res) {
                     SHOULD_UPDATE_SOFTONE: true,
                 }
             })
-            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlPrice`;
             const response = await fetch(URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     username: "Service",
                     password: "Service",
+                    MTRL: MTRL,
                     PRICER: productData.PRICER,
                     PRICEW: productData.PRICEW,
-                    PRICER05: productData.PRICER05, //TIMH SCROUTZ
-                    MTRL: MTRL
 
                 })
             });
