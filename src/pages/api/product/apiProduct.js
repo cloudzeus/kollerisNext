@@ -34,7 +34,6 @@ export default async function handler(req, res) {
                 ...data,
                 SOFTONESTATUS: false,
                 hasImage: false,
-                ΑCTIVE_PRODUCT: true,
                 availability: {
                     DIATHESIMA: '0',
                     SEPARAGELIA: '0',
@@ -373,6 +372,7 @@ export default async function handler(req, res) {
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
         // console.log(mongoData)
+        console.log('------------- DATA -------------------')
         console.log(data)
         try {
             const filteredObject = {};
@@ -393,12 +393,15 @@ export default async function handler(req, res) {
                     body: JSON.stringify({
                         username: "Service",
                         password: "Service",
-                        ...filteredObject
+                        ...data
                     })
                 });
+                let buffer = await translateData(response)
+                console.log('buffer')
+                console.log(buffer)
                 let responseJSON = await response.json();
-                console.log('response softone')
-                console.log(responseJSON)
+                // console.log(responseJSON)
+           
                 return responseJSON;
             }
             let responseJSON = await createSoftone();

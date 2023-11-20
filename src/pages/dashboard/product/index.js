@@ -77,6 +77,11 @@ const initialColumns = [
         header: 'Διαθέσιμα',
         id: 12
     },
+    {
+        header: 'Όνομα',
+        id: 14
+    },
+
 
 
 ]
@@ -112,6 +117,10 @@ const columns = [
         header: 'Τιμή Κόστους',
         id: 13,
     },
+    {
+        header: 'Όνομα',
+        id: 15,
+    },
 
 
 ]
@@ -141,6 +150,7 @@ function Product() {
     const [addDialog, setAddDialog] = useState(false);
     const [codeSearch, setCodeSearch] = useState('');
     const [filterImpa, setFilterImpa] = useState(0)
+    const [minimizeGrid, setMinimizeGrid] = useState(false)
     const [imagesFilter, setImagesFilter] = useState(null)
     const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
@@ -150,7 +160,7 @@ function Product() {
         dispatch(setSearchTerm(''))
     }, [])
 
-
+    console.log(visibleColumns)
     useEffect(() => {
         if (submitted) fetch()
     }, [submitted])
@@ -247,6 +257,7 @@ function Product() {
     };
 
 
+
     const onColumnToggle = (event) => {
         //change the visible columns
         let selectedColumns = event.value;
@@ -272,14 +283,23 @@ function Product() {
             dispatch(resetSelectedFilters())
             setFilterImpa(0)
         }
-        const handleClose = (e) => {
-            op2.current.hide()
-        }
-      
 
+        const makeMinimalGrid = () => {
+            if(visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
+            else   setVisibleColumns([
+                {
+                    header: 'Όνομα',
+                    id: 15,
+                }
+            ])
+        }
         return (
             <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
+
                 <div className='flex'>
+                    <div>
+                        <Button type="button" size="small" className='mr-2' severity="secondary" label="Minimal Grid" onClick={makeMinimalGrid} />
+                    </div>
                     <div className="card flex flex-column align-items-center gap-3">
                         <span className="p-buttonset">
                             <Button type="button" size="small" icon="pi pi-filter" onClick={(e) => op2.current.toggle(e)} />
@@ -329,6 +349,7 @@ function Product() {
                     <div className="ml-2">
                         <MultiSelect className="w-15rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
                     </div>
+
                 </div>
                 <div>
                     <XLSXDownloadButton products={selectedProducts} />
@@ -493,6 +514,8 @@ function Product() {
         return <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
     }
 
+    console.log(minimizeGrid)
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -539,21 +562,35 @@ function Product() {
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
             >
+
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                 <Column selectionMode="multiple" style={{ width: '30px' }} headerStyle={{ width: '30px' }}></Column>
                 {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
                     : null}
                 <Column body={ImagesTemplate} style={{ width: '30px' }}></Column>
 
-                <Column
-                    field="NAME"
-                    style={{ minWidth: '400px' }}
-                    header="Όνομα"
-                    filter
-                    showFilterMenu={false}
-                    filterElement={onSearchName}
-                    body={NameTemplate} >
-                </Column>
+                {visibleColumns.some(column => column.id === 14) && (
+                    <Column
+                        field="NAME"
+                        style={{ minWidth: '400px' }}
+                        header="Όνομα"
+                        filter
+                        showFilterMenu={false}
+                        filterElement={onSearchName}
+                        body={NameTemplate} >
+                    </Column>
+                )}
+                {visibleColumns.some(column => column.id === 15) && (
+                    <Column
+                        field="NAME"
+                        style={{ minWidth: '400px' }}
+                        header="Όνομα"
+                        filter
+                        showFilterMenu={false}
+                        filterElement={onSearchName}
+                        body={MinimalTemplate} >
+                    </Column>
+                )}
                 {visibleColumns.some(column => column.id === 6) && (
                     <Column
                         field="impas.code"
@@ -666,27 +703,53 @@ const ImagesTemplate = ({ _id, images }) => {
                             onLoad={onImageLoad}
                         />
                     </ImageDiv>
-                
+
                 </div>
 
             ) : (
                 <i className="pi pi-image text-400" style={{ fontSize: '1rem' }}></i>
             )}
-                <OverlayPanel style={{width: '200px'}} ref={imageOp}>
-                        <ImageOverlay>
-                            <Image
-                                alt="product-images"
-                                src={`https://kolleris.b-cdn.net/images/${image}`}
-                                fill={true}
-                                sizes="100vw"
-                                loading="lazy"
-                            />
-                        </ImageOverlay>
-                    </OverlayPanel>
+            <OverlayPanel style={{ width: '200px' }} ref={imageOp}>
+                <ImageOverlay>
+                    <Image
+                        alt="product-images"
+                        src={`https://kolleris.b-cdn.net/images/${image}`}
+                        fill={true}
+                        sizes="100vw"
+                        loading="lazy"
+                    />
+                </ImageOverlay>
+            </OverlayPanel>
             {/* <i className={`pi pi-image cursor-pointer ${hasImage ? "text-primary font-md" : "text-400"}`} style={{ fontSize: '1rem' }} onClick={onClick}></i> */}
         </div>
     )
 
+}
+
+
+const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS }) => {
+    return (
+        <div className='flex flex-column'>
+            <span className='font-semibold'>{NAME}</span>
+            <div>
+                <div className='flex align-items-center'>
+                    <i className="pi pi-tag mr-1 mt-1 text-600" style={{ fontSize: '10px' }}></i>
+                    <span className='text-600' style={{ fontSize: '11px' }}>{CATEGORY_NAME}</span>
+                    <i className="pi pi-tag mr-1 ml-2 mt-1 text-600" style={{ fontSize: '10px' }}></i>
+                    <span className='text-600' style={{ fontSize: '11px' }}>{GROUP_NAME}</span>
+                </div>
+                <div>
+                    <div className='flex align-items-center'></div>
+                    <i className="pi pi-tag mr-1 mt-1 text-600" style={{ fontSize: '10px' }}></i>
+                    <span className='text-600' style={{ fontSize: '11px' }}>{SUBGROUP_NAME ? SUBGROUP_NAME : '-----'}</span>
+                </div>
+                <div className='flex align-items-center'>
+                    <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                    <p className='text-500'>softone</p>
+                </div>
+            </div>
+        </div>
+    )
 }
 const PriceTemplate = ({ PRICER }) => {
     return (
@@ -695,6 +758,8 @@ const PriceTemplate = ({ PRICER }) => {
         </div>
     )
 }
+
+
 
 const ExpansionDetails = ({ data }) => {
     return (
@@ -945,11 +1010,11 @@ const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
 
 
 
-const WithImages = ({value, setState}) => {
+const WithImages = ({ value, setState }) => {
     const options = [
-        {name: 'Με φωτογραφία', value: true},
-        {name: 'Χωρίς φωτογραφία', value: false},
-        {name: 'Χωρίς φίλτρο', value: null}
+        { name: 'Με φωτογραφία', value: true },
+        { name: 'Χωρίς φωτογραφία', value: false },
+        { name: 'Χωρίς φίλτρο', value: null }
     ]
 
     const onChange = (e) => {
@@ -969,7 +1034,7 @@ const WithImages = ({value, setState}) => {
                 className="p-column-filter grid-filter"
                 style={{ minWidth: '14rem', fontSize: '12px' }}
             />
-            <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setState({name: 'Χωρίς φίλτρο', value: null})} ></i>
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setState({ name: 'Χωρίς φίλτρο', value: null })} ></i>
         </div>
     )
 }

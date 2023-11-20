@@ -14,6 +14,7 @@ import { FormTitle } from "@/componentsStyles/dialogforms";
 import { useRouter } from "next/router";
 import { removeProductForSoftone } from "@/features/productsSlice";
 import { Dropdown } from "primereact/dropdown";
+import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
 
 const addSchema = yup.object().shape({
     // name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -37,10 +38,11 @@ const Page = () => {
         brand: null,
         vat: null,
         manufacturer: null,
-    })
+    })  
 
     console.log('single product')
     console.log(singleProductForSoftone)
+
     useEffect(() => {
         
         console.log(selectState)
@@ -61,7 +63,7 @@ const Page = () => {
                     groupName: singleProductForSoftone?.GROUP_NAME
                 },
                 subgroup: {
-                    softOne: { cccSubgroup2: singleProductForSoftone?.CCCSUBGOUP2 },
+                    softOne: { cccSubgroup2: singleProductForSoftone?.CCCSUBGROUP2 },
                     subGroupName: singleProductForSoftone?.SUBGROUP_NAME
                 },
             }
@@ -72,26 +74,20 @@ const Page = () => {
         resolver: yupResolver(addSchema),
         defaultValues: {
             NAME: singleProductForSoftone?.NAME || "",
-            CODE: singleProductForSoftone?.CODE || "",
             CODE1: singleProductForSoftone?.CODE1 || "",
             CODE2: singleProductForSoftone?.CODE2 || "",
-            PRICER: singleProductForSoftone?.PRICER04,
+            PRICER: singleProductForSoftone?.PRICER,
             PRICEW: singleProductForSoftone?.PRICEW ,
-            PRICE05: singleProductForSoftone?.PRICE05 ,
-            PRICER01: '',
-            PRICER02: '',
-            PRICER03: '',
-            PRICER04: '',
-            DIM1: '',
-            DIM2: '',
-            DIM3: '',
+            PRICER05: singleProductForSoftone?.PRICER05 || 0 ,
+            DIM1: 0,
+            DIM2: 0,
+            DIM3: 0,
             MTRUNIT1: 101,
             MTRUNIT3: 101,
             MTRUNIT4: 101,
             MU31: 1,
             MU41: 1,
-            GWEIGHT: '',
-            COUNTRY: '',
+            GWEIGHT: 0,
             // MTRMARK_NAME: singleProductForSoftone?.MTRMARK_NAME || '',	
         }
     });
@@ -112,7 +108,8 @@ const Page = () => {
 
 
     const handleAdd = async (data) => {
-        
+        console.log('sefsf')
+        console.log(data)
         if (!selectState.category?.softOne?.MTRCATEGORY) {
             showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Κατηγορία')
             return;
@@ -124,6 +121,9 @@ const Page = () => {
         if (!selectState.group?.softOne?.MTRGROUP) {
             showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Ομάδα')
         }
+        if (!selectState.vat?.VAT) {
+            showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε ΦΠΑ')
+        }
 
         let obj = {
             ...data,
@@ -132,7 +132,7 @@ const Page = () => {
             CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
             MTRMARK: selectState.brand?.softOne?.MTRMARK,
             MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
-            VAT: selectState.vat?.VAT,
+            VAT: parseInt(selectState.vat?.VAT),
            
         }
 
@@ -152,8 +152,7 @@ const Page = () => {
             mongoData: mongoObj,
             id: singleProductForSoftone?._id,
         })
-        console.log('res data')
-        console.log(res.data)
+     
         if(!res.data.success) {
             showError(res.data.message)
             return;
@@ -244,79 +243,67 @@ const Page = () => {
                                 control={control}
                             />
 
-                            <Input
-                                label={'Τιμή ΛΙΑΝΙΚΗΣ'}
-                                name={'PRICER'}
-                                control={control}
-                                required
-                            />
-                            <Input
-                                label={'Τιμή ΑΠΟΘΗΚΗΣ'}
-                                name={'PRICEW'}
-                                control={control}
-                            />
-                            <Input
-                                label={'Τιμή Scroutz'}
-                                name={'PRICE05'}
-                                control={control}
-                            />
+                                    <PrimeInputNumber
+                                     label={'Τιμή Λιανικής'}
+                                     name={'PRICER'}
+                                     control={control}
+                                />
+                               
+                                 <PrimeInputNumber 
+                                    label={'Τιμή Αποθήκης'}
+                                    name={'PRICEW'}
+                                    control={control}
+                                />
+                                <PrimeInputNumber 
+                                    label={'Τιμή Scroutz'}
+                                    name={'PRICER05'}
+                                    control={control}
+                                />
 
 
 
                             <FormTitle>Λοιπά Πεδία</FormTitle>
                             <Input
                                 label={'Κωδικός ΕΑΝ'}
-                                name={'CODE'}
-                                control={control}
-                            />
-                            <Input
-                                label={'Κωδικός εργοστασίου'}
                                 name={'CODE1'}
                                 control={control}
                             />
                             <Input
-                                label={'Κωδικός 2'}
+                                label={'Κωδικός εργοστασίου'}
                                 name={'CODE2'}
                                 control={control}
                             />
+                               <PrimeInputNumber 
+                                    label={'ΚΩΔΙΚΟΣ ΜΟΝΑΔΑΣ ΜΕΤΡΗΣΗΣ ΑΓΟΡΩΝ'}
+                                    name={'GWEIGHT'}
+                                    control={control}
+                                />
+                           
+                           
 
-                            <Input
-                                label={'ΚΩΔΙΚΟΣ ΧΩΡΑΣ'}
-                                name={'COUNTRY'}
-                                control={control}
-                            />
-
-                            <Input
-                                label={'ΚΩΔΙΚΟΣ ΜΟΝΑΔΑΣ ΜΕΤΡΗΣΗΣ ΑΓΟΡΩΝ'}
-                                name={'GWEIGHT'}
-                                control={control}
-                            />
-                            <Input
-                                label={'GWEIGHT'}
-                                name={'GWEIGHT'}
-                                control={control}
-                            />
                             <Input
                                 label={'MTRUNIT4: ΚΩΔΙΚΟΣ ΜΟΝΑΔΑΣ ΜΕΤΡΗΣΗΣ ΠΩΛΗΣΗΣ'}
                                 name={'MTRUNIT4'}
                                 control={control}
                             />
 
-                            <Input
-                                label={'Διάσταση 1'}
-                                name={'DIM1'}
-                                control={control}
-                            />
-                            <Input
-                                label={'Διάσταση 2'}
-                                name={'DIM2'}
-                                control={control}
-                            />
-                            <Input
-                                label={'Διάσταση 3'}
-                                name={'DIM3'}
-                                control={control}
-                            />
+                          
+                             <PrimeInputNumber 
+                                    label={'Διάσταση 1'}
+                                    name={'DIM1'}
+                                    control={control}
+                                />
+                             <PrimeInputNumber 
+                                    label={'Διάσταση 2'}
+                                    name={'DIM2'}
+                                    control={control}
+                                />
+                             <PrimeInputNumber 
+                                    label={'Διάσταση 3'}
+                                    name={'DIM3'}
+                                    control={control}
+                                />
+                       
                             <Button label="Προσθήκη" />
                         </div>
                     </form>

@@ -24,14 +24,17 @@ const Page = () => {
 
 
     const showError = (message) => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 6000 });
     }
 
     const SelectTemplate = ({ field }) => {
         const dispatch = useDispatch()
         const [dvalue, setdValue] = useState('')
 
+        console.log(field)
         const handleChange = (e) => {
+            console.log('eeeeeeee')
+            console.log(e)
             setdValue(e.value)
             dispatch(setSelectedMongoKey({
                 oldKey: field,
@@ -56,9 +59,9 @@ const Page = () => {
     }
 
     useEffect(() => {
-        
+        console.log(mongoKeys)
         let nameCondition = mongoKeys.some(key => key.related === 'NAME');
-        let codeCondition = mongoKeys.some(key => key.related === 'CODE1');
+        let codeCondition = mongoKeys.some(key => key.related === 'CODE2');
         if (nameCondition && codeCondition) {
             setIsSubmit(true); // Set isSubmit to true if 'name' or 'code' condition is met
         } else {
@@ -71,7 +74,7 @@ const Page = () => {
     const onSubmit = () => {
         console.log(isSubmit)
        if(!isSubmit) {
-        showError('Πρέπει να επιλέξεις στήλη για το όνομα ή τον κωδικό')
+        showError('Πρέπει να επιλέξεις στήλη για το όνομα και τον ΚΩΔΙΚΟ ΕΡΓΟΣΤΑΣΙΟΥ')
         return;
 
        }
@@ -127,6 +130,10 @@ const OurDatabaseKeys = [
     {
         key: 'CODE1',
         value: 'EANCODE'
+    },
+    {
+        key: 'CODE2',
+        value: 'Κωδικός Εργοστασίου'
     },
    
     {

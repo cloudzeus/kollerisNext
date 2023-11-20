@@ -26,7 +26,11 @@ const softoneProduct = new mongoose.Schema({
         default: 0
     },
     GROUP_NAME: String,
-    CCCSUBGOUP2: {
+    CCCSUBGROUP2: {
+        type: Number,
+        default: 0
+    },
+    CCCSUBGROUP: {
         type: Number,
         default: 0
     },

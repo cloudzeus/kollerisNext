@@ -27,7 +27,7 @@ const addSchema = yup.object().shape({
 const EditDialog = ({ dialog, hideDialog }) => {
     const { data: session, status } = useSession()
     const dispatch = useDispatch()
-    const [tranlateBtn, setTranslateBtn] = useState(false)
+    const [englishDescription, setEnlgishDescription] = useState('')
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     const [selectState, setSelectState] = useState({
@@ -36,44 +36,31 @@ const EditDialog = ({ dialog, hideDialog }) => {
         subgroup: null,
         vat: null,
     })
-    const [descriptions, setDescriptions] = useState(
-        {
-            de: '',
-            en: '',
-            es: '',
-            fr: '',
-        }
-    )
 
+    console.log('row data')
+    console.log(gridRowData)
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
 
-    const handleEnglish = async (value) => {
-        setDescriptions({ ...descriptions, en: value })
-    }
 
+    const handleEnglish = async (value) => {
+        console.log(value)
+        setEnlgishDescription(value)
+    }
 
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
 
-        setDescriptions(prev => {
-            return {
-                de: gridRowData?.descriptions?.de,
-                en: gridRowData?.descriptions?.en,
-                es: gridRowData?.descriptions?.es,
-                fr: gridRowData?.descriptions?.fr,
 
-            }
-        })
         setSelectState({
             category: { categoryName: gridRowData?.CATEGORY_NAME, softOne: { MTRCATEGORY: gridRowData?.MTRCATEGORY } },
             group: { groupName: gridRowData?.GROUP_NAME, softOne: { MTRGROUP: gridRowData?.MTRGROUP } },
-            subgroup: { subGroupName: gridRowData?.SUBGROUP_NAME, softOne: { cccSubgroup2: gridRowData?.CCCSUBGOUP2 } },
+            subgroup: { subGroupName: gridRowData?.SUBGROUP_NAME, softOne: { cccSubgroup2: gridRowData?.CCCSUBGROUP2 } },
             vat: { VAT: gridRowData?.VAT },
 
         })
@@ -92,7 +79,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                 action: "update",
                 data: {
                     ...data,
-                    descriptions: descriptions,
+                    DESCRIPTION_ENG: englishDescription,
                     ...selectState
 
                 },
@@ -178,7 +165,13 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         name={'DESCRIPTION'}
                         control={control}
                     />
-                  
+                    <TranslateInput
+                        label={'Περιγραφή Aγγλική'}
+                        state={'DESCRIPTION_ENG'}
+                        handleState={handleEnglish}
+                        targetLang="en-GB"
+                    />
+
                     <Input
                         label={'Τιμή Κόστους'}
                         name={'COST'}
@@ -201,7 +194,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         name={'PRICER'}
                         control={control}
                     />
-                   
+
                     <Input
                         label={'Τιμή Scroutz'}
                         name={'PRICE05'}
@@ -213,13 +206,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         control={control}
                     />
 
-                    <FormTitle>ΜΕΤΑΦΡΑΣΕΙΣ ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                            <TranslateInput
-                                label={'Περιγραφή Aγγλική'}
-                                state={descriptions.en}
-                                handleState={handleEnglish}
-                                targetLang="en-GB"
-                            />
+
                 </Dialog>
             </form>
         </Container>
@@ -241,6 +228,9 @@ const AddDialog = ({ dialog, hideDialog }) => {
         vat: null
     })
 
+    useEffect(() => {
+        console.log(selectState)
+    }, [selectState])
 
     const { control, formState: { errors }, handleSubmit, reset } = useForm({
         resolver: yupResolver(addSchema),
@@ -252,13 +242,13 @@ const AddDialog = ({ dialog, hideDialog }) => {
             CODE2: '',
             PRICER: 0,
             PRICEW: 0,
-            PRICE05: 0,
+            PRICER05: 0,
             COST: 0,
         }
     });
 
     const toast = useRef(null);
-  
+
 
     useEffect(() => {
         reset();
@@ -336,8 +326,8 @@ const AddDialog = ({ dialog, hideDialog }) => {
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
-                >   
-                 <FormTitle>ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ:</FormTitle>
+                >
+                    <FormTitle>ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ:</FormTitle>
                     <Categories
                         state={selectState.category}
                         setState={setSelectState}
@@ -354,8 +344,8 @@ const AddDialog = ({ dialog, hideDialog }) => {
                     />
                     <div>
                         {showInputs ? (
-                            <div>   
-                                  <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
+                            <div>
+                                <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
                                 <Input
                                     label={"Όνομα"}
                                     name={'NAME'}
@@ -368,32 +358,33 @@ const AddDialog = ({ dialog, hideDialog }) => {
                                     name={'DESCRIPTION'}
                                     control={control}
                                 />
+
                                 <TranslateInput
                                     label={'Περιγραφή Aγγλική'}
                                     state={englishDescription}
                                     handleState={handleEnglish}
                                     targetLang="en-GB"
                                 />
-                                 <FormTitle>ΤΙΜΕΣ:</FormTitle>
-                                 <PrimeInputNumber 
-                                      label={'Τιμή Κόστους'}
-                                      name={'COST'}
-                                      control={control}
-                                      required
-                                      error={errors.cost}
+                                <FormTitle>ΤΙΜΕΣ:</FormTitle>
+                                <PrimeInputNumber
+                                    label={'Τιμή Κόστους'}
+                                    name={'COST'}
+                                    control={control}
+                                    required
+                                    error={errors.cost}
                                 />
-                                   <PrimeInputNumber 
-                                     label={'Τιμή Λιανικής'}
-                                     name={'PRICER'}
-                                     control={control}
+                                <PrimeInputNumber
+                                    label={'Τιμή Λιανικής'}
+                                    name={'PRICER'}
+                                    control={control}
                                 />
-                               
-                                 <PrimeInputNumber 
+
+                                <PrimeInputNumber
                                     label={'Τιμή Αποθήκης'}
                                     name={'PRICEW'}
                                     control={control}
                                 />
-                                <PrimeInputNumber 
+                                <PrimeInputNumber
                                     label={'Τιμή Scroutz'}
                                     name={'PRICE05'}
                                     control={control}
@@ -409,7 +400,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
                                     control={control}
                                     required
                                 />
-                                    <OptionsVat
+                                <OptionsVat
                                     state={selectState.vat}
                                     setState={setSelectState}
                                 />
@@ -492,11 +483,11 @@ const SubGroups = ({ state, setState, id }) => {
         <div className="card mb-3">
             <span className='mb-2 block'>Επιλογή Υποομάδας</span>
             <Dropdown value={state} onChange={(e) => setState(prev => ({ ...prev, subgroup: e.value }))} options={subgroupOptions} optionLabel="subGroupName"
-                placeholder="Κατηγορία" className="w-full" />
+                placeholder="Yποομάδα" className="w-full" />
         </div>
     )
 }
-const OptionsVat = ({ state, setState}) => {
+const OptionsVat = ({ state, setState }) => {
     const [vatOptions, setVatOptions] = useState([])
     const [data, setData] = useState([])
 

@@ -802,6 +802,16 @@ export default async function handler(req, res) {
         console.log(noGroups)
         return res.status(200).json({ success: true, total: noGroups.length, result: noGroups,});
     }
+
+    if(action === 'updateCol') {
+        
+        await connectMongo()
+         let update = await SoftoneProduct.updateMany({}, { 
+            $rename: { "CCCSUBGROUP": "CCCSUBGROUP2" },
+        })
+         console.log(update)
+    }
+    return res.status(200).json({ success: true });
 }
 
 
