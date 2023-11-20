@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { setSubmitted } from '@/features/productsSlice';
+import { set } from 'mongoose';
 const TreeSelectComp = () => {
 
     const {selectedProducts} = useSelector(state => state.products)
@@ -21,6 +22,15 @@ const TreeSelectComp = () => {
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
 
+
+    useEffect(() => {
+        setCategories(null)
+        setCategory(null)
+        setGroups(null)
+        setGroup(null)
+        setSubgroups(null)
+        setSubgroup(null)
+    }, [gridRowData])
 
     return (
         <div>
