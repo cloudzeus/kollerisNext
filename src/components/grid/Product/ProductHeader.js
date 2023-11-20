@@ -9,8 +9,9 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button'
 import { Toolbar } from 'primereact/toolbar';
 import { MultiSelect } from 'primereact/multiselect'
+import { useDispatch } from 'react-redux'
 const ProductHeader = ({ searchTerm, onSearch, selectedProducts, visibleColumns, onColumnToggle }) => {
-
+    
     const [visible, setVisible] = useState(false);
     const [basket, setBasket] = useState([])
 

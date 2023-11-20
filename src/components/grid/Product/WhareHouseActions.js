@@ -9,17 +9,20 @@ import { ProductQuantityContext } from '@/_context/ProductGridContext'
 import { Message } from 'primereact/message';
 import axios from 'axios'
 import { setSubmitted } from '@/features/productsSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { setSelectedProducts } from '@/features/productsSlice'
 
 const WhareHouseActions = () => {
     const { 
-        selectedProducts, 
         importWarehouse, 
         exportWarehouse,
         diathesimotita,
     } = useContext(ProductQuantityContext)
     const [resultImport , setResultImport] = useState(null)
     const [resultExport , setResultExport] = useState(null)
-
+    const {selectedProducts} = useSelector(state => state.products)
+    const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false);
 
 
     const CalculateBasket = () => {
@@ -43,6 +46,7 @@ const WhareHouseActions = () => {
 
     
     const handleSubmit = async() => {
+        setLoading(true)
         let {data} = await axios.post('/api/product/apiProduct',  
         {
             action: 'warehouse', 
@@ -57,6 +61,7 @@ const WhareHouseActions = () => {
             setResultExport(data.resultExport)
         }
         dispatch(setSubmitted())
+        setLoading(false)
     }
    
 
@@ -69,7 +74,7 @@ const WhareHouseActions = () => {
                 <DataTable footer={footer} className='border-1 border-round-sm	border-50' size="small" scrollHeight='390px' scrollable value={selectedProducts}   >
                     <Column field="availability.DIATHESIMA" body={Template} header="Προϊόν" ></Column>
                 </DataTable>
-                <Button label="Αποθήκευση" className='mt-3' onClick={handleSubmit} />
+                <Button loading={loading} label="Αποθήκευση" className='mt-3' onClick={handleSubmit} />
                   <div className=''>
                   {resultImport ? (
                         <div className=" bg-yellow-400 p-2 mt-2 border-round">
