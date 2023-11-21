@@ -147,10 +147,13 @@ function Product() {
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
     const [expandedRows, setExpandedRows] = useState(null);
     const [addDialog, setAddDialog] = useState(false);
-    const [codeSearch, setCodeSearch] = useState('');
-    const [filterImpa, setFilterImpa] = useState(0)
-    const [minimizeGrid, setMinimizeGrid] = useState(false)
-    const [imagesFilter, setImagesFilter] = useState(null)
+    const [stateFilters, setStateFilters] = useState({
+        impa: 0,
+        images: null,
+        codeSearch: '',
+        skroutz: null,
+        active: true,
+    })
     const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const dispatch = useDispatch();
@@ -166,7 +169,7 @@ function Product() {
 
 
     const fetch = async () => {
-        if (!searchTerm && !codeSearch) {
+        if (!searchTerm && !stateFilters.codeSearch) {
             dispatch(setLoading(true))
         }
         try {
@@ -181,10 +184,8 @@ function Product() {
                 sort: sort,
                 softoneFilter: softoneFilter,
                 marka: marka,
-                codeSearch: codeSearch,
-                filterImpa: filterImpa,
                 sortPrice: sortPrice,
-                withImages: imagesFilter,
+                stateFilters: stateFilters,
             },
             )
             setData(data.result);
@@ -210,10 +211,9 @@ function Product() {
         softoneFilter,
         sortAvailability,
         submitted,
-        codeSearch,
-        filterImpa,
+        stateFilters,
         sortPrice,
-        imagesFilter,
+      
     ])
 
 
@@ -223,7 +223,7 @@ function Product() {
 
     }
     const onFilterImpa = (e) => {
-        setFilterImpa(e.value)
+        setStateFilters(prev => ({ ...prev, impa: e.value }))
 
     }
     const onFilterGroupChange = (e) => {
@@ -280,7 +280,7 @@ function Product() {
 
         const clearAllFilters = () => {
             dispatch(resetSelectedFilters())
-            setFilterImpa(0)
+            setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: ''}))
         }
 
         const makeMinimalGrid = () => {
@@ -325,7 +325,6 @@ function Product() {
                                 <span className='font-bold block mb-2'>SoftOne status:</span>
                                 <div className='mr-2'>
                                     <Dropdown
-                                        emptyMessage="Δεν υπάρχουν υποομάδες"
                                         size="small"
                                         value={softoneFilter}
                                         options={optionsSoft}
@@ -340,7 +339,15 @@ function Product() {
                             </div>
                             <div className='mb-2 ' >
                                 <span className='font-bold block mb-2'>Φίλτρο Εικόνας:</span>
-                                <WithImages value={imagesFilter} setState={setImagesFilter} />
+                                <WithImages value={stateFilters.images} setState={setStateFilters} />
+                            </div>
+                            <div className='mb-2 ' >
+                                <span className='font-bold block mb-2'>Φίλτρο Skroutz:</span>
+                                <IsSkroutz value={stateFilters.skroutz} setState={setStateFilters} />
+                            </div>
+                            <div className='mb-2 ' >
+                                <span className='font-bold block mb-2'>Φίλτρο Ενεργού Προϊόντος:</span>
+                                <IsActive value={stateFilters.active} setState={setStateFilters} />
                             </div>
 
                         </OverlayPanel>
@@ -423,7 +430,7 @@ function Product() {
             <div className="flex align-items-center">
                 <Dropdown
                     size="small"
-                    value={filterImpa}
+                    value={stateFilters.filterImpa}
                     options={options}
                     onChange={onFilterImpa}
                     optionLabel="name"
@@ -471,7 +478,7 @@ function Product() {
             <div className="flex align-items-center justify-content-start w-20rem ">
                 <div className="p-input-icon-left w-full">
                     <i className="pi pi-search" />
-                    <InputText value={codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setCodeSearch(e.target.value)} />
+                    <InputText value={stateFilters.codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setStateFilters(prev => ({...prev, codeSearch: e.target.value}))} />
                 </div>
                 <div className='ml-3'>
                     {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
@@ -513,7 +520,6 @@ function Product() {
         return <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
     }
 
-    console.log(minimizeGrid)
 
     return (
         <AdminLayout >
@@ -1021,12 +1027,15 @@ const WithImages = ({ value, setState }) => {
     ]
 
     const onChange = (e) => {
-        setState(e.value)
+        setState(prev => ({ ...prev, images: e.value }))
+    }
+
+    const onClear = () => {
+        setState(prev => ({ ...prev, images: null }))
     }
     return (
         <div className='flex align-items-center'>
             <Dropdown
-                emptyMessage="Δεν υπάρχουν Μάρκες"
                 size="small"
                 filter
                 value={value}
@@ -1037,7 +1046,71 @@ const WithImages = ({ value, setState }) => {
                 className="p-column-filter grid-filter"
                 style={{ minWidth: '14rem', fontSize: '12px' }}
             />
-            <i className="pi pi-times ml-2 cursor-pointer" onClick={() => setState({ name: 'Χωρίς φίλτρο', value: null })} ></i>
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onClear} ></i>
+        </div>
+    )
+}
+
+const IsActive= ({setState, value}) => {
+    const options = [
+        { name: 'Ενεργό', value: true },
+        { name: 'Ανενεργό', value: false },
+        { name: 'Όλα', value: null }
+    ]
+
+    const onChange = (e) => {
+        setState(prev => ({ ...prev, active: e.value }))
+    }
+
+    const onClear = () => {
+        setState(prev => ({ ...prev, active: null }))
+    }
+    return (
+        <div className='flex align-items-center'>
+            <Dropdown
+                size="small"
+                filter
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="name"
+                placeholder="Φίλτρο ενεργού προϊόντος"
+                className="p-column-filter grid-filter"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onClear} ></i>
+        </div>
+    )
+}
+const IsSkroutz = ({setState, value}) => {
+    console.log(value)
+    const options = [
+        { name: 'Είναι στο Skroutz', value: true },
+        { name: 'Δεν είναι στο Skroutz', value: false },
+        { name: 'Όλα', value: null }
+    ]
+
+    const onChange = (e) => {
+        setState(prev => ({ ...prev, skroutz: e.value }))
+    }
+
+    const onClear = () => {
+        setState(prev => ({ ...prev, skroutz: null }))
+    }
+    return (
+        <div className='flex align-items-center'>
+            <Dropdown
+                size="small"
+                filter
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="name"
+                placeholder="Φίλτρο Skroutz"
+                className="p-column-filter grid-filter"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onClear} ></i>
         </div>
     )
 }

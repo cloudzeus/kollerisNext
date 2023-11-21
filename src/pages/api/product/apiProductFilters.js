@@ -161,10 +161,8 @@ export default async function handler(req, res) {
             softoneFilter,
             sort,
             marka,
-            codeSearch,
-            filterImpa,
             sortPrice,
-            withImages,
+            stateFilters,
         } = req.body;
         
        
@@ -174,11 +172,11 @@ export default async function handler(req, res) {
             let totalRecords;
             let sortObject = {};
             let filterConditions = {};
-            if(withImages) {
+            if(stateFilters.images) {
                 filterConditions.images = { $exists: true, $ne: [] };
 
             }
-            if(withImages === false) {
+            if(stateFilters.images === false) {
                 filterConditions.hasImages === false;
 
             }
@@ -193,13 +191,16 @@ export default async function handler(req, res) {
             if (categoryID) {
                 filterConditions.MTRCATEGORY = categoryID;
             }
-
+   
+            if(stateFilters.skroutz !== null) {
+                filterConditions.isSkroutz = stateFilters.skroutz;
+            }
+            if(stateFilters.active !== null) {
+                filterConditions.ISACTIVE = stateFilters.active;
+            }
             
-    
-            if (filterImpa === 1) {
-                filterConditions = {
-                    impas: { $exists: true, $ne: null },
-                };
+            if (stateFilters.impa === 1) {
+                filterConditions.impas = { $exists: true, $ne: null };
             }
     
             if (groupID) {
@@ -214,8 +215,8 @@ export default async function handler(req, res) {
                 filterConditions.SOFTONESTATUS = softoneFilter;
             }
     
-            if (codeSearch !== '') {
-                let regexSearchTerm = new RegExp(codeSearch, 'i');
+            if (stateFilters.codeSearch !== '') {
+                let regexSearchTerm = new RegExp(stateFilters.codeSearch, 'i');
                 filterConditions.CODE = regexSearchTerm;
             }
     
@@ -228,6 +229,8 @@ export default async function handler(req, res) {
                 filterConditions.NAME = regexSearchTerm;
             }
             
+            console.log('filterConditions')
+            console.log(filterConditions)
     
             if (Object.keys(filterConditions).length === 0) {
                 // No specific filters, fetch all products

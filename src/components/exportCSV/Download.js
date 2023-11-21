@@ -15,7 +15,7 @@ function XLSXDownloadButton({data, fileName, disabled}) {
     
       return (
         <div >
-            <Button size="small" disabled={disabled} className='w-full' label=".xlsx" severity="success" icon="pi pi-download" onClick={handleDownload} />
+            <Button size="small"  disabled={disabled} className='w-full' label=".xlsx" severity="success" icon="pi pi-download" onClick={handleDownload} />
         </div>
       )
   };
