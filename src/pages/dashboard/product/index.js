@@ -142,6 +142,8 @@ function Product() {
     const { data: session } = useSession()
     let user = session?.user?.user;
     const [data, setData] = useState([]);
+    const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
+    const [totalRecords, setTotalRecords] = useState(0);
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns)
@@ -154,17 +156,15 @@ function Product() {
         skroutz: null,
         active: true,
     })
-    const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
-    const [totalRecords, setTotalRecords] = useState(0);
+    
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(setSearchTerm(''))
     }, [])
 
-    console.log(visibleColumns)
     useEffect(() => {
-        if (submitted) fetch()
+         fetch()
     }, [submitted])
 
 
@@ -334,6 +334,8 @@ function Product() {
                                         className="p-column-filter grid-filter"
                                         style={{ minWidth: '14rem', fontSize: '12px' }}
                                     />
+                                    <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  dispatch(setSoftoneFilter( { name: 'Χωρίς Φίλτρο', value: null }))} ></i>
+
                                 </div>
 
                             </div>
