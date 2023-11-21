@@ -372,6 +372,56 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, message: message });
     }
 
+    if(action === "updateSkroutz") {
+        const {isSkroutz, MTRL , id} = req.body;
+        //Softone accepts 1 or 0
+        let _isSkroutz = isSkroutz ? 1 : 0;
+        let message;
+
+        try {
+            async function updateSoftone() {
+                if(!MTRL) return;
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateSkroutz`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        username: "Service",
+                        password: "Service",
+                        STATUS: _isSkroutz,
+                        MTRL: MTRL,
+                    })
+                });
+                let buffer = await translateData(response)
+                console.log('response buffer')
+                console.log(buffer)
+                return buffer.result
+            }
+            message = await updateSoftone();
+            
+          
+        } catch (e) {
+            return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
+        }
+
+        try {
+            await connectMongo();
+            let update = await SoftoneProduct.findOneAndUpdate( {
+                MTRL: MTRL,
+                _id: id 
+              }, {
+                $set: {
+                    isSkroutz: !isSkroutz
+                }
+            }, {new: true})
+            message += ' System skroutz update success.'
+        } catch (e) {
+            return res.status(200).json({ success: false, result: null, error: 'System update error' });
+        }
+       
+      
+        return res.status(200).json({ success: true, message: message });
+    }
+
     if (action === "importCSVProducts") {
         const { data } = req.body;
         await connectMongo();

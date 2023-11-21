@@ -44,7 +44,6 @@ import {
     setSortPrice,
     setSelectedProducts
 } from "@/features/productsSlice";
-import { Toolbar } from 'primereact/toolbar';
 import Image from 'next/image';
 import styled from 'styled-components';
 
@@ -843,8 +842,7 @@ const Cost = ({ COST }) => {
 }
 
 
-const NameTemplate = ({ NAME, SOFTONESTATUS, impas, CATEGORY_NAME, ISACTIVE }) => {
-    let active = true
+const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE }) => {
     return (
         <div>
             <p className='font-medium'>{NAME}</p>
@@ -858,6 +856,13 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, impas, CATEGORY_NAME, ISACTIVE }) =
                     <div style={{ width: '5px', height: '5px' }} className={`${ISACTIVE ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
                     <p className='text-500'>active</p>
                 </div>
+                {isSkroutz ? (
+                    <div className='flex align-items-center ml-2'>
+                        <div style={{ width: '5px', height: '5px' }} className={`bg-orange-500 border-circle mr-1 mt-1`}></div>
+                        <p className='text-500'>skroutz</p>
+                    </div>
+                ) : null}
+
             </div>
 
         </div>

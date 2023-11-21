@@ -77,10 +77,19 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 	}
 
 	const updateSkroutz = async () => {
-		let isSrkoutz = rowData.isSkroutz;
+		console.log(rowData)
+		let isSkroutz = rowData.isSkroutz;
 		const MTRL = rowData.MTRL
-
-
+		const {data} = await axios.post('/api/product/apiProduct', { action: "updateSkroutz", id: rowData._id, MTRL: MTRL, isSkroutz: isSkroutz})
+		console.log(data)
+		if(data.success) {
+			showSuccess(data.message)
+		} else {
+			showError(data?.error)
+		}
+		dispatch(setSubmitted())
+		setLoading(prev => ({...prev, active: false}))
+		op.current.hide();
 	}
 	
 	return (
