@@ -393,55 +393,6 @@ export default async function handler(req, res) {
     }
 
 
-    if (action === "productBrands") {
-        try {
-            await connectMongo();
-            console.log('here')
-            // let group = await SoftoneProduct.find({}, {MTRMARK: 1, _id: 1, NAME: 1})
-
-            // for(let item of group) {
-            //     let groupName = await Markes.findOne(
-            //         { "softOne.MTRMARK": item.MTRMARK },
-            //         { "softOne.NAME": 1, _id: 0 }
-            //       );
-
-            //     let updateField = groupName?.softOne.NAME
-            //     console.log(item)
-            //     if(updateField)  {
-            //         let updated = await SoftoneProduct.findOneAndUpdate(
-            //             { _id: item._id },
-            //             { $set: { MTRMARK_NAME: groupName.softOne.NAME } }
-            //           );
-            //           console.log('updated')
-            //           console.log(updated);
-            //     }
-            // }
-
-            // for(let i of group) {
-            //     await SoftoneProduct.findOneAndUpdate({
-            //         _id: i._id
-            //     }, {
-            //         $set: {
-            //             MTRMARK: 1029,
-            //             MTRMARK_NAME: 'BOSCH' 
-            //         }
-            //     })
-            // }
-
-            let update = await SoftoneProduct.updateMany({}, {
-                $set: {
-                    SOFTONESTATUS: true
-                }
-            })
-            console.log('update')
-            console.log(update)
-
-            return res.status(200).json({ success: true });
-
-        } catch (e) {
-            return res.status(400).json({ success: false });
-        }
-    }
 
     if (action === "createVat") {
         try {
@@ -496,7 +447,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true });
     }
 
-   
+
     if (action === "activeImpas") {
         await connectMongo();
         try {
@@ -519,154 +470,19 @@ export default async function handler(req, res) {
                     minOrderValue: 1000,
                     orderCompletionValue: 0,
                 },
-    
+
             })
             return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false });
         }
-       
+
     }
 
-    if(action === "updateProduct") {
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-            })
-        });
 
-        let buffer = await translateData(response)
-        await connectMongo();
-        try {
 
-            for(let item of buffer.result) {
-                   let obj = {
-                    MTRMARK: item.MTRMARK ? parseInt(item.MTRMARK) : 0,
-                    MTRCATEGORY: item.MTRCATEGORY ? parseInt(item.MTRCATEGORY) : 0,
-                    MTRGROUP: item.MTRGROUP ? parseInt(item.MTRGROUP) : 0,
-                    CCCSUBGOUP2: item.CCCSUBGOUP2 ? parseInt(item.CCCSUBGOUP2) : 0,
-                    MTRMARK_NAME: item.MTRMARK_NAME || '',
-                    GROUP_NAME: item.MTRGROUP_NAME || '',
-                    MMTRMANFCTR_NAME: item.MMTRMANFCTR_NAME || '',
-                    SUBGROUP_NAME: item.CCCSUBGOUP2_NAME || '',
-                    CATEGORY_NAME: item.MTRCATEGORY_NAME || '',
-                    isSkroutz: item.SKROUTZ == 0 ? false : true,
-                    PRICER: item.PRICER ? parseInt(item.PRICER) : 0,
-                    PRICEW: item.PRICEW ? parseInt(item.PRICEW) : 0,
-                    PRICER02: item.PRICE02 ? parseInt(item.PRICE02) : 0,
-                    PRICE05: item.PRICE05 ? parseInt(item.PRICE05) : 0,
-                    COST: 0,
-                    VAT: item.VAT || '',
-                    NAME: item.NAME,
-                    MTRMANFCTR: item.MTRMANFCTR,
-                    WIDTH: item.WIDTH || "0",
-                    HEIGHT: item.HEIGHT || "0",
-                    LENGTH: item.LENGTH || "0",
-                    GWEIGHT: item.GWEIGHT || "0",
-                    VOLUME: item.VOLUME || "0",
-                    STOCK: item.STOCK || "0",
-                    SOFTONESTATUS: true,
-                    ISACTIVE: item.ISACTIVE,
-                    CODE: item.CODE || '',
-                    CODE1: item.CODE1 || '',
-                    CODE2: item.CODE2 || '',
-                    MTRUNIT1: item.MTRUNIT1 || '',
-                    MTRUNIT3: item.MTRUNIT3 || '',
-                    MTRUNIT4: item.MTRUNIT4 || '',
-                    DIM1: item.DIM1 || '',
-                    DIM2: item.DIM2 || '',
-                    DIM3: item.DIM3 || '',
-                    MU31: item.MU31 || '',
-                    MU41: item.MU41 || '',
-                    UPDDATE: item.UPDDATE || '',
-                    SOCURRENCY: item.SOCURRENCY || '',
-                }
+    if (action === 'fixGroups') {
 
-                let find = await SoftoneProduct.findOne({MTRL: item.MTRL})
-                if(!find) {
-                    let create = await SoftoneProduct.create(obj)
-                    console.log('new')
-                    console.log(create)
-                }
-                // let obj = {
-                //     MTRMARK: item.MTRMARK ? parseInt(item.MTRMARK) : 0,
-                //     MTRCATEGORY: item.MTRCATEGORY ? parseInt(item.MTRCATEGORY) : 0,
-                //     MTRGROUP: item.MTRGROUP ? parseInt(item.MTRGROUP) : 0,
-                //     CCCSUBGOUP2: item.CCCSUBGOUP2 ? parseInt(item.CCCSUBGOUP2) : 0,
-                //     MTRMARK_NAME: item.MTRMARK_NAME || '',
-                //     GROUP_NAME: item.MTRGROUP_NAME || '',
-                //     MMTRMANFCTR_NAME: item.MMTRMANFCTR_NAME || '',
-                //     SUBGROUP_NAME: item.CCCSUBGOUP2_NAME || '',
-                //     CATEGORY_NAME: item.MTRCATEGORY_NAME || '',
-                //     isSkroutz: item.SKROUTZ == 0 ? false : true,
-                // }
-                
-                // let update = await SoftoneProduct.findOneAndUpdate({MTRL:  item.MTRL}, 
-                //     {$set: obj}
-                //     )
-                // console.log(update)
-            }
-          
-            
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(400).json({ success: false });
-        }
-    }
-    if(action === 'updateProduct2') {
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-            })
-        });
-
-        let buffer = await translateData(response)
-        await connectMongo();
-        try {
-
-            for(let item of buffer.result) {
-                console.log(item.CCCSUBGOUP2)
-                console.log(item.CCCCSUBGOUP2_NAME)
-                let obj = {
-                    SUBGROUP_NAME: item.CCCCSUBGOUP2_NAME || '',
-                }
-                
-                let update = await SoftoneProduct.findOneAndUpdate({MTRL:  item.MTRL}, 
-                    {$set: obj}
-                    )
-                console.log(update)
-            }
-          
-            
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(400).json({ success: false });
-        }
-    }
-
-    if(action === 'deleteImages') {
-        await connectMongo();
-        try {
-            let update = await SoftoneProduct.updateMany({}, {
-                $set: {
-                    images: [],
-                    hasImage: false
-                }
-            })
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(400).json({ success: false });
-        }
-    }
-
-    if(action === 'fixGroups') {
-     
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/getMtrGroup`
         const response = await fetch(URL, {
             method: 'POST',
@@ -679,18 +495,18 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        for(let item of buffer.result) {
-            let group = await MtrGroup.findOne({'softOne.MTRGROUP': item.MTRGROUP})
-            if(!group) {
+        for (let item of buffer.result) {
+            let group = await MtrGroup.findOne({ 'softOne.MTRGROUP': item.MTRGROUP })
+            if (!group) {
                 // console.log('groups that doesnt exist')
                 // console.log(item)
-                let category = await MtrCategory.findOne({'softOne.MTRCATEGORY': item.cccMTRCATEGORY})
+                let category = await MtrCategory.findOne({ 'softOne.MTRCATEGORY': item.cccMTRCATEGORY })
                 // console.log('category')
                 // console.log(category)
                 let id = category?._id;
                 console.log('id')
                 console.log(id)
-            
+
                 let obj = {
                     groupName: item.NAME,
                     groupIcon: "",
@@ -704,7 +520,7 @@ export default async function handler(req, res) {
                         MTRCATEGORY: item.cccMTRCATEGORY,
                     }
                 }
-                
+
                 let insert = await MtrGroup.create(obj)
                 let push = await MtrCategory.findOneAndUpdate({
                     _id: id
@@ -719,11 +535,11 @@ export default async function handler(req, res) {
                 console.log(push)
             }
         }
-      
+
         return res.status(200).json({ success: true });
     }
 
-    if(action === "fixSubgroups") {
+    if (action === "fixSubgroups") {
         //   add subgroups
         let URL2 = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/getCccGroup`
         const responseSub = await fetch(URL2, {
@@ -737,11 +553,11 @@ export default async function handler(req, res) {
             })
         });
         let buffer2 = await translateData(responseSub)
-        for(let item of buffer2.result) {
-            let subgroup = await SubMtrGroup.findOne({'softOne.cccSubgroup2': item.cccSubgroup2})
-            if(!subgroup) {
+        for (let item of buffer2.result) {
+            let subgroup = await SubMtrGroup.findOne({ 'softOne.cccSubgroup2': item.cccSubgroup2 })
+            if (!subgroup) {
 
-                let group = await MtrGroup.findOne({'softOne.MTRGROUP': parseInt(item.MTRGROUP)})
+                let group = await MtrGroup.findOne({ 'softOne.MTRGROUP': parseInt(item.MTRGROUP) })
                 let id = group?._id;
                 let create = await SubMtrGroup.create({
                     group: id,
@@ -773,7 +589,7 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === "noGroups") {
+    if (action === "noGroups") {
         let noGroups = []
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`
         const response = await fetch(URL, {
@@ -787,9 +603,9 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        for(let item of buffer.result) {
-            if(item?.MTRCATEGORY) {
-                if(!item?.MTRGROUP) {
+        for (let item of buffer.result) {
+            if (item?.MTRCATEGORY) {
+                if (!item?.MTRGROUP) {
                     noGroups.push({
                         name: item.NAME,
                         MTRL: item.MTRL,
@@ -800,18 +616,33 @@ export default async function handler(req, res) {
             }
         }
         console.log(noGroups)
-        return res.status(200).json({ success: true, total: noGroups.length, result: noGroups,});
+        return res.status(200).json({ success: true, total: noGroups.length, result: noGroups, });
     }
 
-    if(action === 'updateCol') {
-        
-        await connectMongo()
-         let update = await SoftoneProduct.updateMany({}, { 
-            $rename: { "CCCSUBGROUP": "CCCSUBGROUP2" },
-        })
-         console.log(update)
+    if (action === 'updateCol') {
+
+        await connectMongo();
+        let updateisActive = await SoftoneProduct.updateMany(
+            { ISACTIVE: { $exists: true } }, // Filter documents where the field exists
+            [
+              {
+                $set: {
+                  ISACTIVE: {
+                    $cond: {
+                      if: { $eq: ["$ISACTIVE", "1"] }, // Check if the value is "true"
+                      then: true,
+                      else: false,
+                    },
+                  },
+                },
+              },
+            ]
+        )
+        console.log(updateisActive)
+        return res.status(200).json({ success: true, result: updateisActive });
     }
-    return res.status(200).json({ success: true });
+
+
 }
 
 

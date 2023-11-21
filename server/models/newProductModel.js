@@ -11,7 +11,7 @@ const softoneProduct = new mongoose.Schema({
     },
     DESCRIPTION: String,
     DESCRIPTION_ENG: String,
-    ISACTIVE: String,
+    ISACTIVE: Boolean,
     NAME: String,
     CODE: String,
     CODE1: String,
@@ -77,7 +77,6 @@ const softoneProduct = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-  
     MTRMARK_NAME: String,
     MMTRMANFCTR_NAME: String,
     DIM1: String,

@@ -33,6 +33,8 @@ export default async function handler(req, res) {
             let product = await SoftoneProduct.create({
                 ...data,
                 SOFTONESTATUS: false,
+                ISACTIVE: true,
+                isSkroutz: false,
                 hasImage: false,
                 availability: {
                     DIATHESIMA: '0',
@@ -323,8 +325,54 @@ export default async function handler(req, res) {
 
     }
 
-    if (action === "importCSVProducts") {
+    if(action === "updateActiveMtrl") {
+        const {ISACTIVE, MTRL , id} = req.body;
+        console.log(MTRL, ISACTIVE)
+        let _ISACTIVE = ISACTIVE ? 1 : 0;
+        // const mtrl = 94273
+     
+        let message;
+        try {
+            await connectMongo();
+            let update = await SoftoneProduct.findOneAndUpdate( {
+                MTRL: MTRL,
+                _id: id 
+              }, {
+                $set: {
+                    ISACTIVE: !ISACTIVE
+                }
+            })
+            message = 'System update success.'
+        } catch (e) {
+            return res.status(200).json({ success: false, result: null, error: 'System update error' });
+        }
+        try {
+            async function updateSoftone() {
+                if(!MTRL) return;
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlActive`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        username: "Service",
+                        password: "Service",
+                        MTRL:  MTRL,
+                        ISACTIVE: _ISACTIVE
+                    })
+                });
+                
+                let buffer = await translateData(response)
+                return message += ` ${buffer.result}`
+            }
+            let message = await updateSoftone();
+          
+        } catch (e) {
+            return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
+        }
+      
+        return res.status(200).json({ success: true, message: message });
+    }
 
+    if (action === "importCSVProducts") {
         const { data } = req.body;
         await connectMongo();
         //ADD THE SOFTONE PRODUCT

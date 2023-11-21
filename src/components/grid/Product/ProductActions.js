@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react'
+import React, { useRef, useContext, useState } from 'react'
 import { OverlayPanel } from 'primereact/overlaypanel'
 import { Button } from 'primereact/button'
 import styled from 'styled-components'
@@ -7,21 +7,27 @@ import { ProductQuantityContext, ProductQuantityProvider } from '@/_context/Prod
 import { useSelector, useDispatch } from 'react-redux'
 import { setSingleProductForSoftone } from '@/features/productsSlice'
 import { Toast } from 'primereact/toast'
-import { setSelectedProducts } from '@/features/productsSlice'
+import { setSelectedProducts, setSubmitted } from '@/features/productsSlice'
+import axios from 'axios'
+import Image from 'next/image'
 
 const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 	const { setActiveIndex, setVisible } = useContext(ProductQuantityContext)
-
+	const [loading, setLoading] = useState({
+		active: false,
+		skroutz: false,
+	})
+	const op = useRef(null)
 	const toast = useRef(null)
 	const dispatch = useDispatch()
 	const router = useRouter();
 
-	const showSuccess = () => {
-		toast.current.show({ severity: 'success', summary: 'Success', detail: 'Message Content', life: 3000 });
+	const showSuccess = (message) => {
+		toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
 	}
 
 	const showError = (message) => {
-		toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+		toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 5000 });
 	}
 
 	const handleChangeClass = () => {
@@ -54,49 +60,36 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 
 
 
-
-	const handleSystemStatus = () => {
-		console.log(rowData)
-		let status;
-		if (rowData.ISACTIVE == true) {
-			status = "0"
+	const updateActiveMtrl  = async () => {
+		setLoading(prev => ({...prev, active: true}))
+		const ISACTIVE = rowData.ISACTIVE
+		const MTRL = rowData.MTRL
+		console.log(ISACTIVE)
+		let {data} = await axios.post('/api/product/apiProduct', { action: "updateActiveMtrl", id: rowData._id, MTRL: MTRL, ISACTIVE: ISACTIVE})
+		if(data.success) {
+			showSuccess(data.message)
+		} else {
+			showError(data?.error)
 		}
-		if (rowData.ISACTIVE == false) {
-			status = "1"
-		}
-
-		let obj = {
-			MTRL: rowData.MTRL,
-			NAME: rowData.NAME,
-			CODE: rowData.CODE,
-			VAT: rowData.VAT,
-			PRICER: rowData.PRICER,
-			PRICEW: rowData.PRICEW,
-			PRICER01: rowData.PRICER01,
-			PRICER02: rowData.PRICER02,
-			PRICER03: rowData.PRICER03,
-			PRICER04: rowData.PRICER04,
-			PRICER05: rowData.PRICER05,
-			PRICEW01: rowData.PRICEW01,
-			PRICEW02: rowData.PRICEW02,
-			PRICEW03: rowData.PRICEW03,
-			PRICEW04: rowData.PRICEW04,
-			PRICEW05: rowData.PRICEW05,
-			ISACTIVE: status,
-		}
-		console.log('obj')
-		console.log(obj)
+		dispatch(setSubmitted())
+		setLoading(prev => ({...prev, active: false}))
+		op.current.hide();
 	}
 
+	const updateSkroutz = async () => {
+		let isSrkoutz = rowData.isSkroutz;
+		const MTRL = rowData.MTRL
 
-	const op = useRef(null)
+
+	}
+	
 	return (
 		<div className="">
 			<Toast ref={toast} />
 			<div onClick={(e) => op.current.toggle(e)} className='flex align-items-center justify-content-center w-full h-full cursor-pointer'>
 				<i className=" pi pi-cog" style={{ color: 'var(--primary-color)' }}></i>
 			</div>
-			<OverlayPanel className='w-20rem product-overlay' ref={op} showCloseIcon>
+			<OverlayPanel className='w-20rem product-overlay' ref={op} showCloseIcon >
 				<Button
 					onClick={() => onEdit(rowData)}
 					text
@@ -118,7 +111,8 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 					Προσθήκη Νέου
 				</Button>
 				<Button
-					onClick={handleSystemStatus}
+					loading={loading.active}
+					onClick={updateActiveMtrl}
 					text
 					className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1"
 				>
@@ -127,7 +121,30 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 							<div style={{ width: '8px', height: '8px', borderRadius: '50%' }} className={`${rowData.ISACTIVE ? "bg-green-500 " : "bg-red-500"}  mt-1 mr-1`}></div>
 							<span className='font-semibold'>{rowData.ISACTIVE ? 'Eνεργό' : 'Aνενεργό'} προϊόν</span>
 						</div>
-						<span style={{fontSize: '12px'}}>{rowData.ISACTIVE ? 'Aπενεργοποίηση' : 'Ενεργοποίηση'}</span>
+						<div className='flex justify-content-start'>
+							<span style={{ fontSize: '11px', marginLeft: '11px' }} className='block' >{rowData.ISACTIVE ? 'Aπενεργοποίηση' : 'Ενεργοποίηση'}</span>
+						</div>
+					</div>
+				</Button>
+				<Button
+					loading={loading.skroutz}
+					onClick={updateSkroutz}
+					text
+					className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1"
+				>
+					<div className='w-full flex justify-content-between align-items-center'>
+					<div className='flex flex-column '>
+						<div className='flex align-items-center'>
+							<div style={{ width: '8px', height: '8px', borderRadius: '50%' }} className={`${rowData.isSkroutz ? "bg-green-500 " : "bg-red-500"}  mt-1 mr-1`}></div>
+							<span className='font-semibold'>{rowData.isSkroutz ? 'Eνεργό' : 'Aνενεργό'} Skroutz</span>
+						</div>
+						<div className='flex justify-content-start'>
+							<span style={{ fontSize: '11px', marginLeft: '11px' }} className='block' >{rowData.isSkroutz ?'Aπενεργοποίηση' : 'Ενεργοποίηση'}</span>
+						</div>
+					</div>
+					<div>
+						<Image src='/uploads/skroutz.png' width={50} height={15} />
+					</div>
 					</div>
 				</Button>
 

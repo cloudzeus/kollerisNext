@@ -843,13 +843,11 @@ const Cost = ({ COST }) => {
 }
 
 
-const NameTemplate = ({ NAME, SOFTONESTATUS, impas, CATEGORY_NAME, ACTIVE_PRODUCT }) => {
+const NameTemplate = ({ NAME, SOFTONESTATUS, impas, CATEGORY_NAME, ISACTIVE }) => {
     let active = true
     return (
         <div>
             <p className='font-medium'>{NAME}</p>
-
-            {/* <p className='text-500' style={{fontSize:'11px', letterSpacing: '0.9px'}}>{CATEGORY_NAME}</p> */}
             <div className='flex border-round'>
 
                 <div className='flex align-items-center'>
@@ -857,7 +855,7 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, impas, CATEGORY_NAME, ACTIVE_PRODUC
                     <p className='text-500'>softone</p>
                 </div>
                 <div className='flex align-items-center ml-2'>
-                    <div style={{ width: '5px', height: '5px' }} className={`${active === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                    <div style={{ width: '5px', height: '5px' }} className={`${ISACTIVE ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
                     <p className='text-500'>active</p>
                 </div>
             </div>
