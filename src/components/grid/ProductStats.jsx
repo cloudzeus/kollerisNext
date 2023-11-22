@@ -22,7 +22,6 @@ const ProductStats = () => {
         activeProductsStat: 0,
         activeProducts: 0,
 
-
     })
     const handleFetch = async () => {
         let {data} = await axios.post('/api/dashboard', {action: 'getStats'})
