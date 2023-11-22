@@ -61,12 +61,13 @@ export default async function handler(req, res) {
     }
 
     if(action === 'fetchProducts') {
-        const {filter} = req.body;
+        const {filter, skip, limit} = req.body;
         console.log(filter)
 
         await connectMongo();
-        let result = await SoftoneProduct.find(filter).limit(100);
-        return res.status(200).json({success: true, result: 'ok'})
+        let result = await SoftoneProduct.find(filter).skip(skip).limit(limit);
+        let totalRecords = await SoftoneProduct.countDocuments(filter);
+        return res.status(200).json({success: true, result: result, totalRecords: totalRecords})
     }
 
  

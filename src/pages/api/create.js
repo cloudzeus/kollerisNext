@@ -665,6 +665,35 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true });
     }
 
+    if(action === "updateCost") {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getProductCost`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        console.log('buffer')
+        console.log(buffer)
+        await connectMongo();
+        try {
+            for(let product of buffer.result) {
+                if(!product.FINALPRICE) return;
+                let update = await SoftoneProduct.findOneAndUpdate({MTRL: product.MTRL}, {
+                    $set: {
+                        COST: product.FINALPRICE,
+                    }
+                }, {new: true})
+                console.log(update)
+            }
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
+
 }
 
 

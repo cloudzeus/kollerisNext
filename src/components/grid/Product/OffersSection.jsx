@@ -141,8 +141,7 @@ const ClientHolder = ({ NAME }) => {
 
 
     useEffect(() => {
-        console.log('data');
-        console.log(data);
+       
         if (data.length > 0) {
             let totalForAllOffers = data.reduce((accumulator, offer) => {
                 let totalForOffer = offer.holders.reduce((holderTotal, holder) => {
@@ -156,7 +155,6 @@ const ClientHolder = ({ NAME }) => {
                 return accumulator + totalForOffer;
             }, 0);
     
-            console.log('Total for all offers:', totalForAllOffers);
             setTotal(totalForAllOffers);
         }
     }, [data]);
