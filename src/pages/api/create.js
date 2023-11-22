@@ -675,8 +675,7 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        console.log('buffer')
-        console.log(buffer)
+      
         await connectMongo();
         try {
             for(let product of buffer.result) {
