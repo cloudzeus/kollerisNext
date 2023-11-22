@@ -11,16 +11,10 @@ const Page = () => {
 
   return (
     <AdminLayout>
-     
-     <OffersSection />
-    
-      <div className="col bg-white border-round mb-3">
-        < UploadedProductsGrid />
-      </div>
-      <div className='ml-2'>
+        <div className='ml-2'>
       <StepHeader text={"Προϊόν"} />
       </div>
-      <div className='grid mt-1'>
+        <div className='grid mt-1 '>
         <div className='col-4'>
         < ProductStats />
         </div>
@@ -28,6 +22,12 @@ const Page = () => {
           <ProductCard />
         </div>
       </div>
+     <OffersSection />
+      <div className="col bg-white border-round mb-3">
+        < UploadedProductsGrid />
+      </div>
+    
+    
     </AdminLayout>
 
   )
