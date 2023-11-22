@@ -196,6 +196,8 @@ const UploadLogo = ({ id }) => {
    
     const onAdd = async () => {
         let { data } = await axios.post('/api/product/apiMarkes', { action: 'addLogo', logo: uploadedFiles[0].name, id: id })
+        console.log('refetch')
+        console.log(refetch)
         setRefetch(prev => !prev)
         return data;
     }

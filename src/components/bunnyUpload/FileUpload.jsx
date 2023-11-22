@@ -12,10 +12,18 @@ import { Toast } from 'primereact/toast';
 
 const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd }) => {
     const [visible, setVisible] = useState(false)
+    const [localData, setLocalData] = useState(data)
     const [loading, setLoading] = useState(false)
+ 
     useEffect(() => {
+        //IMAGE DROP AREA TO RESET everytime we open the window to upload images
         setUploadedFiles([])
     }, [])
+
+    useEffect(() => {
+        //we want to referesh the component everytime we click ok on the uploaded images.
+        setLocalData(data)
+    }, [data])
     //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
@@ -38,7 +46,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
                 </div>
             </div>
             <div className='p-3 flex align-items-center justify-content-between'>
-                {data ? (<ImageTemplate image={data} loading={loading} />) : (
+                {data ? (<ImageTemplate image={localData} loading={loading} />) : (
                     <p>Δεν υπάρχει φωτογραφία</p>
                 ) }
                 
@@ -58,7 +66,6 @@ const ImageTemplate = ({image, loading}) => {
     return (
         <div className='flex'>
             <ImageDiv>
-               
                       <Image
                       alt="product-images"
                       src={`https://kolleris.b-cdn.net/images/${image}`}
@@ -125,6 +132,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
                 setVisible(false)
 
             };
+            console.log(reader)
             reader.readAsArrayBuffer(uploadedFiles[0].file);
 
 
