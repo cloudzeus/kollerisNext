@@ -52,6 +52,7 @@ const softoneProduct = new mongoose.Schema({
     PRICER: Number,
     COST: Number,
     PRICEW: Number,
+    PRICER01: Number, //SKROUTZ
     PRICER02: Number,
     PRICER05: Number,
     UPDDATE: String,

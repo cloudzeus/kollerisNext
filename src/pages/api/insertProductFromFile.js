@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             PRICER: data.PRICER,
             PRICEW: data.PRICEW,
             COST: parseFloat(data.COST.toFixed(2)),
-            PRICER05: data.PRICER05,
+            PRICER01: data.PRICER01,
             WIDTH: data?.WIDTH || '',
             HEIGHT: data?.HEIGHT || '',
             LENGTH: data["ΠΛΑΤΟΣ"] || '',
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
             PRICER: data.PRICER,
             PRICEW: data.PRICEW,
             COST: parseFloat(data.COST.toFixed(2)),
-            PRICER05: data.PRICER05,
+            PRICER01: data.PRICER01,
             SUPPLIER_NAME: SUPPLIER_NAME,
             SUPPLER_TRDR: data.SUPPLER_TRDR,
             UNIQUE_CODE:  UNIQUE_CODE,
@@ -117,10 +117,11 @@ export default async function handler(req, res) {
                     MTRL: MTRL,
                     PRICER: productData.PRICER,
                     PRICEW: productData.PRICEW,
-
+                    PRICE01: productData.PRICER01,
                 })
             });
             let responseJSON = await response.json();
+            console.log(responseJSON)
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {
                     UPDATED_SOFTONE: responseJSON.success ? true : false,

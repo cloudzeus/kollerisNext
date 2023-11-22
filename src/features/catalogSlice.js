@@ -15,12 +15,12 @@ const initialState = {
 	prices: {
 		PRICER: 0,
 		PRICEW: 0,
-		PRICER05: 0,
+		PRICER01: 0,
 	},
 	pricesMultiplier: {
 		PRICER: 1,
 		PRICEW: 1,
-		PRICER05: 1,
+		PRICER01: 1,
 	},
 	returnProducts: [],
 }
@@ -87,9 +87,9 @@ const catalogSlice = createSlice({
 					state.pricesMultiplier.PRICEW = payload.value;
 					state.prices.PRICEW = payload.value * state.prices.PRICEW;
 				  break;
-				case "PRICER05":
-					state.pricesMultiplier.PRICER05 = payload.value;
-					state.prices.PRICER05 = payload.value * state.prices.PRICER05;
+				case "PRICER01":
+					state.pricesMultiplier.PRICER01 = payload.value;
+					state.prices.PRICER01 = payload.value * state.prices.PRICER01;
 				  break;
 				default:
 			}  

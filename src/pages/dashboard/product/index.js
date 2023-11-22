@@ -951,6 +951,12 @@ const CategoriesRowFilterTemplate = ({ value, options, onChange }) => {
 
 
 const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
+    console.log('value')
+    console.log(value)
+    console.log('options')
+    console.log(options)
+    console.log('category')
+    console.log(category)
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {
@@ -987,6 +993,10 @@ const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
 
 
 const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
+    console.log('value')
+    console.log(value)
+    console.log('options')
+    console.log(options)
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {

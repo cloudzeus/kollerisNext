@@ -16,6 +16,7 @@ import Clients from "../../../server/models/modelClients";
 import Holders from "../../../server/models/holderModel";
 import SingleOffer from "../../../server/models/singleOfferModel";
 import { ImpaCodes } from "../../../server/models/impaSchema";
+import { fi } from "date-fns/locale";
 export default async function handler(req, res) {
     let action = req.body.action;
 
@@ -642,6 +643,27 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, result: updateisActive });
     }
 
+    if(action === "updateProducts") {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: "Service",
+                password: "Service",
+            })
+        });
+        let buffer = await translateData(response)
+        await connectMongo();
+        for(let product of buffer.result) {
+            let update = await SoftoneProduct.findOneAndUpdate({MTRL: product.MTRL}, {
+                $set: {
+                    PRICER01: product.PRICER01 || 0,
+                }
+            }, {new: true})
+            console.log(update)
+        }
+        return res.status(200).json({ success: true });
+    }
 
 }
 

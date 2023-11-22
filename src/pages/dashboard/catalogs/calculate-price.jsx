@@ -42,7 +42,7 @@ const StepCalcPrice = () => {
           [selectedPriceKey]: value,
           PRICER: calculateAndRound(value, pricesMultiplier.PRICER),
           PRICEW: calculateAndRound(value, pricesMultiplier.PRICEW),
-          PRICER05:calculateAndRound(value, pricesMultiplier.PRICER05),
+          PRICER01:calculateAndRound(value, pricesMultiplier.PRICER01),
         };
       }
       return {}; // or null or any other fallback value you'd like
@@ -65,7 +65,7 @@ const StepCalcPrice = () => {
           <Column header={'Τιμή αρχείου/COST'} field={selectedPriceKey} />
           <Column header={'Tιμή Λιανικής/PRICER'} field={'PRICER'} style={{ width: '200px' }} />
           <Column header={'Τιμή Χονδρικής/PRICEW'} field={'PRICEW'} style={{ width: '200px' }} />
-          <Column header={'Τιμή Scroutz/PRICER05'} field={'PRICER05'} style={{ width: '200px' }} />
+          <Column header={'Τιμή Scroutz/PRICER01'} field={'PRICER01'} style={{ width: '200px' }} />
         </DataTable>
       ) : null}
 
@@ -89,9 +89,9 @@ const StepCalculatePrice = () => {
   const dispatch = useDispatch();
 
   const handleScroutzPrice = (e) => {
-    setPricesMultiplier(prev => ({ ...prev, PRICER05: e.value }))
+    setPricesMultiplier(prev => ({ ...prev, PRICER01: e.value }))
     dispatch(setPricesMultiplier({
-      type: 'PRICER05',
+      type: 'PRICER01',
       value: e.value.toFixed(2)
     }))
 
@@ -118,7 +118,7 @@ const StepCalculatePrice = () => {
         <div className='mb-3 border-bottom-1 p-4	 border-300	'>
           <div className="flex-auto">
             <label htmlFor="input1" className="font-bold block mb-2">Συντελεστής Τιμής Scroutz</label>
-            <InputNumber inputId="input1" value={pricesMultiplier.PRICER05} minFractionDigits={1} maxFractionDigits={1} onValueChange={handleScroutzPrice} showButtons min={0} max={100} step={0.1}/>
+            <InputNumber inputId="input1" value={pricesMultiplier.PRICER01} minFractionDigits={1} maxFractionDigits={1} onValueChange={handleScroutzPrice} showButtons min={0} max={100} step={0.1}/>
           </div>
         </div>
         {/* //ITEM */}

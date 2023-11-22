@@ -37,8 +37,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
         vat: null,
     })
 
-    console.log('row data')
-    console.log(gridRowData)
+
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData

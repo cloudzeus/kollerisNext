@@ -16,7 +16,7 @@ const NewSidebar = () => {
     return (
         <Container>
             <div className='top'>
-                <Image src="/uploads/logoPlain.png" width={200} height={50} alt="dgsoft-logo" />
+                <Image src="/uploads/logoPlain.png" width={150} height={35} alt="dgsoft-logo" />
                 {/* <h1>Kolleris<span className='kolleris'>.</span></h1> */}
 
                 <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem' }}></i>
@@ -128,22 +128,22 @@ const Container = styled.div`
     flex-direction: column;
     height: 100vh;
     width: 240px;
-    background-color: #37404C;
+    /* background-color: #37404C; */
+    background-color: white;
+    border-right: 2px solid #EEF2F6;
   
     .top {
         height: 70px;
-        background-color:#020202;
+        /* background-color:#020202; */
+        background-color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 20px;
-        color: white;
-
+        border-bottom: 2px solid #EEF2F6;;
     }
 
-    span.kolleris {
-        color: orange;
-    }
+   
     .burger-close {
         cursor: pointer;
         display: none;
@@ -154,44 +154,55 @@ const Container = styled.div`
         flex: 1;
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        /* margin-top: 20px; */
         ul {
             width: 100%;
-            padding: 10px 20px 0px 10px; 
+            padding: 50px 12px 0px 10px; 
             margin: 0;
+            
         }
+     
         li {
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
             list-style: none;
-            color: white;
-            /* background-color: black; */
             border-radius: 8px;
             margin-bottom: 5px;
+            font-size: 14px;
             span {
-                letter-spacing: 1.2px;
+                letter-spacing: 0.9;
             }
             
         }
 
         li.sidebar-item {
-            padding: 15px;
-            background-color: #2d353f;
+            padding: 12px 6px;
+            /* background-color: #2d353f; */
+            /* background-color: #8183F4; */
+            border: 2px solid #EEF2F6;
+            color:#090b64;
+            font-weight: 400;
+            letter-spacing: 0.8px;
+            
         }
 
         li:hover {
-            background-color: #262d36;
+            /* background-color: #262d36; */
+            background-color: #EEF2F6;
             transition: background-color 0.2s, color 0.3s; /* This line is responsible for the smooth transition */
         }
 
         .active {
-            background-color: #1a1f25;
+            /* background-color: #1a1f25; */
+            background-color: #EEF2F6;
             transition: background-color 1s, color 0.3s; /* This line is responsible for the smooth transition */
         }
         .active:hover {
-            background-color:#1a1f25 ;
+            /* background-color:#1a1f25 ; */
+            background-color: #EEF2F6;
+            transition: background-color 1s, color 0.3s; /* This line is responsible for the smooth transition */
         }
         
     }
@@ -205,10 +216,11 @@ const Container = styled.div`
         padding: 12px;
         list-style: none;
         position: relative;
-        background-color: #252b33;
+        /* background-color: #252b33; */
+        background-color:#e4eaf1;
+        color:#090b64;
         min-height: 45px;
         line-height: 1.4;
-        
        
     }
 

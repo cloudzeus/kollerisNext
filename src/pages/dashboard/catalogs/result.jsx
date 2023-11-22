@@ -7,7 +7,8 @@ import axios from 'axios';
 import StepHeader from '@/components/StepHeader';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-
+import { Toolbar } from 'primereact/toolbar';
+import XLSXDownloadButton from '@/components/exportCSV/Download';
 const StepshowData = () => {
   const [returnedProducts, setReturnedProducts] = useState([])
   const [loading, setLoading] = useState(false)
@@ -23,7 +24,7 @@ const StepshowData = () => {
   useEffect(() => {
   
     if (gridData === null) return;
-    const fixedColumns = ['PRICER', 'PRICEW', 'PRICER05'];
+    const fixedColumns = ['PRICER', 'PRICEW', 'PRICER01'];
     const _newData = newData.map(row => {
       let newRow = {};
       fixedColumns.forEach(col => {
@@ -132,12 +133,21 @@ const Table = ({ showData, dynamicColumns, setReturnedProducts, loading, setLoad
         value={showData}
         tableStyle={{ minWidth: '50rem' }}>
         {dynamicColumns.map(key => {
-          if (key === "PRICER05") {
-            return <Column key={key} field={key} header={"PRICER05 /Τιμή Scroutz"} />
+          if (key === "PRICER01") {
+            return <Column key={key} field={key} header={"Τιμή Scroutz"} />
+          }
+          if (key === "PRICER") {
+            return <Column key={key} field={key} header={"Τιμή Λιανικής"} />
+          }
+          if (key === "PRICEW") {
+            return <Column key={key} field={key} header={"Τιμή Χονδρικής"} />
           }
        
           if (key === "CODE1") {
             return <Column key={key} field={key} header={"EANCODE"} />
+          }
+          if (key === "CODE2") {
+            return <Column key={key} field={key} header={"Κωδικός Εργοστασίου"} />
           }
           return <Column key={key} field={key} header={key} />
         })}
@@ -157,9 +167,17 @@ const Table = ({ showData, dynamicColumns, setReturnedProducts, loading, setLoad
 
 
 const UploadedProductsGrid = ({ data }) => {
+  const Start  = () => {
+      return (
+        <div className='flex align-items-center justify-content-between'>
+          <XLSXDownloadButton data={data} fileName="catalog_result"/>
+        </div>
+      )
+  }
   return (
     <div>
-      <DataTable value={data} tableStyle={{ minWidth: '50rem' }}>
+      <Toolbar start={Start} className='mt-3' />
+      <DataTable value={data} tableStyle={{ minWidth: '50rem' }} className=''>
         <Column field="NAME" header="Όνομα"></Column>
         <Column field="SUPPLIER_NAME" header="Προμηθευτής"></Column>
         <Column field="STATUS" header="Status"></Column>

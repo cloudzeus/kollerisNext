@@ -208,7 +208,7 @@ export default async function handler(req, res) {
             }
     
             if (subgroupID) {
-                filterConditions.CCCSUBGOUP2 = subgroupID;
+                filterConditions.CCCSUBGROUP2 = subgroupID;
             }
     
             if (softoneFilter === true || softoneFilter === false) {
