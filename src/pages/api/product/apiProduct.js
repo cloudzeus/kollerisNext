@@ -58,12 +58,12 @@ export default async function handler(req, res) {
             CODE: data.CODE,
             CODE1: data.CODE1,
             CODE2: data.CODE2,
-            ISACTIVE: data.ISACTIVE || 1,
-            MTRCATEGORY: data.category.softOne.MTRCATEGORY,
-            MTRGROUP: data.group.softOne.MTRGROUP,
-            CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2,
-            MTRMARK: data.MTRMARK && data.MTRMARK.toString(),
+            ISACTIVE: data.ISACTIVE ? "1" : "0",
+            MTRCATEGORY: data.category.softOne.MTRCATEGORY.toString(),
+            MTRGROUP: data.group.softOne.MTRGROUP.toString(),
+            CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2.toString(),
             MTRMANFCTR: data.MTRMANFCTR,
+            MTRMARK: data.MTRMARK && data.MTRMARK.toString(),
             VAT: data.vat.VAT,
             COUNTRY: data.MTRMANFCTR,
             WIDTH: data.WIDTH || '0',
@@ -72,20 +72,21 @@ export default async function handler(req, res) {
             GWEIGHT: data.GWEIGHT || '0',
             VOLUME: data.VOLUME || '0',
             STOCK: data.STOCK || '0',
-            PRICER: data.PRICER || '0',
-            PRICER01: data.PRICE01 || '0',
-            PRICER02: data?.PRICE02 || '0',
-            PRICER03: data?.PRICE03 || '0',
-            PRICER04: data?.PRICE04 || '0',
+            PRICER: data.PRICER.toString(),
+            PRICER01: data.PRICER01 || '0',
+            PRICER02: data?.PRICER02 || '0',
+            PRICER03: data?.PRICER03 || '0',
+            PRICER04: data?.PRICER04 || '0',
             PRICER05: data?.PRICER05 || '0',
             PRICEW01: data?.PRICEW01 || '0',
             PRICEW02: data?.PRICEW02 || '0',
             PRICEW03: data?.PRICEW03 || '0',
             PRICEW04: data?.PRICEW04 || '0',
             PRICEW05: data?.PRICEW05 || '0',
-            PRICEW: data?.PRICEW,
+            PRICEW: data?.PRICEW.toString(),
 
         }
+        console.log(obj)
         const response = await fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -95,8 +96,7 @@ export default async function handler(req, res) {
             })
         });
         let responseJSON = await response.json();
-        console.log('response softone')
-        console.log(responseJSON)
+     
 
         if (!responseJSON.success) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
                 CODE2: data.CODE2,
                 MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
                 MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
-                CCCSUBGOUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
+                CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
                 MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
                 VAT: data.vat.VAT,
                 COUNTRY: data.COUNTRY,

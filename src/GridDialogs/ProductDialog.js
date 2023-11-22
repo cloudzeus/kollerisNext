@@ -171,11 +171,30 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         targetLang="en-GB"
                     />
 
-                    <Input
+
+                    <PrimeInputNumber
                         label={'Τιμή Κόστους'}
                         name={'COST'}
                         control={control}
+                        required
                         error={errors.cost}
+                    />
+                    <PrimeInputNumber
+                        label={'Τιμή Λιανικής'}
+                        name={'PRICER'}
+                        control={control}
+                    />
+
+                    <PrimeInputNumber
+                        label={'Τιμή Αποθήκης'}
+                        name={'PRICEW'}
+                        control={control}
+                    />
+
+                    <PrimeInputNumber
+                        label={'Τιμή Skroutz'}
+                        name={'PRICE01'}
+                        control={control}
                     />
 
                     <Input
@@ -188,22 +207,8 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         name={'CODE2'}
                         control={control}
                     />
-                    <Input
-                        label={'Τιμή ΛΙΑΝΙΚΗΣ'}
-                        name={'PRICER'}
-                        control={control}
-                    />
 
-                    <Input
-                        label={'Τιμή Scroutz'}
-                        name={'PRICE05'}
-                        control={control}
-                    />
-                    <Input
-                        label={'Τιμή ΑΠΟΘΗΚΗΣ'}
-                        name={'PRICEW'}
-                        control={control}
-                    />
+
 
 
                 </Dialog>
