@@ -13,6 +13,15 @@ const ProductStats = () => {
         imageStat: 0,
         totalWithImages: 0,
         descriptions: 20,
+        haveDescriptions: 0,
+        haveDescriptionsStat: 0,
+        inSoftoneStat: 0,
+        inSoftone: 0,
+        inSkroutzStat: 0,
+        inSkroutz: 0,
+        activeProductsStat: 0,
+        activeProducts: 0,
+
 
     })
     const handleFetch = async () => {
