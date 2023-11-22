@@ -12,6 +12,7 @@ import { Toast } from 'primereact/toast';
 
 const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd }) => {
     const [visible, setVisible] = useState(false)
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         setUploadedFiles([])
     }, [])
@@ -27,6 +28,8 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
                 <FileUpload
                     onAdd={onAdd}
                     visible={visible}
+                    loading={loading}
+                    setLoading={setLoading}
                     setVisible={setVisible}
                     uploadedFiles={uploadedFiles}
                     setUploadedFiles={setUploadedFiles}
@@ -35,7 +38,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
                 </div>
             </div>
             <div className='p-3 flex align-items-center justify-content-between'>
-                {data ? (<ImageTemplate image={data} />) : (
+                {data ? (<ImageTemplate image={data} loading={loading} />) : (
                     <p>Δεν υπάρχει φωτογραφία</p>
                 ) }
                 
@@ -50,16 +53,18 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
 
 
 
-const ImageTemplate = ({image}) => {
+const ImageTemplate = ({image, loading}) => {
+   
     return (
         <div className='flex'>
             <ImageDiv>
-                <Image
-                    alt="product-images"
-                    src={`https://kolleris.b-cdn.net/images/${image}`}
-                    fill={true}
-                    sizes="50px"
-                />
+               
+                      <Image
+                      alt="product-images"
+                      src={`https://kolleris.b-cdn.net/images/${image}`}
+                      fill={true}
+                      sizes="50px"
+                  />
             </ImageDiv>
         </div>
     )
@@ -69,8 +74,7 @@ const ImageTemplate = ({image}) => {
 
 
 
-const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAdd }) => {
-    const [loading, setLoading] = useState(false)
+const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAdd, loading, setLoading }) => {
     const toast = useRef(null);
 
 

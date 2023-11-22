@@ -214,7 +214,6 @@ export default async function handler(req, res) {
 				{_id: id},
 				{$set: {
 					description: body.description,
-					logo: body.logo[0],
 					videoPromoList: body.videoPromoList,
 					photosPromoList: body.photosPromoList,
 					pimAccess: {
@@ -254,8 +253,7 @@ export default async function handler(req, res) {
 		await connectMongo();
 
 		let id = req.body.id;
-		console.log('backend id')
-		console.log(id)
+	
 		const filter = { _id: id };
 		const update = { $set: {
 			status: false
@@ -346,6 +344,10 @@ export default async function handler(req, res) {
 	}
 	if(action === "addLogo") {
 		const {id, logo} = req.body;
+		console.log('id')	
+		console.log(id)
+		console.log('logo')
+		console.log(logo)
 		try {
 			await connectMongo();
 			const updatedProduct = await Markes.findOneAndUpdate(
@@ -361,6 +363,25 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
+
+	if(action === 'deleteLogo') {
+		const {id} = req.body;
+		
+		try {
+			await connectMongo();
+			let deleted = await  Markes.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					logo: ''
+				}}	
+			  	);
+
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
 }
 
 

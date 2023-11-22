@@ -1,3 +1,4 @@
+import { connect } from "mongoose";
 import connectMongo from "../../../server/config";
 import SoftoneProduct from "../../../server/models/newProductModel";
 import UploadedProduct from "../../../server/models/uploadedProductsModel";
@@ -62,6 +63,9 @@ export default async function handler(req, res) {
     if(action === 'fetchProducts') {
         const {filter} = req.body;
         console.log(filter)
+
+        await connectMongo();
+        let result = await SoftoneProduct.find(filter).limit(100);
         return res.status(200).json({success: true, result: 'ok'})
     }
 

@@ -21,8 +21,7 @@ import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
     const { data: session } = useSession()
-    const [images, setImages] = useState([])
-    const [logo, setLogo] = useState()
+ 
 
     const toast = useRef(null);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: gridRowData });
@@ -194,8 +193,7 @@ const UploadLogo = ({ id }) => {
     const [visible, setVisible] = useState(false)
     const [refetch, setRefetch] = useState(false)
     const [data, setData] = useState(false)
-    console.log('id')
-    console.log(id)
+   
     const onAdd = async () => {
         let { data } = await axios.post('/api/product/apiMarkes', { action: 'addLogo', logo: uploadedFiles[0].name, id: id })
         setRefetch(prev => !prev)

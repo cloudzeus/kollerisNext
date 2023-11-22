@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 const GridLogoTemplate = ({ logo }) => {
     const op = useRef(null);
 
-   
+    console.log(logo)
 
     return (
         <ImageDiv >
@@ -24,7 +24,7 @@ const GridLogoTemplate = ({ logo }) => {
                 </>
 
             ) : (
-                <i className="pi pi-image" style={{ fontSize: '30px', color: '#e6e7e6' }}></i>
+                <i className="pi pi-image" style={{ fontSize: '25px', color: '#e6e7e6' }}></i>
             )}
 
         </ImageDiv>
@@ -60,8 +60,8 @@ const LargeImage = styled.div`
 `
 const ImageDiv = styled.div`
     cursor: pointer;
-    width: 70px;
-    height: 40px;
+    width: 50px;
+    height: 35px;
     border-radius: 5px;
     overflow: hidden;
     display: flex;

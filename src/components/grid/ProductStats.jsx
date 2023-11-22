@@ -73,7 +73,7 @@ export const ProductCard = () => {
     const [data, setData] = useState([])
     const [selectedFilter, setSelectedFilter] = useState(null);
     const filters = [
-        { name: 'Προϊόντα στο softOne', filter: 'SOFTONESTATUS' },
+        { name: 'Προϊόντα στο softOne', filter: {SOFTONESTATUS: true} },
      
     ];
 
