@@ -31,12 +31,17 @@ export default async function handler(req, res) {
     }
 
     if(action === 'delete') {
-        let {url} = req.body
-        console.log(url)
+        let {TRDR, catalogName, id} = req.body
+        console.log(TRDR, catalogName, id)
         
         try {
-            let deleteCatalog = await Catalogs.deleteOne({url: url})
-            console.log('delete')
+            await connectMongo();
+            let deleteCatalog = await Supplier.findOneAndUpdate({_id: id}, {
+                $set: {
+                    catalogName: '',
+                }
+            }, {new: true})
+            console.log('deteted catalog')
             console.log(deleteCatalog)
             return res.status(200).json({result: deleteCatalog, error: null });
         } catch (e) {

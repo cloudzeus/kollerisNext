@@ -27,10 +27,9 @@ const Saved = () => {
 
 
 
-    const Actions  = ({catalogName, TRDR}) => {
+    const Actions  = ({catalogName, TRDR, _id}) => {
         const onDelete = async () => {
-            console.log(url)
-            let {data} = await axios.post('/api/saveCatalog', {url: url, action: 'delete'})
+            let {data} = await axios.post('/api/saveCatalog', {action: 'delete',catalogName: catalogName,  TRDR: TRDR, id: _id})
             setSubmitted(true)
             
         }
@@ -39,7 +38,7 @@ const Saved = () => {
                 <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
                 <i className="pi pi-download mr-2  mr-3"></i>
                </Link>
-                <i className="pi pi-trash mr-2 text-red-500 mr-1"></i>
+                <i className="pi pi-trash mr-2 text-red-500 mr-1 cursor-pointer" onClick={onDelete}></i>
             </div>
         )
     }
