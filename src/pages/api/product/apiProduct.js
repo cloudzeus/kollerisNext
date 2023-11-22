@@ -469,9 +469,7 @@ export default async function handler(req, res) {
 
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
-        // console.log(mongoData)
-        console.log('------------- DATA -------------------')
-        console.log(data)
+      
         try {
             const filteredObject = {};
 
@@ -495,27 +493,28 @@ export default async function handler(req, res) {
                     })
                 });
                 let buffer = await translateData(response)
-                console.log('buffer')
-                console.log(buffer)
-                let responseJSON = await response.json();
+               
                 // console.log(responseJSON)
-           
-                return responseJSON;
+                console.log(buffer)
+                return buffer;
             }
-            let responseJSON = await createSoftone();
-            if(responseJSON.success == false) {
+            let response = await createSoftone();
+            if(response.success == false) {
                 return res.status(200).json({ success: false, error: 'Δεν προστέθηκε στο softOne' });
             }
-            if (responseJSON.success) {
+            if (response.success) {
                 let update = await SoftoneProduct.findOneAndUpdate({ _id: id },
                     {
                         $set: {
                             SOFTONESTATUS: true,
-                            MTRL: responseJSON.MTRL,
+                            MTRL: response.MTRL,
                             ...mongoData
                         }
-                    }
+                    },
+                    { new: true }
                 )
+                console.log('update')
+                console.log(update)
             }
 
 

@@ -142,7 +142,7 @@ export default async function handler(req, res) {
     if(action === 'findVats') {
         try {
             await connectMongo();
-            let response = await Vat.find({}, {VAT: 1, NAME: 1, _id: 0})
+            let response = await Vat.find({ISACTIVE: "1"}, {VAT: 1, NAME: 1, _id: 0})
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
