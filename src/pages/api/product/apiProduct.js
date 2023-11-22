@@ -73,7 +73,7 @@ export default async function handler(req, res) {
             VOLUME: data.VOLUME || '0',
             STOCK: data.STOCK || '0',
             PRICER: data.PRICER.toString(),
-            PRICER01: data.PRICER01 || '0',
+            PRICER01: data.PRICER01.toString() || '0',
             PRICER02: data?.PRICER02 || '0',
             PRICER03: data?.PRICER03 || '0',
             PRICER04: data?.PRICER04 || '0',
