@@ -6,6 +6,7 @@ import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/ca
 import SoftoneProduct from "../../../../server/models/newProductModel";
 import Markes from "../../../../server/models/markesModel";
 import Vat from "../../../../server/models/vatModel";
+import greekUtils from 'greek-utils';
 
 export const config = {
     api: {
@@ -165,7 +166,7 @@ export default async function handler(req, res) {
             stateFilters,
         } = req.body;
         
-       
+        console.log(searchTerm)
         try {
             await connectMongo();
     
@@ -225,9 +226,16 @@ export default async function handler(req, res) {
             }
     
             if (searchTerm !== '') {
-                let regexSearchTerm = new RegExp(searchTerm, 'i');
-                filterConditions.NAME = regexSearchTerm;
+                const greek = greekUtils.toGreek(searchTerm);
+                let regexSearchTerm = new RegExp( searchTerm, 'i');
+                let regexSearchGreeLish = new RegExp( greek, 'i');
+                filterConditions.NAME = {$in: [ regexSearchTerm, regexSearchGreeLish ]};
+             
             }
+
+         
+              
+            
             
             console.log('filterConditions')
             console.log(filterConditions)

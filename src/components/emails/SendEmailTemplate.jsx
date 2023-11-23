@@ -34,7 +34,7 @@ const SendEmailTemplate = ({ email, mt,  clientName, SALDOCNUM, createdAt, produ
     useEffect(() => {
         setState((prev) => (
             { ...prev, 
-                subject: `Προσφορά με αριθμό ${SALDOCNUM} για τον πελάτη ${name}`,
+                subject: `Προσφορά με αριθμό ${SALDOCNUM} για τον πελάτη ${clientName}`,
                 fileName: `kollers.offer.csv`,
                 message: 'Καλησπέρα σας στον παρόν email θα βρείτε επισυναπτόμενο το αρχείο της προσφοράς. Στείλε το μας πίσω συμπληρωμένο με τα προϊόντα που έχετε αποδεχτεί. Ευχαριστούμε.'
             }
@@ -125,10 +125,10 @@ const SendEmailTemplate = ({ email, mt,  clientName, SALDOCNUM, createdAt, produ
                         />
                     </div>
                 </div>
-                <div className="flex align-items-center mt-3">
+                {/* <div className="flex align-items-center mt-3">
                     <Checkbox id="attach" onChange={handleCheck} checked={state.checked} />
                     <label htmlFor="attach" className="ml-2">Το email να περιλαμβάνει csv αρχείο με τα προϊόντα</label>
-                </div>
+                </div> */}
                 <div className="flex flex-column gap-2 mt-5">
                     <label className='font-bold' htmlFor="username">Όνομα αρχείου CSV:</label>
                     <InputText value={state.fileName} onChange={handleSubject} />
