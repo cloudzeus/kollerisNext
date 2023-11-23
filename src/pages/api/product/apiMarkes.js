@@ -190,7 +190,7 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'update') {
-		
+	
 		let mtrmark = req.body.mtrmark;
 		let body = req.body.data;
 		let id = req.body.id
@@ -214,6 +214,7 @@ export default async function handler(req, res) {
 				{_id: id},
 				{$set: {
 					description: body.description,
+					updatedFrom: body.updatedFrom,
 					videoPromoList: body.videoPromoList,
 					photosPromoList: body.photosPromoList,
 					pimAccess: {
@@ -232,10 +233,7 @@ export default async function handler(req, res) {
 						CODE: body.softOne.CODE,
 						NAME: body.softOne.NAME,
 						ISACTIVE: 1
-					},
-					minValueOrder: body.minValueOrder,
-					minItemsOrder: body.minItemsOrder,
-					minYearPurchases: body.minYearPurchases,
+					},	
 
 				}}
 			);

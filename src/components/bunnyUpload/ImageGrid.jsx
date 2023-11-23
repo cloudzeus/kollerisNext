@@ -136,7 +136,10 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
         // ON drop add any new file added to the previous stat
         accept: {
             'image/jpeg': [],
-            'image/png': []
+            'image/png': [],
+            'image/webp': [],
+            'image/jpg': [],
+            'image/svg+xml': [],
         },
         onDrop: (acceptedFiles) => {
             console.log(acceptedFiles)

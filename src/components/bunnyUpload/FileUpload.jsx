@@ -13,7 +13,11 @@ import { Toast } from 'primereact/toast';
 const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd }) => {
     const [visible, setVisible] = useState(false)
     const [loading, setLoading] = useState(false)
- 
+    
+    useEffect(() => {
+        console.log('data in single image upload')
+        console.log(data)
+    }, [data])
     useEffect(() => {
         //IMAGE DROP AREA TO RESET everytime we open the window to upload images
         setUploadedFiles([])
@@ -60,6 +64,8 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
 const ImageTemplate = ({image, loading}) => {
     const [localImage, setLocalImage] = useState()
 
+    console.log('local image')
+    console.log(localImage)
     useEffect(() => {
         setLocalImage(image)
     }, [image])
@@ -97,7 +103,9 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
         accept: {
             'image/jpeg': [],
             'image/png': [],
-            'image/webp': []
+            'image/webp': [],
+            'image/jpg': [],
+            'image/svg+xml': [],
         },
         multiple: false,
         onDrop: (acceptedFiles) => {
@@ -111,35 +119,44 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
 
 
     const onSubmit = async () => {
-        setLoading(true)
-        //Turn the file into binary and use the uploadBunny function in utils to send it to bunny cdn
+        try {
+          setLoading(true);
+          // Assume onAdd returns a Promise
+          const onAddResult = await onAdd();
+          if (!onAddResult.success) {
+            showError(onAddResult.message);
+          } else {
             const reader = new FileReader();
+      
             reader.onload = async (event) => {
-                //onAdd is the passed function that will be called after the upload is complete, to save the image data to our database
-
-                let res = await onAdd()
-                if (!res.success) {
-                    showError(res.message)
+              try {
+                const arrayBuffer = event.target.result;
+      
+                // Assume uploadBunny returns a Promise
+                const result = await uploadBunny(arrayBuffer, uploadedFiles[0].name);
+      
+                if (result.HttpCode === 201 || result.Message === "File uploaded.") {
+                  showSuccess('Η φωτογραφία ανέβηκε επιτυχώς');
                 }
-                if (res.success) {
-                    const arrayBuffer = event.target.result;
-                    let result = await uploadBunny(arrayBuffer, uploadedFiles[0].name)
-                    if (result.HttpCode == 201 || result.Message === "File uploaded.") {
-                        showSuccess('Η φωτογραφία ανέβηκε επιτυχώς')
-                    }
-
-                }
-                setLoading(false)
-                setVisible(false)
-
+              } catch (error) {
+                console.error('Error uploading to Bunny CDN:', error);
+                showError('Error uploading to Bunny CDN');
+              } finally {
+                setLoading(false);
+                setVisible(false);
+              }
             };
-            console.log(reader)
+      
             reader.readAsArrayBuffer(uploadedFiles[0].file);
+          }
+        } catch (error) {
+          console.error('Error calling onAdd:', error);
+          showError('Error calling onAdd');
+          setLoading(false);
+          setVisible(false);
+        }
+      };
 
-
-
-
-    };
     const removeImage = ({ name }) => {
         let newFiles = uploadedFiles.filter(file => file.name !== name)
         setUploadedFiles(newFiles)
