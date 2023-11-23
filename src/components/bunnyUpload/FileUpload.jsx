@@ -62,23 +62,10 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
 
 
 const ImageTemplate = ({image, loading}) => {
-    const [localImage, setLocalImage] = useState()
-
-    console.log('local image')
-    console.log(localImage)
-    useEffect(() => {
-        setLocalImage(image)
-    }, [image])
     return (
         <div className='flex'>
-            <ImageDiv>
-                      <Image
-                      alt="product-images"
-                      src={`https://kolleris.b-cdn.net/images/${localImage}`}
-                      fill={true}
-                      sizes="50px"
-                  />
-            </ImageDiv>
+          
+            <span>{image}</span>
         </div>
     )
 }
