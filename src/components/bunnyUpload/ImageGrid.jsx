@@ -20,6 +20,14 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
     const [visible, setVisible] = useState(false)
     const toast = useRef(null);
 
+
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+    }
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
+    }
+
     console.log('refresh')
     useEffect(() => {
         setUploadedFiles([])
