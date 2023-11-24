@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
 import { useRouter } from 'next/router';
+import { deleteBunny } from '@/utils/bunny_cdn';
+import { Toast } from 'primereact/toast';
+import { toast } from 'react-toastify';
 const ProductImagesComp = ({ id }) => {
     const router = useRouter();
-
+    const toast = useRef(null);
 
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [data, setData] = useState([])
@@ -19,7 +22,12 @@ const ProductImagesComp = ({ id }) => {
         return imagesNames;
     }
 
-
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+    }
+    const showError = () => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    }
 
     const handleFetch = async () => {
         console.log('fetch again')
@@ -34,6 +42,12 @@ const ProductImagesComp = ({ id }) => {
     const onDelete = async (name, _id) => {
         //THis is not the product id but the image id
         let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId: id, imageId: _id, name: name })
+        let bunny_res = await deleteBunny(name)
+        if(bunny_res.HttpCode == 200 ) {
+            showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
+        }
+        console.log('bunny res')
+        console.log(bunny_res)
         setRefetch(prev => !prev)
     }
 
@@ -51,7 +65,9 @@ const ProductImagesComp = ({ id }) => {
         handleFetch()
     }, [refetch])
     return (
-        <ImageGrid
+       <>
+       <Toast ref={toast} />
+         <ImageGrid
             width={'1200px'}
             data={data}
             loading={loading}
@@ -61,6 +77,7 @@ const ProductImagesComp = ({ id }) => {
             onAdd={onAdd}
 
         />
+       </>
 
     )
 }

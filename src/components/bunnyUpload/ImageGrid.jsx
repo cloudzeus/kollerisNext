@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { uploadBunny } from '@/utils/bunny_cdn';
+import { deleteBunny, uploadBunny } from '@/utils/bunny_cdn';
 import axios from 'axios';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
@@ -183,9 +183,15 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
 
 
     };
-    const removeImage = ({ name }) => {
+    const removeImage = async ({ name }) => {
+        console.log('name')
+        console.log(name)
         let newFiles = uploadedFiles.filter(file => file.name !== name)
         setUploadedFiles(newFiles)
+        let bunny_res = await deleteBunny(name)
+        console.log('bunny res')
+        console.log(bunny_res)
+
     }
 
 
