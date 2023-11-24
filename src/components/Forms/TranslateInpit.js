@@ -6,8 +6,7 @@ import { Button } from 'primereact/button';
 import axios from 'axios';
 
 const TranslateInput = ({ label, name, state, handleState, targetLang }) => {
-    console.log('state')
-    console.log(state)
+   
     const onChange = (e) => {
         handleState(e.target.value)
     }

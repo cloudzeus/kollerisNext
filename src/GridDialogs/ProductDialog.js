@@ -91,7 +91,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
             }
             dispatch(setSubmitted())
             hideDialog()
-            showSuccess('Η εγγραφή ενημερώθηκε')
+            showSuccess(resp.data.systemMessage + " " + resp.data.softoneMessage)
 
         } catch (e) {
             showError("Αποτυχία. Προσπαθήστε ξανά")
@@ -279,7 +279,6 @@ const AddDialog = ({ dialog, hideDialog }) => {
     }
 
     const handleAdd = async (data) => {
-        console.log(englishDescription)
 
         let obj = {
             MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,

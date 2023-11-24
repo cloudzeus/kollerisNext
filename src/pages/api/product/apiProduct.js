@@ -51,6 +51,9 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
+        
+        let systemMessage = '';
+        let softoneMessage = '';
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
         let obj = {
             MTRL: data.MTRL,
@@ -86,56 +89,69 @@ export default async function handler(req, res) {
             PRICEW: data?.PRICEW.toString(),
 
         }
-        console.log(obj)
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-                ...obj
-            })
-        });
-        let responseJSON = await response.json();
-     
 
-        if (!responseJSON.success) {
-            return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
-        }
-        let updateSoftoneProduct = await SoftoneProduct.updateOne({ MTRL: data.MTRL }, {
-            $set: {
-                COST: data.COST,
-                NAME: data.NAME,
-                CODE: data.CODE,
-                CODE1: data.CODE1,
-                CODE2: data.CODE2,
-                MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
-                MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
-                CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
-                MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
-                VAT: data.vat.VAT,
-                COUNTRY: data.COUNTRY,
-                INTRASTAT: data.INTRASTAT,
-                WIDTH: data.WIDTH,
-                HEIGHT: data.HEIGHT,
-                LENGTH: data.LENGTH,
-                GWEIGHT: data.GWEIGHT,
-                VOLUME: data.VOLUME,
-                STOCK: data.STOCK,
-                PRICER: data.PRICER,
-                PRICEW: data.PRICEW,
-                PRICER02: data.PRICE02 || 0,
-                PRICER05: data.PRICER05,
-                CATEGORY_NAME: data.category.categoryName,
-                DESCRIPTION: data.DESCRIPTION,
-                GROUP_NAME: data.category.groupName,
-                SUBGROUP_NAME: data.category.subGroupName,
-                SOFTONESTATUS: true,
-                descriptions: data.descriptions,
-                COST: data?.COST,
+
+        if(data.MTRL) {
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    ...obj
+                })
+            });
+            let responseJSON = await response.json();
+            if (!responseJSON.success) {
+               softoneMessage = 'Δεν έγινε ενημέρωση στο softone'
             }
-        })
-        return res.status(200).json({ success: true, result: updateSoftoneProduct, softOneResult: responseJSON });
+            if (responseJSON.success) {
+                softoneMessage = 'Εγινε ενημέρωση στο softone'
+            }
 
+        }
+        try {
+            let updateSoftoneProduct = await SoftoneProduct.updateOne({ _id: data._id }, {
+                $set: {
+                    COST: data.COST,
+                    NAME: data.NAME,
+                    CODE: data.CODE,
+                    CODE1: data.CODE1,
+                    CODE2: data.CODE2,
+                    MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
+                    MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
+                    CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
+                    MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
+                    VAT: data.vat.VAT,
+                    COUNTRY: data.COUNTRY,
+                    INTRASTAT: data.INTRASTAT,
+                    WIDTH: data.WIDTH,
+                    HEIGHT: data.HEIGHT,
+                    LENGTH: data.LENGTH,
+                    GWEIGHT: data.GWEIGHT,
+                    VOLUME: data.VOLUME,
+                    STOCK: data.STOCK,
+                    PRICER: data.PRICER,
+                    PRICEW: data.PRICEW,
+                    PRICER02: data.PRICE02 || 0,
+                    PRICER05: data.PRICER05,
+                    CATEGORY_NAME: data.category.categoryName,
+                    DESCRIPTION: data.DESCRIPTION,
+                    GROUP_NAME: data.category.groupName,
+                    SUBGROUP_NAME: data.category.subGroupName,
+                    SOFTONESTATUS: true,
+                    descriptions: data.descriptions,
+                    COST: data?.COST,
+                }
+            })
+           systemMessage = 'Εγινε ενημέρωση στο σύστημα'
+            return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage});
+    
+        } catch (e) {
+            systemMessage = 'Δεν έγινε ενημέρωση στο σύστημα'
+            return res.status(400).json({ success: false, systemMessage: systemMessage, softoneMessage: softoneMessage });
+        }
+     
+       
     }
 
     if (action === 'search') {
