@@ -54,12 +54,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
         try {
             let user = session.user.user.lastName
+            console.log(user)
             let resp = await axios.post('/api/product/apiMarkes', { action: "update", data: { ...object, updatedFrom: user, }, id: gridRowData._id, mtrmark: gridRowData?.softOne?.MTRMARK })
             if (!resp.data.success) {
                 return showError(resp.data.softoneError)
             }
             showSuccess()
-            setSubmitted(true)
+            setSubmitted(prev => !prev)
             hideDialog()
 
 
@@ -122,7 +123,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                   
                     <div>
                         <FormTitle>Λογότυπο</FormTitle>
-                        <UploadLogo id={gridRowData._id}  />
+                        <UploadLogo id={gridRowData._id} />
                     </div>
 
                     < Divider />
@@ -196,6 +197,8 @@ const UploadLogo = ({ id }) => {
    
     const onAdd = async () => {
         let { data } = await axios.post('/api/product/apiMarkes', { action: 'addLogo', logo: uploadedFiles[0].name, id: id })
+        console.log('data ------------')
+        console.log(data)
         console.log('refetch')
         console.log(refetch)
         setRefetch(prev => !prev)

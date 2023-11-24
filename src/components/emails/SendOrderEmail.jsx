@@ -132,10 +132,10 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
                         />
                     </div>
                 </div>
-                <div className="flex align-items-center mt-3">
+                {/* <div className="flex align-items-center mt-3">
                     <Checkbox id="attach" onChange={handleCheck} checked={state.checked} />
                     <label htmlFor="attach" className="ml-2">Το email να περιλαμβάνει csv αρχείο με τα προϊόντα</label>
-                </div>
+                </div> */}
                 <div className="flex flex-column gap-2 mt-5">
                     <label className='font-bold' htmlFor="username">Όνομα αρχείου CSV:</label>
                     <InputText value={state.fileName} onChange={handleSubject} />
