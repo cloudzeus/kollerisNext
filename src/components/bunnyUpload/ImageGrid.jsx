@@ -1,7 +1,8 @@
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-'use client'
+
 import { Button } from 'primereact/button';
 import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
