@@ -41,7 +41,7 @@ const ProductImagesComp = ({ id }) => {
         let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId: id, imageId: _id, name: name })
         console.log(data)
         setRefetch(prev => !prev)
-        dispatch(setSubmitted())
+    
     }
 
     const onAdd = async () => {
@@ -50,7 +50,7 @@ const ProductImagesComp = ({ id }) => {
         console.log('data')
         console.log(data)
         setRefetch(prev => !prev)
-        
+        dispatch(setSubmitted())
         return data;
     }
 
