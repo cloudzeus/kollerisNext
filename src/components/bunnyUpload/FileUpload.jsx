@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { uploadBunny } from '@/utils/bunny_cdn';
+import { deleteBunny, uploadBunny } from '@/utils/bunny_cdn';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
@@ -11,19 +11,34 @@ import { Toast } from 'primereact/toast';
 
 
 const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd }) => {
+    const toast = useRef(null);
     const [visible, setVisible] = useState(false)
     const [loading, setLoading] = useState(false)
+
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+    }
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
+    }
     
     useEffect(() => {
-        console.log('data in single image upload')
-        console.log(data)
+       
     }, [data])
     useEffect(() => {
-        //IMAGE DROP AREA TO RESET everytime we open the window to upload images
         setUploadedFiles([])
     }, [])
 
- 
+    
+    const handleDelete = async (name) => {
+        onDelete()
+        let bunny_delete = await deleteBunny(name);
+        if(bunny_delete.HttpCode == 200) {
+            showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
+        } else {
+            showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
+        }
+    }
     //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
@@ -31,6 +46,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
     return (
         <div className=' border-1 border-round border-300' >
                <div className='flex border-bottom-1 border-300'>
+                <Toast ref={toast} />
                 <div className='p-3'>
                 <Button className='p-button-sm'  style={{width: '80px', height: '30px', fontSize: '12px'}} label="Add/Edit" severity='secondary' onClick={() => setVisible(true)} />
                 <FileUpload
@@ -50,7 +66,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
                     <p>Δεν υπάρχει φωτογραφία</p>
                 ) }
                 
-                <i onClick={onDelete} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
+                <i onClick={() => handleDelete(data)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
             </div>
         </div>
        

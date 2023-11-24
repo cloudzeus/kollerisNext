@@ -8,17 +8,17 @@ import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { deleteBunny, uploadBunny } from '@/utils/bunny_cdn';
-import axios from 'axios';
+
 import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
-import { set } from 'mongoose';
 
 
 
 export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd, loading}) => {
     const [visible, setVisible] = useState(false)
+    const toast = useRef(null);
 
     console.log('refresh')
     useEffect(() => {
@@ -28,9 +28,19 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
     console.log('data', data)
+    const handleDelete  = async (name, _id) => {
+        onDelete(name, _id)
+        let bunny_delete = await deleteBunny(name);
+        if(bunny_delete.HttpCode == 200) {
+            showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
+        } else {
+            showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
+        }
+    }
     const Header = () => {
         return (
             <div >
+                  <Toast ref={toast} />
                 <Button icon="pi pi-plus" label="προσθήκη" severity='secondary' onClick={() => setVisible(true)} />
                 <FileUpload
                     onAdd={onAdd}
@@ -49,7 +59,7 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
        
         return (
             <div>
-                <i onClick={() => onDelete(name, _id)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
+                <i onClick={() =>  handleDelete(name, _id)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
             </div>
         )
     }
@@ -188,9 +198,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
         console.log(name)
         let newFiles = uploadedFiles.filter(file => file.name !== name)
         setUploadedFiles(newFiles)
-        let bunny_res = await deleteBunny(name)
-        console.log('bunny res')
-        console.log(bunny_res)
+       
 
     }
 

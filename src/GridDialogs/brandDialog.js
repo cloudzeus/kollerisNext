@@ -17,6 +17,7 @@ import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
 import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
+import { deleteBunny } from '@/utils/bunny_cdn';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
@@ -212,8 +213,9 @@ const UploadLogo = ({ id }) => {
         setData(data.result)
 
     }
-    const onDelete = async () => {
+    const onDelete = async (name) => {
         let { data } = await axios.post('/api/product/apiMarkes', { action: 'deleteLogo', id: id })
+
         setRefetch(prev => !prev)
     }
 

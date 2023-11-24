@@ -42,12 +42,6 @@ const ProductImagesComp = ({ id }) => {
     const onDelete = async (name, _id) => {
         //THis is not the product id but the image id
         let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId: id, imageId: _id, name: name })
-        let bunny_res = await deleteBunny(name)
-        if(bunny_res.HttpCode == 200 ) {
-            showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
-        }
-        console.log('bunny res')
-        console.log(bunny_res)
         setRefetch(prev => !prev)
     }
 
