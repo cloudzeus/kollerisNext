@@ -280,7 +280,7 @@ function Product() {
 
         const clearAllFilters = () => {
             dispatch(resetSelectedFilters())
-            setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: ''}))
+            setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: '', active: true}))
         }
 
         const makeMinimalGrid = () => {

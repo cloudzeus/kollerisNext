@@ -27,7 +27,7 @@ const addSchema = yup.object().shape({
 const EditDialog = ({ dialog, hideDialog }) => {
     const { data: session, status } = useSession()
     const dispatch = useDispatch()
-    const [englishDescription, setEnlgishDescription] = useState('')
+    const [englishDescription, setEnglishDescription] = useState('')
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     const [selectState, setSelectState] = useState({
@@ -38,6 +38,10 @@ const EditDialog = ({ dialog, hideDialog }) => {
     })
 
 
+    console.log('english description')
+    console.log(englishDescription)
+    console.log('gridRowData')
+    console.log(gridRowData)
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -46,16 +50,14 @@ const EditDialog = ({ dialog, hideDialog }) => {
 
 
     const handleEnglish = async (value) => {
-        console.log(value)
-        setEnlgishDescription(value)
+        setEnglishDescription(value)
     }
 
 
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
-
-
+        setEnglishDescription(gridRowData?.DESCRIPTION_ENG)
         setSelectState({
             category: { categoryName: gridRowData?.CATEGORY_NAME, softOne: { MTRCATEGORY: gridRowData?.MTRCATEGORY } },
             group: { groupName: gridRowData?.GROUP_NAME, softOne: { MTRGROUP: gridRowData?.MTRGROUP } },
@@ -83,7 +85,6 @@ const EditDialog = ({ dialog, hideDialog }) => {
 
                 },
             })
-            console.log(resp.data)
             if (!resp.data.success) {
                 showError(resp.data?.error)
                 return;
@@ -166,7 +167,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                     />
                     <TranslateInput
                         label={'Περιγραφή Aγγλική'}
-                        state={'DESCRIPTION_ENG'}
+                        state={englishDescription}
                         handleState={handleEnglish}
                         targetLang="en-GB"
                     />
@@ -233,6 +234,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
     })
 
     useEffect(() => {
+        console.log('selectState')
         console.log(selectState)
     }, [selectState])
 
@@ -246,7 +248,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
             CODE2: '',
             PRICER: 0,
             PRICEW: 0,
-            PRICER05: 0,
+            PRICER01: 0,
             COST: 0,
         }
     });
@@ -286,6 +288,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
             GROUP_NAME: selectState.group?.groupName,
             CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2,
             SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+            VAT: selectState.vat?.VAT,
             DESCRIPTION_ENG: englishDescription,
             ...data
         }
@@ -346,9 +349,14 @@ const AddDialog = ({ dialog, hideDialog }) => {
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
                     />
+                    
                     <div>
                         {showInputs ? (
                             <div>
+                                 <OptionsVat
+                                    state={selectState.vat}
+                                    setState={setSelectState}
+                                />
                                 <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
                                 <Input
                                     label={"Όνομα"}
@@ -390,7 +398,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
                                 />
                                 <PrimeInputNumber
                                     label={'Τιμή Scroutz'}
-                                    name={'PRICE05'}
+                                    name={'PRICER01'}
                                     control={control}
                                 />
                                 <Input
@@ -404,10 +412,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
                                     control={control}
                                     required
                                 />
-                                <OptionsVat
-                                    state={selectState.vat}
-                                    setState={setSelectState}
-                                />
+                               
                             </div>
                         ) : null}
                     </div>
