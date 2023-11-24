@@ -53,11 +53,18 @@ const RightSide = () => {
 //TOOLBAR LEFT SIDE:
 const LeftSide = () => {
     const {  activeIndex, setActiveIndex, visible, setVisible} = useContext(ProductQuantityContext)
+   
     const {selectedProducts} = useSelector(state => state.products)
     const [showMenu, setShowMenu] = useState(false)
     const onMultipleActions = () => {
+        setActiveIndex(0)
         setVisible(true)
     }
+
+    
+    useEffect(() => {
+       setActiveIndex(0);
+    }, [])
 
     const customIcons = (
         <React.Fragment>
@@ -178,7 +185,6 @@ const SecondScreen = ({ children }) => {
 
 
 const MenuBtn = ({ label, onClick }) => {
-
     return (
         <Button onClick={onClick} style={{ textAlign: 'left' }} icon="pi pi-arrow-right" className='surface-ground text-primary w-full mb-1' label={label} severity='warning' />
 
