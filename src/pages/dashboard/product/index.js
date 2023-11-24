@@ -27,7 +27,7 @@ import StepHeader from '@/components/StepHeader';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import XLSXDownloadButton from '@/components/exportCSV/Product';
 import MassiveImageUpload from '@/components/MassiveImageUpload';
-import ProductImagesComp from '../images/product/[id]';
+
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -47,7 +47,7 @@ import {
 } from "@/features/productsSlice";
 import Image from 'next/image';
 import styled from 'styled-components';
-import { UploadProductImages } from './multi-image-upload';
+import ProductImagesComp from '@/components/grid/Product/ProductImageComp';
 
 
 const dialogStyle = {

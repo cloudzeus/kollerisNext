@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
@@ -36,6 +37,7 @@ const ProductImagesComp = ({ id }) => {
     const onDelete = async (name, _id) => {
         //THis is not the product id but the image id
         let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId: id, imageId: _id, name: name })
+        console.log(data)
         setRefetch(prev => !prev)
     }
 
@@ -70,12 +72,4 @@ const ProductImagesComp = ({ id }) => {
     )
 }
 
-
-
-
-
-
-
-
-
-export default ProductImagesComp 
+export default ProductImagesComp

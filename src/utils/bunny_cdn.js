@@ -20,6 +20,8 @@ export async function uploadBunnyFolderName(data, fileName, folderName) {
 
 export async function deleteBunny(fileName) {
   let result = await axios.delete(`https://${region}.bunnycdn.com/${storageZoneName}/images/${fileName}`, { headers: headers })
+  console.log('result')
+  console.log(result)
   return result.data
 }
 

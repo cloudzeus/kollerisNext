@@ -28,16 +28,18 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
     }
 
-    console.log('refresh')
+   
+
     useEffect(() => {
         setUploadedFiles([])
     }, [])
+
     //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
     console.log('data', data)
     const handleDelete  = async (name, _id) => {
-        onDelete(name, _id)
+         await onDelete(name, _id)
         let bunny_delete = await deleteBunny(name);
         if(bunny_delete.HttpCode == 200) {
             showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')

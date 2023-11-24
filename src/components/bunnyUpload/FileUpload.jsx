@@ -31,7 +31,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
 
     
     const handleDelete = async (name) => {
-        onDelete()
+        await onDelete()
         let bunny_delete = await deleteBunny(name);
         if(bunny_delete.HttpCode == 200) {
             showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
