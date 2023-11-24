@@ -15,13 +15,13 @@ import XLSXDownloadButton from '@/components/exportCSV/Download';
 const Page = () => {
     return (
         <AdminLayout>
-            <Upload />
+            <UploadProductImages/>
         </AdminLayout>
     )
 }
 
 
-const Upload = () => {
+export const UploadProductImages = () => {
     const [loading, setLoading] = useState(false);
     const [returnedData, setReturendData] = useState([]);
     const router = useRouter();

@@ -27,6 +27,7 @@ import StepHeader from '@/components/StepHeader';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import XLSXDownloadButton from '@/components/exportCSV/Product';
 import MassiveImageUpload from '@/components/MassiveImageUpload';
+import ProductImagesComp from '../images/product/[id]';
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -46,7 +47,7 @@ import {
 } from "@/features/productsSlice";
 import Image from 'next/image';
 import styled from 'styled-components';
-
+import { UploadProductImages } from './multi-image-upload';
 
 
 const dialogStyle = {
@@ -390,9 +391,10 @@ function Product() {
 
     const rowExpansionTemplate = (data) => {
         return (
-            <div className="card p-20">
+            <div className="card p-20" style={{maxWidth: '1000px'}}>
                 <TabView>
                     <TabPanel header="Φωτογραφίες">
+                        <ProductImagesComp id={data._id}/>
                     </TabPanel>
                     <TabPanel header="Λεπτομέριες">
                         <ExpansionDetails data={data} />
@@ -658,7 +660,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 5) && (<Column field="CODE" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
                 {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
                 <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
-                <Column style={{ width: '40px' }} field="PRICER05" header="Τιμή Scroutz"></Column>
+                <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column>
             </DataTable>
             <EditDialog
                 style={dialogStyle}

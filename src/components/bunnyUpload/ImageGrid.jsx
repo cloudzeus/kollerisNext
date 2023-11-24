@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+'use client'
 import { Button } from 'primereact/button';
 import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
@@ -15,20 +16,20 @@ import { set } from 'mongoose';
 
 
 
-export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, hasLogo, onAdd, loading }) => {
+export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd, loading}) => {
     const [visible, setVisible] = useState(false)
 
+    console.log('refresh')
     useEffect(() => {
-        console.log(uploadedFiles)
         setUploadedFiles([])
     }, [])
     //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
     //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
     //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
-
+    console.log('data', data)
     const Header = () => {
         return (
-            <div>
+            <div >
                 <Button icon="pi pi-plus" label="προσθήκη" severity='secondary' onClick={() => setVisible(true)} />
                 <FileUpload
                     onAdd={onAdd}
@@ -44,8 +45,7 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, has
     const header = Header()
 
     const Actions = ({ name, _id }) => {
-        console.log(name)
-        console.log(_id)
+       
         return (
             <div>
                 <i onClick={() => onDelete(name, _id)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1rem' }}></i>
@@ -54,29 +54,25 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, has
     }
 
     return (
-        <DataTable
-            value={data}
-            tableStyle={{ minWidth: '50rem' }}
-            header={header}
-            loading={loading}
-        >
-            <Column body={ImageTemplate} field="path" header="Φωτογραφία"></Column>
-            {hasLogo ? (<Column body={Logo} field="path" header="Φωτογραφία"></Column>) : null}
-            <Column style={{ width: '80px' }} body={Actions}></Column>
-        </DataTable>
+        < DataTableContainer>
+            <DataTable
+                // className='p-datatable-sm'
+                value={data}
+                header={header}
+                loading={loading}
+            >
+                <Column body={ImageTemplate} field="path" header="Φωτογραφία"></Column>
+                <Column style={{ width: '80px' }} body={Actions}></Column>
+            </DataTable>
+        </DataTableContainer>
+       
 
     )
 }
 
 
 
-const Logo = ({ path, name }) => {
-    return (
-        <div className='bg-green-400 border-round flex align-items-center justify-content-center p-3 text-white' style={{ width: '80px', height: '25px' }}>
-            <p>logo</p>
-        </div>
-    )
-}
+
 
 const ImageTemplate = ({ name }) => {
 
@@ -251,6 +247,16 @@ const ImageItem = ({ fileItem, index, removeImage, uploadedFiles, setUploadedFil
 }
 
 
+const DataTableContainer  = styled.div`
+    width: 100%;
+    @media (max-width: 1552px) {
+        width: 800px;
+    }
+    @media (max-width: 1163px) {
+        width: 600px;
+    }
+
+`
 const ImageDiv = styled.div`
     width: 50px;
     height: 50px;
