@@ -8,21 +8,23 @@ import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { deleteBunny, uploadBunny } from '@/utils/bunny_cdn';
-
 import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
+import { setSubmitted } from '@/features/productsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 
 
 export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onAdd, loading}) => {
     const [visible, setVisible] = useState(false)
     const toast = useRef(null);
-
+  
 
     const showSuccess = (message) => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+        toast.current?.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
     }
     const showError = (message) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
@@ -30,18 +32,13 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
 
    
 
-    useEffect(() => {
-        setUploadedFiles([])
-    }, [])
+  
 
-    //UPLOAD FILE STATE IS AN ARRAY OF OBJECTS {file: file, name: name}
-    //THE file is the uplaoded file that will be turned into binary to send to bunny cdn
-    //In case we need to change the name of the file that wll be uploaded we change the value stored in the "name" key in the state object
-    console.log('data', data)
+    
     const handleDelete  = async (name, _id) => {
          await onDelete(name, _id)
         let bunny_delete = await deleteBunny(name);
-        if(bunny_delete.HttpCode == 200) {
+        if(bunny_delete?.HttpCode == 200) {
             showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
         } else {
             showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
@@ -77,7 +74,6 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
     return (
         < DataTableContainer>
             <DataTable
-                // className='p-datatable-sm'
                 value={data}
                 header={header}
                 loading={loading}
@@ -96,7 +92,9 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
 
 
 const ImageTemplate = ({ name }) => {
+   
 
+   
 
     const op = useRef(null);
     return (
@@ -117,14 +115,14 @@ const ImageTemplate = ({ name }) => {
                     onMouseLeave={(e) => op.current.hide(e)}
                     className='font-medium'>{name}</span>
                 <OverlayPanel ref={op}>
-                    <ImageDiv>
+                    <ImageOverlay>
                         <Image
                             alt="product-images"
                             src={`https://kolleris.b-cdn.net/images/${name}`}
                             fill={true}
                             sizes="50px"
                         />
-                    </ImageDiv>
+                    </ImageOverlay>
 
                 </OverlayPanel>
             </div>
@@ -141,6 +139,8 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
     const [loading, setLoading] = useState(false)
     const toast = useRef(null);
 
+
+    
 
     const showError = (message) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
@@ -159,7 +159,6 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
             'image/svg+xml': [],
         },
         onDrop: (acceptedFiles) => {
-            console.log(acceptedFiles)
             let newfiles = acceptedFiles.map(file => {
                 return {
                     file: file,
@@ -174,29 +173,60 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
 
     const onSubmit = async () => {
         setLoading(true)
+        const readAsArrayBuffer = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+        
+                reader.onload = (event) => {
+                    resolve(event.target.result);
+                };
+        
+                reader.onerror = (error) => {
+                    reject(error);
+                };
+        
+                reader.readAsArrayBuffer(file);
+            });
+        };
+        
         //Turn the file into binary and use the uploadBunny function in utils to send it to bunny cdn
         for (let item of uploadedFiles) {
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                //onAdd is the passed function that will be called after the upload is complete, to save the image data to our database
 
-                let res = await onAdd()
-                if (!res.success) {
-                    showError(res.message)
-                }
-                if (res.success) {
-                    const arrayBuffer = event.target.result;
-                    let result = await uploadBunny(arrayBuffer, item.name)
-                    if (result.HttpCode == 201 || result.Message === "File uploaded.") {
-                        showSuccess('Η φωτογραφία ανέβηκε επιτυχώς')
+            try {
+                const arrayBuffer = await readAsArrayBuffer(item.file);
+                const result = await uploadBunny(arrayBuffer, item.name);
+                if (result.HttpCode === 201 || result.Message === "File uploaded.") {
+                    let res = await onAdd()
+                    if(res.success) {
+                        showSuccess('Η φωτογραφία ανέβηκε επιτυχώς');
+
                     }
-
+                } else {
+                    showError('Αποτυχία μεταφόρτωσης φωτογραφίας στο Bunny CDN');
                 }
-                setLoading(false)
+            } catch (error) {
+                showError('Σφάλμα κατά τη μεταφόρτωση στο Bunny CDN');
+            } finally {
+                setLoading(false);
+            }
+        
 
-            };
-            reader.readAsArrayBuffer(item.file);
-            setLoading(false)
+            // let res = await onAdd()
+            // console.log('res')
+            // console.log(res)
+            // const reader = new FileReader();
+            // reader.onload = async (event) => {
+            //     //onAdd is the passed function that will be called after the upload is complete, to save the image data to our database
+            // const arrayBuffer = event.target.result;
+            // let result = await uploadBunny(arrayBuffer, item.name)
+            //         if (result.HttpCode == 201 || result.Message === "File uploaded.") {
+            //             showSuccess('Η φωτογραφία ανέβηκε επιτυχώς')
+            //     }
+            //     setLoading(false)
+
+            // };
+            // reader.readAsArrayBuffer(item.file);
+            // setLoading(false)
         }
 
 
@@ -204,8 +234,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
 
     };
     const removeImage = async ({ name }) => {
-        console.log('name')
-        console.log(name)
+      
         let newFiles = uploadedFiles.filter(file => file.name !== name)
         setUploadedFiles(newFiles)
        
@@ -246,7 +275,6 @@ const ImageItem = ({ fileItem, index, removeImage, uploadedFiles, setUploadedFil
     const handleEdit = (e) => {
         setLocalValue(e.target.value)
         let newFiles = uploadedFiles.map(mapitem => {
-            console.log(mapitem)
             if (mapitem.file.path === fileItem.file.path) {
                 console.log('found')
                 return {
@@ -295,4 +323,18 @@ const ImageDiv = styled.div`
 
 `
 
+const ImageOverlay = styled.div`
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+    position: unset !important;
+    width: 100%;
+    height: 100%;
+    img {
+        object-fit: contain;
+        width: 100% !important;
+        position: relative !important;
+        height: unset !important;
+    }
+`
 export default ImageGrid;

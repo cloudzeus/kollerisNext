@@ -38,10 +38,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
     })
 
 
-    console.log('english description')
-    console.log(englishDescription)
-    console.log('gridRowData')
-    console.log(gridRowData)
+ 
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
@@ -233,10 +230,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
         vat: null
     })
 
-    useEffect(() => {
-        console.log('selectState')
-        console.log(selectState)
-    }, [selectState])
+  
 
     const { control, formState: { errors }, handleSubmit, reset } = useForm({
         resolver: yupResolver(addSchema),
@@ -310,7 +304,6 @@ const AddDialog = ({ dialog, hideDialog }) => {
 
 
     const handleEnglish = async (value) => {
-        console.log(value)
         setEnlgishDescription(value)
     }
 

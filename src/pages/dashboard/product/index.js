@@ -240,7 +240,7 @@ function Product() {
 
 
     const editProduct = async (product) => {
-        setSubmitted(false);
+        dispatch(setSubmitted())
         setEditDialog(true)
         dispatch(setGridRowData(product))
     };
@@ -373,7 +373,8 @@ function Product() {
 
 
     const addProduct = async (product) => {
-        setSubmitted(false);
+        dispatch(setSubmitted())
+        // setSubmitted(false);
         setAddDialog(true)
     }
     const AddToCartTemplate = (rowData) => {
@@ -667,7 +668,7 @@ function Product() {
                 dialog={editDialog}
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
-                setSubmitted={setSubmitted}
+                // setSubmitted={setSubmitted}
 
             />
             <AddDialog
@@ -953,12 +954,7 @@ const CategoriesRowFilterTemplate = ({ value, options, onChange }) => {
 
 
 const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
-    console.log('value')
-    console.log(value)
-    console.log('options')
-    console.log(options)
-    console.log('category')
-    console.log(category)
+    
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {
@@ -995,10 +991,7 @@ const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
 
 
 const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
-    console.log('value')
-    console.log(value)
-    console.log('options')
-    console.log(options)
+   
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {
@@ -1097,7 +1090,6 @@ const IsActive= ({setState, value}) => {
     )
 }
 const IsSkroutz = ({setState, value}) => {
-    console.log(value)
     const options = [
         { name: 'Είναι στο Skroutz', value: true },
         { name: 'Δεν είναι στο Skroutz', value: false },

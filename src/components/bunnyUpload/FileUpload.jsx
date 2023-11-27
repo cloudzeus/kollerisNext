@@ -22,9 +22,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
     }
     
-    useEffect(() => {
-       
-    }, [data])
+  
     useEffect(() => {
         setUploadedFiles([])
     }, [])

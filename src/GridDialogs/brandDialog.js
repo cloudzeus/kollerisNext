@@ -16,13 +16,12 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
-import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
-import { deleteBunny } from '@/utils/bunny_cdn';
+
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
     const { data: session } = useSession()
- 
+    
 
     const toast = useRef(null);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: gridRowData });

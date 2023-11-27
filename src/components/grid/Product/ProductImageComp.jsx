@@ -5,13 +5,14 @@ import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
 import { useRouter } from 'next/router';
 import { Toast } from 'primereact/toast';
 import { setSubmitted } from '@/features/productsSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const ProductImagesComp = ({ id }) => {
-    const router = useRouter();
     const toast = useRef(null);
     const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
@@ -47,10 +48,8 @@ const ProductImagesComp = ({ id }) => {
     const onAdd = async () => {
         let imagesURL = createImagesURL(uploadedFiles)
         let { data } = await axios.post('/api/product/apiProduct', { action: 'addImages', id: id, imagesURL: imagesURL })
-        console.log('data')
-        console.log(data)
         setRefetch(prev => !prev)
-        dispatch(setSubmitted())
+        setUploadedFiles([])
         return data;
     }
 
@@ -69,7 +68,6 @@ const ProductImagesComp = ({ id }) => {
             setUploadedFiles={setUploadedFiles}
             onDelete={onDelete}
             onAdd={onAdd}
-
         />
        </>
 
