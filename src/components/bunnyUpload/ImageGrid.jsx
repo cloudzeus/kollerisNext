@@ -213,11 +213,8 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
 
     };
     const removeImage = async ({ name }) => {
-      
         let newFiles = uploadedFiles.filter(file => file.name !== name)
         setUploadedFiles(newFiles)
-       
-
     }
 
 
