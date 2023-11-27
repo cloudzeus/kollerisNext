@@ -12,9 +12,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
-import { setSubmitted } from '@/features/productsSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+
 
 
 
@@ -24,7 +22,7 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
   
 
     const showSuccess = (message) => {
-        toast.current?.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
     }
     const showError = (message) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
@@ -37,12 +35,12 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
     
     const handleDelete  = async (name, _id) => {
          await onDelete(name, _id)
-        let bunny_delete = await deleteBunny(name);
-        if(bunny_delete?.HttpCode == 200) {
-            showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
-        } else {
-            showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
-        }
+        // let bunny_delete = await deleteBunny(name);
+        // if(bunny_delete?.HttpCode == 200) {
+        //     showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
+        // } else {
+        //     showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
+        // }
     }
     const Header = () => {
         return (
@@ -92,9 +90,6 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
 
 
 const ImageTemplate = ({ name }) => {
-   
-
-   
 
     const op = useRef(null);
     return (
@@ -105,6 +100,8 @@ const ImageTemplate = ({ name }) => {
                     src={`https://kolleris.b-cdn.net/images/${name}`}
                     fill={true}
                     sizes="50px"
+                    quality={30} 
+                    
 
                 />
             </ImageDiv>
@@ -121,6 +118,7 @@ const ImageTemplate = ({ name }) => {
                             src={`https://kolleris.b-cdn.net/images/${name}`}
                             fill={true}
                             sizes="50px"
+                            
                         />
                     </ImageOverlay>
 
@@ -140,7 +138,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
     const toast = useRef(null);
 
 
-    
+  
 
     const showError = (message) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
@@ -191,16 +189,14 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
         
         //Turn the file into binary and use the uploadBunny function in utils to send it to bunny cdn
         for (let item of uploadedFiles) {
-
+            console.log(item)
             try {
                 const arrayBuffer = await readAsArrayBuffer(item.file);
                 const result = await uploadBunny(arrayBuffer, item.name);
                 if (result.HttpCode === 201 || result.Message === "File uploaded.") {
-                    let res = await onAdd()
-                    if(res.success) {
+                    
                         showSuccess('Η φωτογραφία ανέβηκε επιτυχώς');
-
-                    }
+                        setUploadedFiles([]);
                 } else {
                     showError('Αποτυχία μεταφόρτωσης φωτογραφίας στο Bunny CDN');
                 }
@@ -209,27 +205,10 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
             } finally {
                 setLoading(false);
             }
-        
-
-            // let res = await onAdd()
-            // console.log('res')
-            // console.log(res)
-            // const reader = new FileReader();
-            // reader.onload = async (event) => {
-            //     //onAdd is the passed function that will be called after the upload is complete, to save the image data to our database
-            // const arrayBuffer = event.target.result;
-            // let result = await uploadBunny(arrayBuffer, item.name)
-            //         if (result.HttpCode == 201 || result.Message === "File uploaded.") {
-            //             showSuccess('Η φωτογραφία ανέβηκε επιτυχώς')
-            //     }
-            //     setLoading(false)
-
-            // };
-            // reader.readAsArrayBuffer(item.file);
-            // setLoading(false)
+            
         }
-
-
+        let res = await onAdd()
+        setUploadedFiles([]);
 
 
     };
@@ -276,7 +255,6 @@ const ImageItem = ({ fileItem, index, removeImage, uploadedFiles, setUploadedFil
         setLocalValue(e.target.value)
         let newFiles = uploadedFiles.map(mapitem => {
             if (mapitem.file.path === fileItem.file.path) {
-                console.log('found')
                 return {
                     ...mapitem,
                     name: e.target.value

@@ -276,9 +276,13 @@ const Images = ({id}) => {
     }
 
     const onAdd = async () => {
+        console.log('uploadedFiles')
+        console.log(uploadedFiles)
         let imagesURL = createImagesURL(uploadedFiles)
+        console.log('images url')
+        console.log(imagesURL)
         let { data } = await axios.post('/api/product/apiMarkes', { action: 'addImages', id: id, imagesURL: imagesURL})
-         setRefetch(prev => !prev)
+        setRefetch(prev => !prev)
         return data;
     }
 
