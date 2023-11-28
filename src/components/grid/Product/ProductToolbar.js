@@ -13,6 +13,7 @@ import WhareHouseActions from './WhareHouseActions';
 import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMtrLines } from '@/features/productsSlice';
+import PickingNew from './PickingNew';
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
     return (
@@ -104,6 +105,7 @@ const LeftSide = () => {
                                     <MenuBtn label="Αλλαγή Impa" onClick={() => setActiveIndex(2)} />
                                     <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
                                     <MenuBtn label="Ποσοτική τροποποίηση αποθήκης" onClick={() => setActiveIndex(4)} />
+                                    <MenuBtn label="Picking new" onClick={() => setActiveIndex(5)} />
                                 </div>
                             </div>
                         ) : null}
@@ -115,6 +117,7 @@ const LeftSide = () => {
                         {activeIndex === 2 ? (<SelectImpas />) : null}
                         {activeIndex === 3 ? (<Offer />) : null}
                         {activeIndex === 4 ? (<WhareHouseActions/>) : null}
+                        {activeIndex === 5 ? (<PickingNew/>) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>

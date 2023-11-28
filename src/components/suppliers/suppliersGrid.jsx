@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Button } from 'primereact/button';
@@ -12,18 +13,21 @@ import StepHeader from '../multiOffer/StepHeader';
 
 const SuppliersGrid = () => {
     const router = useRouter();
-    const { selectedSupplier,  inputEmail, mtrl } = useSelector(state => state.supplierOrder)
-    const [showTable, setShowTable] = useState(false)
+    const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
+    const [sortOffers, setSortOffers] = useState(1)
     const [searchTerm, setSearchTerm] = useState({
         name: '',
-        email: '',
-        phone: '',
+        afm: '',
+        address: '',
+        phone01: '',
+        phone02: '',
+        email: ''
     })
     const [lazyState, setlazyState] = useState({
         first: 0,
-        rows: 10,
+        rows: 15,
         page: 1,
     });
     const [totalRecords, setTotalRecords] = useState(0);
@@ -31,79 +35,86 @@ const SuppliersGrid = () => {
     useEffect(() => {
        dispatch(setSelectedSupplier(null)) 
     }, [])
-    const fetch = async (action) => {
-        if(action == "fetchSuppliers") {
+
+
+    console.log('selected supplier')
+    console.log(selectedSupplier)
+
+    const fetchClients = async () => {
+        const isAnyFieldNotEmpty = Object.values(searchTerm).some(value => value == '');
+        if (isAnyFieldNotEmpty) {
             setLoading(true)
         }
-     
-        let { data } = await axios.post('/api/supplier', {
-            action: action,
+       
+        let { data } = await axios.post('/api/suppliers', {
+            action: "fetchAll",
             skip: lazyState.first,
             limit: lazyState.rows,
-            searchTerm: searchTerm
+            searchTerm: searchTerm,
+            sortOffers: sortOffers,
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
-        if(action == "fetchSuppliers") {
-            setLoading(false)
-        }
-     
+        setLoading(false)
 
     }
 
-  
     useEffect(() => {
-        if (searchTerm.name == '' && searchTerm.email == '' && searchTerm.phone == '') {
-            fetch("fetchSuppliers");
-        } else {
-            fetch("search")
-        }
-    }, [searchTerm.name, searchTerm.phone, searchTerm.email, lazyState.rows, lazyState.first,])
+        fetchClients();
+    }, [
+        lazyState.rows,
+        lazyState.first,
+        searchTerm,
+        sortOffers
+    ])
+
+    const SearchName = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.name} onChange={(e) => setSearchTerm(prev => ({ ...prev, name: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
+
+    const SearchAFM = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.afm} onChange={(e) => setSearchTerm(prev => ({ ...prev, afm: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
+ 
+    const SearchEmail = () => {
+        return (
+            <div className="flex justify-content-start w-20rem ">
+                <span className="p-input-icon-left w-full">
+                    <i className="pi pi-search " />
+                    <InputText value={searchTerm.email} onChange={(e) => setSearchTerm(prev => ({ ...prev, email: e.target.value }))} />
+                </span>
+            </div>
+        )
+    }
 
 
   
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedSupplier(e.value))
-        setShowTable(false)
     }
 
     const onPage = (event) => {
         setlazyState(event);
     };
 
-    const SearchClient = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.name} onChange={(e) => setSearchTerm(prev => ({...prev, name: e.target.value}))} />
-                </span>
-            </div>
-        )
-    }
+   
 
-    const SearchEmail = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.email} onChange={(e) => setSearchTerm(prev => ({...prev, email: e.target.value}))} />
-                </span>
-            </div>
-        )
-    }
-    const SearchPhone = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.phone}  onChange={(e) => setSearchTerm(prev => ({...prev, phone: e.target.value}))} />
-                </span>
-            </div>
-        )
-    }
-
+  
     
 
 
@@ -111,7 +122,6 @@ const SuppliersGrid = () => {
   
     return (
         <>
-            <StepHeader text="Προμηθευτές" />
                 <DataTable
                     value={data}
                     paginator
@@ -125,17 +135,15 @@ const SuppliersGrid = () => {
                     selection={selectedSupplier}
                     onSelectionChange={onSelectionChange}
                     loading={loading}
-                    className='border-1 border-round-sm	border-50 mt-3'
-                    size="small"
                     filterDisplay="row"
+                    className="p-datatable-gridlines p-datatable-sm"
                     id={'_id'}
                     showGridlines
-                >
-                    <Column selectionMode="single" headerStyle={{ width: '30px' }}></Column>
-                    <Column field="NAME" style={{width: '400px'}} filter showFilterMenu={false} filterElement={SearchClient} header="Όνομα Πελάτη"></Column>
-                    <Column field="EMAIL"  style={{width: '500px'}} filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
-                    <Column field="PHONE01" style={{width: '200px'}} filter showFilterMenu={false} filterElement={SearchPhone} header="Τηλέφωνο"></Column>
-                    <Column field="ADDRESS" header="Διεύθυνση"></Column>
+                >  
+                    <Column selectionMode="single" ></Column>
+                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName}  header="Ονομα"></Column>
+                <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
+                <Column field="EMAIL" filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
                 </DataTable>
         </>
     )
