@@ -7,27 +7,30 @@ export default async function handler(req, res) {
     if (action === "createPurDoc") {
         const { mtrLines, TRDR, WHOUSE, supplier,  } = req.body;
 
+        //ALTER THE PRODUCTS ARRAY TO MATCH THE FORMAT OF THE API:
         let _newLines = mtrLines.map(item => {
             return {
                 MTRL: item.MTRL,
                 QTY1: item.QTY1,
             }
         })
-
-        console.log(_newLines , TRDR, WHOUSE, supplier)
-      
+        console.log('--------------- NEW LINES -----------------')
+        console.log(_newLines)
         let purdoc = await createPurDoc(WHOUSE, TRDR, _newLines );
         console.log('--------------- PURDOC -----------------')
         console.log(purdoc)
         if(!purdoc.success) {
             return res.status(200).json({ success: false, message: "Προέκυψε σφάλμα κατά την δημιουργία του παραστατικού" })
         }
-       
+        //GET THE SALDOCNUM FROM THE FIRST API CALL:
         const saldocnum = purdoc.SALDOCNUM;
-        console.log('--------------- SALDOCNUM -----------------')
-        console.log(saldocnum)
         //GET INVOICE DETAILS FROM SOFTONE:
         let result = await getInvoiceId(saldocnum);
+        //GET THE TRDR AND MTRLINES FROM THE RESULT:
+        const RESULT_TRDR = result.NUMBEROFITEMS.TRDR[0];
+        const MTRLINES = result.NUMBEROFITEMS.MTRLINES[0];
+        const INVOICE = result.NUMBEROFITEMS.INVOICE[0];
+        
         console.log('--------------- INVOICE ID -----------------')
         console.log(result.NUMBEROFITEMS);
         
@@ -38,14 +41,46 @@ export default async function handler(req, res) {
 
         //CREATE PICKINGNEW DOCUMENT:
         await connectMongo();
-        let createNewPicking = await Pickingnew.create({
-                TRDR: TRDR,
-                SUPPLIER: supplier,
-                PRODUCTS: mtrLines,
-                SALDOCNUM: saldocnum,
-                WHOUSE: WHOUSE,
-                INVOICE_STATUS: true,
-            })
+        let createOBJ = {
+            SALDOCNUM: saldocnum,
+            TRDR: INVOICE.TRDR,
+            NAME: RESULT_TRDR.NAME,
+            JOBTYPETRD: RESULT_TRDR.JOBTYPETRD,
+            AFM: RESULT_TRDR.AFM,
+            IRSDATA: RESULT_TRDR.IRSDATA,
+            ZIP: RESULT_TRDR.ZIP,
+            CITY: RESULT_TRDR.CITY,
+            ADDRESS: RESULT_TRDR.ADDRESS,
+            PHONE01: RESULT_TRDR.PHONE01,
+            EMAIL:RESULT_TRDR.EMAIL,
+            // --------------------------
+            MTRLINES: {
+                LINENUM: parseInt(MTRLINES.LINENUM),
+                MTRL: parseInt(MTRLINES.MTRL),
+                ERPCODE: MTRLINES.KODIKOSERP,
+                BARCODE: MTRLINES.BARCODE,
+                KODERGOSTASIOU: MTRLINES.KODERGOSTASIOU,
+                QTY: parseInt(MTRLINES.QTY),
+                PRICE: parseInt(MTRLINES.PRICE),
+                PRICE1: parseInt(MTRLINES.PRICE),
+                LINEVAL: parseInt(MTRLINES.LINEVAL),
+                VATAMNT: parseInt(MTRLINES.VATAMNT),
+                SALESCVAL: parseInt(MTRLINES.SALESCVAL),
+                TRNLINEVAL: parseInt(MTRLINES.TRNLINEVAL),
+                LTRNLINEVAL: parseInt(MTRLINES.LTRNLINEVAL),
+                SXPERC: parseInt(MTRLINES.SXPERC),
+            },
+            INVOICE: {
+                FINDOC: INVOICE.FINDOC,
+                TRNDATE: INVOICE.TRNDATE,
+                TAXSERIES: INVOICE.TAXSERIES,
+                TAXSERIESNUM: INVOICE.TAXSERIESNUM,
+                TURNOVER: INVOICE.TURNOVER,
+                SHIPKIND: INVOICE.SHIPKIND,
+                PAYMENT: INVOICE.PAYMENT,
+            },
+        }
+        let createNewPicking = await Pickingnew.create(createOBJ);
         console.log(createNewPicking);
         return res.status(200).json({ success: true, message: "Το παραστατικό δημιουργήθηκε με επιτυχία" })
     }
@@ -62,6 +97,10 @@ export default async function handler(req, res) {
             return res.status(500).json({ success: false, result: null, message: "Προέκυψε σφάλμα κατά την ανάκτηση των παραστατικών" })
         }
     }
+
+
+
+
     async function createPurDoc(whouse, trdr, mtrLines){
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/createPurDoc`;
         const response = await fetch(URL, {
@@ -76,8 +115,6 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response);
-        console.log('buffer')
-        console.log(buffer)
         return buffer;
     }
 

@@ -4,11 +4,15 @@ const nextConfig = {
   images: {
     domains: ['next.mbmv.io', 'localhost', "kolleris.b-cdn.net"],
   },
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
+ },
  
 }
 
 module.exports = {
-  
+ 
   env: {
     MONGO_URI: process.env.MONGO_URI,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

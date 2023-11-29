@@ -5,6 +5,7 @@ import catalogSlice from "./features/catalogSlice";
 import impaofferSlice from "./features/impaofferSlice";
 import supplierOrderSlice from "./features/supplierOrderSlice";
 import productsSlice from "./features/productsSlice";
+import pdfSlice from "./features/pdfSlice";
 export const store = configureStore({
   reducer: {
     user: userSlice,
@@ -13,6 +14,7 @@ export const store = configureStore({
     impaoffer: impaofferSlice,
     supplierOrder: supplierOrderSlice,
     products: productsSlice,
+    pdf: pdfSlice,
   }
 })
 
