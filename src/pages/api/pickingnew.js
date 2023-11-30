@@ -28,18 +28,39 @@ export default async function handler(req, res) {
         let result = await getInvoiceId(saldocnum);
         //GET THE TRDR AND MTRLINES FROM THE RESULT:
         const RESULT_TRDR = result.NUMBEROFITEMS.TRDR[0];
-        const MTRLINES = result.NUMBEROFITEMS.MTRLINES[0];
+        const MTRLINES = result.NUMBEROFITEMS.MTRLINES;
         const INVOICE = result.NUMBEROFITEMS.INVOICE[0];
         
         console.log('--------------- INVOICE ID -----------------')
         console.log(result.NUMBEROFITEMS);
         
+        const _MTRLINES = MTRLINES.map(item => {
+            return {
+                LINENUM: item.LINENUM,
+                MTRL: item.MTRL,
+                ERPCODE: item.KODIKOSERP,
+                BARCODE: item.BARCODE,
+                KODERGOSTASIOU: item.KODERGOSTASIOU,
+                QTY: item.QTY,
+                PRICE: item.PRICE,
+                PRICE1: item.PRICE1,
+                LINEVAL: item.LINEVAL,
+                VATAMNT: item.VATAMNT,
+                SALESCVAL: item.SALESCVAL,
+                TRNLINEVAL: item.TRNLINEVAL,
+                LTRNLINEVAL: item.LTRNLINEVAL,
+                SXPERC: item.SXPERC,
+            }
+        })
 
+        console.log('--------------- _____________MTRLINES -----------------')
+        console.log(_MTRLINES)
         if(!result.success) {
             return res.status(200).json({ success: false, message: "Προέκυψε σφάλμα κατά την δημιουργία του παραστατικού. ERROR: INVOICE DETAILS " })
         }
 
         //CREATE PICKINGNEW DOCUMENT:
+
         await connectMongo();
         let createOBJ = {
             SALDOCNUM: saldocnum,
@@ -54,22 +75,7 @@ export default async function handler(req, res) {
             PHONE01: RESULT_TRDR.PHONE01,
             EMAIL:RESULT_TRDR.EMAIL,
             // --------------------------
-            MTRLINES: {
-                LINENUM: parseInt(MTRLINES.LINENUM),
-                MTRL: parseInt(MTRLINES.MTRL),
-                ERPCODE: MTRLINES.KODIKOSERP,
-                BARCODE: MTRLINES.BARCODE,
-                KODERGOSTASIOU: MTRLINES.KODERGOSTASIOU,
-                QTY: parseInt(MTRLINES.QTY),
-                PRICE: parseInt(MTRLINES.PRICE),
-                PRICE1: parseInt(MTRLINES.PRICE),
-                LINEVAL: parseInt(MTRLINES.LINEVAL),
-                VATAMNT: parseInt(MTRLINES.VATAMNT),
-                SALESCVAL: parseInt(MTRLINES.SALESCVAL),
-                TRNLINEVAL: parseInt(MTRLINES.TRNLINEVAL),
-                LTRNLINEVAL: parseInt(MTRLINES.LTRNLINEVAL),
-                SXPERC: parseInt(MTRLINES.SXPERC),
-            },
+            MTRLINES: _MTRLINES,
             INVOICE: {
                 FINDOC: INVOICE.FINDOC,
                 TRNDATE: INVOICE.TRNDATE,

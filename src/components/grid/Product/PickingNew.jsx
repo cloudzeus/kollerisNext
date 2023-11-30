@@ -13,6 +13,11 @@ const PickingNew = () => {
     const [btnLoading, setBtnLoading] = useState(false)
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const {mtrLines} = useSelector(state => state.products)
+
+    useEffect(() => {
+        console.log('mtrLines')
+        console.log(mtrLines)
+    }, [mtrLines])
     const [selected, setSelected] = useState({ name: 'Wharehouse 1000', code: 1000 });
     const toast = useRef(null);
     const router = useRouter()
