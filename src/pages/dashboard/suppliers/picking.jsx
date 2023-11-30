@@ -12,6 +12,7 @@ import MyDocument from '@/components/pdf/PickingPDF'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPrintState } from '@/features/pdfSlice'
+import { FaFilePdf } from "react-icons/fa6";
 
 
 const Picking= () => {
@@ -62,9 +63,7 @@ const Picking= () => {
   return (
     <AdminLayout>
         <Toast ref={toast} />
-        {/* <MyDocument /> */}
         <StepHeader text="Παραστατικό Picking" />
-        {/* <Button onClick={handlePDF} icon="pi pi-pdf" label={'Download Pdf'}/> */}
         <DataTable
                 loading={loading}
                 editMode="row"
@@ -80,16 +79,15 @@ const Picking= () => {
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={rowExpansionTemplate}
             >   
-                <Column expander={allowExpansion} style={{ width: '5rem' }} />
-                <Column field="SUPPLIER" header="PDF" body={ViewPDF}></Column>
-                <Column field="NAME" header="Όνομα"></Column>
+                <Column expander={allowExpansion} style={{ width: '5rem'}}  />
+                <Column  header="PDF" body={ViewPDF} style={{width: '30px'}}></Column>
+                <Column field="NAME" header="ΌΝΟΜΑ"></Column>
                 <Column field="AFM" header="ΑΦΜ"></Column>
                 <Column field="ZIP" header="ZIP"></Column>
-                <Column field="PHONE01" header="PHONE01"></Column>
-                <Column field="ADDRESS" header="ADDRESS"></Column>
+                <Column field="PHONE01" header="ΤΗΛΕΦΩΝΟ"></Column>
+                <Column field="ADDRESS" header="ΔΙΕΥΘΥΝΣΗ"></Column>
                 <Column field="INVOICE.TAXSERIES" header="TAXSERIES"></Column>
-                <Column field="createdAt" body={CreatedAt} header="Ημερομηνία Δημ."></Column>
-            
+                <Column field="createdAt" body={CreatedAt} header="ΗΜΕΡΟΜΗΝΙΑ ΔΗΜ."></Column>
             </DataTable>
     </AdminLayout>
   )
@@ -100,7 +98,6 @@ const rowExpansionTemplate = ({MTRLINES}) => {
     
     return (
         <div  >
-        {/* <span className='font-semibold mb-2 mt-2 block'>Προϊόντα</span> */}
         <DataTable value={MTRLINES} className='w-full'>
             <Column field="LINENUM" header="LINENUM"></Column>
             <Column field="ERPCODE" header="ERP CODE"></Column>
@@ -128,8 +125,10 @@ const ViewPDF = (content) => {
         router.push(`/dashboard/suppliers/pdf`)
     }
     return (
-        <div>   
-            <i onClick={handleClick} className="pi pi-eye cursor-pointer" style={{ fontSize: '1rem' }}></i>
+        <div className='flex align-items-center justify-content-center cursor-pointer'>  
+            <FaFilePdf onClick={handleClick} style={{fontSize: '18px'}} className='text-red-600' />
+ 
+            {/* <i onClick={handleClick} className="pi pi-eye cursor-pointer" style={{ fontSize: '1rem' }}></i> */}
         </div>
     )
 }
