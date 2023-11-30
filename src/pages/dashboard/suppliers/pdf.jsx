@@ -5,7 +5,6 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import Barcode from 'react-barcode';
 import { InputNumber } from 'primereact/inputnumber';
 import { usePDF } from 'react-to-pdf';
-import Image from 'next/image'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -14,7 +13,6 @@ import { Toolbar } from 'primereact/toolbar';
 
 const Page = () => {
     const { printState } = useSelector(state => state.pdf)
-
     return (
         <AdminLayout>
             <MyDocument data={printState} />
@@ -50,18 +48,17 @@ function MyDocument({ data }) {
                     <div style={{fontSize: fontSize}}>
                         <p className='font-bold'>ΑΦΟΙ ΚΟΛΛΕΡΗ ΙΚΕ</p>
                         <p className='font-bold' >ΕΙΣΑΓΩΓΕΣ & ΕΜΠΟΡΙΟ ΕΡΓΑΛΕΙΩΝ & ΒΙΟΜΗΧΑΝΙΚΩΝ ΕΙΔΩΝ</p>
-                        <p className='font-bold' >ΑΦΜ: 099095556 - ΔΟΥ: Ε' ΠΕΙΡΑΙΑ</p>
+                        <p className='font-bold' >{"ΑΦΜ: 099095556 - ΔΟΥ: Ε' ΠΕΙΡΑΙΑ"}</p>
                         <p className='font-bold' >Αρ. Γ.Ε.ΜΗ: 044598907000</p>
                         <p className='font-bold'>Κ. ΜΑΥΡΟΜΙΧΑΛΗ 4 - ΠΕΙΡΑΙΑΣ 185 45</p>
                         <p className='font-bold' >ΤΗΛΕΦΩΝΑ: +30 210 4111 355 - +30 210 4113 754 - FAX: +30 210 4125 851</p>
                         <p className='font-bold'>ΤΗΛΕΦΩΝΑ: +30 210 4111 355 - +30 210 4113 754 - FAX: +30 210 4125 851</p>
-                        <p className='font-bold' >WEB: https://kolleris.com - EMAIL: info@kolleris.com - accounts@kolleris.com - warehouse@kolleris.comΤ</p>
+                        <p className='font-bold'>{"WEB: https://kolleris.com - EMAIL: info@kolleris.com - accounts@kolleris.com - warehouse@kolleris.com"}</p>
                     </div>
                     <div>
                         <img src="/uploads/logoPlain.png" style={{ width: '300px' }} />
                     </div>
                 </div>
-                {/* CONTACT INFO */}
                 <div className='mt-4 border-1 border-200' style={{fontSize: fontSize}}>
                     <div className='surface-100 p-2' >
                         <span className='text-sm'>ΣΤΟΙΧΕΙΑ ΣΥΝΑΛΛΑΣΣΟΜΕΝΟΥ</span>
