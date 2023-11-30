@@ -98,7 +98,7 @@ const rowExpansionTemplate = ({MTRLINES}) => {
     
     return (
         <div  >
-        <DataTable value={MTRLINES} className='w-full'>
+        <DataTable value={MTRLINES} className='w-full' >
             <Column field="LINENUM" header="LINENUM"></Column>
             <Column field="ERPCODE" header="ERP CODE"></Column>
             <Column field="BARCODE" header="Barcode"></Column>

@@ -29,7 +29,11 @@ const ProductSearchGrid = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [data, setData] = useState([])
     const [codeSearch, setCodeSearch] = useState('');
-
+    const [stateFilters, setStateFilters] = useState({
+        codeSearch: '',
+        skroutz: null,
+        active: true,
+    })
 
     useEffect(() => {
         dispatch(setSearchTerm(''))
@@ -58,9 +62,10 @@ const ProductSearchGrid = () => {
                 sort: sort,
                 marka: marka,
                 softoneFilter: null,
-                codeSearch: codeSearch
+                codeSearch: codeSearch,
+                stateFilters: stateFilters,
             })
-
+            console.log(data.result)
             setData(data.result);
             setTotalRecords(data.totalRecords)
             dispatch(setLoading(false))
@@ -79,12 +84,12 @@ const ProductSearchGrid = () => {
         subgroup,
         marka,
         sort,
-        codeSearch
+        codeSearch,
+        stateFilters
     ])
 
     useEffect(() => {
         dispatch(setLazyState({ ...lazyState, first: 0 }))
-
     }, [selectedMarkes])
 
     const onSelectionChange = (e) => {
@@ -205,17 +210,20 @@ const ProductSearchGrid = () => {
         )
     };
 
-    const MarkesFilter = () => {
+    
+
+    const MarkesFilter = ({ value, options, onChange }) => {
+        const dispatch = useDispatch();
         useEffect(() => {
             const handleCategories = async () => {
                 let { data } = await axios.post('/api/product/apiProductFilters', {
                     action: 'findBrands',
                 })
                 dispatch(setFilters({ action: 'marka', value: data.result }))
-
+    
             }
             handleCategories()
-
+    
         }, [])
         return (
             <div className='flex align-items-center'>
@@ -272,7 +280,6 @@ const ProductSearchGrid = () => {
 
     const SearchEAN = () => {
         const onSort = () => {
-
             dispatch(setSort())
 
         }
@@ -280,7 +287,7 @@ const ProductSearchGrid = () => {
             <div className="flex align-items-center justify-content-start w-20rem ">
                 <div className="p-input-icon-left w-full">
                     <i className="pi pi-search" />
-                    <InputText value={codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setCodeSearch(e.target.value)} />
+                    <InputText value={stateFilters.codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setStateFilters(prev => ({...prev, codeSearch: e.target.value}))} />
                 </div>
                 <div className='ml-3'>
                     {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
@@ -314,7 +321,14 @@ const ProductSearchGrid = () => {
         >
             <Column selectionMode="multiple" headerStyle={{ width: '30px' }}></Column>
             <Column field="NAME" filter showFilterMenu={false} filterElement={Search} body={NameTemplate} header="Προϊόν"></Column>
-            <Column field="MTRMARK_NAME" style={{ width: '300px' }} header="Όνομα Μάρκας" filter showFilterMenu={false} filterElement={MarkesFilter}></Column>
+            <Column
+                        field="MTRMARK_NAME"
+                        style={{ width: '300px' }}
+                        header="Όνομα Μάρκας"
+                        filter
+                        showFilterMenu={false}
+                        filterElement={MarkesFilter}>
+                    </Column>
             <Column field="CATEGORY_NAME" header="Εμπορική Κατηγορία" filter filterElement={CategoriesRowFilterTemplate} showFilterMenu={false}></Column>
             <Column field="GROUP_NAME" showFilterMenu={false} filter filterElement={GroupRowFilterTemplate} header="Ομάδα" ></Column>
             <Column field="SUBGROUP_NAME" header="Υποομάδα" filter showFilterMenu={false} filterElement={SubGroupsRowFilterTemplate}></Column>
