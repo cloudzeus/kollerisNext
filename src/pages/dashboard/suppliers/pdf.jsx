@@ -22,241 +22,17 @@ const Page = () => {
     )
 }
 
-// const dataArray = [
-//     {
-//       NAME: "Product 1",
-//       ERPCODE: "ABC123",
-//       BARCODE: "123456789012",
-//       QTY: 10,
-//       PRICE: 49.99,
-//       LINEVAL: 499.90,
-//     },
-//     {
-//       NAME: "Product 2",
-//       ERPCODE: "DEF456",
-//       BARCODE: "234567890123",
-//       QTY: 5,
-//       PRICE: 29.99,
-//       LINEVAL: 149.95,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 20,
-//       PRICE: 19.99,
-//       LINEVAL: 399.80,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     {
-//       NAME: "Product 3",
-//       ERPCODE: "GHI789",
-//       BARCODE: "345678901234",
-//       QTY: 10000000,
-//       PRICE: 10000000,
-//       LINEVAL: 10000000,
-//     },
-//     // Add similar objects for the remaining 4 items
-//   ];
-  
+
 
 
 function MyDocument({ data }) {
     const [fontSize, setFontSize] = useState(16);
-    const [sum, setSum] = useState(0);
     const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
-    let styleTop = {
-        fontSize: `11px`,
-        lineHeight: `1.2`,
-    }
+  
    
 
     
     const Start = () => {
-    
         return (
             <div className="flex-auto">
             <label htmlFor="stacked-buttons" className="font-bold block mb-2">Font Size</label>
@@ -265,7 +41,7 @@ function MyDocument({ data }) {
         )
     }
     return (
-        <div className=''>
+        <div >
             <Button severity='danger' className="mb-3" icon="pi pi-download" onClick={() => toPDF()}>Download PDF</Button>
 
             <Toolbar start={Start} />
@@ -294,30 +70,30 @@ function MyDocument({ data }) {
                         <div className='col-6'>
                             <div className='p-2 border-bottom-1 border-300' style={{fontSize: fontSize}}>
                                 <span className='font-bold'>ONOMA: </span>
-                                <span className=''>{data.NAME} </span>
+                                <span >{data.NAME} </span>
                             </div>
                             <div className='p-2 border-bottom-1 border-300'>
                                 <span className=' font-bold'>EΠΩΝΥΜΙΑ: </span>
-                                <span className=''>{data.NAME} </span>
+                                <span>{data.NAME} </span>
                             </div>
                             <div className='p-2 border-bottom-1 border-300'>
                                 <span className=' font-bold '>ΑΦΜ / ΔΟΥ: </span>
-                                <span className=''>{data.NAME} </span>
+                                <span >{data.NAME} </span>
                             </div>
                             <div className='p-2'>
                                 <span className=' font-bold'>ΔΙΕΥΘΥΝΣΗ: </span>
-                                <span className=''>{data.ADDRESS} </span>
+                                <span >{data.ADDRESS} </span>
                             </div>
 
                         </div>
                         <div className='col-6' style={{fontSize: fontSize}}>
                             <div className='p-2 border-bottom-1 border-300'>
                                 <span className='font-bold'>EMAIL: </span>
-                                <span className=''>{data.EMAIL} </span>
+                                <span>{data.EMAIL} </span>
                             </div>
                             <div className='p-2 border-bottom-1 border-300'>
                                 <span className=' font-bold'>ΤΗΛΕΦΩΝΟ: </span>
-                                <span className=''>{data.PHONE01} </span>
+                                <span >{data.PHONE01} </span>
                             </div>
                         </div>
                     </div>
@@ -343,20 +119,7 @@ function MyDocument({ data }) {
 }
 
 
-const Footer = (props) => {
-   
-    let sum = 0;
-    // MTRLINES.forEach(element => {
-    //     sum += element.LINEVAL
-    // });
-    return (
-        <div>
-            <span className='font-light'>ΣΥΝΟΛΟ:</span>
-            <span>{sum}</span>
-        </div>
-    )
 
-}
 const CreateBarcode = ({ BARCODE }) => {
     return (
         <Barcode value={BARCODE} width={1.4} height={50} fontSize={12} />
