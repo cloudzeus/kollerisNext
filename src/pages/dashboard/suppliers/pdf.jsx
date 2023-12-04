@@ -69,13 +69,10 @@ function MyDocument({ data }) {
                                 <span className='font-bold'>ONOMA: </span>
                                 <span >{data.NAME} </span>
                             </div>
-                            <div className='p-2 border-bottom-1 border-300'>
-                                <span className=' font-bold'>EΠΩΝΥΜΙΑ: </span>
-                                <span>{data.NAME} </span>
-                            </div>
+                          
                             <div className='p-2 border-bottom-1 border-300'>
                                 <span className=' font-bold '>ΑΦΜ / ΔΟΥ: </span>
-                                <span >{data.NAME} </span>
+                                <span >{data.AFN} </span>
                             </div>
                             <div className='p-2'>
                                 <span className=' font-bold'>ΔΙΕΥΘΥΝΣΗ: </span>

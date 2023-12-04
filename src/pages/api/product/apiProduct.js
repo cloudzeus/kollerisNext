@@ -51,7 +51,7 @@ export default async function handler(req, res) {
 
     if (action === 'update') {
         let { data } = req.body;
-        
+
         let systemMessage = '';
         let softoneMessage = '';
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
@@ -91,7 +91,7 @@ export default async function handler(req, res) {
         }
 
 
-        if(data.MTRL) {
+        if (data.MTRL) {
             const response = await fetch(URL, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -102,7 +102,7 @@ export default async function handler(req, res) {
             });
             let responseJSON = await response.json();
             if (!responseJSON.success) {
-               softoneMessage = 'Δεν έγινε ενημέρωση στο softone'
+                softoneMessage = 'Δεν έγινε ενημέρωση στο softone'
             }
             if (responseJSON.success) {
                 softoneMessage = 'Εγινε ενημέρωση στο softone'
@@ -143,15 +143,15 @@ export default async function handler(req, res) {
                     COST: data?.COST,
                 }
             })
-           systemMessage = 'Εγινε ενημέρωση στο σύστημα'
-            return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage});
-    
+            systemMessage = 'Εγινε ενημέρωση στο σύστημα'
+            return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage });
+
         } catch (e) {
             systemMessage = 'Δεν έγινε ενημέρωση στο σύστημα'
             return res.status(400).json({ success: false, systemMessage: systemMessage, softoneMessage: softoneMessage });
         }
-     
-       
+
+
     }
 
     if (action === 'search') {
@@ -235,7 +235,7 @@ export default async function handler(req, res) {
         try {
             let results = [];
             if (gridData) {
-              
+
                 for (let item of gridData) {
                     console.log(item)
                     if (!item.hasOwnProperty('MTRL')) {
@@ -341,19 +341,19 @@ export default async function handler(req, res) {
 
     }
 
-    if(action === "updateActiveMtrl") {
-        const {ISACTIVE, MTRL , id} = req.body;
+    if (action === "updateActiveMtrl") {
+        const { ISACTIVE, MTRL, id } = req.body;
         console.log(MTRL, ISACTIVE)
         let _ISACTIVE = ISACTIVE ? 1 : 0;
         // const mtrl = 94273
-     
+
         let message;
         try {
             await connectMongo();
-            let update = await SoftoneProduct.findOneAndUpdate( {
+            let update = await SoftoneProduct.findOneAndUpdate({
                 MTRL: MTRL,
-                _id: id 
-              }, {
+                _id: id
+            }, {
                 $set: {
                     ISACTIVE: !ISACTIVE
                 }
@@ -364,43 +364,43 @@ export default async function handler(req, res) {
         }
         try {
             async function updateSoftone() {
-                if(!MTRL) return;
+                if (!MTRL) return;
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrlActive`;
                 const response = await fetch(URL, {
                     method: 'POST',
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         username: "Service",
                         password: "Service",
-                        MTRL:  MTRL,
+                        MTRL: MTRL,
                         ISACTIVE: _ISACTIVE
                     })
                 });
-                
+
                 let buffer = await translateData(response)
                 return message += ` ${buffer.result}`
             }
             let message = await updateSoftone();
-          
+
         } catch (e) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
         }
-      
+
         return res.status(200).json({ success: true, message: message });
     }
 
-    if(action === "updateSkroutz") {
-        const {isSkroutz, MTRL , id} = req.body;
+    if (action === "updateSkroutz") {
+        const { isSkroutz, MTRL, id } = req.body;
         //Softone accepts 1 or 0
         let _isSkroutz = isSkroutz ? 1 : 0;
         let message;
 
         try {
             async function updateSoftone() {
-                if(!MTRL) return;
+                if (!MTRL) return;
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateSkroutz`;
                 const response = await fetch(URL, {
                     method: 'POST',
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         username: "Service",
                         password: "Service",
                         STATUS: _isSkroutz,
@@ -413,28 +413,28 @@ export default async function handler(req, res) {
                 return buffer.result
             }
             message = await updateSoftone();
-            
-          
+
+
         } catch (e) {
             return res.status(200).json({ success: false, result: null, error: 'Softone update error' });
         }
 
         try {
             await connectMongo();
-            let update = await SoftoneProduct.findOneAndUpdate( {
+            let update = await SoftoneProduct.findOneAndUpdate({
                 MTRL: MTRL,
-                _id: id 
-              }, {
+                _id: id
+            }, {
                 $set: {
                     isSkroutz: !isSkroutz
                 }
-            }, {new: true})
+            }, { new: true })
             message += ' System skroutz update success.'
         } catch (e) {
             return res.status(200).json({ success: false, result: null, error: 'System update error' });
         }
-       
-      
+
+
         return res.status(200).json({ success: true, message: message });
     }
 
@@ -485,7 +485,7 @@ export default async function handler(req, res) {
 
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
-      
+
         try {
             const filteredObject = {};
 
@@ -509,13 +509,13 @@ export default async function handler(req, res) {
                     })
                 });
                 let buffer = await translateData(response)
-               
+
                 // console.log(responseJSON)
                 console.log(buffer)
                 return buffer;
             }
             let response = await createSoftone();
-            if(response.success == false) {
+            if (response.success == false) {
                 return res.status(200).json({ success: false, error: 'Δεν προστέθηκε στο softOne' });
             }
             if (response.success) {
@@ -629,13 +629,13 @@ export default async function handler(req, res) {
     if (action === "csvImages") {
         const { data, index, total } = req.body;
 
-       
+
         let erp = data['Erp Code'];
         let image = data['Image Name'];
-      
+
         try {
             const updatedDocument = await SoftoneProduct.findOneAndUpdate(
-                { CODE: `${erp}`  },
+                { CODE: `${erp}` },
                 {
                     $push: {
                         images: [{ name: image }]
@@ -644,7 +644,7 @@ export default async function handler(req, res) {
                         hasImage: true
                     }
                 },
-                { new: true, projection: { _id: 0, NAME: 1, CODE: 1, updatedAt: 1, images: { $slice: -1 }}}
+                { new: true, projection: { _id: 0, NAME: 1, CODE: 1, updatedAt: 1, images: { $slice: -1 } } }
             );
             console.log('updated')
             console.log(updatedDocument.NAME)
@@ -660,6 +660,59 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true, result: _newdoc });
         } catch (error) {
             console.error(error);
+            return res.status(400).json({ success: false, result: null });
+        }
+    }
+
+    if (action === "update_service") {
+        const { data } = req.body;
+        console.log(data)
+
+        try {
+            await connectMongo();
+
+            for (let item of data) {
+                const now = new Date();
+                const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
+                await updateSystem(item, formattedDateTime)
+            }
+            const errors = [];
+            const result = [];
+            async function updateSystem(data, date) {
+                let update = await SoftoneProduct.findOneAndUpdate({
+                    MTRL: data.MTRL
+                }, {
+                    $set: {
+                        PRICER: data.PRICER,
+                        PRICER01: data.PRICER01,
+                        PRICEW: data.PRICEW,
+                        isSkroutz: data.isSkroutz,
+                        COST: data.COST,
+                        availability: {
+                            DIATHESIMA: data.DIATHESIMA,
+                            SEPARAGELIA: data.SEPARAGELIA,
+                            DESVMEVMENA: data.DESVMEVMENA,
+                            date: date
+                        }
+
+                    }
+                }, { new: true })
+                if(!update) {
+                    errors.push({
+                        MTRL: data.MTRL,
+                        error: 'Δεν βρέθηκε το προϊόν'
+                    })
+                }
+                if(update) {
+                    errors.push({
+                        success: 'Επιτυχής ενημέρωση',
+                        ...update
+                    })
+                }
+            }
+
+            return res.status(200).json({ success: true, errors: errors, result: result });
+        } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
     }
