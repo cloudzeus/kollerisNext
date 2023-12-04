@@ -670,47 +670,67 @@ export default async function handler(req, res) {
 
         try {
             await connectMongo();
-
+            const errors = [];
+            const result = [];
             for (let item of data) {
                 const now = new Date();
                 const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
-                await updateSystem(item, formattedDateTime)
+
+                let res = await updateSystem(item, formattedDateTime)
+                console.log('res')
+                console.log(res)
+                if(!res) {
+                    errors.push({
+                        MTRL: item.MTRL,
+                        error: 'Δεν βρέθηκε το προϊόν'
+                    })
+                }
+                if(res) {
+                    result.push({
+                        success: 'Επιτυχής ενημέρωση',
+                        MTRL: res._doc.MTRL,
+                        PRICER: res._doc.PRICER,
+                        PRICER01: res._doc.PRICER01,
+                        PRICEW: res._doc.PRICEW,
+                        isSkroutz: res._doc.isSkroutz,
+                        COST: res._doc.COST,
+                        availability: {
+                            DIATHESIMA: res._doc.availability.DIATHESIMA,
+                            SEPARAGELIA: res._doc.availability.SEPARAGELIA,
+                            DESVMEVMENA: res._doc.availability.DESVMEVMENA,
+                            date: res._doc.availability.date
+                        }
+
+
+                    })
+                }
             }
-            const errors = [];
-            const result = [];
+            console.log('result')
+            console.log(result)
             async function updateSystem(data, date) {
                 let update = await SoftoneProduct.findOneAndUpdate({
-                    MTRL: data.MTRL
+                    MTRL: data.MTRL.toString()
                 }, {
                     $set: {
                         PRICER: data.PRICER,
                         PRICER01: data.PRICER01,
                         PRICEW: data.PRICEW,
-                        isSkroutz: data.isSkroutz,
+                        isSkroutz: parseInt(data.isSkroutz) === 1 ? true : false,
                         COST: data.COST,
                         availability: {
                             DIATHESIMA: data.DIATHESIMA,
                             SEPARAGELIA: data.SEPARAGELIA,
                             DESVMEVMENA: data.DESVMEVMENA,
-                            date: date
+                            date: date.toString()
                         }
-
                     }
-                }, { new: true })
-                if(!update) {
-                    errors.push({
-                        MTRL: data.MTRL,
-                        error: 'Δεν βρέθηκε το προϊόν'
-                    })
-                }
-                if(update) {
-                    errors.push({
-                        success: 'Επιτυχής ενημέρωση',
-                        ...update
-                    })
-                }
+                }, {new: true})
+                console.log('update')
+                console.log(update)
+                return update;
             }
-
+          
+          
             return res.status(200).json({ success: true, errors: errors, result: result });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
