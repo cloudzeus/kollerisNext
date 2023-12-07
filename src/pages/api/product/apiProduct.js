@@ -677,8 +677,7 @@ export default async function handler(req, res) {
                 const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
 
                 let res = await updateSystem(item, formattedDateTime)
-                console.log('res')
-                console.log(res)
+               
                 if(!res) {
                     errors.push({
                         MTRL: item.MTRL,
@@ -693,7 +692,6 @@ export default async function handler(req, res) {
                         PRICER01: res._doc.PRICER01,
                         PRICEW: res._doc.PRICEW,
                         isSkroutz: res._doc.isSkroutz,
-                        COST: res._doc.COST,
                         availability: {
                             DIATHESIMA: res._doc.availability.DIATHESIMA,
                             SEPARAGELIA: res._doc.availability.SEPARAGELIA,
@@ -716,7 +714,7 @@ export default async function handler(req, res) {
                         PRICER01: data.PRICER01,
                         PRICEW: data.PRICEW,
                         isSkroutz: parseInt(data.isSkroutz) === 1 ? true : false,
-                        COST: data.COST,
+                      
                         availability: {
                             DIATHESIMA: data.DIATHESIMA,
                             SEPARAGELIA: data.SEPARAGELIA,
@@ -735,6 +733,49 @@ export default async function handler(req, res) {
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
         }
+    }
+
+    if(action === 'update_service_cost') {
+            const  {data} = req.body;
+            await connectMongo();
+            const errors = [];
+            const result = [];
+          
+            try {
+                for (let item of data) {
+                    let res = await updateSystem(item)
+                    if(!res) {
+                        errors.push({
+                            MTRL: item.MTRL,
+                            error: 'Δεν βρέθηκε το προϊόν'
+                        })
+                    }
+                    if(res) {
+                        result.push({
+                            success: 'Επιτυχής ενημέρωση',
+                            COST: res._doc.COST,
+                        })
+                    }
+                }
+                async function updateSystem(data) {
+                    let update = await SoftoneProduct.findOneAndUpdate({
+                        MTRL: data.MTRL.toString()
+                    }, {
+                        $set: {
+                            COST: data.COST,
+                        }
+                    }, {new: true})
+                    console.log('update')
+                    console.log(update)
+                    return update;
+                }
+                return res.status(200).json({ success: true, errors: errors, result: result });
+            } catch (e) {
+                return res.status(400).json({ success: false, result: null });
+            }
+           
+
+          
     }
 }
 
