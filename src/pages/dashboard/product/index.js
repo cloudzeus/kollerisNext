@@ -266,7 +266,7 @@ function Product() {
     }
 
 
-
+    
 
     const RenderHeader = () => {
         const op2 = useRef(null);
@@ -526,6 +526,13 @@ function Product() {
     }
 
 
+    const isSelectable = (data) => data.availability.DIATHESIMA === '0';
+    const rowClassName = (data) => {
+        console.log('data row')
+        console.log(data)
+        let className  = isSelectable(data)? 'diathesima-warning' : ''
+        return className;
+    }
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -550,6 +557,7 @@ function Product() {
 
             <DataTable
                 header={header}
+                rowClassName={rowClassName}
                 first={lazyState2.first}
                 lazy
                 totalRecords={totalRecords}
@@ -660,7 +668,7 @@ function Product() {
                     </Column>)}
                 {visibleColumns.some(column => column.id === 5) && (<Column field="CODE" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
                 {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
-                <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
+                <Column  style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
                 <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column>
             </DataTable>
             <EditDialog
@@ -737,7 +745,7 @@ const ImagesTemplate = ({ _id, images }) => {
 }
 
 
-const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS }) => {
+const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability }) => {
     return (
         <div className='flex flex-column'>
             <span className='font-semibold'>{NAME}</span>
@@ -757,6 +765,13 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
                     <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
                     <p className='text-500'>softone</p>
                 </div>
+                {availability.DIATHESIMA === '0' ? (
+                     <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center  mt-1' 
+                     style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px', maxWidth: '70px'}}>
+                        <p style={{marginBottom: '2px'}}>not available</p>
+                     </div>
+                ) : null}
+               
             </div>
         </div>
     )
@@ -853,7 +868,7 @@ const Cost = ({ COST }) => {
 }
 
 
-const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE }) => {
+const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }) => {
     return (
         <div>
             <p className='font-medium'>{NAME}</p>
@@ -873,7 +888,13 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE }) => {
                         <p className='text-500'>skroutz</p>
                     </div>
                 ) : null}
-
+                {availability.DIATHESIMA === '0' ? (
+                     <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1' 
+                     style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px',  maxWidth: '70px'}}>
+                        <p style={{marginBottom: '2px'}}>not available</p>
+                     </div>
+                ) : null}
+               
             </div>
 
         </div>
