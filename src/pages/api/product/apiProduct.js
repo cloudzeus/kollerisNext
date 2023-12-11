@@ -691,6 +691,7 @@ export default async function handler(req, res) {
                         PRICER: res._doc.PRICER,
                         PRICER01: res._doc.PRICER01,
                         PRICEW: res._doc.PRICEW,
+                        COST: res._doc.COST,
                         isSkroutz: res._doc.isSkroutz,
                         availability: {
                             DIATHESIMA: res._doc.availability.DIATHESIMA,
@@ -698,13 +699,10 @@ export default async function handler(req, res) {
                             DESVMEVMENA: res._doc.availability.DESVMEVMENA,
                             date: res._doc.availability.date
                         }
-
-
                     })
                 }
             }
-            console.log('result')
-            console.log(result)
+           
             async function updateSystem(data, date) {
                 let update = await SoftoneProduct.findOneAndUpdate({
                     MTRL: data.MTRL.toString()
@@ -713,8 +711,8 @@ export default async function handler(req, res) {
                         PRICER: data.PRICER,
                         PRICER01: data.PRICER01,
                         PRICEW: data.PRICEW,
+                        COST: data.COST,
                         isSkroutz: parseInt(data.isSkroutz) === 1 ? true : false,
-                      
                         availability: {
                             DIATHESIMA: data.DIATHESIMA,
                             SEPARAGELIA: data.SEPARAGELIA,
@@ -723,8 +721,6 @@ export default async function handler(req, res) {
                         }
                     }
                 }, {new: true})
-                console.log('update')
-                console.log(update)
                 return update;
             }
           
