@@ -380,6 +380,23 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	} 
+
+	if(action === 'saveCatalog') {
+        const {catalogName, id} = req.body;
+        console.log('catalogName')
+        console.log(catalogName)
+        try {
+            await connectMongo();
+            let result = await  Markes.findOneAndUpdate({_id: id}, {
+                $set: {
+                    catalogName: catalogName
+                }   
+            })
+            return res.status(200).json({ success: true, result: result })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
 }
 
 

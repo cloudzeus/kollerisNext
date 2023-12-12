@@ -53,6 +53,7 @@ const markesSchema = new mongoose.Schema({
     },
 
     updatedFrom: String,
+    catalogName: String,
     
   
 },{

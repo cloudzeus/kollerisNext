@@ -5,10 +5,9 @@ import SoftoneProduct from "../../../server/models/newProductModel";
 import { ConnectedOverlayScrollHandler } from "primereact/utils";
 import UploadedProduct from "../../../server/models/uploadedProductsModel";
 export default async function handler(req, res) {
-    const { data, SUPPLIER_NAME, UNIQUE_CODE } = req.body;
+    const { data,  UNIQUE_CODE } = req.body;
     
-    console.log('=----------------------------------------')
-    console.log(UNIQUE_CODE)
+ 
     try {
         await connectMongo();
         let productData = {
@@ -18,7 +17,7 @@ export default async function handler(req, res) {
             COUNTRY: data?.COUNTRY || '',
             VAT: data?.VAT || '',
             CODE1: data?.CODE1 || '',
-            CODE2: data?.CODE2 || '',
+            CODE2: data?.CODE2 ,
             PRICER: data.PRICER,
             PRICEW: data.PRICEW,
             COST: parseFloat(data.COST.toFixed(2)),
@@ -30,6 +29,9 @@ export default async function handler(req, res) {
             uploaded: true,
             // uploadedDate: 
         }
+
+        console.log('productData')
+        console.log(productData)
         //CREATE THE UPLOADED PRODUCT FOR THIS SUPPLIER
         let uploadedProduct = await UploadedProduct.create({
             NAME: data.NAME,
@@ -38,13 +40,12 @@ export default async function handler(req, res) {
             PRICEW: data.PRICEW,
             COST: parseFloat(data.COST.toFixed(2)),
             PRICER01: data.PRICER01,
-            SUPPLIER_NAME: SUPPLIER_NAME,
             SUPPLER_TRDR: data.SUPPLER_TRDR,
             UNIQUE_CODE:  UNIQUE_CODE,
         })
         //CREATE A FILTER WITH EITHER THE NAME OR THE CODE OF THE PRODUCT FROM THE UPLOADED FILE
         const filter = {
-         CODE1: data.CODE1 
+         CODE2: data.CODE2  
         };
 
 
@@ -59,11 +60,14 @@ export default async function handler(req, res) {
      
       
         const find = await SoftoneProduct.findOne(filter);
-      
+        console.log('find')
+        console.log(find)
         if(find) {
             if(find.MTRL) {
                 //if you find MTRL it means that the product is in softone and you need to update the prices:
                 let MTRL = find.MTRL
+                console.log('MTRL')
+                console.log(MTRL)
                 await updateSoftone(MTRL)
 
             }
@@ -72,8 +76,8 @@ export default async function handler(req, res) {
             },
                 { new: true, }
             );
-            // console.log('updatedProduct')
-            // console.log(product)
+            console.log('updatedProduct')
+            console.log(product)
             //UPDATE THE STATUS TO UPDATED
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {
@@ -86,8 +90,8 @@ export default async function handler(req, res) {
 
         if (!find) {
             let product = await SoftoneProduct.create(productData);
-            // console.log('created Product')
-            // console.log(product)
+            console.log('created Product')
+            console.log(product)
             //UPDATE THE STATUS TO CRATED
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {

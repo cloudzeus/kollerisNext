@@ -21,6 +21,7 @@ import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalo
 import * as XLSX from 'xlsx';
 import { uploadBunny, uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import Link from 'next/link';
+import { setLazyState } from '@/features/productsSlice';
 
 
 export default function Page() {
@@ -354,7 +355,6 @@ export default function Page() {
 }
 
 
-
 const NameTemplate = ({NAME, catalogName}) => {
     return (
         <div className='flex align-items-center'>
@@ -382,7 +382,6 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
             color="#fff"
             backgroundColor='var(--yellow-500)'
         />
-
     )
 }
 

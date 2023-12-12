@@ -22,9 +22,15 @@ import MarkesActions from '@/components/markes/MarkesActions';
 import { setSelectedMarkes } from '@/features/supplierOrderSlice';
 import { useRouter } from 'next/router';
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
-
+import styled from 'styled-components';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalogSlice';
+import { uploadBunnyFolderName } from '@/utils/bunny_cdn';
+import XLSX from 'xlsx';
 export default function TemplateDemo() {
-    const router = useRouter()
+    const router = useRouter();
+    const [fileLoading, setFileLoading] = useState(false)
+    const fileInputRef = useRef(null);
     const dispatch = useDispatch();
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
@@ -32,13 +38,14 @@ export default function TemplateDemo() {
     const [submitted, setSubmitted] = useState(false);
     const [data, setData] = useState([])
     const toast = useRef(null);
+    const [selectedBrand, setSelectedBrand] = useState(null)
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
-    const { data: session } =  useSession()
+    const { data: session } = useSession()
     let user = session?.user?.user;
 
 
@@ -105,9 +112,9 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
-      
+
         return (
-            < Images id={data._id}/>
+            < Images id={data._id} />
         );
     };
 
@@ -138,12 +145,12 @@ export default function TemplateDemo() {
         setAddDialog(false);
     };
 
-   
 
- 
-           
+
+
+
     // CUSTOM TEMPLATES FOR COLUMNS
-  
+
 
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
@@ -166,6 +173,60 @@ export default function TemplateDemo() {
             </div>
         )
     }
+
+    const onUploadClick = () => {
+        fileInputRef.current.click()
+    }
+    const ActionTemplate = (rowData) => {
+        const op = useRef(null);
+        return (
+            <div className='flex align-items-center justify-content-center'>
+                <i className="pi pi-cog mr-2 cursor-pointer text-primary" style={{ fontSize: '12px' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel ref={op}>
+                    <div className='flex flex-column'>
+                        <Button label="Διαμόρφωση Προμηθευτή" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
+                        <UploadBtn>
+                            <input className="hide" ref={fileInputRef} type="file" onChange={(e) => handleFileUpload(e, rowData)} />
+                            <Button className='w-full' severity='warning' loading={fileLoading} onClick={onUploadClick} label="Ανέβασμα τιμοκατάλογου" icon="pi pi-plus"></Button>
+                        </UploadBtn>
+                    </div>
+                </OverlayPanel>
+            </div>
+        )
+    }
+
+    const handleFileUpload = async (e, rowData) => {
+        setFileLoading(true)
+        let fileName = e.target.files[0].name
+        let save = await axios.post('/api/product/apiMarkes', { action: 'saveCatalog', catalogName: fileName, id: rowData._id })
+        console.log(save)
+        // dispatch(setSelectedSupplier(rowData))
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(e.target.files[0]);
+        reader.onload = async (e) => {
+
+            const data = e.target.result;
+            let upload = await uploadBunnyFolderName(data, fileName, 'catalogs')
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const parsedData = XLSX.utils.sheet_to_json(sheet);
+            dispatch(setGridData(parsedData))
+
+            if (parsedData.length > 0) {
+                const firstRow = parsedData[0];
+                const headers = Object.keys(firstRow).map((key) => ({
+                    field: key,
+                }));
+                dispatch(setHeaders(headers))
+                setFileLoading(false)
+                router.push('/dashboard/catalogs/upload-catalog')
+
+
+            }
+        };
+    };
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -194,10 +255,11 @@ export default function TemplateDemo() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                
+                <Column body={ActionTemplate} style={{ width: '30px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" ></Column>
                 <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={DownLoadCatalog}></Column>
                 {user?.role === 'admin' ? (
                     <Column body={Actions} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
@@ -226,7 +288,22 @@ export default function TemplateDemo() {
 
 
 
+const DownLoadCatalog = ({ rowData }) => {
 
+    return (
+        <div>
+            {rowData?.catalogName ? (<Button icon="pi pi-download" className=" p-button-danger " size="small" label="pdf" />
+            ) : null}
+        </div>
+    )
+}
+
+const UploadBtn = styled.div`
+  .hide {
+    display: none;
+  }
+  display: inline-block;
+`;
 
 
 
@@ -246,17 +323,17 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
 
 
-const Images = ({id}) => {
+const Images = ({ id }) => {
     console.log(id)
     const router = useRouter();
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
 
-    const createImagesURL =  (files) => {
+    const createImagesURL = (files) => {
         let imagesNames = [];
         for (let file of files) {
-            imagesNames.push({name: file.name})
+            imagesNames.push({ name: file.name })
         }
         return imagesNames;
     }
@@ -271,7 +348,7 @@ const Images = ({id}) => {
 
     const onDelete = async (name, _id) => {
         //THis is not the product id but the image id
-        let { data } = await axios.post('/api/product/apiMarkes', { action: "deleteImage", parentId:id, imageId :_id, name: name })
+        let { data } = await axios.post('/api/product/apiMarkes', { action: "deleteImage", parentId: id, imageId: _id, name: name })
         setRefetch(prev => !prev)
     }
 
@@ -281,7 +358,7 @@ const Images = ({id}) => {
         let imagesURL = createImagesURL(uploadedFiles)
         console.log('images url')
         console.log(imagesURL)
-        let { data } = await axios.post('/api/product/apiMarkes', { action: 'addImages', id: id, imagesURL: imagesURL})
+        let { data } = await axios.post('/api/product/apiMarkes', { action: 'addImages', id: id, imagesURL: imagesURL })
         setRefetch(prev => !prev)
         return data;
     }
@@ -292,16 +369,16 @@ const Images = ({id}) => {
     }, [id, refetch])
     return (
         <div className='p-4'>
-              <ImageGrid
-            data={data}
-            uploadedFiles={uploadedFiles}
-            setUploadedFiles={setUploadedFiles}
-            onDelete={onDelete}
-            onAdd={onAdd}
-            
-        />
+            <ImageGrid
+                data={data}
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                onDelete={onDelete}
+                onAdd={onAdd}
+
+            />
         </div>
-      
+
     )
 }
 
