@@ -27,6 +27,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalogSlice';
 import { uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import XLSX from 'xlsx';
+import Link from 'next/link';
 export default function TemplateDemo() {
     const router = useRouter();
     const [fileLoading, setFileLoading] = useState(false)
@@ -259,7 +260,7 @@ export default function TemplateDemo() {
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" ></Column>
                 <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={DownLoadCatalog}></Column>
+                <Column field="catalogName" header="pdf" style={{ width: '90px' }} body={DownLoadCatalog}></Column>
                 {user?.role === 'admin' ? (
                     <Column body={Actions} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
@@ -288,11 +289,15 @@ export default function TemplateDemo() {
 
 
 
-const DownLoadCatalog = ({ rowData }) => {
-
+const DownLoadCatalog = ({ catalogName }) => {
+    console.log('catalogs')
+    console.log(catalogName)
     return (
-        <div>
-            {rowData?.catalogName ? (<Button icon="pi pi-download" className=" p-button-danger " size="small" label="pdf" />
+        <div className='flex align-items-center justify-content-center'>
+            {catalogName ? (
+             <Link  href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
+             <i className="pi pi-file-pdf mr-2 text-red-500 mr-1 text-xl"></i>
+            </Link>
             ) : null}
         </div>
     )
