@@ -28,6 +28,7 @@ import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalo
 import { uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import XLSX from 'xlsx';
 import Link from 'next/link';
+import { TabPanel, TabView } from 'primereact/tabview';
 export default function TemplateDemo() {
     const router = useRouter();
     const [fileLoading, setFileLoading] = useState(false)
@@ -113,10 +114,18 @@ export default function TemplateDemo() {
 
 
     const rowExpansionTemplate = (data) => {
-
         return (
-            < Images id={data._id} />
-        );
+            <TabView>
+                <TabPanel header="Φωτογραφίες">
+                    < Images id={data._id} />
+                </TabPanel>
+                <TabPanel header="Προμηθευτές">
+                    
+                </TabPanel>
+
+            </TabView>
+        )
+       
     };
 
     const leftToolbarTemplate = () => {
@@ -289,15 +298,18 @@ export default function TemplateDemo() {
 
 
 
-const DownLoadCatalog = ({ catalogName }) => {
-    console.log('catalogs')
-    console.log(catalogName)
+const DownLoadCatalog = ({ catalogName, catalogDate }) => {
+  
     return (
         <div className='flex align-items-center justify-content-center'>
             {catalogName ? (
-             <Link  href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
-             <i className="pi pi-file-pdf mr-2 text-red-500 mr-1 text-xl"></i>
-            </Link>
+                <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
+                    <div className='' >
+                        <i className="pi pi-file-pdf mr-2 text-red-500 mr-1 text-xl" />
+                        <span className=''>{catalogName}</span>
+                    </div>
+                    <span>{catalogDate }</span>
+                </Link>
             ) : null}
         </div>
     )

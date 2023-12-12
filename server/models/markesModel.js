@@ -54,6 +54,11 @@ const markesSchema = new mongoose.Schema({
 
     updatedFrom: String,
     catalogName: String,
+    catalogDate: String,
+    supplier: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplier'
+    },
     
   
 },{

@@ -1,6 +1,7 @@
 import connectMongo from "../../../../server/config";
 import axios from "axios";
 import Markes from "../../../../server/models/markesModel";
+import { format } from "path";
 
 export default async function handler(req, res) {
 
@@ -385,11 +386,14 @@ export default async function handler(req, res) {
         const {catalogName, id} = req.body;
         console.log('catalogName')
         console.log(catalogName)
+		const now = new Date();
+        const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
         try {
             await connectMongo();
             let result = await  Markes.findOneAndUpdate({_id: id}, {
                 $set: {
-                    catalogName: catalogName
+                    catalogName: catalogName,
+					catalogDate: formattedDateTime
                 }   
             })
             return res.status(200).json({ success: true, result: result })
@@ -397,6 +401,18 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false })
         }
     }
+
+	if(action === "findBrandName") {
+		
+		await connectMongo();
+		try {
+			let result = await Markes.find({}, {'softOne.NAME': 1});
+			console.log(result)
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
 }
 
 

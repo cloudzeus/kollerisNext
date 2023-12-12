@@ -693,6 +693,22 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "updateSuppliers") {
+
+        await connectMongo();
+        try {
+           await Supplier.updateMany({}, {
+                $set: {
+                    brands: []
+                },
+
+            })
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(400).json({ success: false });
+        }
+    }
+
 }
 
 

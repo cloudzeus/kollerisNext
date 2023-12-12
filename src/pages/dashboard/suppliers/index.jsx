@@ -22,6 +22,7 @@ import * as XLSX from 'xlsx';
 import { uploadBunny, uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import Link from 'next/link';
 import { setLazyState } from '@/features/productsSlice';
+import { render } from 'react-dom';
 
 
 export default function Page() {
@@ -41,6 +42,7 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [fileLoading, setFileLoading] = useState(false)
     const [sortOffers, setSortOffers] = useState(1)
+    const [expandedRows, setExpandedRows] = useState(null);
     const [searchTerm, setSearchTerm] = useState({
         name: '',
         afm: '',
@@ -94,7 +96,10 @@ export default function Page() {
 
 
    
+    const allowExpansion = (rowData) => {
+        return rowData
 
+    };
 
   
     //Add product
@@ -112,7 +117,11 @@ export default function Page() {
 
 
    
-
+    const rowExpansionTemplate = (data) => {
+        return (
+            <RowExpansionTemplate data={data} />
+        )
+    }
 
 
     const SearchName = () => {
@@ -234,7 +243,6 @@ export default function Page() {
 
             const data = e.target.result;
             let upload = await uploadBunnyFolderName(data, fileName , 'catalogs')
-         
             const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
@@ -321,18 +329,21 @@ export default function Page() {
                 loading={loading}
                 filterDisplay="row"
                 showGridlines
-            >   
-                <Column body={ActionTemplate} style={{width: '50px'}}></Column>
-                
-                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} header="Order Status" style={{minWidth: '70px'}}></Column>
+                rowExpansionTemplate={rowExpansionTemplate}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+            >       
+                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
+                <Column body={ActionTemplate} style={{ width: '50px' }}></Column>
+                <Column body={ShowOffers} filter showFilterMenu={false} filterElement={FilterOffers} header="Order Status" style={{ minWidth: '70px' }}></Column>
                 <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName} body={NameTemplate} header="Ονομα"></Column>
                 <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
                 <Column field="ADDRESS" filter showFilterMenu={false} filterElement={SearchΑddress} header="Διεύθυνση" ></Column>
                 <Column field="EMAIL" filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
-                <Column field="PHONE01" filter showFilterMenu={false} filterElement={ SearchPhone01} header="Τηλέφωνο" ></Column>
+                <Column field="PHONE01" filter showFilterMenu={false} filterElement={SearchPhone01} header="Τηλέφωνο" ></Column>
                 <Column field="PHONE02" filter showFilterMenu={false} filterElement={SearchPhone02} header="Τηλέφωνο 2" ></Column>
                 <Column field="ZIP" header="Ταχ.Κώδικας" ></Column>
-                <Column field="updatedFrom" header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column field="updatedFrom" header="updatedFrom" body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
 
             </DataTable>
             <EditDialog
@@ -355,17 +366,41 @@ export default function Page() {
 }
 
 
-const NameTemplate = ({NAME, catalogName}) => {
+const RowExpansionTemplate = ({ data }) => {
+    const  renderHeader  = () => {
+        return (
+            <Button label="Προσθήκη Μάρκας" icon="pi pi-plus" severity="secondary" />
+        )
+    }
+
+    const header = renderHeader();
+
+    return (
+       <div className='p-3 w-6'>
+<Button label="Προσθήκη Μάρκας" icon="pi pi-plus" severity="secondary"  className='mb-2'/>
+         <DataTable
+        
+        size="small"
+        value={data.brands}
+        paginator
+        rows={8}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        showGridlines
+        paginatorRight={true}
+        
+    >
+        <Column field="brandName" header="Ονομα" ></Column>
+    </DataTable>
+
+       </div>
+   
+    )
+}
+
+const NameTemplate = ({NAME}) => {
     return (
         <div className='flex align-items-center'>
-            {catalogName ? (
-                <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
-                <i className="pi pi-file-pdf mr-2 text-red-500 mr-1"></i>
-    
-               </Link>
-            ) : null}
             <span>{NAME}</span>
-           
         </div>
     
     )
