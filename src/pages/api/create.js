@@ -693,8 +693,7 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === "updateSuppliers") {
-
+    if(action === "updateSup") {
         await connectMongo();
         try {
            await Supplier.updateMany({}, {

@@ -86,4 +86,38 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === 'findSuppliersBrands') {
+	
+		const {supplierID} = req.body;
+
+		try {
+			await connectMongo();
+			let result = await Supplier.findOne({
+                _id: supplierID
+            }, {brands: 1}).populate('brands');
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+
+    if(action === "deleteBrandFromSupplier") {
+        const {supplierID, brandID} = req.body;
+        console.log('supplierID')
+        console.log(supplierID)
+        console.log('brandID')
+        console.log(brandID)
+        try {
+            await connectMongo();
+            let result = await Supplier.findOneAndUpdate({_id: supplierID}, {
+                $pull: {
+                    brands: brandID
+                }
+            })
+            return res.status(200).json({ success: true, result: result })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
 }

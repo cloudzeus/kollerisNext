@@ -99,16 +99,13 @@ export default function TemplateDemo() {
     const onGlobalFilterChange = (event) => {
         const value = event.target.value;
         let _filters = { ...filters };
-
         _filters['global'].value = value;
-
         setFilters(_filters);
     };
 
 
     const allowExpansion = (rowData) => {
         return rowData
-
     };
 
 

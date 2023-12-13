@@ -1,24 +1,24 @@
 import { model, models } from 'mongoose';
 import mongoose from 'mongoose';
-
+import Supplier from './suppliersSchema';
 
 
 
 const markesSchema = new mongoose.Schema({
   
     description:String,
-    minItemsOrder:{
-        type:Number,
-        default:0
-    },
-    minValueOrder:{
-        type:Number,
-        default:0    
-    },
-    minYearPurchases:{
-        type:Number,
-        default:0
-    },
+    // minItemsOrder:{
+    //     type:Number,
+    //     default:0
+    // },
+    // minValueOrder:{
+    //     type:Number,
+    //     default:0    
+    // },
+    // minYearPurchases:{
+    //     type:Number,
+    //     default:0
+    // },
     logo:{
         type:String,
     },
