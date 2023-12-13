@@ -265,6 +265,7 @@ export default function TemplateDemo() {
                 <Column body={ActionTemplate} style={{ width: '30px' }} />
                 <Column field="logo" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
                 <Column field="softOne.NAME" header="Ονομα" ></Column>
+                <Column field="supplier.NAME" header="Προμηθευτής" ></Column>
                 <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
                 <Column field="catalogName" header="pdf" style={{ width: '90px' }} body={DownLoadCatalog}></Column>
                 {user?.role === 'admin' ? (
@@ -301,11 +302,11 @@ const DownLoadCatalog = ({ catalogName, catalogDate }) => {
         <div className='flex align-items-center justify-content-center'>
             {catalogName ? (
                 <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
-                    <div className='' >
+                    <div className='flex' >
                         <i className="pi pi-file-pdf mr-2 text-red-500 mr-1 text-xl" />
                         <span className=''>{catalogName}</span>
                     </div>
-                    <span>{catalogDate }</span>
+                    <span>{catalogDate}</span>
                 </Link>
             ) : null}
         </div>

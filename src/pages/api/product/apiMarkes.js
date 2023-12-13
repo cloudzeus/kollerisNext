@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 		try {
 			console.log('fin all markes')
 			await connectMongo();
-			const markes = await Markes.find({})
+			const markes = await Markes.find({}).populate('supplier');
 			if (markes) {
 				// console.log(markes)
 				const arrayImages = []
@@ -451,7 +451,12 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, result: null });
 		}
 
+
+		
+
 	}
+
+
 }
 
 
