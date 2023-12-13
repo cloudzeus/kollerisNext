@@ -1,9 +1,5 @@
 import Supplier from "../../../server/models/suppliersSchema";
 import connectMongo from "../../../server/config";
-import SoftoneProduct, { Product } from "../../../server/models/newProductModel";
-import Markes from "../../../server/models/markesModel";
-import nodemailer from 'nodemailer';
-import { transporter } from "@/utils/nodemailerConfig";
 import SupplierOrders from "../../../server/models/supplierOrders";
 import PendingOrders from "../../../server/models/pendingOrders";
 import CompletedOrders from "../../../server/models/completedOrdes";

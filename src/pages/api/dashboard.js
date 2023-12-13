@@ -1,7 +1,6 @@
-import { connect } from "mongoose";
 import connectMongo from "../../../server/config";
 import SoftoneProduct from "../../../server/models/newProductModel";
-import UploadedProduct from "../../../server/models/uploadedProductsModel";
+
 
 
 export default async function handler(req, res) {

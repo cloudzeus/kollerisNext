@@ -5,126 +5,85 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import * as xlsx from 'xlsx';
-import CreatedAt from '@/components/grid/CreatedAt';
 import Link from 'next/link';
 import StepHeader from '@/components/StepHeader';
+import CreatedAt from '@/components/grid/CreatedAt';
 
-
-const Saved = () => {
-    const [catalogs, setCatalogs] = useState([])
-    const [submitted, setSubmitted] = useState(false)
-    const [loading, setLoading] = useState(false)
+export const Saved = () => {
+    const [state, setState] = useState({
+        catalogs: [],
+        loading: false,
+        submitted: false,
+        totalRecords: 0,
+        rows: 10,
+        first: 0,
+    })
     const handleFetch = async () => {
-        setLoading(true)
-        let { data } = await axios.post('/api/saveCatalog', { action: 'findAll' })
-        setCatalogs(data.result)
-        setLoading(false)
+        setState(prev => ({ ...prev, loading: true }))
+        let { data } = await axios.post('/api/saveCatalog', { action: 'findAll', limit: state.rows, skip: state.first})
+        console.log(data.result)
+        setState(prev => ({ 
+            ...prev, 
+            catalogs: data.result, 
+            totalRecords: data.totalRecords, 
+            loading: false,
+        }))
     }
 
     useEffect(() => {
         handleFetch()
-    }, [submitted])
+    }, [state.submitted, state.rows, state.first])
 
+    const onPage = (e) => {
+        setState(prev => ({ ...prev, rows: e.rows, first: e.first }))
+    }
 
-
-    const Actions  = ({catalogName, TRDR, _id}) => {
+    const Actions  = ({catalogName, _id, name}) => {
         const onDelete = async () => {
-            let {data} = await axios.post('/api/saveCatalog', {action: 'delete',catalogName: catalogName,  TRDR: TRDR, id: _id})
-            setSubmitted(true)
+            let {data} = await axios.post('/api/saveCatalog', {action: 'deleteCatalog',catalogName: catalogName, id: _id})
+            setState(prev => ({ ...prev, submitted: !prev.submitted }))
             
         }
         return (
             <div>
-                <Link href={`https://kolleris.b-cdn.net/catalogs/${catalogName}`}>
+                <Link href={`https://kolleris.b-cdn.net/catalogs/${name}`}>
                 <i className="pi pi-download mr-2  mr-3"></i>
                </Link>
                 <i className="pi pi-trash mr-2 text-red-500 mr-1 cursor-pointer" onClick={onDelete}></i>
             </div>
         )
+    
+    }
+    
+    const Created = ({createdAt}) => {
+        return (
+            <CreatedAt createdAt={createdAt} />
+        )
     }
 
     return (
-        <AdminLayout>
             <div>
                 <StepHeader text="Κατάλογοι" />
                 <DataTable
-                    loading={loading}
+                    lazy
+                    onPage={onPage}
+                    first={state.first}
+                    rows={state.rows}
+                    loading={state.loading}
                     paginator
-                    rows={20} rowsPerPageOptions={[20, 50, 100, 200]}
-                    value={catalogs}
+                    rowsPerPageOptions={[20, 50, 100, 200]}
+                    value={state.catalogs}
                     tableStyle={{ minWidth: '50rem' }}>
-                        <Column header="Όνομα Προμηθευτή" field="NAME" />
-                        <Column header="Κατάλογος" field="catalogName" />
+                        {/* <Column header="Μάρκα" field="brand" /> */}
+                        <Column header="Κατάλογος" field="name" />
+                        <Column header="Μάρκα" field="brand.softOne.NAME" />
+                        <Column header="Ημερομηνία" field="createdAt" body={Created} />
                         <Column body={Actions} style={{ textAlign: 'end' }} />
                 </DataTable>
             </div>
-        </AdminLayout>
     )
 }
 
 
-const ActionTemplate = ({ url, setSubmitted}) => {
-    const [savedfile, setSavedFile] = useState('')
 
-
-    const readCSV = async () => {
-        try {
-            const response = await fetch(`/uploads/${url}`);
-            if (!response.ok) throw new Error("Failed to fetch the file.");
-
-            const blob = await response.blob();
-
-            const reader = new FileReader();
-
-            reader.onload = function (event) {
-                const binary = event.target.result;
-                const workbook = xlsx.read(binary, { type: 'binary' });
-                const sheetNameList = workbook.SheetNames;
-                const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
-                console.log(data)
-            };
-
-            reader.readAsBinaryString(blob);
-        } catch (error) {
-            console.error("Error reading the file:", error);
-        }
-    };
-
-    const download = async () => {
-        try {
-            // Fetch the file from the public directory
-            const response = await fetch(`/uploads/${url}`);
-            if (!response.ok) throw new Error("Failed to fetch the file.");
-            const reader = new FileReader()
-            const blob = await response.blob();
-           
-            reader.readAsBinaryString(blob);
-      ;
-            reader.onload = function (event) {
-                const binary = event.target.result;
-                const workbook = xlsx.read(binary, { type: 'binary' });
-          
-                let saveFile = xlsx.writeFile( workbook, 'test2.xlsx')
-                setSavedFile(saveFile)
-            };
-
-            reader.readAsBinaryString(blob);
-        } catch (error) {
-            console.error("Error reading the file:", error);
-        }
-    };
-
-    const onDelete = async () => {
-        console.log(url)
-        let {data} = await axios.post('/api/saveCatalog', {url: url, action: 'delete'})
-        setSubmitted(true)
-        
-    }
-    return (
-        <div>
-            <Button icon="pi pi-download" className="p-button-warning" onClick={download} />
-            <Button icon="pi  pi-trash" text className="p-button-danger" onClick={onDelete}  />
-        </div>
-    )
-}
 export default Saved;

@@ -1,6 +1,5 @@
 import Supplier from "../../../../server/models/suppliersSchema";
 import connectMongo from "../../../../server/config";
-import { connect } from "mongoose";
 export default async function handler(req, res) {
 
     const action = req.body.action;

@@ -1,5 +1,4 @@
 import axios from "axios";
-import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";

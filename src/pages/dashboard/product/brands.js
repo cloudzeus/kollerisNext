@@ -17,9 +17,7 @@ import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
 import { useSession } from 'next-auth/react';
 import StepHeader from '@/components/StepHeader';
-import GridExpansionTemplate from '@/components/markes/GridExpansionTemplate';
-import MarkesActions from '@/components/markes/MarkesActions';
-import { setSelectedMarkes } from '@/features/supplierOrderSlice';
+import CreatedAt from '@/components/grid/CreatedAt';
 import { useRouter } from 'next/router';
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
 import styled from 'styled-components';
@@ -29,6 +27,8 @@ import { uploadBunnyFolderName } from '@/utils/bunny_cdn';
 import XLSX from 'xlsx';
 import Link from 'next/link';
 import { TabPanel, TabView } from 'primereact/tabview';
+import Saved from '../catalogs/saved';
+
 export default function TemplateDemo() {
     const router = useRouter();
     const [fileLoading, setFileLoading] = useState(false)
@@ -116,13 +116,13 @@ export default function TemplateDemo() {
                 <TabPanel header="Φωτογραφίες">
                     < Images id={data._id} />
                 </TabPanel>
-                <TabPanel header="Προμηθευτές">
-                    
+                <TabPanel header="Κατάλογοι">
+                    <BrandCatalogs id={data._id} />
                 </TabPanel>
 
             </TabView>
         )
-       
+
     };
 
     const leftToolbarTemplate = () => {
@@ -205,9 +205,8 @@ export default function TemplateDemo() {
     const handleFileUpload = async (e, rowData) => {
         setFileLoading(true)
         let fileName = e.target.files[0].name
-        let save = await axios.post('/api/product/apiMarkes', { action: 'saveCatalog', catalogName: fileName, id: rowData._id })
+        let save = await axios.post('/api/saveCatalog', { action: 'create', catalogName: fileName, id: rowData._id })
         console.log(save)
-        // dispatch(setSelectedSupplier(rowData))
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = async (e) => {
@@ -228,8 +227,6 @@ export default function TemplateDemo() {
                 dispatch(setHeaders(headers))
                 setFileLoading(false)
                 router.push('/dashboard/catalogs/upload-catalog')
-
-
             }
         };
     };
@@ -267,7 +264,6 @@ export default function TemplateDemo() {
                 <Column field="softOne.NAME" header="Ονομα" ></Column>
                 <Column field="supplier.NAME" header="Προμηθευτής" ></Column>
                 <Column field="updatedFrom" header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
-                <Column field="catalogName" header="pdf" style={{ width: '90px' }} body={DownLoadCatalog}></Column>
                 {user?.role === 'admin' ? (
                     <Column body={Actions} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
@@ -288,7 +284,9 @@ export default function TemplateDemo() {
                 hideDialog={hideDialog}
                 setSubmitted={setSubmitted}
             />
-
+            <div className='mt-4'>
+                <Saved />
+            </div>
         </AdminLayout >
     );
 }
@@ -297,7 +295,6 @@ export default function TemplateDemo() {
 
 
 const DownLoadCatalog = ({ catalogName, catalogDate }) => {
-  
     return (
         <div className='flex align-items-center justify-content-center'>
             {catalogName ? (
@@ -310,6 +307,74 @@ const DownLoadCatalog = ({ catalogName, catalogDate }) => {
                 </Link>
             ) : null}
         </div>
+    )
+}
+
+
+const BrandCatalogs = ({id}) => {
+    const [state, setState] = useState({
+        data: [],
+        loading: false,
+        rows: 10,
+        first: 0,
+        refetch: false,
+    })
+
+    const onPage = (e) => {
+        setState((prev) => ({ ...prev, first: e.first, rows: e.rows }))
+    }
+
+    const handleFetch = async () => {
+        setState(prev => ({ ...prev, loading: true }))
+        const { data } = await axios.post('/api/saveCatalog', {
+            action: 'getBrandCatalogs',
+            id: id,
+            skip: state.first,
+            limit: state.rows
+        })
+        console.log(data)
+        setState(prev => ({...prev, data: data.result.catalogs, totalRecords: data.totalRecords, loading: false}))
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [state.refetch])
+
+    const CatalogDate = ({createdAt}) => {
+        return (
+            <CreatedAt createdAt={createdAt} />
+            
+        )
+    }   
+
+    const handleDelete = async (_id) => {
+        let {data} = await axios.post('/api/saveCatalog', {action: 'deleteCatalog', id: _id})
+        setState(prev => ({...prev, refetch: !prev.refetch}))
+    }
+    const Delete = ({_id}) => {
+        return (
+            <i className="pi pi-trash mr-2 text-red-500 mr-1 cursor-pointer" onClick={() => handleDelete(_id)} />
+        )
+    }
+    return (
+        <DataTable
+            size="small"
+            value={state.data}
+            paginator
+            lazy
+            first={state.first}
+            rows={state.rows}
+            onPage={onPage}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            showGridlines
+            dataKey="_id"
+            paginatorRight={true}
+            loading={state.loading}
+        >
+            <Column field="name" header="Όνομα" ></Column>
+            <Column field="createAt" header="Όνομα" body={CatalogDate} ></Column>
+            <Column header="" body={Delete} style={{width: '30px'}} ></Column>
+        </DataTable>
     )
 }
 

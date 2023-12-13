@@ -2,7 +2,6 @@ import connectMongo from "../../../../server/config";
 import axios from "axios";
 import Markes from "../../../../server/models/markesModel";
 import { format } from "path";
-import { ConnectedOverlayScrollHandler } from "primereact/utils";
 import Supplier from "../../../../server/models/suppliersSchema";
 
 export default async function handler(req, res) {
@@ -398,6 +397,9 @@ export default async function handler(req, res) {
 					catalogDate: formattedDateTime
                 }   
             })
+			let catalogUpdate = await Catalogs.create({
+				
+			})
             return res.status(200).json({ success: true, result: result })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -454,6 +456,42 @@ export default async function handler(req, res) {
 
 		
 
+	}
+
+	if(action === 'findCatalogs') {
+		await connectMongo();
+		const {limit, skip} = req.body;
+		try {
+			let result = await Markes.find({
+				catalogName: {$ne: null}
+			}, 
+			{'catalogName': 1, 'catalogDate': 1, softOne:1})
+			.skip(skip).limit(limit);
+			console.log('result')
+			console.log(result)
+			let totalRecords = await Markes.countDocuments();
+			return res.status(200).json({ success: true, result: result, totalRecords: totalRecords });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+
+	if(action === "deleteCatalog") {
+		await connectMongo();
+		const {id} = req.body;
+		try {
+			let result = await Markes.findOneAndUpdate(
+				{_id: id},
+				{$set: {
+					catalogName: null,
+					catalogDate: null
+				}}
+			)
+			
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
 	}
 
 

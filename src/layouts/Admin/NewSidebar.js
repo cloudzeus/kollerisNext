@@ -66,7 +66,7 @@ const SidebarList = () => {
                 <div >
 
                     <SidebarSubItem title={'Λίστα Προμηθευτών'} goTo={'/dashboard/suppliers'} />
-                    <SidebarSubItem title={'Όλοι οι κατάλογοι'} goTo={'/dashboard/catalogs/saved'} />
+                    {/* <SidebarSubItem title={'Όλοι οι κατάλογοι'} goTo={'/dashboard/catalogs/saved'} /> */}
 
 
                 </div>

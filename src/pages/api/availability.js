@@ -1,8 +1,5 @@
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../server/config";
-import { Product } from "../../../server/models/newProductModel";
-import format from "date-fns/format";
-import SoftoneProduct from "../../../server/models/newProductModel";
 
 
 export default async function handler(req, res) {

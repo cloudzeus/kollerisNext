@@ -5,12 +5,7 @@ import format from "date-fns/format";
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
-import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../server/models/categoriesModel";
-
-
 import { Product } from "../../../../server/models/newProductModel";
-import { ProductAttributes } from "../../../../server/models/attributesModel";
-import Offer from "@/components/grid/Product/Offer";
 
 
 
