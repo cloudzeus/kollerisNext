@@ -218,7 +218,7 @@ export default async function handler(req, res) {
     
             if (stateFilters.codeSearch !== '') {
                 let regexSearchTerm = new RegExp(stateFilters.codeSearch, 'i');
-                filterConditions.CODE = regexSearchTerm;
+                filterConditions.CODE1 = regexSearchTerm;
             }
     
             if (marka) {
@@ -237,8 +237,7 @@ export default async function handler(req, res) {
               
             
             
-            console.log('filterConditions')
-            console.log(filterConditions)
+          
     
             if (Object.keys(filterConditions).length === 0) {
                 // No specific filters, fetch all products
