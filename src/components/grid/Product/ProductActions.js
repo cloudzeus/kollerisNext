@@ -13,15 +13,18 @@ import Image from 'next/image'
 
 const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 	const { setActiveIndex, setVisible } = useContext(ProductQuantityContext)
+	const dispatch = useDispatch()
+	const router = useRouter();
+
+    const { selectedProducts } = useSelector(store => store.products)
+
 	const [loading, setLoading] = useState({
 		active: false,
 		skroutz: false,
 	})
 	const op = useRef(null)
 	const toast = useRef(null)
-	const dispatch = useDispatch()
-	const router = useRouter();
-
+	
 	const showSuccess = (message) => {
 		toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
 	}
@@ -58,6 +61,9 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 		router.push('/dashboard/add-to-softone/add')
 	}
 
+	const handleAddToBucket = () => {
+		dispatch(setSelectedProducts([...selectedProducts, rowData]))
+	}
 
 
 	const updateActiveMtrl  = async () => {
@@ -179,6 +185,11 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 					onClick={handleAddToSoftone}
 					text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
 					Προσθήκη στο Softone
+				</Button>
+				<Button
+					onClick={handleAddToBucket}
+					text className=" w-full  hover:bg-bluegray-200 border-bluegray-100 text-bluegray-800 mt-1 mb-1">
+					Προσθήκη στον Κουβά
 				</Button>
 			</OverlayPanel>
 		</div>
