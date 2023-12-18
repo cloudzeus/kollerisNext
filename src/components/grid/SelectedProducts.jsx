@@ -5,8 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DataTable } from 'primereact/datatable';
 import { setMtrLines, deleteSelectedProduct } from '@/features/productsSlice';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-
-
+import { InputNumber } from 'primereact/inputnumber';
 
 const SelectedProducts = () => {
     const { selectedProducts, mtrLines } = useSelector(state => state.products)
@@ -40,41 +39,32 @@ const SelectedProducts = () => {
 const CalculateTemplate = (item) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
-
+    const {mtrLines} = useSelector(state => state.products)
 
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: item.MTRL, QTY1: quantity }))
     }, [quantity])
 
 
-    const increaseQuantity = () => {
-        setQuantity(prev => prev + 1)
-    }
-    const decreaseQuantity = () => {
-        if (quantity === 1) return
-        setQuantity(prev => prev - 1)
-
-    }
+   useEffect(() => {
+        console.log(mtrLines)
+   }, [mtrLines])
 
     return (
-        <div className='flex'>
-            <div className='font-xs flex align-items-center border-1 p-2 border-300 border-round'>
-                <div
-                    onClick={decreaseQuantity}
-                    className='mr-2 border-1 border-300  flex align-items-center justify-content-center border-round pointer-cursor'
-                    style={{ width: '25px', height: '25px' }}>
-                    <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
-                </div>
-                <div className='w-2rem flex align-items-center justify-content-center'>
-                    <p className='text-lg'>{quantity}</p>
-                </div>
-                <div
-                    onClick={increaseQuantity}
-                    className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
-                    <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
-                </div>
-            </div>
-        </div>
+       
+            <InputNumber 
+                        value={quantity} 
+                        size='small'
+                        min= {1}
+                        onValueChange={(e) => setQuantity(e.value)} 
+                        showButtons 
+                        buttonLayout="horizontal" 
+                        decrementButtonClassName="p-button-secondary" 
+                        incrementButtonClassName="p-button-secondary" 
+                        incrementButtonIcon="pi pi-plus" 
+                        decrementButtonIcon="pi pi-minus" 
+                        inputStyle={{ width: '70px', textAlign: 'center' }}
+                        />
     )
 }
 

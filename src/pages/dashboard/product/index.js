@@ -526,13 +526,7 @@ function Product() {
     }
 
 
-    const isSelectable = (data) => data.availability.DIATHESIMA === '0';
-    const rowClassName = (data) => {
-        console.log('data row')
-        console.log(data)
-        let className  = isSelectable(data)? 'diathesima-warning' : ''
-        return className;
-    }
+    
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -557,7 +551,6 @@ function Product() {
 
             <DataTable
                 header={header}
-                rowClassName={rowClassName}
                 first={lazyState2.first}
                 lazy
                 totalRecords={totalRecords}

@@ -14,6 +14,7 @@ import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMtrLines } from '@/features/productsSlice';
 import PickingNew from './PickingNew';
+import { InputNumber } from 'primereact/inputnumber';
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
     return (
@@ -202,31 +203,27 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL, _id }) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
     const {selectedProducts, mtrLines} = useSelector(state => state.products)
+    
+
    
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: MTRL, QTY1: quantity }))
+       
     }, [quantity])
 
 
-    const increaseQuantity = () => {
-        setQuantity(prev => prev + 1)
-    }
-    const decreaseQuantity = () => {
-        if (quantity === 1) return
-        setQuantity(prev => prev - 1)
-
-    }
+   
 
     useEffect(() => {
         setTotal(parseInt(PRICER) * quantity)
     }, [quantity, PRICER])
     return (
-        <ProductBasket>
+        <div className='flex align-items-center justify-content-between p-2'>
             <div>
                 <div>
                     <p className='text-md text-900 font-semibold'>{name}</p>
                 </div>
-                <div className='details'>
+                <div className='flex align-items-center'>
                     <i className="pi pi-tag" style={{ fontSize: '12px', marginRight: '3px', marginTop: '2px' }}></i>
                     <p className='text-xs'>{categoryName}</p>
                 </div>
@@ -234,22 +231,24 @@ const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL, _id }) => {
                 <span className='text-xs ml-2'>{total},00$</span>
             </div>
             <div className='flex'>
-                <div className='font-xs flex align-items-center border-1 p-2 border-400 border-round'>
-                    <div
-                        onClick={decreaseQuantity}
-                        className='mr-2 border-1  flex align-items-center justify-content-center border-round border-400 pointer-cursor'
-                        style={{ width: '25px', height: '25px' }}>
-                        <i className="pi pi-minus" style={{ fontSize: '10px' }}></i>
-                    </div>
-                    <p className='text-lg'>{quantity}</p>
-                    <div
-                        onClick={increaseQuantity}
-                        className='ml-2 border-1  flex align-items-center justify-content-center border-round border-400' style={{ width: '25px', height: '25px' }}>
-                        <i className="pi pi-plus" style={{ fontSize: '10px' }}></i>
-                    </div>
+                <div className='w-10rem'>
+                    
+                    <InputNumber 
+                        value={quantity} 
+                        size='small'
+                        min= {1}
+                        onValueChange={(e) => setQuantity(e.value)} 
+                        showButtons 
+                        buttonLayout="horizontal" 
+                        decrementButtonClassName="p-button-secondary" 
+                        incrementButtonClassName="p-button-secondary" 
+                        incrementButtonIcon="pi pi-plus" 
+                        decrementButtonIcon="pi pi-minus" 
+                        inputStyle={{ width: '70px', textAlign: 'center' }}
+                        />
                 </div>
             </div>
-        </ProductBasket>
+        </div>
     )
 }
 

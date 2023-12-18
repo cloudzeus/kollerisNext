@@ -70,7 +70,6 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 		setLoading(prev => ({...prev, active: true}))
 		const ISACTIVE = rowData.ISACTIVE
 		const MTRL = rowData.MTRL
-		console.log(ISACTIVE)
 		let {data} = await axios.post('/api/product/apiProduct', { action: "updateActiveMtrl", id: rowData._id, MTRL: MTRL, ISACTIVE: ISACTIVE})
 		if(data.success) {
 			showSuccess(data.message)
@@ -83,11 +82,9 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 	}
 
 	const updateSkroutz = async () => {
-		console.log(rowData)
 		let isSkroutz = rowData.isSkroutz;
 		const MTRL = rowData.MTRL
 		const {data} = await axios.post('/api/product/apiProduct', { action: "updateSkroutz", id: rowData._id, MTRL: MTRL, isSkroutz: isSkroutz})
-		console.log(data)
 		if(data.success) {
 			showSuccess(data.message)
 		} else {
