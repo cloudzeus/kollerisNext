@@ -27,7 +27,8 @@ import StepHeader from '@/components/StepHeader';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import XLSXDownloadButton from '@/components/exportCSV/Product';
 import MassiveImageUpload from '@/components/MassiveImageUpload';
-
+import format from 'date-fns/format';
+import { el } from 'date-fns/locale';
 import { useSelector } from 'react-redux';
 import {
     setCategory,
@@ -738,10 +739,17 @@ const ImagesTemplate = ({ _id, images }) => {
 }
 
 
-const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability }) => {
+const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability, updatedAt }) => {
+
+    const yourDate = new Date(updatedAt);
+    const formattedDate = format(yourDate, 'dd-MM-yyyy:HH:mm', { locale: el });
     return (
         <div className='flex flex-column'>
-            <span className='font-semibold'>{NAME}</span>
+            <span className='font-semibold '>{NAME} </span>
+            <span className='mb-2 text-xs' >
+               Ημ. ενημέρωσης: 
+                <span className='font-semibold text-primary'>{ ` ${formattedDate}`}</span>
+            </span>
             <div>
                 <div className='flex align-items-center'>
                     <i className="pi pi-tag mr-1 mt-1 text-600" style={{ fontSize: '10px' }}></i>
