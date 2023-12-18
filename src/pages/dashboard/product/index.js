@@ -666,7 +666,7 @@ function Product() {
                         showFilterMenu={false}
                         filterElement={OnFilterMarka}>
                     </Column>)}
-                {visibleColumns.some(column => column.id === 5) && (<Column field="CODE" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
+                {visibleColumns.some(column => column.id === 5) && (<Column field="CODE1" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
                 {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
                 <Column  style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
                 <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column>
