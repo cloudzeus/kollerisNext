@@ -79,7 +79,8 @@ export default async function handler(req, res) {
                 clients = await Clients.find({}).skip(skip).limit(limit);
             }
             if(searchTerm?.name) {
-                let regexSearchTerm = new RegExp(searchTerm.name, 'i');
+                let name  = searchTerm.name.replace(/[^a-zA-Z0-9_]/g, '')
+                let regexSearchTerm = new RegExp(name , 'i');
                 totalRecords = await Clients.countDocuments({ NAME: regexSearchTerm });
                 clients = await Clients.find({ NAME: regexSearchTerm }).skip(skip).limit(limit);
             }

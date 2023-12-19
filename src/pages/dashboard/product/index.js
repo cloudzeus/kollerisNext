@@ -82,9 +82,6 @@ const initialColumns = [
         header: 'Όνομα',
         id: 14
     },
-
-
-
 ]
 
 const columns = [
@@ -113,6 +110,10 @@ const columns = [
     {
         header: 'Ιmpa Code',
         id: 6,
+    },
+    {
+        header: 'Τιμη Scroutz',
+        id: 7,
     },
     {
         header: 'Τιμή Κόστους',
@@ -291,6 +292,14 @@ function Product() {
                 {
                     header: 'Minimized',
                     id: 15,
+                },
+                {
+                    header: 'Κόστος',
+                    id: 13,
+                },
+                {
+                    header: 'Διαθέσιμα',
+                    id: 12,
                 }
             ])
         }
@@ -663,7 +672,8 @@ function Product() {
                 {visibleColumns.some(column => column.id === 5) && (<Column field="CODE1" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
                 {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
                 <Column  style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
-                <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column>
+                {visibleColumns.some(column => column.id === 7) && <Column field="PRICER01" header="Τιμή Scroutz"></Column>}
+                {/* <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column> */}
             </DataTable>
             <EditDialog
                 style={dialogStyle}
