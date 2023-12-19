@@ -57,6 +57,7 @@ const Continue = ({value}) => {
 
         dispatch(setHolder({
             id: generateRandomId(),
+            isImpa: false,
             name: value,
             products: mtrLines
         }))
@@ -77,7 +78,6 @@ const Continue = ({value}) => {
             </div>
             <div className='mt-4 mb-5'>
                 <SoftoneStatusButton btnText="Ολοκλήρωση Holder"  onClick={onHolderCompletions}/>
-               
             </div>
         </>
     )

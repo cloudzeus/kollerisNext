@@ -1,4 +1,4 @@
-import { combineReducers, createSlice } from "@reduxjs/toolkit";
+import { combineReducers, createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
 	selectedImpa: null,
@@ -40,7 +40,29 @@ const impaofferSlice = createSlice({
 		setHolder: (state, {payload}) => {
 			state.holder.push(payload);
 		},
-	
+		addMoreToHolder: (state, {payload}) => {
+			console.log('payload')
+			console.log(payload)
+			console.log('state.holder')
+			console.log(current(state.holder))
+			console.log('payload')
+			console.log(payload)
+			let holder = state.holder;
+			holder.map((item) => {
+				if(item.id === payload.id) {
+					console.log('item')
+					console.log(item)
+					return {
+						...item,
+						products: [...item.products, payload.products]
+					}
+				}
+				return item;
+			})
+			console.log('holder')
+			console.log(holder)
+			// state.holder.push(payload);
+		},
 		setOfferEmail: (state, {payload}) => {
 			state.offerEmail = payload;
 		},
@@ -70,7 +92,8 @@ export const {
 	setOfferEmail,
 	setSingleClientName,
 	setPlainHolderName,
-	removeHolder
+	removeHolder,
+	addMoreToHolder,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

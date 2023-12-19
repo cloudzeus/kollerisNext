@@ -50,6 +50,7 @@
     "react-toastify": "^9.1.2",
     "react-world-flags": "^1.5.1",
     "redux": "^4.2.1",
+    "redux-persist": "^6.0.0",
     "styled-components": "^5.3.9",
     "transliteration": "^2.3.5",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz",

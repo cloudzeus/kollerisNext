@@ -39,6 +39,7 @@ const ImpaHolder = () => {
         let fullName = selectedImpa?.code + ': ' + subString
         dispatch(setHolder({
             id: generateRandomId(),
+            isImpa: true,
             name: fullName,
             products: mtrLines
         }))

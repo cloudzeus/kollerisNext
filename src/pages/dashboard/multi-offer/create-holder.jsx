@@ -5,7 +5,7 @@ import StepHeader from '@/components/StepHeader'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
-import { removeHolder } from '@/features/impaofferSlice'
+import { addMoreToHolder, removeHolder, setHolder } from '@/features/impaofferSlice'
 import { useRouter } from 'next/router'
 import { setSelectedProducts } from '@/features/productsSlice'
 import { useSession } from 'next-auth/react'
@@ -25,30 +25,34 @@ const ΟffersPage = () => {
     const router = useRouter()
     const { data: session, update } = useSession();
     let user = session?.user?.user;
-    
+
     useEffect(() => {
-        if(!selectedClient) {
+        if (!selectedClient) {
             router.push('/dashboard/multi-offer/choose-client')
         }
-    }, [] )
+    }, [])
 
     const finalizeOffer = async () => {
-        let { data } = await axios.post('/api/createOffer', { 
-            action: 'addOfferDatabase', 
-            holders: holder, 
-            client: selectedClient, 
-            email: offerEmail, 
+        let { data } = await axios.post('/api/createOffer', {
+            action: 'addOfferDatabase',
+            holders: holder,
+            client: selectedClient,
+            email: offerEmail,
             createdFrom: user?.lastName,
-            num: generateOfferNum(6) 
+            num: generateOfferNum(6)
         })
         router.push('/dashboard/multi-offer')
     }
-    
+
+    useEffect(() => {
+        console.log('holder')
+        console.log(holder)
+    }, [holder])
 
 
     const createImpaHolder = () => {
         dispatch(setSelectedProducts([]))
-       router.push('/dashboard/multi-offer/create-impa-holder')
+        router.push('/dashboard/multi-offer/create-impa-holder')
     }
 
     const createHolder = () => {
@@ -65,22 +69,22 @@ const ΟffersPage = () => {
                 <StepHeader text={"Δημιουργία Holders"} />
                 <div className='bg-white mt-3 border-round p-4 '>
                     <div>
-                    <Button icon="pi pi-plus" className='w-15rem' label="Νέο Holder με Impa" severity='warning' onClick={createImpaHolder} />
+                        <Button icon="pi pi-plus" className='w-15rem' label="Νέο Holder με Impa" severity='warning' onClick={createImpaHolder} />
                     </div>
                     <div className='mt-2'>
-                    <Button icon="pi pi-plus" className='w-15rem' label="Nέο Holder Χωρίς Impa" severity='secondary' onClick={createHolder} />
+                        <Button icon="pi pi-plus" className='w-15rem' label="Nέο Holder Χωρίς Impa" severity='secondary' onClick={createHolder} />
                     </div>
                 </div>
                 <div className='mt-2'>
                     {holder.length > 0 ? (< MapHolders />) : null}
                 </div>
                 {holder.length > 0 ? (
-                    <Button 
-                    onClick={finalizeOffer} 
-                    disabled={holder.length === 0}
-                    raised  className='mt-2 mb-4' label="Ολοκλήρωση" />
+                    <Button
+                        onClick={finalizeOffer}
+                        disabled={holder.length === 0}
+                        raised className='mt-2 mb-4' label="Ολοκλήρωση" />
                 ) : null}
-                 
+
 
             </div>
         </AdminLayout>
@@ -91,8 +95,8 @@ const ΟffersPage = () => {
 const MapHolders = () => {
     const { holder } = useSelector(state => state.impaoffer)
     const [showContent, setShowContent] = useState(null)
+    const router = useRouter();
     const dispatch = useDispatch();
-    console.log(holder)
     const dropDownClick = (id) => {
         setShowContent(id)
     }
@@ -100,6 +104,28 @@ const MapHolders = () => {
     const deleteHolderHandler = (id) => {
         console.log(id)
         dispatch(removeHolder(id))
+    }
+
+    const handleAddMore = (item) => {
+        console.log(item)
+        dispatch(addMoreToHolder({ id: item.id, products: [
+            {
+                COST: 24.74,
+                MTRL: "10000",
+                PRICE:  10,
+                QTY1: 1,
+                TOTAl_COST: 24.74,
+             }
+        ]}))
+        // if(item.hasImpa) {
+        //     dispatch(setSelectedProducts([]))
+        //     router.push('/dashboard/multi-offer/create-impa-holder')
+        // }
+        // if(!item.hasImpa) {
+        //     dispatch(setSelectedProducts([]))
+        //     router.push('/dashboard/multi-offer/plain-holder')
+        // }
+       
     }
     return (
         <div className='mb-2'>
@@ -116,9 +142,8 @@ const MapHolders = () => {
 
                             </div>
                             <div>
-                                
-                            <p className='block size-xs'>Όνομα holder:</p>
-                            <p className='font-bold mt-1'>{item?.name}</p>
+                                <p className='block size-xs'>Όνομα holder:</p>
+                                <p className='font-bold mt-1'>{item?.name}</p>
                             </div>
                         </div>
                         <div>
@@ -135,7 +160,13 @@ const MapHolders = () => {
                     {/* //HIDDEN CONTENT */}
                     <div className='border-top-1 border-300' >
                         {showContent == item.id ? (
-                            <MapProducts products={item.products} />
+                            <>
+                                <MapProducts products={item.products} />
+                                <div className='p-3'>
+                                <Button onClick={() => handleAddMore(item)} label="προσθηκη"></Button>
+                                </div>
+                            </>
+
                         ) : null}
                     </div>
                 </div>
@@ -147,7 +178,7 @@ const MapHolders = () => {
 
 
 const MapProducts = ({ products }) => {
-   
+
     return (
         <div>
             {products && products.map((item, index) => {
