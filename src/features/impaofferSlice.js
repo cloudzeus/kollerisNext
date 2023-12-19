@@ -11,7 +11,6 @@ const initialState = {
 	holder: [],
 	mtrLines: [],
 	offerEmail: '',
-	//used in clients page, to set a single client name, and find the offers that correspond to him
 	singleClientName: '',
 }
 
@@ -41,27 +40,16 @@ const impaofferSlice = createSlice({
 			state.holder.push(payload);
 		},
 		addMoreToHolder: (state, {payload}) => {
-			console.log('payload')
-			console.log(payload)
-			console.log('state.holder')
-			console.log(current(state.holder))
-			console.log('payload')
-			console.log(payload)
-			let holder = state.holder;
-			holder.map((item) => {
+			state.holder = state.holder.map((item) => {
 				if(item.id === payload.id) {
-					console.log('item')
-					console.log(item)
 					return {
 						...item,
-						products: [...item.products, payload.products]
+						products: [...item.products, ...payload.products]
 					}
 				}
 				return item;
-			})
-			console.log('holder')
-			console.log(holder)
-			// state.holder.push(payload);
+			});
+		
 		},
 		setOfferEmail: (state, {payload}) => {
 			state.offerEmail = payload;

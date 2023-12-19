@@ -7,9 +7,7 @@ import supplierOrderSlice from "./features/supplierOrderSlice";
 import productsSlice from "./features/productsSlice";
 import pdfSlice from "./features/pdfSlice";
 import { combineReducers } from 'redux'
-
 import storage from 'redux-persist/lib/storage'
-import { PersistGate } from 'redux-persist/integration/react'
 import {
   persistStore,
   persistReducer,

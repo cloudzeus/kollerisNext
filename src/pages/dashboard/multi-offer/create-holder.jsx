@@ -26,11 +26,7 @@ const ΟffersPage = () => {
     const { data: session, update } = useSession();
     let user = session?.user?.user;
 
-    useEffect(() => {
-        if (!selectedClient) {
-            router.push('/dashboard/multi-offer/choose-client')
-        }
-    }, [])
+    
 
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', {
@@ -44,10 +40,7 @@ const ΟffersPage = () => {
         router.push('/dashboard/multi-offer')
     }
 
-    useEffect(() => {
-        console.log('holder')
-        console.log(holder)
-    }, [holder])
+ 
 
 
     const createImpaHolder = () => {
@@ -102,7 +95,6 @@ const MapHolders = () => {
     }
 
     const deleteHolderHandler = (id) => {
-        console.log(id)
         dispatch(removeHolder(id))
     }
 
@@ -110,8 +102,17 @@ const MapHolders = () => {
         console.log(item)
         dispatch(addMoreToHolder({ id: item.id, products: [
             {
+                NAME: "SWIVEL ΒΕΡΓΑΣ J24000 MBP1",
                 COST: 24.74,
-                MTRL: "10000",
+                MTRL: "64002",
+                PRICE:  10,
+                QTY1: 4,
+                TOTAl_COST: 186,
+             },
+            {
+                NAME: "test",
+                COST: 24.74,
+                MTRL: "64002",
                 PRICE:  10,
                 QTY1: 1,
                 TOTAl_COST: 24.74,
