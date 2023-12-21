@@ -54,7 +54,7 @@ const ImpaHolder = () => {
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
             </div>
-            <PickListComp />
+            <PickListComp title={'Επιλογή Impa'} />
             <div className='mt-4 mb-5'>
                 <div className='mt-3'>
                     < SoftoneStatusButton onClick={onHolderCompletions} btnText="Ολοκλήρωση Holder" />
@@ -68,7 +68,7 @@ const ImpaHolder = () => {
 
 
 
-export const PickListComp = ({disableImpaBtn = false}) => {
+export const PickListComp = ({disableImpaBtn = false, title}) => {
     const { selectedImpa, dataSource, showImpaTable } = useSelector(state => state.impaoffer)
     const { selectedProducts } = useSelector(state => state.products)
     const [show, setShow] = useState(true)
@@ -77,7 +77,7 @@ export const PickListComp = ({disableImpaBtn = false}) => {
     return (
         <div >
             <div className='mt-4' >
-                <StepHeader text={"Eπιλογή Impa"} />
+                <StepHeader text={title} />
                 <CustomToolbar disableImpaBtn={disableImpaBtn} setShow={setShow} show={show} />
                 {showImpaTable ? (<ImpaGrid />) : null}
 

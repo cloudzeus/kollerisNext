@@ -5,7 +5,7 @@ import StepHeader from '@/components/StepHeader'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import AdminLayout from '@/layouts/Admin/AdminLayout'
-import { addMoreToHolder, removeHolder, setHolder } from '@/features/impaofferSlice'
+import { addMoreToHolder, removeHolder, removeProductFromHolder, setHolder } from '@/features/impaofferSlice'
 import { useRouter } from 'next/router'
 import { setSelectedProducts } from '@/features/productsSlice'
 import { useSession } from 'next-auth/react'
@@ -26,7 +26,7 @@ const ΟffersPage = () => {
     const { data: session, update } = useSession();
     let user = session?.user?.user;
 
-    
+
 
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', {
@@ -40,7 +40,7 @@ const ΟffersPage = () => {
         router.push('/dashboard/multi-offer')
     }
 
- 
+
 
 
     const createImpaHolder = () => {
@@ -100,8 +100,9 @@ const MapHolders = () => {
 
     const handleAddMore = (item) => {
         console.log('handle add more')
+        dispatch(setSelectedProducts([]))
         console.log(item)
-        if(item.isImpa) {
+        if (item.isImpa) {
             router.push(`/dashboard/multi-offer/add-more-to-impa/${item.id}`)
         }
         // dispatch(addMoreToHolder({ id: item.id, products: [
@@ -130,7 +131,7 @@ const MapHolders = () => {
         //     dispatch(setSelectedProducts([]))
         //     router.push('/dashboard/multi-offer/plain-holder')
         // }
-       
+
     }
     return (
         <div className='mb-2'>
@@ -166,9 +167,9 @@ const MapHolders = () => {
                     <div className='border-top-1 border-300' >
                         {showContent == item?.id ? (
                             <>
-                                <MapProducts products={item?.products} />
+                                <MapProducts products={item?.products} holderId={item?.id} />
                                 <div className='p-3'>
-                                <Button icon="pi pi-plus" onClick={() => handleAddMore(item)} severity='secondary'></Button>
+                                    <Button icon="pi pi-plus" onClick={() => handleAddMore(item)} severity='secondary'></Button>
                                 </div>
                             </>
 
@@ -182,27 +183,40 @@ const MapHolders = () => {
 }
 
 
-const MapProducts = ({ products }) => {
+const MapProducts = ({ products, holderId }) => {
+    const dispatch = useDispatch();
 
+    const handleRemove = (product) => {
+        dispatch(removeProductFromHolder({
+            holderId: holderId,
+            product: product
+        }))
+    }
     return (
         <div>
             {products && products.map((item, index) => {
                 return (
                     <div className=' border-bottom-1 border-400 ' key={index}>
                         <div className='p-4 flex justify-content-between'>
-                            <div>
-                                <p>{item.NAME}</p>
+                            <div >
+                                <p className='text-md'>{item.NAME}</p>
                             </div>
-                            <div className='flex '>
-                                <div className='flex mr-5 '>
-                                    <p>QNT:</p>
-                                    <p className='ml-1 font-bold'>{item.QTY1}</p>
+                            <div className='flex align-items-center justify-content-between'>
+                                <div style={{width: '230px'}} className='flex align-items-center justify-content-between '>
+                                    <div className='flex mr-5 '>
+                                        <p>QNT:</p>
+                                        <p className='ml-1 font-bold'>{item.QTY1}</p>
+                                    </div>
+                                    <div style={{width: '120px'}} className='flex '>
+                                        <p>PR:</p>
+                                        <p className='ml-1 font-bold'>€{item.TOTAL_PRICE}</p>
+                                    </div>
                                 </div>
-                                <div className='flex'>
-                                    <p>PRICE:</p>
-                                    <p className='ml-1 font-bold'>${item.TOTAL_PRICE}</p>
+                                <div  style={{width: '40px'}} className='flex align-items-center justify-content-center'> 
+                                    <i onClick={() => handleRemove(item)} className="pi pi-trash cursor-pointer" style={{ fontSize: '1.1rem', color: 'red' }}></i>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 

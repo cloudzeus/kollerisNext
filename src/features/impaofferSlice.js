@@ -68,11 +68,21 @@ const impaofferSlice = createSlice({
 				}
 			});	
 
-			console.log('===== current holder ========')
 			
 		},
 		resetHolder: (state) => {
 			state.holder = [];
+		},
+		removeProductFromHolder: (state, {payload}) => {
+			const product = payload.product;
+			const holderId = payload.holderId;
+			state.holder = state.holder.map((item) => {
+				if (item.id !== holderId ) return item;
+				return {
+					...item,
+					products: item.products.filter((p) => p.MTRL !== product.MTRL),
+				}				
+			})
 		},
 		setOfferEmail: (state, {payload}) => {
 			state.offerEmail = payload;
@@ -106,6 +116,7 @@ export const {
 	removeHolder,
 	addMoreToHolder,
 	resetHolder,
+	removeProductFromHolder,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;
