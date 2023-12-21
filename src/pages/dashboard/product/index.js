@@ -92,23 +92,20 @@ const columns = [
     },
 
     {
-        header: 'Ordered',
+        header: 'Δεσμευμένα',
         id: 2,
     },
+    
     {
-        header: 'Reserved',
-        id: 3,
-    },
-    {
-        header: 'Brands',
+        header: 'Μάρκα',
         id: 4,
     },
     {
-        header: 'EAN Code',
+        header: 'EAN/Barcode',
         id: 5,
     },
     {
-        header: 'Ιmpa Code',
+        header: 'Κωδ. ΙMPA',
         id: 6,
     },
     {
