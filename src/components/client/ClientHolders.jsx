@@ -250,19 +250,34 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
             </div>
         )
     }
+
+   
+        let sum = 0;
+        let productSum = 0;
+        data.map((product) => {
+            sum += product.TOTAL_PRICE
+        })
+        data.map((product) => {
+            productSum += product.QTY1
+        })
+       
+        
+
+    const footer = `Συνολο Προϊόντων: ${productSum }  /  Συνολο Τιμής: ${sum}€  `;
+
     return (
         <div className='p-3'>
             <p className='mb-3 font-bold ml-1'>Προϊόντα</p>
             <DataTable
                 value={data}
                 loading={loading}
+                footer={footer }
             >
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμή" body={Price} field="PRICE"></Column>
                 <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1"></Column>
                 <Column header="Σύνολο Τιμής" body={TotalPrice} field="TOTAL_PRICE"></Column>
                 <Column body={RemoveItem} header="Αφαίρεση" bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
-                {/* <Column header="Σύνολο Προϊόντων" body={TotalProducts}></Column> */}
             </DataTable>
         </div>
     )
