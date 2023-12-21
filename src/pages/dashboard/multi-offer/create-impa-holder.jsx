@@ -57,9 +57,7 @@ const ImpaHolder = () => {
             <PickListComp />
             <div className='mt-4 mb-5'>
                 <div className='mt-3'>
-
                     < SoftoneStatusButton onClick={onHolderCompletions} btnText="Ολοκλήρωση Holder" />
-
                 </div>
 
             </div>
@@ -70,7 +68,7 @@ const ImpaHolder = () => {
 
 
 
-const PickListComp = () => {
+export const PickListComp = ({disableImpaBtn = false}) => {
     const { selectedImpa, dataSource, showImpaTable } = useSelector(state => state.impaoffer)
     const { selectedProducts } = useSelector(state => state.products)
     const [show, setShow] = useState(true)
@@ -80,7 +78,7 @@ const PickListComp = () => {
         <div >
             <div className='mt-4' >
                 <StepHeader text={"Eπιλογή Impa"} />
-                <CustomToolbar setShow={setShow} show={show} />
+                <CustomToolbar disableImpaBtn={disableImpaBtn} setShow={setShow} show={show} />
                 {showImpaTable ? (<ImpaGrid />) : null}
 
                 {(!showImpaTable && selectedImpa) ? (
@@ -108,7 +106,7 @@ const PickListComp = () => {
 }
 
 
-const CustomToolbar = ({ setShow, show }) => {
+export const CustomToolbar = ({ setShow, show, disableImpaBtn = false }) => {
     const { selectedImpa, dataSource } = useSelector(state => state.impaoffer)
     const dispatch = useDispatch()
 
@@ -124,7 +122,7 @@ const CustomToolbar = ({ setShow, show }) => {
     const StartContent = () => {
         return (
             <div className='w-full flex justify-content-between '>
-                <Button severity='secondary' label={`Eπιλογή Impa: ${(selectedImpa) ? selectedImpa?.code : ''}`} onClick={() => dispatch(setShowImpaTable((true)))} />
+                <Button disabled={disableImpaBtn} severity='secondary' label={`Eπιλογή Impa: ${(selectedImpa) ? selectedImpa?.code : ''}`} onClick={() => dispatch(setShowImpaTable((true)))} />
             </div>
         )
     }

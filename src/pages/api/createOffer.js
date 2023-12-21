@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const impas = await ImpaCodes.find({ code: code })
-                .populate('products', 'MTRL CODE PRICER _id NAME');
+            .populate('products', 'MTRL CODE COST PRICER _id NAME');
             let products = impas[0].products
             return res.status(200).json({ success: true, result: products })
         } catch (e) {

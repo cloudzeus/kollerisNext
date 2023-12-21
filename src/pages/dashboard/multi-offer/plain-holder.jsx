@@ -54,7 +54,6 @@ const Continue = ({value}) => {
    
     const dispatch = useDispatch();
     const onHolderCompletions = async () => {
-
         dispatch(setHolder({
             id: generateRandomId(),
             isImpa: false,

@@ -99,25 +99,29 @@ const MapHolders = () => {
     }
 
     const handleAddMore = (item) => {
+        console.log('handle add more')
         console.log(item)
-        dispatch(addMoreToHolder({ id: item.id, products: [
-            {
-                NAME: "SWIVEL ΒΕΡΓΑΣ J24000 MBP1",
-                COST: 24.74,
-                MTRL: "64002",
-                PRICE:  10,
-                QTY1: 4,
-                TOTAl_COST: 186,
-             },
-            {
-                NAME: "test",
-                COST: 24.74,
-                MTRL: "64002",
-                PRICE:  10,
-                QTY1: 1,
-                TOTAl_COST: 24.74,
-             }
-        ]}))
+        if(item.isImpa) {
+            router.push(`/dashboard/multi-offer/add-more-to-impa/${item.id}`)
+        }
+        // dispatch(addMoreToHolder({ id: item.id, products: [
+        //     {
+        //         NAME: "SWIVEL ΒΕΡΓΑΣ J24000 MBP1",
+        //         COST: 24.74,
+        //         MTRL: "64002",
+        //         PRICE:  10,
+        //         QTY1: 4,
+        //         TOTAl_COST: 186,
+        //      },
+        //     {
+        //         NAME: "test",
+        //         COST: 24.74,
+        //         MTRL: "64002",
+        //         PRICE:  10,
+        //         QTY1: 1,
+        //         TOTAl_COST: 24.74,
+        //      }
+        // ]}))
         // if(item.hasImpa) {
         //     dispatch(setSelectedProducts([]))
         //     router.push('/dashboard/multi-offer/create-impa-holder')
@@ -138,7 +142,7 @@ const MapHolders = () => {
                                 {(showContent == item?.id) ? (
                                     <i onClick={() => dropDownClick(null)} className="pi pi-angle-up" style={{ fontSize: '1.3rem' }}></i>
                                 ) : (
-                                    <i onClick={() => dropDownClick(item.id)} className="pi pi-angle-down" style={{ fontSize: '1.3rem' }}></i>
+                                    <i onClick={() => dropDownClick(item?.id)} className="pi pi-angle-down" style={{ fontSize: '1.3rem' }}></i>
                                 )}
 
                             </div>
@@ -152,7 +156,7 @@ const MapHolders = () => {
                                 <p>Σύνολο Προϊόντων:</p>
                                 <p className='font-bold ml-2 pr-3'>{item?.products?.length}</p>
                                 <div className='ml-2 pl-4 border-left-1 border-400'>
-                                    <i className="pi pi-trash cursor-pointer" style={{ fontSize: '1.3rem', color: 'red' }} onClick={() => deleteHolderHandler(item.id)}></i>
+                                    <i className="pi pi-trash cursor-pointer" style={{ fontSize: '1.3rem', color: 'red' }} onClick={() => deleteHolderHandler(item?.id)}></i>
                                 </div>
                             </div>
                         </div>
@@ -160,11 +164,11 @@ const MapHolders = () => {
 
                     {/* //HIDDEN CONTENT */}
                     <div className='border-top-1 border-300' >
-                        {showContent == item.id ? (
+                        {showContent == item?.id ? (
                             <>
-                                <MapProducts products={item.products} />
+                                <MapProducts products={item?.products} />
                                 <div className='p-3'>
-                                <Button onClick={() => handleAddMore(item)} label="προσθηκη"></Button>
+                                <Button icon="pi pi-plus" onClick={() => handleAddMore(item)} severity='secondary'></Button>
                                 </div>
                             </>
 

@@ -12,17 +12,19 @@ import { setSelectedProducts } from '@/features/productsSlice';
 
 
 
-const ImpaDataTable = () => {
+const ImpaDataTable = ({code}) => {
     const [data, setData] = useState([])
     const { selectedImpa} = useSelector(state => state.impaoffer)
     const {selectedProducts} = useSelector(state => state.products)
     const dispatch = useDispatch()
 
-    const onAllProductsClick = () => {
-        dispatch(setDataSource(2))
-    }
-
- 
+   
+    
+    useEffect(() => {
+        if(code) {
+            dispatch(setSelectedImpa({code}))
+        }
+    }, [])
     const handleFetch = async () => {
         let { data } = await axios.post('/api/createOffer', { action: 'findImpaProducts', code: selectedImpa?.code })
         setData(data.result)

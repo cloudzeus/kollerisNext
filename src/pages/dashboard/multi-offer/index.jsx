@@ -6,12 +6,15 @@ import axios from 'axios'
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import ClientHolder from '@/components/client/ClientHolders';
+import { useDispatch } from 'react-redux';
+import { resetHolder } from '@/features/impaofferSlice';
 
 const Page = () => {
     const router = useRouter();
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch()
     const handleFetch = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', { action: 'findHolders' })
@@ -21,6 +24,7 @@ const Page = () => {
 
 
     const nextPage = () => {
+        dispatch(resetHolder())
         router.push('/dashboard/multi-offer/choose-client')
     }
     useEffect(() => {
