@@ -12,6 +12,7 @@ const initialState = {
 	mtrLines: [],
 	offerEmail: '',
 	singleClientName: '',
+	totalHolderPrice: 0,
 }
 
 
@@ -20,36 +21,41 @@ const impaofferSlice = createSlice({
 	name: 'catalog',
 	initialState,
 	reducers: {
-		setSelectedImpa: (state, {payload}) => {
+		setSelectedImpa: (state, { payload }) => {
 			state.selectedImpa = payload;
 		},
-		setSelectedClient: (state, {payload}) => {
+		setSelectedClient: (state, { payload }) => {
 			state.selectedClient = payload;
 		},
-		
-		setPageId: (state, {payload}) => {
+
+		setPageId: (state, { payload }) => {
 			state.pageId = payload;
 		},
-		setDataSource: (state, {payload}) => {
+		setDataSource: (state, { payload }) => {
 			state.dataSource = payload;
 		},
-		setShowImpaTable: (state, {payload}) => {
+		setShowImpaTable: (state, { payload }) => {
 			state.showImpaTable = payload;
 		},
-		setHolder: (state, {payload}) => {
-			state.holder.push(payload);
+		setHolder: (state, { payload }) => {
+			let products = payload.products;
+			let totalPrice = products.reduce((acc, item) => acc + item.TOTAL_PRICE, 0);
+			state.holder.push({
+				...payload,
+				totalPrice: totalPrice,
+			});
 		},
-		addMoreToHolder: (state, {payload}) => {
+		addMoreToHolder: (state, { payload }) => {
 			const id = payload.id;
 			const products = payload.products;
-			
-			 state.holder = state.holder.map((item) => {
+			state.holder = state.holder.map((item) => {
 				const updateProducts = []
+				let filter;
 				if (item.id !== id) return item;
-				products.map((p) => {
+				products.forEach((p) => {
 					let existing = item.products.find((item) => item.MTRL === p.MTRL);
-					if(existing) {
-						
+					filter = item.products.filter((item) => item.MTRL !== p.MTRL);
+					if (existing) {
 						updateProducts.push({
 							...existing,
 							QTY1: existing.QTY1 + p.QTY1,
@@ -58,50 +64,81 @@ const impaofferSlice = createSlice({
 						})
 
 					} else {
-						
 						updateProducts.push(p)
 					}
 				})
+
 				return {
 					...item,
-					products: updateProducts,
+					products: [...updateProducts, ...filter],
 				}
-			});	
+			});
 
+
+		},
+		increaseQuantity: (state, { payload }) => {
+			let id = payload.holderId;
+			let name = payload.productName;
+			let QTY1 = payload.QTY1;
+
+			state.holder = state.holder.map((item) => {
+				if(item.id !== id) return item;
+				return {
+					...item,
+					products: item.products.map((p) => {
+						if(p.NAME !== name) return p;
+						return {
+							...p,
+							QTY1: QTY1,
+							TOTAL_PRICE: p.PRICE * QTY1,
+							TOTAL_COST: p.COST * QTY1,
+						}
+					})
+				}
+			})
 			
 		},
 		resetHolder: (state) => {
 			state.holder = [];
 		},
-		removeProductFromHolder: (state, {payload}) => {
+		removeProductFromHolder: (state, { payload }) => {
 			const product = payload.product;
 			const holderId = payload.holderId;
 			state.holder = state.holder.map((item) => {
-				if (item.id !== holderId ) return item;
+				if (item.id !== holderId) return item;
 				return {
 					...item,
 					products: item.products.filter((p) => p.MTRL !== product.MTRL),
-				}				
+				}
 			})
 		},
-		setOfferEmail: (state, {payload}) => {
+		setOfferEmail: (state, { payload }) => {
 			state.offerEmail = payload;
 		},
-		setPlainHolderName: (state, {payload}) => {
+		setPlainHolderName: (state, { payload }) => {
 			state.plainHolderName = payload;
 		},
-		removeHolder: (state, {payload}) => {
+		removeHolder: (state, { payload }) => {
 			state.holder = state.holder.filter((item) => item.id !== payload);
+		},
+		calculateTotal: (state, {payload}) => {
+			let holderId = payload.holderId;
+			let price = state.holder
+				.find((item) => item.id === holderId)
+				.products.reduce((acc, item) => acc + item.TOTAL_PRICE, 0);
+			
+		
+			state.totalHolderPrice = price;
 		}
 
 
-		
+
 	},
 
 })
 
 
-export const {	
+export const {
 	setSelectedImpa,
 	setSelectedClient,
 	setHolderPage,
@@ -117,6 +154,8 @@ export const {
 	addMoreToHolder,
 	resetHolder,
 	removeProductFromHolder,
+	increaseQuantity,
+	calculateTotal,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;
