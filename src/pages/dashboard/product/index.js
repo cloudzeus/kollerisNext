@@ -798,6 +798,21 @@ const PriceTemplate = ({ PRICER }) => {
 
 
 const ExpansionDetails = ({ data }) => {
+    const [vat, setVat] = useState('');
+    const handleVat = async () => {
+        const res = await axios.post('/api/vat', {
+            action: 'findVatName',
+            VAT: data?.VAT
+        })
+        console.log('vat')
+        console.log(res.data.result)
+        setVat(res.data.result)
+    }
+    useEffect(() => {
+        handleVat()
+
+    }, [])
+
     return (
         < DisabledDisplay  >
             <div className="disabled-card">
@@ -818,13 +833,14 @@ const ExpansionDetails = ({ data }) => {
                 <label>
                     Μάρκα
                 </label>
-                <InputText disabled value={data?.mrtmark} />
+                <InputText disabled value={data?.MTRMARK_NAME
+} />
             </div>
             <div className="disabled-card">
                 <label>
                     Kατασκευαστής
                 </label>
-                <InputText disabled value={data?.mrtmanufact} />
+                <InputText disabled value={data?.MMTRMANFCTR_NAME} />
             </div>
             <div className="disabled-card">
                 <label>
@@ -834,9 +850,9 @@ const ExpansionDetails = ({ data }) => {
             </div>
             <div className="disabled-card">
                 <label>
-                    VAT
+                    ΦΠΑ
                 </label>
-                <InputText disabled value={data?.VAT} />
+                <InputText onChange={handleVat} disabled value={vat} />
             </div>
             <div className="disabled-card">
                 <label>

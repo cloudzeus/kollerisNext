@@ -38,12 +38,7 @@ const impaofferSlice = createSlice({
 			state.showImpaTable = payload;
 		},
 		setHolder: (state, { payload }) => {
-			let products = payload.products;
-			let totalPrice = products.reduce((acc, item) => acc + item.TOTAL_PRICE, 0);
-			state.holder.push({
-				...payload,
-				totalPrice: totalPrice,
-			});
+			state.holder.push(payload);
 		},
 		addMoreToHolder: (state, { payload }) => {
 			const id = payload.id;
@@ -121,15 +116,7 @@ const impaofferSlice = createSlice({
 		removeHolder: (state, { payload }) => {
 			state.holder = state.holder.filter((item) => item.id !== payload);
 		},
-		calculateTotal: (state, {payload}) => {
-			let holderId = payload.holderId;
-			let price = state.holder
-				.find((item) => item.id === holderId)
-				.products.reduce((acc, item) => acc + item.TOTAL_PRICE, 0);
-			
 		
-			state.totalHolderPrice = price;
-		}
 
 
 
@@ -155,7 +142,6 @@ export const {
 	resetHolder,
 	removeProductFromHolder,
 	increaseQuantity,
-	calculateTotal,
 } = impaofferSlice.actions;
 
 export default impaofferSlice.reducer;

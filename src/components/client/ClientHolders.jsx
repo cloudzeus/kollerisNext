@@ -199,12 +199,20 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Όνομα" field="name"></Column>
+                <Column header="XLSX"  body={DownloadXLSXline} style={{ width: '30px ' }}></Column>
                 {/* <Column header="Σύνολο Προϊόντων" body={TotalProducts}></Column> */}
             </DataTable>
         </div>
     )
 };
 
+const DownloadXLSXline = ({products}) => {
+    return (
+        <div>
+            <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+        </div>
+    )
+}
 const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
