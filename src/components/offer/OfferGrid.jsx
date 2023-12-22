@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import axios from 'axios';
@@ -27,11 +27,9 @@ const OfferGrid = ({ clientName }) => {
         setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
-        
         setLoading(prev => ({ ...prev, grid: false }))
 
     }
-    console.log(data)
 
 
     useEffect(() => {
@@ -80,7 +78,7 @@ const OfferGrid = ({ clientName }) => {
     //SUBMIT ACTIONS, SEND EMAIL TO CLIENT:
     // const Actions = ({products, clientName, clientEmail, _id, SALDOCNUM,createdAt}) => {
     const Actions = ({ clientEmail, clientName, products, SALDOCNUM, createdAt, _id }) => {
-        
+
         const op = useRef(null);
         const _products = products.map((item, index) => {
             return {
@@ -158,7 +156,7 @@ const OfferGrid = ({ clientName }) => {
 
     const RowExpansionTemplate = ({ products, _id }) => {
         return (
-            <RowExpansionGrid products={products} id={_id}/>
+            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} />
         )
     }
 
@@ -225,7 +223,21 @@ const Status = ({ status }) => {
 
 
 
-const RowExpansionGrid = ({ products, id }) => {
+const RowExpansionGrid = ({ id, setRefetch }) => {
+
+    const [state, setState] = useState({
+        products: [],
+        loading: false,
+        refetch: false
+    })
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/singleOffer', { action: 'findOfferProducts', id: id })
+        setState(prev => ({ ...prev, products: data.result.products }))
+    
+    }
+    useEffect(() => {
+        handleFetch()
+    }, [state.refetch])
 
     const RemoveItem = ({ MTRL }) => {
         return (
@@ -235,10 +247,22 @@ const RowExpansionGrid = ({ products, id }) => {
         )
     }
 
-    const TotalPrice = ({ TOTAL_PRICE }) => {
+    const TotalPrice = ({ TOTAL_PRICE, DISCOUNTED_TOTAL, DISC1PRC }) => {
         return (
-            <div>
-                <p className='font-bold'>{TOTAL_PRICE + " €"}</p>
+            <div className='flex'>
+                <div>
+                    <p className={`font-bold  ${DISCOUNTED_TOTAL ? "line-through text-500" : null}`}>{TOTAL_PRICE + " €"}</p>
+                    
+                </div>
+
+                    {
+                        DISCOUNTED_TOTAL ? (
+                            <>
+                            <span className='font-bold ml-2 mr-2 text-primary'>{`-${DISC1PRC}%`}</span>
+                            <span className='font-bold'>{` ${DISCOUNTED_TOTAL} €`}</span>
+                            </>
+                        ) : null
+                    }
             </div>
         )
     }
@@ -252,32 +276,39 @@ const RowExpansionGrid = ({ products, id }) => {
 
     let sum = 0;
     let productSum = 0;
-    products.map((product) => {
+    state.products && state.products.map((product) => {
         sum += product.TOTAL_PRICE
     })
-    products.map((product) => {
+    state.products && state.products.map((product) => {
         productSum += product.QTY1
     })
     const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
 
-    const DiscountTemplate = ({ TOTAL_PRICE, MTRL }) => {
+    const DiscountTemplate = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL, DISC1PRC}) => {
         return (
-            <DiscountDialog TOTAL_PRICE={TOTAL_PRICE} MTRL={MTRL} id={id} />
+            <DiscountDialog 
+                TOTAL_PRICE={TOTAL_PRICE} 
+                MTRL={MTRL} 
+                id={id} 
+                setRefetch={setRefetch} 
+                DISCOUNTED_TOTAL={DISCOUNTED_TOTAL} 
+                DISC1PRC={DISC1PRC}
+             />
         )
     }
     return (
         <div  >
             <DataTable
-                className='border-1 border-300 p-datable-sm '
-                value={products}
+                className=' p-datable-sm '
+                value={state.products}
                 footer={footer}
             >
-                <Column body={DiscountTemplate}  bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
+                <Column body={DiscountTemplate} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
                 <Column header="Όνομα" field="NAME"></Column>
-                <Column header="Τι." body={Price} field="PRICE" style={{width: '90px'}}></Column>
-                <Column header="Ποσ." field="QTY1" style={{width: '60px'}}></Column>
-                <Column header="ΣΤ." body={TotalPrice} field="TOTAL_PRICE" ></Column>
-                <Column body={RemoveItem}  bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
+                <Column header="Τι." body={Price} field="PRICE" style={{ width: '90px' }}></Column>
+                <Column header="Ποσ." field="QTY1" style={{ width: '60px' }}></Column>
+                <Column header="Συν." body={TotalPrice} field="TOTAL_PRICE" ></Column>
+                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
             </DataTable>
         </div>
     )
@@ -285,55 +316,62 @@ const RowExpansionGrid = ({ products, id }) => {
 
 
 
-const DiscountDialog = ({ TOTAL_PRICE, MTRL, id  }) => {
+const DiscountDialog = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL,DISC1PRC, id, setRefetch}) => {
+   
     const [state, setState] = useState({
         discount: 0,
-        discountedTotal: TOTAL_PRICE,
+        discountedTotal: 0,
         visible: false,
         loading: false,
-    
+
     })
-   
+
+   useEffect(() => {
+    setState((prev) => ({ ...prev, discount: DISC1PRC }))
+   }, [])
 
     const handleCalculatePrice = (e) => {
-        // setDiscount(e.value)
         setState((prev) => ({ ...prev, discount: e.value }))
     }
 
     useEffect(() => {
+       
+        if(state.discount === 0) return;
         let _discount = state.discount / 100;
         let _price = TOTAL_PRICE * _discount;
         let _total = TOTAL_PRICE - _price;
         setState((prev) => ({ ...prev, discountedTotal: _total.toFixed(2) }))
+
     }, [state.discount])
 
     const onSubmit = async () => {
-        let { data } = await axios.post('/api/singleOffer', 
-            { 
-                action: 'addDiscount', 
-                discount: state.discount, 
+        let { data } = await axios.post('/api/singleOffer',
+            {
+                action: 'addDiscount',
+                discount: state.discount,
                 discountedTotal: state.discountedTotal,
                 MTRL: MTRL,
                 id: id
             })
         setState((prev) => ({ ...prev, visible: false, loading: false }))
+        setRefetch(prev => !prev)
     }
     return (
         <div>
-            <div className='offer_disctount_btn'>
-                <i className="pi pi-percentage pointer p-1" onClick={() => setState(prev => ({...prev, visible: true}))}></i>
+            <div className={`text-white border-round text-sm ${DISCOUNTED_TOTAL ? "bg-green-500" : "bg-primary"}`}>
+                <i className="pi pi-percentage pointer p-1  text-sm" onClick={() => setState(prev => ({ ...prev, visible: true }))}></i>
             </div>
-            <Dialog header="%" visible={state.visible} style={{ width: '20vw' }} onHide={() => setVisible(false)}>
+            <Dialog header="%" visible={state.visible} style={{ width: '20vw' }} onHide={() => setState(prev => ({ ...prev, visible: false }))}>
                 <div className="flex-auto w-full">
                     <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber className='w-full' inputId="percent" value={state.discount} max={100} onChange={handleCalculatePrice}  />
+                    <InputNumber className='w-full' inputId="percent" value={state.discount} max={100} onChange={handleCalculatePrice} />
                 </div>
                 <div className="flex align-items-center w-full mt-4 ">
-                    <span style={{width: '140px'}}  className="">Συνολική Τιμή: </span>
+                    <span style={{ width: '140px' }} className="">Συνολική Τιμή: </span>
                     <p className='font-bold ml-2 mt-0'>{TOTAL_PRICE.toFixed(2)} €</p>
                 </div>
                 <div className="flex align-items-center w-full mt-2">
-                    <span style={{width: '140px'}} className="">Mετά την έκπτωση: </span>
+                    <span style={{ width: '140px' }} className="">Mετά την έκπτωση: </span>
                     <p className='font-bold ml-2 mt-0 text-green-600 underline'>{state.discountedTotal} €</p>
                 </div>
                 <div className='flex align-items-center justify-content-end mt-6'>

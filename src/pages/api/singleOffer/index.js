@@ -8,7 +8,6 @@ import createCSVfile from "@/utils/createCSVfile";
 
 export default async function handler(req, res) {
     const action = req.body.action
-    console.log(action)
     if (action === 'createOrder') {
         console.log('create offer')
         const { data, email, name, TRDR, createdFrom } = req.body;
@@ -110,6 +109,18 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action=== "findOfferProducts") {
+        const {id} = req.body;
+        try {
+            await connectMongo();
+            let find = await SingleOffer.findOne({_id: id}).select('products')
+            console.log(find)
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+
     if(action === "sendEmail") {
         const {products, cc, subject, fileName, message, createdAt, includeFile, clientEmail, clientName, SALDOCNUM} = req.body;
             let newcc = []
@@ -154,8 +165,6 @@ export default async function handler(req, res) {
         console.log(id, discount, discountedTotal, MTRL)
         await connectMongo();
         try {
-            let find = await SingleOffer.findOne({_id:newId})
-
             let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
                 $set: {
                     "products.$.DISC1PRC": discount,

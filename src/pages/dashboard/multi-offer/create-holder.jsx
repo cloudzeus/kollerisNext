@@ -117,7 +117,6 @@ const MapHolders = () => {
     const handleAddMore = (item) => {
         console.log('handle add more')
         dispatch(setSelectedProducts([]))
-        console.log(item)
         if (item.isImpa) {
             router.push(`/dashboard/multi-offer/add-more-to-impa/${item.id}`)
         }
