@@ -177,8 +177,8 @@ const OfferGrid = ({clientName}) => {
                             <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column field="clientName" header="Όνομα"></Column>
                 <Column field="clientEmail" header="Email"></Column>
-                <Column field="SALDOCNUM" header="SALDOCNUM"></Column>
-                <Column field="createdAt" body={CreatedAt} header="Ημερομηνία Δημ."></Column>
+                <Column field="FINCODE" header="Κωδ.Παραστατικού"></Column>
+                <Column field="createdAt" body={CreatedAt} header="Ημ. Δημ."></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>
                 <Column header="Status Edit"  rowEditor headerStyle={{width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
