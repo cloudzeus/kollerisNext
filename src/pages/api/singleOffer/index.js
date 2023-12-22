@@ -161,22 +161,63 @@ export default async function handler(req, res) {
 
    
     if(action === "addDiscount") {
-        const {id, discount, discountedTotal, MTRL} = req.body;
+        const {id, discount, discountedTotal, MTRL, } = req.body;
         console.log(id, discount, discountedTotal, MTRL)
         await connectMongo();
         try {
-            let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
-                $set: {
-                    "products.$.DISC1PRC": discount,
-                    "products.$.DISCOUNTED_TOTAL": discountedTotal
+            let find = await SingleOffer.findOne({_id: id}, {_id: 0, products: 1})
+            console.log('find')
+            console.log(find)
+            let _products = find.products.filter(item => {
+                if(item.DISC1PRC )   return item;
+            }).map(item => {
+                return {
+                    MTRL: item.MTRL,
+                    QTY1: item.QTY1,
+                    DISC1PRC: item.DISC1PRC,
                 }
-            }, {new: true})
-            console.log('update')
-            console.log(update)
-            return res.status(200).json({ success: true, result: find })
-        } catch (e) {
+            })
 
+            console.log('new')
+            console.log(_products);
+           
+            // let salesDoc = await  getNewSalesDoc()
+
+        //     let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
+        //         $set: {
+        //             "products.$.DISC1PRC": discount,
+        //             "products.$.DISCOUNTED_TOTAL": discountedTotal
+        //         }
+        //     }, {new: true})
+    
+        //     return res.status(200).json({ success: true, result: find })
+        // } catch (e) {
+
+        } catch (e) {
+            return res.status(400).json({ success: false })
         }
-        return res.status(200).json({ success: true })
+        // return res.status(200).json({ success: true })
     }
+}
+
+
+async function getNewSalesDoc(TRDR, MTRLINES, DISC1PRC) {
+    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.parastatika/newSalesDoc`;
+    const response = await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            username: "Service",
+            password: "Service",
+            COMPANY: 1001,
+            SERIES: 7021,
+            PAYMENT: 1012,
+            TRDR: 1001,
+            DISC1PRC:DISC1PRC,
+            MTRLINES: MTRLINES
+        })
+    });
+
+    let responseJSON = await response.json();
+    console.log(responseJSON)
+    return responseJSON;
 }

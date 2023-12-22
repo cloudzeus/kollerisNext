@@ -154,9 +154,9 @@ const OfferGrid = ({ clientName }) => {
     const header = Header();
 
 
-    const RowExpansionTemplate = ({ products, _id }) => {
+    const RowExpansionTemplate = ({ products, _id, TRDR }) => {
         return (
-            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} />
+            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR} />
         )
     }
 
@@ -223,7 +223,7 @@ const Status = ({ status }) => {
 
 
 
-const RowExpansionGrid = ({ id, setRefetch }) => {
+const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
     const [state, setState] = useState({
         products: [],
@@ -293,6 +293,7 @@ const RowExpansionGrid = ({ id, setRefetch }) => {
                 setRefetch={setRefetch} 
                 DISCOUNTED_TOTAL={DISCOUNTED_TOTAL} 
                 DISC1PRC={DISC1PRC}
+                TRDR={TRDR}
              />
         )
     }
@@ -316,7 +317,7 @@ const RowExpansionGrid = ({ id, setRefetch }) => {
 
 
 
-const DiscountDialog = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL,DISC1PRC, id, setRefetch}) => {
+export const DiscountDialog = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL,DISC1PRC, id, setRefetch, TRDR}) => {
    
     const [state, setState] = useState({
         discount: 0,
@@ -350,6 +351,7 @@ const DiscountDialog = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL,DISC1PRC, id, setR
                 action: 'addDiscount',
                 discount: state.discount,
                 discountedTotal: state.discountedTotal,
+                TRDR: TRDR,
                 MTRL: MTRL,
                 id: id
             })
