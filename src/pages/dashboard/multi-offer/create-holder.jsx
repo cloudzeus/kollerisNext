@@ -28,7 +28,10 @@ const ΟffersPage = () => {
     let user = session?.user?.user;
 
 
-
+    useEffect(() => {
+        console.log('oofer email')
+        console.log(offerEmail)
+    }, [offerEmail])
     const finalizeOffer = async () => {
         let { data } = await axios.post('/api/createOffer', {
             action: 'addOfferDatabase',

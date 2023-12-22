@@ -12,6 +12,7 @@ import SendEmailTemplate from '../emails/SendEmailTemplate';
 import { set } from 'mongoose';
 
 const OfferGrid = ({clientName}) => {
+    const [expandedRows, setExpandedRows] = useState(null);
     const [data, setData] = useState([])
     const [loading, setLoading] = useState({
         grid: false,
@@ -122,6 +123,11 @@ const OfferGrid = ({clientName}) => {
         )
     }
 
+    const allowExpansion = (rowData) => {
+        return rowData
+    };
+
+
     const Header = () => {
         const _newdata = [];
 
@@ -147,7 +153,12 @@ const OfferGrid = ({clientName}) => {
     }
     const header = Header();
 
-   
+    
+    const RowExpansionTemplate = ({ products }) => {
+        return (
+            <RowExpansionGrid products={products} />
+        )
+    }
 
     return (
         <div className="card mt-3">
@@ -159,7 +170,11 @@ const OfferGrid = ({clientName}) => {
                 value={data}
                 tableStyle={{ minWidth: '50rem' }}
                 showGridlines
-            >
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+                rowExpansionTemplate={RowExpansionTemplate}
+            >   
+                            <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column field="clientName" header="Όνομα"></Column>
                 <Column field="clientEmail" header="Email"></Column>
                 <Column field="SALDOCNUM" header="SALDOCNUM"></Column>
@@ -209,6 +224,59 @@ const Status = ({ status }) => {
 
 
 
+const RowExpansionGrid = ({ products }) => {
 
+    const RemoveItem = ({ MTRL }) => {
+
+        return (
+            <div>
+                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: 'red' }} onClick={() => onRemove(MTRL)}></i>
+            </div>
+        )
+    }
+
+    const TotalPrice = ({ TOTAL_PRICE }) => {
+        return (
+            <div>
+                <p className='font-bold'>{TOTAL_PRICE + " €"}</p>
+            </div>
+        )
+    }
+    const Price = ({ PRICE }) => {
+        return (
+            <div>
+                <p className='font-bold'>{PRICE + " €"}</p>
+            </div>
+        )
+    }
+    
+    let sum = 0;
+    let productSum = 0;
+    products.map((product) => {
+        sum += product.TOTAL_PRICE
+    })
+    products.map((product) => {
+        productSum += product.QTY1
+    })
+    const footer = `Συνολο Προϊόντων: ${productSum }  /  Συνολο Τιμής: ${sum}€  `;
+
+
+    return (
+        <div className="">
+            <DataTable
+                className='border-1 border-300 p-datable-sm'
+                value={products}
+                footer={footer }
+
+            >
+                <Column header="Όνομα" field="NAME"></Column>
+                <Column header="Τιμή" body={Price} field="PRICE"></Column>
+                <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1"></Column>
+                <Column header="Σύνολο Τιμής" body={TotalPrice} field="TOTAL_PRICE"></Column>
+                <Column body={RemoveItem} header="Αφαίρεση" bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
+            </DataTable>
+        </div>
+    )
+};
 
 export default OfferGrid

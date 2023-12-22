@@ -132,15 +132,15 @@ export default async function handler(req, res) {
 
     if (action === "addOfferDatabase") {
         const { holders, client, email, id, num, createdFrom } = req.body;
-        console.log(JSON.stringify(holders))
-        console.log(client)
-        console.log(createdFrom)
+        
+        console.log('email:')
+        console.log(email)
 
         try {
             await connectMongo();
             let insert = await Holders.create({
                 clientName: client.NAME,
-                clientEmail: client.EMAIL || '',
+                clientEmail: email,
                 clientPhone: client.PHONE01 || '',
                 TRDR: client.TRDR,
                 holders: holders,

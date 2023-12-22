@@ -5,7 +5,6 @@ import SingleOffer from "../../../../server/models/singleOfferModel";
 import { transporter } from "@/utils/nodemailerConfig";
 import { sendEmail } from "@/utils/offersEmailConfig";
 import createCSVfile from "@/utils/createCSVfile";
-import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 
 
 export default async function handler(req, res) {
@@ -41,24 +40,45 @@ export default async function handler(req, res) {
 
                 return responseJSON;
             }
+
+            async function getFinDoc(saldoc) {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        SALDOC: saldoc,
+                        SODTYPE: 13,
+                      
+                    })
+                });
+
+             
+                let data = await translateData(response)
+                return  data;
+            }
             let saldoc = await getSaldoc();
             if (!saldoc.success) {
                 return res.status(200).json({ success: false, error: "softone saldocnum error" })
             }
-            if (saldoc.SALDOCNUM) {
-                let create = await SingleOffer.create({
-                    SALDOCNUM: saldoc.SALDOCNUM,
-                    products: data,
-                    status: 'created',
-                    TRDR: TRDR,
-                    clientName: name,
-                    clientEmail: email,
-                    createdFrom: createdFrom
-                })
-                console.log('created single offer')
-                console.log(create)
+        
+            let finDoc = await getFinDoc(saldoc.SALDOCNUM);
+            if (!finDoc.success) {
+                return res.status(200).json({ success: false, error: "softone findoc error" })
             }
-
+            let create = await SingleOffer.create({
+                SALDOCNUM: saldoc.SALDOCNUM,
+                FINCODE: finDoc.result[0].FINCODE,
+                products: data,
+                status: 'created',
+                TRDR: TRDR,
+                clientName: name,
+                clientEmail: email,
+                createdFrom: createdFrom
+            })
+            console.log('create')
+            console.log(create)
             await Clients.updateOne({ TRDR: TRDR }, {
                 $set: {
                     OFFERSTATUS: true
