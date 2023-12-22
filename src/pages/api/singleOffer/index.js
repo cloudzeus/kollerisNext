@@ -2,13 +2,13 @@ import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import Clients from "../../../../server/models/modelClients";
 import SingleOffer from "../../../../server/models/singleOfferModel";
-import { transporter } from "@/utils/nodemailerConfig";
 import { sendEmail } from "@/utils/offersEmailConfig";
 import createCSVfile from "@/utils/createCSVfile";
 
 
 export default async function handler(req, res) {
     const action = req.body.action
+    console.log(action)
     if (action === 'createOrder') {
         console.log('create offer')
         const { data, email, name, TRDR, createdFrom } = req.body;
@@ -148,5 +148,26 @@ export default async function handler(req, res) {
         }
     }
 
+   
+    if(action === "addDiscount") {
+        const {id, discount, discountedTotal, MTRL} = req.body;
+        console.log(id, discount, discountedTotal, MTRL)
+        await connectMongo();
+        try {
+            let find = await SingleOffer.findOne({_id:newId})
 
+            let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
+                $set: {
+                    "products.$.DISC1PRC": discount,
+                    "products.$.DISCOUNTED_TOTAL": discountedTotal
+                }
+            }, {new: true})
+            console.log('update')
+            console.log(update)
+            return res.status(200).json({ success: true, result: find })
+        } catch (e) {
+
+        }
+        return res.status(200).json({ success: true })
+    }
 }

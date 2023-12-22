@@ -94,6 +94,27 @@ form {
 
 
 
+.offer_input .p-inputtext {
+    width: 70px;
+}
 
 
+.offer_disctount_btn {
+    width: 25px;
+    height: 25px;
+    font-size: 0.8rem;
+    background-color: white;
+    /* border: 1px solid var(--primary-color); */
+    background-color: rgb(130, 197, 29);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 
+.offer_disctount_btn i {
+   color: var(--primary-color);
+   color: white;
+   font-size: 12px;
+}

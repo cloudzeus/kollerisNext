@@ -23,6 +23,8 @@ const singleOfferchema = new mongoose.Schema({
             QTY1: Number,
             COST: Number,
             TOTAL_PRICE: Number,
+            DISCOUNTED_TOTAL: Number,
+            DISC1PRC: Number,
             TOTAL_COST: Number,
         }
     ],
