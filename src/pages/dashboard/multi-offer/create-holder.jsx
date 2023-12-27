@@ -197,54 +197,11 @@ const MapProducts = ({ products, holderId }) => {
         <div>
             {products && products.map((item, index) => {
                 return (
-                    // <div className=' border-300 border-bottom-1' key={index}>
-                    //     <div className='p-2 flex justify-content-between md:flex-col'>
-                    //         <div className='flex align-items-center pl-2'>
-                    //             <p className='text-sm'>{item.NAME}</p>
-                    //         </div>
-                    //         <div className='flex align-items-center justify-content-between bg-red-200' style={{ width: '30%' }}>
-                    //             <div style={{ width: '220px' }} className='flex align-items-center'>
-                    //                 <div className='flex mr-3 ' style={{ width: '100px' }}>
-                    //                     <p>QNT:</p>
-                    //                     <p className='ml-1 font-bold'>{item.QTY1}</p>
-                    //                 </div>
-                    //                 <div className='flex '>
-                    //                     <p>PR:</p>
-                    //                     <p className='ml-1 font-bold'>€{item.TOTAL_PRICE}</p>
-                    //                 </div>
-                    //             </div>
-                    //             <div style={{ width: '400px' }} className='flex align-items-center justify-content-between '>
-
-                    //             </div>
-                    //             <div style={{ width: '200px' }} className='flex align-items-center justify-content-center'>
-                    //                 <QuantityTemplate qt={item.QTY1} holderId={holderId} productName={item.NAME} />
-                    //                 <i onClick={() => handleRemove(item)} className="pi pi-trash cursor-pointer ml-4 mr-2" style={{ fontSize: '1.1rem', color: 'red' }}></i>
-                    //             </div>
-                    //         </div>
-                    //     </div>
-                        
-                    // </div>
-                    <div className='holder_products_container'>
+                    <div key={index} className='holder_products_container'>
                         <div className='holder-products_left'>
                             <p className='text-sm'>{item.NAME}</p>
                         </div>
                         <div className='holder-products_right'>
-                            {/* <div >
-                                <div className='flex'>
-                                    <p>QNT:</p>
-                                    <p className='ml-1 font-bold'>{item.QTY1}</p>
-                                </div>
-                                <div className='flex'>
-                                    <p>PR:</p>
-                                    <p className='ml-1 font-bold'>€{item.TOTAL_PRICE}</p>
-                                </div>
-                            </div>
-                            <div >
-                            </div>
-                            <div>
-                                <QuantityTemplate qt={item.QTY1} holderId={holderId} productName={item.NAME} />
-                                <i onClick={() => handleRemove(item)} className="pi pi-trash cursor-pointer ml-4 mr-2" style={{ fontSize: '1.1rem', color: 'red' }}></i>
-                            </div> */}
                             <div>
                             <div className='holder_item_quantity'>
                                     <p>QNT:</p>

@@ -112,6 +112,7 @@ export default async function handler(req, res) {
         const {id} = req.body;
         try {
             await connectMongo();
+            let newsum =  await calculateTotal(id)
             let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 1, totalPrice: 1, totalDiscount: 1})
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
