@@ -14,6 +14,8 @@ const singleOfferchema = new mongoose.Schema({
     SALDOCNUM: Number,
     FINCODE: String,
     createdFrom: String,
+    totalDiscount: Number,
+    totalPrice: Number,
     products: [
         {
             _id: String,

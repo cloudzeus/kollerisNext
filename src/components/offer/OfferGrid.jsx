@@ -154,9 +154,9 @@ const OfferGrid = ({ clientName }) => {
     const header = Header();
 
 
-    const RowExpansionTemplate = ({ products, _id, TRDR }) => {
+    const RowExpansionTemplate = ({ products, _id, TRDR, totalPrice }) => {
         return (
-            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR} />
+            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR}  totalPrice={totalPrice}/>
         )
     }
 
@@ -224,21 +224,25 @@ const Status = ({ status }) => {
 
 
 const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
-
     const [state, setState] = useState({
         products: [],
+        totalPrice: 0,
+        totalDiscount: 0,
         loading: false,
         refetch: false
     })
     const handleFetch = async () => {
         let { data } = await axios.post('/api/singleOffer', { action: 'findOfferProducts', id: id })
-        setState(prev => ({ ...prev, products: data.result.products }))
+        setState(prev => ({ ...prev, products: data.result.products, totalPrice: data.result.totalPrice, totalDiscount: data.result.totalDiscount}))
     
     }
     useEffect(() => {
         handleFetch()
     }, [state.refetch])
 
+    const onRemove = async (MTRL) => {
+
+    }
     const RemoveItem = ({ MTRL }) => {
         return (
             <div>
@@ -274,35 +278,88 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         )
     }
 
-    let sum = 0;
-    let productSum = 0;
-    state.products && state.products.map((product) => {
-        sum += product.TOTAL_PRICE
-    })
-    state.products && state.products.map((product) => {
-        productSum += product.QTY1
-    })
-    const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
+   
+    // const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
 
-    const DiscountTemplate = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL, DISC1PRC}) => {
+    const Footer = () => {
+        const [visible, setVisible] = useState(false)
+        const [discount, setDiscount] = useState(0)
+        const [loading, setLoading] = useState(false)
+
+
+        let productSum = 0;
+        state.products && state.products.map((product) => {
+            productSum += product.QTY1
+        })
+
+        const handleFooter = async () => {
+            setLoading(prev => !prev)
+            let { data } = await axios.post('/api/singleOffer',
+            {
+                action: 'totalDiscount',
+                discount: discount,
+                TRDR: TRDR,
+                id: id
+            })
+            setVisible(prev => !prev)
+            setLoading(prev => !prev)
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+        }
+        return (
+            <div className='flex justify-content-between align-items-center '>
+                <div>
+                    <div className='mb-2'>
+                        <span className='font-medium'>Συνολο Προϊόντων:</span>
+                        <span className='font-bold ml-2'>{productSum}</span>
+                    </div>
+                    <div>
+                        <span className='font-medium'> Συνολο Τιμής:</span>
+                        <span className='font-bold ml-2'>{state.totalPrice}€</span>
+                    </div>
+                    <div  className='mt-1'>
+                        <span className='font-medium'>Eκπτωση στο σύνολo:</span>
+                        <span className='font-bold ml-2 text-primary'>{state.totalDiscount}%</span>
+                    </div>
+                </div>
+                <Button onClick={() => setVisible(prev => !prev)} icon="pi pi-percentage" label="Συνολική έκπτωση" className='bg-primary text-white' />
+                <Dialog header="%" visible={visible} style={{ width: '20vw' }} onHide={() => setVisible(prev => !prev)}>
+                <div className="flex-auto w-full">
+                    <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
+                    <InputNumber className='w-full' inputId="percent" value={discount} max={100} onChange={(e) => setDiscount(e.value)} />
+                </div>
+                <div className='flex align-items-center justify-content-end mt-6'>
+                    <Button loading={loading} label="Εφαρμογή" icon="pi pi-check" onClick={handleFooter} />
+                </div>
+            </Dialog>
+            </div>
+        )
+    }
+  
+
+    const DiscountTemplate = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL, DISC1PRC, QTY1, NAME, PRICE}) => {
         return (
             <DiscountDialog 
                 TOTAL_PRICE={TOTAL_PRICE} 
                 MTRL={MTRL} 
                 id={id} 
                 setRefetch={setRefetch} 
+                setState={setState}
                 DISCOUNTED_TOTAL={DISCOUNTED_TOTAL} 
                 DISC1PRC={DISC1PRC}
                 TRDR={TRDR}
+                NAME={NAME}
+                QTY1={QTY1}
+                PRICE={PRICE}
              />
         )
     }
+
     return (
         <div  >
             <DataTable
                 className=' p-datable-sm '
                 value={state.products}
-                footer={footer}
+                footer={Footer }
             >
                 <Column body={DiscountTemplate} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
                 <Column header="Όνομα" field="NAME"></Column>
@@ -317,64 +374,57 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
 
 
-export const DiscountDialog = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL,DISC1PRC, id, setRefetch, TRDR}) => {
+export const DiscountDialog = ({ 
+    MTRL, 
+    DISCOUNTED_TOTAL,
+    id, 
+    setState,
+    TRDR, 
+    QTY1, 
+    NAME,
+    PRICE,
+}) => {
    
-    const [state, setState] = useState({
+    const [localState, setLocalState] = useState({
         discount: 0,
-        discountedTotal: 0,
         visible: false,
         loading: false,
 
     })
 
-   useEffect(() => {
-    setState((prev) => ({ ...prev, discount: DISC1PRC }))
-   }, [])
+   
 
     const handleCalculatePrice = (e) => {
-        setState((prev) => ({ ...prev, discount: e.value }))
+        setLocalState((prev) => ({ ...prev, discount: e.value }))
     }
 
-    useEffect(() => {
-       
-        if(state.discount === 0) return;
-        let _discount = state.discount / 100;
-        let _price = TOTAL_PRICE * _discount;
-        let _total = TOTAL_PRICE - _price;
-        setState((prev) => ({ ...prev, discountedTotal: _total.toFixed(2) }))
-
-    }, [state.discount])
-
+   
     const onSubmit = async () => {
         let { data } = await axios.post('/api/singleOffer',
             {
                 action: 'addDiscount',
-                discount: state.discount,
-                discountedTotal: state.discountedTotal,
+                DISC1PRC: localState.discount,
+                products: [{
+                    NAME: NAME,
+                    MTRL: MTRL,
+                    QTY1: QTY1,
+                    PRICE: PRICE,
+                }],
                 TRDR: TRDR,
-                MTRL: MTRL,
                 id: id
             })
-        setState((prev) => ({ ...prev, visible: false, loading: false }))
-        setRefetch(prev => !prev)
+        setLocalState((prev) => ({ ...prev, visible: false, loading: false}))
+        setState(prev => ({ ...prev, refetch: !prev.refetch }))
     }
     return (
         <div>
             <div className={`text-white border-round text-sm ${DISCOUNTED_TOTAL ? "bg-green-500" : "bg-primary"}`}>
-                <i className="pi pi-percentage pointer p-1  text-sm" onClick={() => setState(prev => ({ ...prev, visible: true }))}></i>
+                <i className="pi pi-percentage pointer p-1  text-sm" onClick={() => setLocalState(prev => ({ ...prev, visible: true }))}></i>
             </div>
-            <Dialog header="%" visible={state.visible} style={{ width: '20vw' }} onHide={() => setState(prev => ({ ...prev, visible: false }))}>
+            <Dialog header="%" visible={localState.visible} style={{ width: '20vw' }} onHide={() => setLocalState(prev => ({ ...prev, visible: false }))}>
                 <div className="flex-auto w-full">
                     <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber className='w-full' inputId="percent" value={state.discount} max={100} onChange={handleCalculatePrice} />
-                </div>
-                <div className="flex align-items-center w-full mt-4 ">
-                    <span style={{ width: '140px' }} className="">Συνολική Τιμή: </span>
-                    <p className='font-bold ml-2 mt-0'>{TOTAL_PRICE.toFixed(2)} €</p>
-                </div>
-                <div className="flex align-items-center w-full mt-2">
-                    <span style={{ width: '140px' }} className="">Mετά την έκπτωση: </span>
-                    <p className='font-bold ml-2 mt-0 text-green-600 underline'>{state.discountedTotal} €</p>
+                    <InputNumber className='w-full' inputId="percent" value={localState.discount} max={100} onChange={handleCalculatePrice} />
                 </div>
                 <div className='flex align-items-center justify-content-end mt-6'>
                     <Button label="Εφαρμογή" icon="pi pi-check" onClick={onSubmit} />

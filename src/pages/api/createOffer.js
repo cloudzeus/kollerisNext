@@ -133,8 +133,7 @@ export default async function handler(req, res) {
     if (action === "addOfferDatabase") {
         const { holders, client, email, id, num, createdFrom } = req.body;
         
-        console.log('email:')
-        console.log(email)
+       
 
         try {
             await connectMongo();

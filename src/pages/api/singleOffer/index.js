@@ -97,7 +97,6 @@ export default async function handler(req, res) {
             await connectMongo();
             let find;
             if (clientName !== '' || clientName !== null || clientName !== undefined) {
-                console.log('ther is no client name')
                 find = await SingleOffer.find({ clientName: clientName })
             } 
             if(clientName === undefined || clientName === null || clientName === ''){
@@ -113,8 +112,7 @@ export default async function handler(req, res) {
         const {id} = req.body;
         try {
             await connectMongo();
-            let find = await SingleOffer.findOne({_id: id}).select('products')
-            console.log(find)
+            let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 1, totalPrice: 1, totalDiscount: 1})
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -161,47 +159,74 @@ export default async function handler(req, res) {
 
    
     if(action === "addDiscount") {
-        const {id, discount, discountedTotal, MTRL, } = req.body;
-        console.log(id, discount, discountedTotal, MTRL)
+        const {id, discount, products, TRDR, DISC1PRC } = req.body;
+
+        // console.log('products')
+        // console.log(products)
+
+        // console.log('id')
+        // console.log(id)
         await connectMongo();
+       
+        
         try {
-            let find = await SingleOffer.findOne({_id: id}, {_id: 0, products: 1})
-            console.log('find')
-            console.log(find)
-            let _products = find.products.filter(item => {
-                if(item.DISC1PRC )   return item;
-            }).map(item => {
-                return {
-                    MTRL: item.MTRL,
-                    QTY1: item.QTY1,
-                    DISC1PRC: item.DISC1PRC,
-                }
+            const mtrLines = products.map(item => {
+                return { MTRL: item.MTRL, QTY1: item.QTY1, DISC1PRC:  DISC1PRC };
             })
-
-            console.log('new')
-            console.log(_products);
+            // let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
+            // if(!discountSoftone.success) {
+            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            // }
+     
+            for(let product of products) {
+                let _discount = DISC1PRC / 100;
+                let _newPrice =  product.PRICE - (product.PRICE* _discount);
+                let _discounted_total = _newPrice * product.QTY1;
+                let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": product.MTRL}, {
+                            $set: {
+                                "products.$.DISC1PRC": DISC1PRC,
+                                "products.$.DISCOUNTED_TOTAL": _discounted_total
+                            }
+                }, {new: true})
+                        
+                console.log('update')
+                console.log(update)               
+            }
            
-            // let salesDoc = await  getNewSalesDoc()
-
-        //     let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
-        //         $set: {
-        //             "products.$.DISC1PRC": discount,
-        //             "products.$.DISCOUNTED_TOTAL": discountedTotal
-        //         }
-        //     }, {new: true})
-    
-        //     return res.status(200).json({ success: true, result: find })
-        // } catch (e) {
+      
+            // CALCULATE TOTAL PRICE
+            await calculateTotal(id)
+            return res.status(200).json({ success: true, result: true })
 
         } catch (e) {
             return res.status(400).json({ success: false })
         }
         // return res.status(200).json({ success: true })
     }
+
+
+    if(action === "totalDiscount") {
+        const {id, TRDR, discount, products } = req.body;
+        console.log(discount);
+        await connectMongo();
+        let updateDiscount = await SingleOffer.findOneAndUpdate({_id: id}, {
+            $set: {
+                totalDiscount: discount
+            }
+        }, {new: true})
+        console.log('updateDiscount')
+        console.log(updateDiscount)
+        // UPDATE TOTAL PRICE
+        let newsum =  await calculateTotal(id)
+        // console.log('newsum')
+        // console.log(newsum)
+        return res.status(200).json({ success: true })
+    }
+
 }
 
 
-async function getNewSalesDoc(TRDR, MTRLINES, DISC1PRC) {
+async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.parastatika/newSalesDoc`;
     const response = await fetch(URL, {
         method: 'POST',
@@ -211,8 +236,9 @@ async function getNewSalesDoc(TRDR, MTRLINES, DISC1PRC) {
             COMPANY: 1001,
             SERIES: 7021,
             PAYMENT: 1012,
-            TRDR: 1001,
-            DISC1PRC:DISC1PRC,
+            TRDR: TRDR,
+            SOCARRIER: 238,
+            DISC1PRC: totalDiscount,
             MTRLINES: MTRLINES
         })
     });
@@ -220,4 +246,24 @@ async function getNewSalesDoc(TRDR, MTRLINES, DISC1PRC) {
     let responseJSON = await response.json();
     console.log(responseJSON)
     return responseJSON;
+}
+
+
+async function calculateTotal(id) {
+    let find = await SingleOffer.findOne({_id: id});
+    let totalPrice = 0;
+    for(let item of find.products) {
+        totalPrice += item.DISCOUNTED_TOTAL ? item.DISCOUNTED_TOTAL : item.TOTAL_PRICE
+    }
+
+    if(find.totalDiscount) {
+        totalPrice = totalPrice - totalPrice * (find.totalDiscount / 100)
+    }
+
+    let update = await SingleOffer.findOneAndUpdate({_id: id}, {
+        $set: {
+            totalPrice: totalPrice,
+        }
+    }, {new: true})
+    return update;
 }
