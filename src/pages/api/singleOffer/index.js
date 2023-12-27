@@ -263,7 +263,7 @@ async function calculateTotal(id) {
 
     let update = await SingleOffer.findOneAndUpdate({_id: id}, {
         $set: {
-            totalPrice: totalPrice,
+            totalPrice: totalPrice.toFixed(2),
         }
     }, {new: true})
     return update;

@@ -325,7 +325,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                 <Dialog header="%" visible={visible} style={{ width: '20vw' }} onHide={() => setVisible(prev => !prev)}>
                 <div className="flex-auto w-full">
                     <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber className='w-full' inputId="percent" value={discount} max={100} onChange={(e) => setDiscount(e.value)} />
+                    <InputNumber className='w-full' inputId="percent" value={discount} max={100} onChange={(e) => setDiscount(e.value)} minFractionDigits={2} maxFractionDigits={5} />
                 </div>
                 <div className='flex align-items-center justify-content-end mt-6'>
                     <Button loading={loading} label="Εφαρμογή" icon="pi pi-check" onClick={handleFooter} />
@@ -424,7 +424,7 @@ export const DiscountDialog = ({
             <Dialog header="%" visible={localState.visible} style={{ width: '20vw' }} onHide={() => setLocalState(prev => ({ ...prev, visible: false }))}>
                 <div className="flex-auto w-full">
                     <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber className='w-full' inputId="percent" value={localState.discount} max={100} onChange={handleCalculatePrice} />
+                    <InputNumber  locale="gr-GR"  className='w-full' inputId="percent" value={localState.discount} max={100} onChange={handleCalculatePrice} minFractionDigits={0} maxFractionDigits={5}/>
                 </div>
                 <div className='flex align-items-center justify-content-end mt-6'>
                     <Button label="Εφαρμογή" icon="pi pi-check" onClick={onSubmit} />
