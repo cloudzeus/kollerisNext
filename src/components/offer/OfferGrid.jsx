@@ -11,7 +11,8 @@ import CreatedAt from '@/components/grid/CreatedAt';
 import SendEmailTemplate from '../emails/SendEmailTemplate';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
-import { set } from 'mongoose';
+import { Toast } from 'primereact/toast';
+
 
 const OfferGrid = ({ clientName }) => {
     const [expandedRows, setExpandedRows] = useState(null);
@@ -224,6 +225,18 @@ const Status = ({ status }) => {
 
 
 const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
+    const toast = useRef(null);
+
+
+    
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});
+    }
+
+    const showError = (message) => {
+        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
+    }
+
     const [state, setState] = useState({
         products: [],
         totalPrice: 0,
@@ -298,9 +311,14 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
             {
                 action: 'totalDiscount',
                 discount: discount,
+                products: state.products,
                 TRDR: TRDR,
                 id: id
             })
+            if(data.error) {
+                showError(data.message)
+                return;
+            }
             setVisible(prev => !prev)
             setLoading(prev => !prev)
             setState(prev => ({ ...prev, refetch: !prev.refetch }))
@@ -356,6 +374,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
     return (
         <div  >
+            <Toast ref={toast} />
             <DataTable
                 className=' p-datable-sm '
                 value={state.products}

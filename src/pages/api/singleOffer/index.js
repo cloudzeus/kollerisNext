@@ -174,10 +174,10 @@ export default async function handler(req, res) {
             const mtrLines = products.map(item => {
                 return { MTRL: item.MTRL, QTY1: item.QTY1, DISC1PRC:  DISC1PRC };
             })
-            // let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
-            // if(!discountSoftone.success) {
-            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            // }
+            let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
+            if(!discountSoftone.success) {
+                return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            }
      
             for(let product of products) {
                 let _discount = DISC1PRC / 100;
@@ -208,8 +208,11 @@ export default async function handler(req, res) {
 
     if(action === "totalDiscount") {
         const {id, TRDR, discount, products } = req.body;
-        console.log(discount);
         await connectMongo();
+        let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
+        if(!discountSoftone.success) {
+            return res.status(200).json({ success: false, error: "softone saldocnum error" })
+        }
         let updateDiscount = await SingleOffer.findOneAndUpdate({_id: id}, {
             $set: {
                 totalDiscount: discount

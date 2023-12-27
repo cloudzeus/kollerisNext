@@ -408,13 +408,20 @@ export default async function handler(req, res) {
 
 	if(action === "findBrandName") {
 		await connectMongo();
-		const {limit, skip} = req.body;
-		console.log('apimarkes1')
+		const {limit, skip, searchBrand} = req.body;
+		console.log(searchBrand)
 		try {
+			// let searchParams;
+			// if(searchBrand !== '') {
+			// 	let regexSearchTerm = new RegExp("^" + searchBrand, 'i');
+			// 	searchParams = {'softOne.NAME': regexSearchTerm }
+			// }
+			
 			let result = await Markes.find({}, {'softOne.NAME': 1}).skip(skip).limit(limit);
-			let totalRecords = await Markes.countDocuments();
-			console.log('apimarkes2')
+			console.log('result')
 			console.log(result)
+			let totalRecords = await Markes.countDocuments();
+		
 			return res.status(200).json({ success: true, result: result, totalRecords: totalRecords });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
