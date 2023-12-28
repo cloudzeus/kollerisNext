@@ -7,9 +7,109 @@ import SingleOffer from "../../../server/models/singleOfferModel";
 import createCSVfile from "@/utils/createCSVfile";
 import { sendEmail } from "@/utils/offersEmailConfig";
 
+function generateOfferNum(length) {
+    const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
+    const min = Math.pow(10, length - 1); // Generates a number like 100000 for length = 6
+    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+    return num;
+}
+
+
+
+async function correlateProductsToImpa(products, impa) {
+    const ids = products.map((item) => item._id)
+    try {
+       
+        let find = await ImpaCodes.updateOne(
+            { code: impa },
+            { $addToSet: { products: { $each: ids } } }
+
+        )
+        return {
+            success: true,
+            result: find
+        };
+    } catch (e) {
+        return {
+            success: false,
+            error: 'failed to correlate products to impa'
+        }
+    }
+}
 
 export default async function handler(req, res) {
     const action = req.body.action
+
+
+
+    if(action === 'startOffer') {
+        const { selectedClient, user } = req.body;
+        let TRDR = selectedClient.TRDR;
+        let clientName = selectedClient.NAME;
+        let clientEmail = selectedClient.EMAIL;
+        let clientPhone = selectedClient.PHONE01;
+        const num = generateOfferNum(6);    
+        console.log(selectedClient)
+        try {
+            let create = await Holders.create({
+                clientName: clientName,
+                clientEmail: clientEmail,
+                clientPhone: clientPhone,
+                TRDR: TRDR,
+                createdFrom:  user,
+                status: 'created',
+                num: num
+            })
+            console.log('created')
+            console.log(create)
+            return res.status(200).json({ success: true, result: create })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+  
+
+    }
+
+    if(action === "createImpaHolder") {
+        const { products, impa, holderId } = req.body;
+        try {
+            console.log('products')
+            console.log(products)
+          
+            const subString = impa?.greekDescription || impa?.englishDescriptio
+            const fullName = impa?.code + ': ' + subString
+            // let productsToImpa = await correlateProductsToImpa(products, impa);
+            // if(!productsToImpa.success) {
+            //     return res.status(500).json({ success: false, result: productsToImpa?.error })
+            // }
+
+            const checkimpa = await Holders.findOne({ _id: holderId, 'holders.impaCode': impa.code })
+            if(checkimpa) {
+                return res.status(200).json({ success: false, result: `Υπάρχει ήδη Holder για τον impa ${impa.code}` })
+            }
+            const update = await Holders.findOneAndUpdate(
+                { _id: holderId },
+                {
+                    $push: {
+                        holders: {
+                            name: fullName,
+                            isImpa: true,
+                            impaCode: impa.code,
+                            products: products
+                        }
+                    }
+                },
+                { new: true }
+            );
+            console.log(update)
+            return res.status(200).json({ success: true, result: update })
+        }catch(e) {
+            return res.status(500).json({ success: false, result: null })
+        }   
+    }
+
+    // /product
+
     if (action === "findImpaProducts") {
         let { code } = req.body
         try {
@@ -17,6 +117,7 @@ export default async function handler(req, res) {
             const impas = await ImpaCodes.find({ code: code })
             .populate('products', 'MTRL CODE COST PRICER _id NAME');
             let products = impas[0].products
+
             return res.status(200).json({ success: true, result: products })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -24,7 +125,8 @@ export default async function handler(req, res) {
 
     }
 
-
+    // https:localohost:4000/products
+   
 
     if (action === "findHolderProducts") {
         const { documentID, holderID } = req.body;
@@ -133,7 +235,6 @@ export default async function handler(req, res) {
     if (action === "addOfferDatabase") {
         const { holders, client, email, id, num, createdFrom } = req.body;
         
-       
 
         try {
             await connectMongo();
@@ -192,9 +293,6 @@ export default async function handler(req, res) {
         const { products, impa } = req.body;
         console.log('PRODUCTS')
 
-        console.log(products)
-        console.log('impa')
-        console.log(impa)
         const ids = products.map((item) => item._id)
         try {
             await connectMongo();

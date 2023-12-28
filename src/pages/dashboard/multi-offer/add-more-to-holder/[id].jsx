@@ -33,7 +33,7 @@ const PlainHolder = () => {
             id: id,
             products: mtrLines
         }))
-        router.push('/dashboard/multi-offer/create-holder')
+        router.push('/dashboard/multi-offer')
 
     }
 

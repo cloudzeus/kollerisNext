@@ -240,7 +240,7 @@ const Impas = () => {
             >
                 <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column>
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="code" header="code" filter filterElement={searchCode} showFilterMenu={false}></Column>
+                <Column field="code" header="code" filter filterElement={searchCode} showFilterMenu={false} body={ImpaCode}></Column>
                 <Column field="englishDescription" header="Αγγλική Περιγραφή" filter filterElement={searchEngName} showFilterMenu={false}></Column>
                 <Column field="greekDescription" header="Ελληνική Περιγραφή" filter filterElement={searchGreekName} showFilterMenu={false}></Column>
                 <Column field="unit" header="Unit"></Column>
@@ -267,6 +267,19 @@ const Impas = () => {
 }
 
 
+const ImpaCode = ({ code, products }) => {
+    return (
+        <div>
+            <span className="block font-bold">{code}</span>
+            {products.length > 0 ? (
+                <div className="flex align-items-center  mt-1 text-sm">
+                    <span className="">products:</span>
+                    <span className="block ml-1 font-bold text-primary">{products.length}</span>
+                </div>
+            ) : null}
+        </div>
+    )
+}
 
 const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
     const router = useRouter();

@@ -18,28 +18,31 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 
 const ImpaHolder = () => {
     const dispatch = useDispatch();
-    const { selectedProducts, mtrLines } = useSelector(state => state.products)
-
-    const { selectedClient, holder, selectedImpa } = useSelector(state => state.impaoffer)
+    const [loading, setLoading] = useState(false)
     const router = useRouter();
-    useEffect(() => {
-        dispatch(setSelectedProducts([]))
-        if (!selectedClient) {
-            router.push('/dashboard/multi-offer')
-        }
-    }, [])
+    const {id} = router.query;
+  
+
+
+    const { selectedProducts, mtrLines } = useSelector(state => state.products)
+    const { selectedClient, holder, selectedImpa } = useSelector(state => state.impaoffer)
+
+
+
 
 
     const onHolderCompletions = async () => {
-        let subString = selectedImpa?.greekDescription || selectedImpa?.englishDescriptio
-        let fullName = selectedImpa?.code + ': ' + subString
-        dispatch(setHolder({
-            isImpa: true,
-            name: fullName,
-            products: mtrLines
-        }))
+        setLoading(prev => !prev)
+      
+        // dispatch(setHolder({
+        //     isImpa: true,
+        //     name: fullName,
+        //     products: mtrLines
+        // }))
 
-        await axios.post('/api/createOffer', { action: 'addProductsToImpa', impa: selectedImpa?.code, products: selectedProducts })
+        const {data} = await axios.post('/api/createOffer', { action: 'createImpaHolder', impa: selectedImpa, products: mtrLines, holderId: id })
+       console.log(data)
+        setLoading(prev => !prev)
         router.push('/dashboard/multi-offer')
     }
 
@@ -47,7 +50,7 @@ const ImpaHolder = () => {
     return (
         <AdminLayout >
             <div className='flex align-items-center justify-content-between mb-5'>
-                <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
+                <Button loading={loading} size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
             </div>
             <PickListComp title={'Επιλογή Impa'} />
             <div className='mt-4 mb-5'>

@@ -20,12 +20,11 @@ export default function Page() {
     const dispatch = useDispatch()
     const id = router.query.id
     const onCompletion = async () => {
-
         dispatch(addMoreToHolder({
             id: id,
             products: mtrLines
         }))
-        router.push('/dashboard/multi-offer/create-holder')
+        router.push('/dashboard/multi-offer')
     }
 
 
@@ -40,9 +39,7 @@ export default function Page() {
 
             <div className='mt-4 mb-5'>
                 <div className='mt-3'>
-
                     < SoftoneStatusButton onClick={onCompletion} btnText="Προσθήκη" />
-
                 </div>
 
             </div>

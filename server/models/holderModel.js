@@ -16,6 +16,8 @@ const holderchema = new mongoose.Schema({
     holders: [
         {
             name: String,
+            isImpa: Boolean,
+            impaCode: String,
             products: [
                 {
                     _id: String,

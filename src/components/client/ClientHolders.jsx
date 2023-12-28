@@ -8,10 +8,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import CreatedAt from '../grid/CreatedAt'
-import SendEmailTemplate from '@/components/emails/SendEmailTemplate'
 import XLSXDownloadButton from '../exportCSV/Download'
 import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
-import {useSelector} from 'react-redux'
+import { setSelectedProducts } from '@/features/productsSlice'
+import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
+import { InputNumber } from 'primereact/inputnumber';
+
 
 const ClientHolder = ({ NAME }) => {
     const [expandedRows, setExpandedRows] = useState(null);
@@ -139,20 +142,22 @@ const ClientHolder = ({ NAME }) => {
         <>
             <DataTable
                 loading={loading}
+                // className='p-datatable-sm'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={RowExpansionTemplate}
                 value={data}
+                paginator
+                rows={4}
+                rowsPerPageOptions={[4, 10, 20]}
                 editMode="row"
                 onRowEditComplete={onRowEditComplete}
                 showGridlines
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
-                <Column header="Όνομα Πελάτη" field="clientName"></Column>
-                <Column header="Email" field="clientEmail"></Column>
-                <Column header="SALDOCNUM" field="SALDOCNUM" style={{width: '90px'}}></Column>
+                <Column header="Όνομα Πελάτη" field="clientName" body={Client}></Column>
+                <Column header="SALDOCNUM" field="SALDOCNUM" style={{maxWidth: '90px'}}></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
-                <Column header="Aριθμός Προσφοράς" headerStyle={{ width: '170px' }} bodyStyle={{ textAlign: 'center' }} field="num"></Column>
                 <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column header="Status Edit" rowEditor headerStyle={{ width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
@@ -162,6 +167,14 @@ const ClientHolder = ({ NAME }) => {
     )
 }
 
+const Client = ({clientName, clientEmail}) => {
+    return (
+        <div>
+            <p className=''>{clientName}</p>
+            <p  style={{fontSize: '13px'}} className='text-500'>{clientEmail}</p>
+        </div>
+    )
+}
 
 const CreatedFrom = ({createdFrom}) => {
     return (
@@ -177,20 +190,41 @@ const CreatedFrom = ({createdFrom}) => {
     )
 }
 const RowExpansionGrid = ({ holders, documentID }) => {
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const op = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
 
     const allowExpansion = (rowData) => {
         return rowData
     };
 
+    const createImpaHolder = () => {
+        dispatch(setSelectedProducts([]))
+        router.push(`/dashboard/multi-offer/create-impa/${documentID}`)
+    }
+
+    const createHolder = () => {
+        dispatch(setSelectedProducts([]))
+        router.push('/dashboard/multi-offer/plain-holder')
+
+    }
+
     const RowExpansionTemplate = ({ products, _id }) => {
         return <SubRowExpansionGrid products={products} documentID={documentID} holderID={_id} />
     }
 
     return (
-        <div className="p-3 mb-8 mt-4">
-            <p className='mb-3 font-bold ml-1'>holders</p>
+        <div className="p-2">
+            <Button className='my-3' size="small" type="button" icon="pi pi-plus" label="Νέο Holder" onClick={(e) => op.current.toggle(e)} />
+            <OverlayPanel ref={op}>
+                <div className="">
+                <Button onClick={createImpaHolder} className='w-full mb-1' type="button" label="Με ΙMPA" severity='warning' />
+                <Button onClick={createHolder} className='w-full' type="button"  label="Απλό Holder"  />
+                </div>
+            </OverlayPanel>
             <DataTable
+                header="Holders"
                 className='border-1 border-300'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -213,12 +247,16 @@ const DownloadXLSXline = ({products}) => {
         </div>
     )
 }
+
+
+
+
+
 const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
     useEffect(() => {
-
         const fetch = async () => {
             setLoading(true)
             let { data } = await axios.post('/api/createOffer', { action: 'findHolderProducts', documentID: documentID, holderID: holderID })
@@ -258,7 +296,6 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
             </div>
         )
     }
-
    
         let sum = 0;
         let productSum = 0;
@@ -275,7 +312,7 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
 
     return (
         <div className='p-3'>
-            <p className='mb-3 font-bold ml-1'>Προϊόντα</p>
+            <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus"/>
             <DataTable
                 value={data}
                 loading={loading}
@@ -283,7 +320,7 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
             >
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμή" body={Price} field="PRICE"></Column>
-                <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1"></Column>
+                <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1" body={Quantity}></Column>
                 <Column header="Σύνολο Τιμής" body={TotalPrice} field="TOTAL_PRICE"></Column>
                 <Column body={RemoveItem} header="Αφαίρεση" bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
             </DataTable>
@@ -310,7 +347,26 @@ const Status = ({ status }) => {
     )
 }
 
-
+const Quantity = ({ QTY1 }) => {
+    const [quantity, setQuantity] = useState(QTY1)
+    return (
+        <div>
+              <InputNumber 
+                        value={quantity} 
+                        size='small'
+                        min= {1}
+                        onValueChange={(e) => setQuantity(e.value)} 
+                        showButtons 
+                        buttonLayout="horizontal" 
+                        decrementButtonClassName="p-button-secondary" 
+                        incrementButtonClassName="p-button-secondary" 
+                        incrementButtonIcon="pi pi-plus" 
+                        decrementButtonIcon="pi pi-minus" 
+                        inputStyle={{ width: '70px', textAlign: 'center' }}
+                        />
+        </div>
+    )
+}
 
 
 
