@@ -411,15 +411,13 @@ export default async function handler(req, res) {
 		const {limit, skip, searchBrand} = req.body;
 		console.log(searchBrand)
 		try {
-			// let searchParams;
-			// if(searchBrand !== '') {
-			// 	let regexSearchTerm = new RegExp("^" + searchBrand, 'i');
-			// 	searchParams = {'softOne.NAME': regexSearchTerm }
-			// }
+			let searchParams;
+			if(searchBrand !== '') {
+				let regexSearchTerm = new RegExp("^" + searchBrand, 'i');
+				searchParams = {'softOne.NAME': regexSearchTerm }
+			}
 			
-			let result = await Markes.find({}, {'softOne.NAME': 1}).skip(skip).limit(limit);
-			console.log('result')
-			console.log(result)
+			let result = await Markes.find(searchParams, {'softOne.NAME': 1}).skip(skip).limit(limit);
 			let totalRecords = await Markes.countDocuments();
 		
 			return res.status(200).json({ success: true, result: result, totalRecords: totalRecords });
@@ -429,9 +427,8 @@ export default async function handler(req, res) {
 	}
 
 	if(action === "relateBrandsToSupplier") {
-		await connectMongo();
 		const {supplierID, brands} = req.body;
-
+		await connectMongo();
 		let brandIds = brands.map(brand => brand._id);
 		try {
 			let updateSuppler = await Supplier.updateOne(
@@ -440,24 +437,20 @@ export default async function handler(req, res) {
 				, 
 				{$addToSet: {brands:brandIds }}
 			);
-			console.log(updateSuppler)
-
+			
 			for(let brand of brands) {
-				let updateBrand = await Markes.updateOne(
-					{
-					_id: brand._id}
-					, 
-					{$set: {supplier: supplierID}}
+				let updateBrand = await Markes.findOneAndUpdate(
+					{_id: brand._id}, 
+					{$set: {supplier: supplierID}},
+				
 				);
-				console.log('updateBrand')
-				console.log(updateBrand)
+			
+				
 			}
 			
-			
-			
-			// return res.status(200).json({ success: true, result: result });
+			return res.status(200).json({ success: true, result: 'ok' });
 		} catch (e) {
-			return res.status(400).json({ success: false, result: null });
+			return res.status(400).json({ success: false, result: null, error: 'Πρόβλημα με την προσθήκη' });
 		}
 
 

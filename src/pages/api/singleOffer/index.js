@@ -218,8 +218,7 @@ export default async function handler(req, res) {
                 totalDiscount: discount
             }
         }, {new: true})
-        console.log('updateDiscount')
-        console.log(updateDiscount)
+    
         // UPDATE TOTAL PRICE
         let newsum =  await calculateTotal(id)
         // console.log('newsum')

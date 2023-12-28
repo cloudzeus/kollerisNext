@@ -369,6 +369,7 @@ const RowExpansionTemplate = ({  supplierID }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)   
     const [refetch, setRefetch] = useState(false)
+    const router = useRouter();
 
     const handleFetch  = async () => {
         setLoading(true)
@@ -400,7 +401,14 @@ const RowExpansionTemplate = ({  supplierID }) => {
 
     return (
         <div className='p-3 w-6'>
-            < MarkesOverlay supplierID={supplierID} setRefetch={setRefetch} />
+            {/* < MarkesOverlay supplierID={supplierID} setRefetch={setRefetch} /> */}
+            <Button 
+                label="Προσθήκη Μάρκας" 
+                icon="pi pi-plus" 
+                severity='secondary' 
+                className='mb-2' 
+                onClick={() => router.push(`/dashboard/suppliers/add-brand/${supplierID}`)}
+            />
             <DataTable
                 loading={loading}
                 style={{maxWidth: '30vw'}}
