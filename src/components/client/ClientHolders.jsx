@@ -189,7 +189,7 @@ const RowExpansionGrid = ({ holders, documentID }) => {
 
     const createHolder = () => {
         dispatch(setSelectedProducts([]))
-        router.push('/dashboard/multi-offer/plain-holder')
+        router.push(`/dashboard/multi-offer/create-plain-holder/${documentID}`)
 
     }
 
@@ -394,6 +394,15 @@ const DownloadXLSXline = ({ products }) => {
     return (
         <div>
             <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+        </div>
+    )
+}
+
+
+const HolderActions = () => {
+    return (
+        <div>
+
         </div>
     )
 }

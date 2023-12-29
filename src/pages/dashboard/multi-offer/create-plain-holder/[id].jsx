@@ -12,12 +12,10 @@ import { useRouter } from 'next/router'
 import SelectedProducts from '@/components/grid/SelectedProducts'
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton'
 import { setPlainHolderName } from '@/features/impaofferSlice'
+import axios from 'axios'
 
 
 
-function generateRandomId(length = 8) {
-    return Math.random().toString(36).substr(2, length);
-}
 
 
 
@@ -25,6 +23,9 @@ const PlainHolder = () => {
     const dispatch = useDispatch();
     const {plainHolderName} = useSelector(state => state.impaoffer)
     const router = useRouter();
+    const {id} = router.query;
+    console.log('id')
+    console.log(id)
     const onChange = (e) => {
         dispatch(setPlainHolderName(e.target.value))
     }
@@ -41,26 +42,21 @@ const PlainHolder = () => {
                 <InputText className='w-full' value={plainHolderName} onChange={onChange } placeholder='Δώστε ένα όνομα στον Holder' />
                 <Button className='ml-2' icon={plainHolderName !== '' ? "pi pi-check" : "pi pi-times"} severity={plainHolderName !== '' ? "success" : "danger"} />
             </div>
-            {plainHolderName ? (<Continue  value={plainHolderName}/>) : null}
+            {plainHolderName ? (<Continue  name={plainHolderName} holderId={id}/>) : null}
 
         </ AdminLayout>
     )
 }
 
 
-const Continue = ({value}) => {
+const Continue = ({name, holderId}) => {
     const { selectedProducts, mtrLines } = useSelector(state => state.products)
     const router = useRouter();
    
-    const dispatch = useDispatch();
     const onHolderCompletions = async () => {
-        // dispatch(setHolder({
-        //     id: generateRandomId(),
-        //     isImpa: false,
-        //     name: value,
-        //     products: mtrLines
-        // }))
-        router.push('/dashboard/multi-offer/create-holder')
+        console.log(mtrLines)
+        const {data} = axios.post('/api/createOffer', { action: 'createHolder', name: name, products: mtrLines, holderId: holderId })
+        // router.push('/dashboard/multi-offer/create-holder')
     }
     return (
         <>

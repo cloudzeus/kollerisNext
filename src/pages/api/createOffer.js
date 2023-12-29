@@ -108,6 +108,32 @@ export default async function handler(req, res) {
         }   
     }
 
+    if(action === "createHolder") {
+        const { products, name, holderId } = req.body;
+        try {
+            console.log('products')
+            console.log(products)
+            console.log('name ' +  name)
+            const update = await Holders.findOneAndUpdate(
+                { _id: holderId },
+                {
+                    $push: {
+                        holders: {
+                            name: name,
+                            isImpa: false,
+                            products: products
+                        }
+                    }
+                },
+                { new: true } // This option returns the modified document after the update
+            );
+            console.log(update)
+            return res.status(200).json({ success: true })
+        }catch(e) {
+            return res.status(500).json({ success: false, result: null })
+        }   
+    }
+
     if(action === "addMoreToHolder") {
         const {  holderId, products} = req.body;
        
