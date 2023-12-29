@@ -14,6 +14,7 @@ import { setSelectedProducts } from '@/features/productsSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { InputNumber } from 'primereact/inputnumber';
+import Input from '../Forms/PrimeInput'
 
 
 const ClientHolder = ({ NAME }) => {
@@ -216,7 +217,7 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             </OverlayPanel>
             <DataTable
                 header="Holders"
-                
+
                 className='p-datatable-sm border-1 border-300'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -225,8 +226,8 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '40px' }} />
                 <Column header="Όνομα" field="name"></Column>
-                <Column  body={HolderActions} style={{ width: '30px ' }}></Column>
-               
+                <Column body={HolderActions} style={{ width: '30px ' }}></Column>
+
             </DataTable>
         </div>
     )
@@ -248,8 +249,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
         const fetch = async () => {
             setLoading(true)
             let { data } = await axios.post('/api/createOffer', { action: 'findHolderProducts', documentID: documentID, holderID: holderID })
-            console.log('data')
-            console.log(data)
+          
             let updateData = data.result.holders[0].products
             setData(updateData)
             setLoading(false)
@@ -309,46 +309,75 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
 
         }
     }
-    const Quantity = ({ QTY1, MTRL, PRICE  }) => {
-        const [quantity, setQuantity] = useState(QTY1)
-        
+        const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
+            const [quantity, setQuantity] = useState(QTY1)
 
-        const handleQuantity = async () => {
-            let {data} = await axios.post('/api/createOffer', {
-                action: 'updateQuantity', 
-                quantity: quantity, 
-                price: PRICE,
-                documentID: documentID, 
-                holderID: holderID, 
-                MTRL: MTRL
-            })
-            setRefetch(prev => !prev)
+
+            const handleQuantity = async () => {
+                let { data } = await axios.post('/api/createOffer', {
+                    action: 'updateQuantity',
+                    quantity: quantity,
+                    price: PRICE,
+                    discountedPrice: DISCOUNTED_PRICE,
+                    documentID: documentID,
+                    holderID: holderID,
+                    MTRL: MTRL
+                })
+                setRefetch(prev => !prev)
+            }
+
+            useEffect(() => {
+                if (quantity === QTY1) return;
+                console.log(quantity)
+                handleQuantity();
+            }, [quantity])
+            return (
+                <div>
+                    <InputNumber
+                        value={quantity}
+                        size='small'
+                        min={1}
+                        onValueChange={(e) => setQuantity(e.value)}
+                        showButtons
+                        buttonLayout="horizontal"
+                        decrementButtonClassName="p-button-secondary"
+                        incrementButtonClassName="p-button-secondary"
+                        incrementButtonIcon="pi pi-plus"
+                        decrementButtonIcon="pi pi-minus"
+                        inputStyle={{ width: '70px', textAlign: 'center' }}
+                    />
+                </div>
+            )
         }
-    
-        useEffect(() => {
-            if(quantity === QTY1) return;
-            console.log(quantity)
-            handleQuantity();
-        }, [quantity])
-        return (
-            <div>
-                <InputNumber
-                    value={quantity}
-                    size='small'
-                    min={1}
-                    onValueChange={(e) => setQuantity(e.value)}
-                    showButtons
-                    buttonLayout="horizontal"
-                    decrementButtonClassName="p-button-secondary"
-                    incrementButtonClassName="p-button-secondary"
-                    incrementButtonIcon="pi pi-plus"
-                    decrementButtonIcon="pi pi-minus"
-                    inputStyle={{ width: '70px', textAlign: 'center' }}
-                />
-            </div>
-        )
-    }
-    
+        const Discount = ({ MTRL, PRICE, QTY1 }) => {
+            const [value, setValue] = useState(0)
+
+            const onValueChange = async (e) => {
+                setValue(e.value)
+            }
+
+            useEffect(() => {
+                if (value == 0) return;
+                const handleChange = async () => {
+                    let { data } = await axios.post('/api/createOffer', {
+                        action: 'updateDiscount',
+                        discount: value,
+                        MTRL: MTRL,
+                        QTY1: QTY1,
+                        PRICE: PRICE,
+                        documentID: documentID,
+                        holderID: holderID,
+                    })
+                    setRefetch(prev => !prev)
+                }
+                handleChange();
+
+            }, [value])
+
+            return (
+                <InputNumber onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+            )
+        }
     return (
         <div className='p-3'>
             <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
@@ -358,14 +387,19 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
                 footer={footer}
             >
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
-                <Column header="Τιμή" body={Price} field="PRICE"></Column>
-                <Column header="Πoσότητα" field="QTY1" body={Quantity}></Column>
-                <Column header="ΣT" body={TotalPrice} style={{width: '80px'}} field="TOTAL_PRICE"></Column>
-                <Column body={RemoveItem}  bodyStyle={{ textAlign: 'center' }} style={{ width: '30px' }}></Column>
+                <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
+                <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
+                <Column header="Τιμ. Έκπ." style={{ width: '50px' }} field="DISCOUNTED_PRICE"></Column>
+                <Column header="Πoσ." field="QTY1" body={Quantity} style={{ width: '100px' }}></Column>
+                <Column header="ΣT" body={TotalPrice} style={{ width: '80px' }} field="TOTAL_PRICE"></Column>
+                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '30px' }}></Column>
             </DataTable>
         </div>
     )
 }
+
+
+
 
 
 const Status = ({ status }) => {
@@ -414,13 +448,13 @@ const CreatedFrom = ({ createdFrom }) => {
 
 
 
-const HolderActions = ({products }) => {
+const HolderActions = ({ products }) => {
     const op = useRef(null);
     return (
         <div>
             <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
             <OverlayPanel className='w-15rem' ref={op}>
-                <Button  label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2'  />
+                <Button label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' />
                 <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
             </OverlayPanel>
         </div>

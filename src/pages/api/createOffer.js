@@ -179,10 +179,9 @@ export default async function handler(req, res) {
 
 
     if(action === "updateQuantity") {
-        const {quantity, holderId, MTRL, holderID, documentID, price} = req.body;
-        
-
-        let newTotalPrice = quantity * price;
+        const {quantity, holderId, MTRL, holderID, documentID, price, discountedPrice} = req.body;
+        let newPrice = discountedPrice ? discountedPrice : price;
+        let newTotalPrice = quantity * newPrice ;
         let _new = parseFloat(newTotalPrice).toFixed(2);
         try {
             await connectMongo();
@@ -222,6 +221,41 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "updateDiscount") {
+        const {discount, PRICE,  QTY1, MTRL, holderID, documentID} = req.body;
+   
+        const newPrice = PRICE - (PRICE * discount / 100);
+        const newTotal = newPrice * QTY1;
+      
+        try {
+            const update = await Holders.findOneAndUpdate(
+                {
+                    '_id': documentID,
+                },
+                {
+                    $set: {
+                        'holders.$[holder].products.$[product].DISCOUNTED_PRICE':newPrice,
+                        'holders.$[holder].products.$[product].TOTAL_PRICE': newTotal
+                    }
+                },
+                {
+                    arrayFilters: [
+                        { 'holder._id': holderID },
+                        { 'product.MTRL': MTRL }
+                    ],
+                    new: true
+                }
+            );
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+
+        }
+               
+            
+        
+    
+    }
     if (action === "findImpaProducts") {
         let { code } = req.body
         try {
