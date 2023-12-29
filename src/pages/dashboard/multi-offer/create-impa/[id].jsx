@@ -66,12 +66,12 @@ const ImpaHolder = () => {
 
 
 
-export const PickListComp = ({disableImpaBtn = false, title}) => {
+export const PickListComp = ({disableImpaBtn = false, title, code}) => {
     const { selectedImpa, dataSource, showImpaTable } = useSelector(state => state.impaoffer)
     const { selectedProducts } = useSelector(state => state.products)
     const [show, setShow] = useState(true)
 
-
+    console.log('picklist code :'  + code)
     return (
         <div >
             <div className='mt-4' >
@@ -82,7 +82,7 @@ export const PickListComp = ({disableImpaBtn = false, title}) => {
                 {(!showImpaTable && selectedImpa) ? (
                     <div>
                         {(dataSource == 2 && show) ? (<ProductSearchGrid />) : null}
-                        {(dataSource == 1 && show) ? (<ImpaDataTable />) : null}
+                        {(dataSource == 1 && show) ? (<ImpaDataTable code={code} />) : null}
                     </div>
                 ) : null}
 

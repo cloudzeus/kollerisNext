@@ -81,9 +81,9 @@ const ClientHolder = ({ NAME }) => {
         setRefetch(prev => !prev)
     };
 
-  
 
-    const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id  }) => {
+
+    const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id }) => {
         const op = useRef(null);
         const _products = []
         holders.map((holder) => {
@@ -156,9 +156,9 @@ const ClientHolder = ({ NAME }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column header="Όνομα Πελάτη" field="clientName" body={Client}></Column>
-                <Column header="SALDOCNUM" field="SALDOCNUM" style={{maxWidth: '90px'}}></Column>
+                <Column header="SALDOCNUM" field="SALDOCNUM" style={{ maxWidth: '90px' }}></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
-                <Column field="createdFrom" body={CreatedFrom}  header="Created From" style={{width: '60px'}}></Column>
+                <Column field="createdFrom" body={CreatedFrom} header="Created From" style={{ width: '60px' }}></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
                 <Column header="Status Edit" rowEditor headerStyle={{ width: '50px' }} bodyStyle={{ textAlign: 'center' }}></Column>
                 <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
@@ -167,29 +167,12 @@ const ClientHolder = ({ NAME }) => {
     )
 }
 
-const Client = ({clientName, clientEmail}) => {
-    return (
-        <div>
-            <p className=''>{clientName}</p>
-            <p  style={{fontSize: '13px'}} className='text-500'>{clientEmail}</p>
-        </div>
-    )
-}
 
-const CreatedFrom = ({createdFrom}) => {
-    return (
-        <div className='flex align-items-center'>
-            {createdFrom ? (
-                <>
-                <i className="pi pi-user mr-1 mt-1 text-primary" style={{fontSize: '12px'}}></i>
-                 <span className="text-600">{createdFrom}</span>
-                </>
-            ) : null}
 
-        </div>
-    )
-}
 const RowExpansionGrid = ({ holders, documentID }) => {
+
+    console.log('holders')
+    console.log(holders)
     const dispatch = useDispatch();
     const router = useRouter();
     const op = useRef(null);
@@ -210,8 +193,16 @@ const RowExpansionGrid = ({ holders, documentID }) => {
 
     }
 
-    const RowExpansionTemplate = ({ products, _id }) => {
-        return <SubRowExpansionGrid products={products} documentID={documentID} holderID={_id} />
+    const RowExpansionTemplate = ({ products, _id, name, isImpa, impaCode }) => {
+        return (
+            <SubRowExpansionGrid
+                products={products}
+                documentID={documentID}
+                holderID={_id}
+                isImpa={isImpa}
+                impaCode={impaCode}
+            />
+        )
     }
 
     return (
@@ -219,8 +210,8 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             <Button className='my-3' size="small" type="button" icon="pi pi-plus" label="Νέο Holder" onClick={(e) => op.current.toggle(e)} />
             <OverlayPanel ref={op}>
                 <div className="">
-                <Button onClick={createImpaHolder} className='w-full mb-1' type="button" label="Με ΙMPA" severity='warning' />
-                <Button onClick={createHolder} className='w-full' type="button"  label="Απλό Holder"  />
+                    <Button onClick={createImpaHolder} className='w-full mb-1' type="button" label="Με ΙMPA" severity='warning' />
+                    <Button onClick={createHolder} className='w-full' type="button" label="Απλό Holder" />
                 </div>
             </OverlayPanel>
             <DataTable
@@ -233,33 +224,31 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column header="Όνομα" field="name"></Column>
-                <Column header="XLSX"  body={DownloadXLSXline} style={{ width: '30px ' }}></Column>
+                <Column header="XLSX" body={DownloadXLSXline} style={{ width: '30px ' }}></Column>
                 {/* <Column header="Σύνολο Προϊόντων" body={TotalProducts}></Column> */}
             </DataTable>
         </div>
     )
 };
 
-const DownloadXLSXline = ({products}) => {
-    return (
-        <div>
-            <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
-        </div>
-    )
-}
 
 
 
 
 
-const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
+
+const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
     const [data, setData] = useState([])
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
+    const router = useRouter();
     useEffect(() => {
         const fetch = async () => {
             setLoading(true)
             let { data } = await axios.post('/api/createOffer', { action: 'findHolderProducts', documentID: documentID, holderID: holderID })
+            console.log('data')
+            console.log(data)
             let updateData = data.result.holders[0].products
             setData(updateData)
             setLoading(false)
@@ -296,27 +285,36 @@ const SubRowExpansionGrid = ({ products, documentID, holderID }) => {
             </div>
         )
     }
-   
-        let sum = 0;
-        let productSum = 0;
-        data.map((product) => {
-            sum += product.TOTAL_PRICE
-        })
-        data.map((product) => {
-            productSum += product.QTY1
-        })
-       
-        
 
-    const footer = `Συνολο Προϊόντων: ${productSum }  /  Συνολο Τιμής: ${sum}€  `;
+    let sum = 0;
+    let productSum = 0;
+    data.map((product) => {
+        sum += product.TOTAL_PRICE
+    })
+    data.map((product) => {
+        productSum += product.QTY1
+    })
+
+
+
+    const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
+
+    const handleAddMore = () => {
+        dispatch(setSelectedProducts([]))
+        if (isImpa) {
+            router.push(`/dashboard/multi-offer/add-more-to-impa/${holderID}/${impaCode}`)
+        } else {
+            console.log('notImpa')
+        }
+    }
 
     return (
         <div className='p-3'>
-            <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus"/>
+            <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
             <DataTable
                 value={data}
                 loading={loading}
-                footer={footer }
+                footer={footer}
             >
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμή" body={Price} field="PRICE"></Column>
@@ -351,23 +349,52 @@ const Quantity = ({ QTY1 }) => {
     const [quantity, setQuantity] = useState(QTY1)
     return (
         <div>
-              <InputNumber 
-                        value={quantity} 
-                        size='small'
-                        min= {1}
-                        onValueChange={(e) => setQuantity(e.value)} 
-                        showButtons 
-                        buttonLayout="horizontal" 
-                        decrementButtonClassName="p-button-secondary" 
-                        incrementButtonClassName="p-button-secondary" 
-                        incrementButtonIcon="pi pi-plus" 
-                        decrementButtonIcon="pi pi-minus" 
-                        inputStyle={{ width: '70px', textAlign: 'center' }}
-                        />
+            <InputNumber
+                value={quantity}
+                size='small'
+                min={1}
+                onValueChange={(e) => setQuantity(e.value)}
+                showButtons
+                buttonLayout="horizontal"
+                decrementButtonClassName="p-button-secondary"
+                incrementButtonClassName="p-button-secondary"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                inputStyle={{ width: '70px', textAlign: 'center' }}
+            />
+        </div>
+    )
+}
+
+const Client = ({ clientName, clientEmail }) => {
+    return (
+        <div>
+            <p className=''>{clientName}</p>
+            <p style={{ fontSize: '13px' }} className='text-500'>{clientEmail}</p>
+        </div>
+    )
+}
+
+const CreatedFrom = ({ createdFrom }) => {
+    return (
+        <div className='flex align-items-center'>
+            {createdFrom ? (
+                <>
+                    <i className="pi pi-user mr-1 mt-1 text-primary" style={{ fontSize: '12px' }}></i>
+                    <span className="text-600">{createdFrom}</span>
+                </>
+            ) : null}
+
         </div>
     )
 }
 
 
-
+const DownloadXLSXline = ({ products }) => {
+    return (
+        <div>
+            <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+        </div>
+    )
+}
 export default ClientHolder;

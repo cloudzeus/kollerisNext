@@ -108,7 +108,41 @@ export default async function handler(req, res) {
         }   
     }
 
-    // /product
+    if(action === "addMoreToHolder") {
+        const {  holderId, products} = req.body;
+       
+        const _products = [];
+        const _existing = [];
+        await connectMongo();
+        try {
+            let findImpaProducts = await Holders.findOne({ 'holders._id': holderId }, { 'holders.$': 1, _id: 0})
+            let existingProducts = findImpaProducts.holders[0].products
+            products.filter((product) => {
+                let found = existingProducts.find((item) => item.MTRL === product.MTRL)
+                if(!found) {
+                    _products.push(product)
+                } else {
+                    _existing.push(product.NAME)
+                }
+            })
+            console.log('_products')
+            console.log(_products)
+            let update = await Holders.findOneAndUpdate({
+                'holders._id': holderId 
+            }, {
+                $push: {
+                    'holders.$.products': { $each: _products }
+                }
+            })
+            console.log('update')
+            console.log(update)
+            return res.status(200).json({ success: true, result: update, _existing: _existing })
+        } catch (e) {
+
+        }
+        return res.status(200).json({ success: true, result: 'ok' })
+    }
+
 
     if (action === "findImpaProducts") {
         let { code } = req.body
@@ -125,14 +159,14 @@ export default async function handler(req, res) {
 
     }
 
-    // https:localohost:4000/products
    
 
     if (action === "findHolderProducts") {
         const { documentID, holderID } = req.body;
         try {
             await connectMongo();
-            const holder = await Holders.findOne({ _id: documentID, 'holders._id': holderID }, { holders: { products: 1 } })
+            const holder = await Holders.findOne({ _id: documentID, 'holders._id': holderID }, { "holders.$": 1 })
+            console.log('find holder')
             console.log(holder)
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
@@ -140,18 +174,18 @@ export default async function handler(req, res) {
         }
     }
 
-    if (action === "findHolderProductsByDocumentID") {
-        const { documentID } = req.body;
-        console.log(documentID)
-        try {
-            await connectMongo();
-            const holder = await Holders.find({ _id: documentID }, { holders: { products: 1 } })
-            console.log(holder)
-            return res.status(200).json({ success: true, result: holder })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
+    // if (action === "findHolderProductsByDocumentID") {
+    //     const { documentID } = req.body;
+    //     console.log(documentID)
+    //     try {
+    //         await connectMongo();
+    //         const holder = await Holders.find({ _id: documentID }, { holders: { products: 1 } })
+    //         console.log(holder)
+    //         return res.status(200).json({ success: true, result: holder })
+    //     } catch (e) {
+    //         return res.status(500).json({ success: false, result: null })
+    //     }
+    // }
 
     if (action == "saveNewEmail") {
         try {
