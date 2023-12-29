@@ -19,8 +19,7 @@ const holderchema = new mongoose.Schema({
             isImpa: Boolean,
             impaCode: String,
             products: [
-                {
-                    _id: String,
+                {   
                     COST: Number,
                     MTRL: String,
                     PRICE: Number,
@@ -32,9 +31,6 @@ const holderchema = new mongoose.Schema({
             ],
         }
     ]
-
-
-
 },
     {
         timestamps: true

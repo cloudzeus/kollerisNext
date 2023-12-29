@@ -32,12 +32,13 @@ export default function Page() {
 
     const onCompletion = async () => {
         const {data} = await axios.post('/api/createOffer', { action: 'addMoreToHolder', products: mtrLines, holderId: holderId })
-        if(data._existing.length > 0) {
-            for(let item of data._existing) {
-                showError(`Το προϊόν  ---- ${item} ---- υπάρχει ήδη στον holder`)
+        if(data.existing.length > 0) {
+            for(let item of data.existing) {
+                 showError(`Το προϊόν  ---- ${item} ---- υπάρχει ήδη στον holder`)
             } 
-        } 
-        router.push('/dashboard/multi-offer')
+        } else {
+            router.push('/dashboard/multi-offer')
+        }
     }
 
 

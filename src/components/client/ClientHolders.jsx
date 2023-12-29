@@ -216,16 +216,17 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             </OverlayPanel>
             <DataTable
                 header="Holders"
-                className='border-1 border-300'
+                
+                className='p-datatable-sm border-1 border-300'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={RowExpansionTemplate}
                 value={holders}
             >
-                <Column expander={allowExpansion} style={{ width: '5rem' }} />
+                <Column expander={allowExpansion} style={{ width: '40px' }} />
                 <Column header="Όνομα" field="name"></Column>
-                <Column header="XLSX" body={DownloadXLSXline} style={{ width: '30px ' }}></Column>
-                {/* <Column header="Σύνολο Προϊόντων" body={TotalProducts}></Column> */}
+                <Column  body={HolderActions} style={{ width: '30px ' }}></Column>
+               
             </DataTable>
         </div>
     )
@@ -304,10 +305,50 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
         if (isImpa) {
             router.push(`/dashboard/multi-offer/add-more-to-impa/${holderID}/${impaCode}`)
         } else {
-            console.log('notImpa')
+            router.push(`/dashboard/multi-offer/add-more-to-holder/${holderID}`)
+
         }
     }
+    const Quantity = ({ QTY1, MTRL, PRICE  }) => {
+        const [quantity, setQuantity] = useState(QTY1)
+        
 
+        const handleQuantity = async () => {
+            let {data} = await axios.post('/api/createOffer', {
+                action: 'updateQuantity', 
+                quantity: quantity, 
+                price: PRICE,
+                documentID: documentID, 
+                holderID: holderID, 
+                MTRL: MTRL
+            })
+            setRefetch(prev => !prev)
+        }
+    
+        useEffect(() => {
+            if(quantity === QTY1) return;
+            console.log(quantity)
+            handleQuantity();
+        }, [quantity])
+        return (
+            <div>
+                <InputNumber
+                    value={quantity}
+                    size='small'
+                    min={1}
+                    onValueChange={(e) => setQuantity(e.value)}
+                    showButtons
+                    buttonLayout="horizontal"
+                    decrementButtonClassName="p-button-secondary"
+                    incrementButtonClassName="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    inputStyle={{ width: '70px', textAlign: 'center' }}
+                />
+            </div>
+        )
+    }
+    
     return (
         <div className='p-3'>
             <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
@@ -318,9 +359,9 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
             >
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμή" body={Price} field="PRICE"></Column>
-                <Column header="ΠΟΣΟΤΗΤΑ" field="QTY1" body={Quantity}></Column>
-                <Column header="Σύνολο Τιμής" body={TotalPrice} field="TOTAL_PRICE"></Column>
-                <Column body={RemoveItem} header="Αφαίρεση" bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
+                <Column header="Πoσότητα" field="QTY1" body={Quantity}></Column>
+                <Column header="ΣT" body={TotalPrice} style={{width: '80px'}} field="TOTAL_PRICE"></Column>
+                <Column body={RemoveItem}  bodyStyle={{ textAlign: 'center' }} style={{ width: '30px' }}></Column>
             </DataTable>
         </div>
     )
@@ -345,26 +386,7 @@ const Status = ({ status }) => {
     )
 }
 
-const Quantity = ({ QTY1 }) => {
-    const [quantity, setQuantity] = useState(QTY1)
-    return (
-        <div>
-            <InputNumber
-                value={quantity}
-                size='small'
-                min={1}
-                onValueChange={(e) => setQuantity(e.value)}
-                showButtons
-                buttonLayout="horizontal"
-                decrementButtonClassName="p-button-secondary"
-                incrementButtonClassName="p-button-secondary"
-                incrementButtonIcon="pi pi-plus"
-                decrementButtonIcon="pi pi-minus"
-                inputStyle={{ width: '70px', textAlign: 'center' }}
-            />
-        </div>
-    )
-}
+
 
 const Client = ({ clientName, clientEmail }) => {
     return (
@@ -390,19 +412,17 @@ const CreatedFrom = ({ createdFrom }) => {
 }
 
 
-const DownloadXLSXline = ({ products }) => {
+
+
+const HolderActions = ({products }) => {
+    const op = useRef(null);
     return (
         <div>
-            <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
-        </div>
-    )
-}
-
-
-const HolderActions = () => {
-    return (
-        <div>
-
+            <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+            <OverlayPanel className='w-15rem' ref={op}>
+                <Button  label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2'  />
+                <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+            </OverlayPanel>
         </div>
     )
 }

@@ -66,7 +66,8 @@ const productsSlice = createSlice({
             state.submitted = !state.submitted;
         },
         deleteSelectedProduct: (state, {payload}) => {
-			state.selectedProducts = state.selectedProducts.filter(product => product._id !== payload);
+			state.selectedProducts = state.selectedProducts.filter(product => product._id !== payload.id);
+            state.mtrLines = state.mtrLines.filter(product => product.NAME !== payload.name);
 		},
 		setMtrLines: (state, {payload}) => {
 			state.mtrLines = state.mtrLines.map(item => {

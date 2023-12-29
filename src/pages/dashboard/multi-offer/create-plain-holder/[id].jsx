@@ -24,8 +24,7 @@ const PlainHolder = () => {
     const {plainHolderName} = useSelector(state => state.impaoffer)
     const router = useRouter();
     const {id} = router.query;
-    console.log('id')
-    console.log(id)
+   
     const onChange = (e) => {
         dispatch(setPlainHolderName(e.target.value))
     }
@@ -54,9 +53,8 @@ const Continue = ({name, holderId}) => {
     const router = useRouter();
    
     const onHolderCompletions = async () => {
-        console.log(mtrLines)
         const {data} = axios.post('/api/createOffer', { action: 'createHolder', name: name, products: mtrLines, holderId: holderId })
-        // router.push('/dashboard/multi-offer/create-holder')
+        router.push('/dashboard/multi-offer')
     }
     return (
         <>

@@ -19,7 +19,7 @@ function generateOfferNum(length) {
 async function correlateProductsToImpa(products, impa) {
     const ids = products.map((item) => item._id)
     try {
-       
+
         let find = await ImpaCodes.updateOne(
             { code: impa },
             { $addToSet: { products: { $each: ids } } }
@@ -42,13 +42,13 @@ export default async function handler(req, res) {
 
 
 
-    if(action === 'startOffer') {
+    if (action === 'startOffer') {
         const { selectedClient, user } = req.body;
         let TRDR = selectedClient.TRDR;
         let clientName = selectedClient.NAME;
         let clientEmail = selectedClient.EMAIL;
         let clientPhone = selectedClient.PHONE01;
-        const num = generateOfferNum(6);    
+        const num = generateOfferNum(6);
         console.log(selectedClient)
         try {
             let create = await Holders.create({
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
                 clientEmail: clientEmail,
                 clientPhone: clientPhone,
                 TRDR: TRDR,
-                createdFrom:  user,
+                createdFrom: user,
                 status: 'created',
                 num: num
             })
@@ -66,16 +66,16 @@ export default async function handler(req, res) {
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
-  
+
 
     }
 
-    if(action === "createImpaHolder") {
+    if (action === "createImpaHolder") {
         const { products, impa, holderId } = req.body;
         try {
             console.log('products')
             console.log(products)
-          
+
             const subString = impa?.greekDescription || impa?.englishDescriptio
             const fullName = impa?.code + ': ' + subString
             // let productsToImpa = await correlateProductsToImpa(products, impa);
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
             // }
 
             const checkimpa = await Holders.findOne({ _id: holderId, 'holders.impaCode': impa.code })
-            if(checkimpa) {
+            if (checkimpa) {
                 return res.status(200).json({ success: false, result: `Υπάρχει ήδη Holder για τον impa ${impa.code}` })
             }
             const update = await Holders.findOneAndUpdate(
@@ -103,17 +103,17 @@ export default async function handler(req, res) {
             );
             console.log(update)
             return res.status(200).json({ success: true, result: update })
-        }catch(e) {
+        } catch (e) {
             return res.status(500).json({ success: false, result: null })
-        }   
+        }
     }
 
-    if(action === "createHolder") {
+    if (action === "createHolder") {
         const { products, name, holderId } = req.body;
         try {
             console.log('products')
             console.log(products)
-            console.log('name ' +  name)
+            console.log('name ' + name)
             const update = await Holders.findOneAndUpdate(
                 { _id: holderId },
                 {
@@ -129,53 +129,105 @@ export default async function handler(req, res) {
             );
             console.log(update)
             return res.status(200).json({ success: true })
-        }catch(e) {
+        } catch (e) {
             return res.status(500).json({ success: false, result: null })
-        }   
+        }
     }
 
-    if(action === "addMoreToHolder") {
-        const {  holderId, products} = req.body;
-       
+    if (action === "addMoreToHolder") {
+        const { holderId, products } = req.body;
+        
         const _products = [];
         const _existing = [];
         await connectMongo();
         try {
-            let findImpaProducts = await Holders.findOne({ 'holders._id': holderId }, { 'holders.$': 1, _id: 0})
+            let findImpaProducts = await Holders.findOne({ 'holders._id': holderId }, { 'holders.$': 1, _id: 0 })
             let existingProducts = findImpaProducts.holders[0].products
             products.filter((product) => {
                 let found = existingProducts.find((item) => item.MTRL === product.MTRL)
-                if(!found) {
+                if (!found) {
                     _products.push(product)
                 } else {
                     _existing.push(product.NAME)
                 }
             })
-            console.log('_products')
-            console.log(_products)
-            let update = await Holders.findOneAndUpdate({
-                'holders._id': holderId 
-            }, {
-                $push: {
-                    'holders.$.products': { $each: _products }
-                }
-            })
-            console.log('update')
-            console.log(update)
-            return res.status(200).json({ success: true, result: update, _existing: _existing })
+
+            if (_existing.length > 0) {
+                return res.status(200).json({ success: true, result: null, existing: _existing })
+            }
+
+            if (_existing.length == 0) {
+                console.log('we shpuld be here')
+                await Holders.findOneAndUpdate({
+                    'holders._id': holderId
+                }, {
+                    $push: {
+                        'holders.$.products': { $each: _products }
+                    }
+                })
+            }
+
+
+            return res.status(200).json({ success: true, existing: _existing })
         } catch (e) {
+            console.log(e)
+            throw 'error in addMoreToHolder'
+            // return res.status(200).json({ success: true, result: null, existing: []})
 
         }
-        return res.status(200).json({ success: true, result: 'ok' })
     }
 
+
+    if(action === "updateQuantity") {
+        const {quantity, holderId, MTRL, holderID, documentID, price} = req.body;
+        
+
+        let newTotalPrice = quantity * price;
+        let _new = parseFloat(newTotalPrice).toFixed(2);
+        try {
+            await connectMongo();
+            async function updateProductQuantity(documentID, holderID, MTRL, newQuantity) {
+                try {
+                    const update = await Holders.findOneAndUpdate(
+                        {
+                            '_id': documentID,
+                        },
+                        {
+                            $set: {
+                                'holders.$[holder].products.$[product].QTY1': newQuantity,
+                                'holders.$[holder].products.$[product].TOTAL_PRICE': _new
+                            }
+                        },
+                        {
+                            arrayFilters: [
+                                { 'holder._id': holderID },
+                                { 'product.MTRL': MTRL }
+                            ],
+                            new: true
+                        }
+                    );
+            
+                    console.log(update);
+                    return update;
+                } catch (error) {
+                   
+                }
+            }
+            
+            updateProductQuantity(documentID, holderID, MTRL, quantity);
+            
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
 
     if (action === "findImpaProducts") {
         let { code } = req.body
         try {
             await connectMongo();
             const impas = await ImpaCodes.find({ code: code })
-            .populate('products', 'MTRL CODE COST PRICER _id NAME');
+                .populate('products', 'MTRL CODE COST PRICER _id NAME');
             let products = impas[0].products
 
             return res.status(200).json({ success: true, result: products })
@@ -185,7 +237,7 @@ export default async function handler(req, res) {
 
     }
 
-   
+
 
     if (action === "findHolderProducts") {
         const { documentID, holderID } = req.body;
@@ -237,18 +289,18 @@ export default async function handler(req, res) {
     if (action === "updateStatus") {
         const { status, id, TRDR, data } = req.body;
         let saldoc;
-      
-        if(status === 'done') {
+
+        if (status === 'done') {
             const mtrlArr = data.flatMap(holder => {
                 let arr = holder.products.map(product => {
-                         const MTRL = parseInt(product.MTRL);
-                         const QTY1 = parseInt(product.QTY1);
-                         return { MTRL, QTY1 };
-                   })
-                   return arr
+                    const MTRL = parseInt(product.MTRL);
+                    const QTY1 = parseInt(product.QTY1);
+                    return { MTRL, QTY1 };
                 })
-              
-                async function getSaldoc() {
+                return arr
+            })
+
+            async function getSaldoc() {
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
                 const response = await fetch(URL, {
                     method: 'POST',
@@ -258,43 +310,43 @@ export default async function handler(req, res) {
                         SERIES: 7001,
                         COMPANY: 1001,
                         TRDR: TRDR,
-                        MTRLINES: mtrlArr 
+                        MTRLINES: mtrlArr
                     })
                 });
 
                 let responseJSON = await response.json();
                 return responseJSON;
             }
-        
+
             let softResponse = await getSaldoc();
-            if(!softResponse.success) {
+            if (!softResponse.success) {
                 saldoc = 'saldoc error'
             } else {
                 saldoc = softResponse.SALDOCNUM
             }
-        } 
-       
+        }
 
-            try {
-                await connectMongo();
-                let update = await Holders.updateOne({ _id: id }, {
-                    $set: {
-                        status: status,
-                        SALDOCNUM: saldoc,
-                    }
-                })
-                console.log(update)
-                return res.status(200).json({ success: true, result: update })
-            } catch (e) {
-                return res.status(500).json({ success: false, result: null })
-            }
-       
+
+        try {
+            await connectMongo();
+            let update = await Holders.updateOne({ _id: id }, {
+                $set: {
+                    status: status,
+                    SALDOCNUM: saldoc,
+                }
+            })
+            console.log(update)
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
+        }
+
     }
 
 
     if (action === "addOfferDatabase") {
         const { holders, client, email, id, num, createdFrom } = req.body;
-        
+
 
         try {
             await connectMongo();
@@ -310,7 +362,7 @@ export default async function handler(req, res) {
             })
             console.log('insert')
             console.log(insert)
-           
+
             await Clients.updateOne({ NAME: client.NAME }, {
                 $set: {
                     OFFERSTATUS: true
@@ -339,7 +391,7 @@ export default async function handler(req, res) {
                     status: "sent"
                 }
             })
-           
+
             let modified = update.modifiedCount
             return res.status(200).json({ success: true, result: modified, send: send })
         } catch (e) {
@@ -426,7 +478,7 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === 'deleteOffer') {
+    if (action === 'deleteOffer') {
         const { id } = req.body;
         try {
             await connectMongo();

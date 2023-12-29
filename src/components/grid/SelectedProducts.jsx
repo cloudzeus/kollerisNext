@@ -14,8 +14,6 @@ const SelectedProducts = () => {
         setLength(selectedProducts.length)
     }, [selectedProducts])
 
-  
-    
 
     return (
         <>
@@ -25,11 +23,11 @@ const SelectedProducts = () => {
                 totalRecords={length}
                 rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
                 value={selectedProducts}
-                className='border-1 border-round-sm	border-50'
-                size="small"
+                className='p-datatable-sm border-1 border-round-sm	border-50'
+                showGridlines
             >
                 <Column header="Προσφορά" body={itemTemplate}></Column>
-                <Column header="Προσφορά" style={{ width: '70px' }} body={CalculateTemplate}></Column>
+                <Column  style={{ width: '70px' }} body={CalculateTemplate}></Column>
                 <Column style={{ width: '30px' }} body={RemoveTemplate}></Column>
             </DataTable>
         </>
@@ -39,7 +37,7 @@ const SelectedProducts = () => {
 const CalculateTemplate = (item) => {
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
-    const {mtrLines} = useSelector(state => state.products)
+    const {mtrLines, selectedProducts} = useSelector(state => state.products)
 
     useEffect(() => {
         dispatch(setMtrLines({ MTRL: item.MTRL, QTY1: quantity }))
@@ -47,6 +45,10 @@ const CalculateTemplate = (item) => {
 
 
    useEffect(() => {
+        console.log('---------------------------------')
+        console.log('selected Products')
+        console.log(selectedProducts)
+        console.log('mtrlines')
         console.log(mtrLines)
    }, [mtrLines])
 
@@ -71,8 +73,11 @@ const CalculateTemplate = (item) => {
 const RemoveTemplate = (item) => {
     const dispatch = useDispatch()
     return (
-        <div className="flex flex-wrap p-2 align-items-center gap-3 border-left-1 border-400 pl-3">
-            <i className="pi pi-trash text-red-400" onClick={() => dispatch(deleteSelectedProduct(item._id))}></i>
+        <div className="flex flex-wrap p-2 align-items-center gap-3">
+            <i className="pi pi-trash text-red-400" onClick={() => dispatch(deleteSelectedProduct({
+                id: item._id,
+                name: item.NAME,
+            }))}></i>
         </div>
     );
 }
