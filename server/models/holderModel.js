@@ -24,6 +24,7 @@ const holderchema = new mongoose.Schema({
                     MTRL: String,
                     PRICE: Number,
                     DISCOUNTED_PRICE: Number,
+                    DISCOUNT: Number,
                     NAME: String,
                     QTY1: Number,
                     TOTAL_PRICE: Number,

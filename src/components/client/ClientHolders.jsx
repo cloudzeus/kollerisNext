@@ -249,7 +249,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
         const fetch = async () => {
             setLoading(true)
             let { data } = await axios.post('/api/createOffer', { action: 'findHolderProducts', documentID: documentID, holderID: holderID })
-          
+
             let updateData = data.result.holders[0].products
             setData(updateData)
             setLoading(false)
@@ -309,75 +309,87 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
 
         }
     }
-        const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
-            const [quantity, setQuantity] = useState(QTY1)
+    const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
+        const [quantity, setQuantity] = useState(QTY1)
 
 
-            const handleQuantity = async () => {
-                let { data } = await axios.post('/api/createOffer', {
-                    action: 'updateQuantity',
-                    quantity: quantity,
-                    price: PRICE,
-                    discountedPrice: DISCOUNTED_PRICE,
-                    documentID: documentID,
-                    holderID: holderID,
-                    MTRL: MTRL
-                })
-                setRefetch(prev => !prev)
-            }
-
-            useEffect(() => {
-                if (quantity === QTY1) return;
-                console.log(quantity)
-                handleQuantity();
-            }, [quantity])
-            return (
-                <div>
-                    <InputNumber
-                        value={quantity}
-                        size='small'
-                        min={1}
-                        onValueChange={(e) => setQuantity(e.value)}
-                        showButtons
-                        buttonLayout="horizontal"
-                        decrementButtonClassName="p-button-secondary"
-                        incrementButtonClassName="p-button-secondary"
-                        incrementButtonIcon="pi pi-plus"
-                        decrementButtonIcon="pi pi-minus"
-                        inputStyle={{ width: '70px', textAlign: 'center' }}
-                    />
-                </div>
-            )
+        const handleQuantity = async () => {
+            let { data } = await axios.post('/api/createOffer', {
+                action: 'updateQuantity',
+                quantity: quantity,
+                price: PRICE,
+                discountedPrice: DISCOUNTED_PRICE,
+                documentID: documentID,
+                holderID: holderID,
+                MTRL: MTRL
+            })
+            setRefetch(prev => !prev)
         }
-        const Discount = ({ MTRL, PRICE, QTY1 }) => {
-            const [value, setValue] = useState(0)
 
-            const onValueChange = async (e) => {
-                setValue(e.value)
-            }
+        useEffect(() => {
+            if (quantity === QTY1) return;
+            console.log(quantity)
+            handleQuantity();
+        }, [quantity])
+        return (
+            <div>
+                <InputNumber
+                    value={quantity}
+                    size='small'
+                    min={0}
+                    onValueChange={(e) => setQuantity(e.value)}
+                    showButtons
+                    buttonLayout="horizontal"
+                    decrementButtonClassName="p-button-secondary"
+                    incrementButtonClassName="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    inputStyle={{ width: '70px', textAlign: 'center' }}
+                />
+            </div>
+        )
+    }
+    const Discount = ({ MTRL, PRICE, QTY1, DISCOUNTED_PRICE, DISCOUNT }) => {
+        console.log('discount')
+        console.log(DISCOUNT)
+        const [value, setValue] = useState(0)
 
-            useEffect(() => {
-                if (value == 0) return;
-                const handleChange = async () => {
-                    let { data } = await axios.post('/api/createOffer', {
-                        action: 'updateDiscount',
-                        discount: value,
-                        MTRL: MTRL,
-                        QTY1: QTY1,
-                        PRICE: PRICE,
-                        documentID: documentID,
-                        holderID: holderID,
-                    })
-                    setRefetch(prev => !prev)
-                }
-                handleChange();
-
-            }, [value])
-
-            return (
-                <InputNumber onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
-            )
+        const onValueChange = async () => {
+           
+          
+            let { data } = await axios.post('/api/createOffer', {
+                action: 'updateDiscount',
+                discount: value,
+                MTRL: MTRL,
+                QTY1: QTY1,
+                PRICE: PRICE,
+                documentID: documentID,
+                holderID: holderID,
+            })
+            setRefetch(prev => !prev)
         }
+
+
+
+        useEffect(() => {
+            setValue(DISCOUNT ? DISCOUNT : 0)
+            
+
+        }, [])
+
+        const onChange = async (e) => {
+            console.log(e.value)
+            setValue(e.value)
+        }
+        return (
+            <div className='flex'>
+                <span className="p-input-icon-right">
+                    <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' :  'text-green-400'}` } onClick={onValueChange}  />
+                    <InputNumber value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                </span>
+            </div>
+        )
+    }
     return (
         <div className='p-3'>
             <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />

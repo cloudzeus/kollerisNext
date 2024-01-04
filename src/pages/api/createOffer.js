@@ -223,7 +223,11 @@ export default async function handler(req, res) {
 
     if(action === "updateDiscount") {
         const {discount, PRICE,  QTY1, MTRL, holderID, documentID} = req.body;
-   
+        
+        console.log('discount')
+        console.log(discount)
+        console.log('PRICE')
+        console.log(PRICE)
         const newPrice = PRICE - (PRICE * discount / 100);
         const newTotal = newPrice * QTY1;
       
@@ -235,6 +239,7 @@ export default async function handler(req, res) {
                 {
                     $set: {
                         'holders.$[holder].products.$[product].DISCOUNTED_PRICE':newPrice,
+                        'holders.$[holder].products.$[product].DISCOUNT': discount,
                         'holders.$[holder].products.$[product].TOTAL_PRICE': newTotal
                     }
                 },
