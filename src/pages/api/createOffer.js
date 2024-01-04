@@ -224,7 +224,7 @@ export default async function handler(req, res) {
             PRICE: PRICE
         }]
         
-        
+
         let salesdoc = await getNewSalesDoc(TRDR, mtrLine, discount)
         console.log(salesdoc)
         if(!salesdoc.success) {
@@ -532,6 +532,47 @@ export default async function handler(req, res) {
             return res.status(200).json({success: true, result: deleted})
         } catch (e) {
             return res.status(500).json({success: false, result: null})
+        }
+    }
+
+    if(action === "holdersTotalPrice") {
+        const {documentID} = req.body;
+        try {
+            await connectMongo();
+            const holder = await Holders.findOne({_id: documentID}, {holders: 1})
+            let totalPrice = 0;
+            for(let item of holder.holders) {
+                for(let product of item.products) {
+                    totalPrice += product.TOTAL_PRICE
+                }
+            }
+            console.log(totalPrice)
+            let update = await Holders.updateOne({_id: documentID}, {
+                $set: {
+                    totalPrice: totalPrice
+                }
+            })
+            return res.status(200).json({success: true, result: totalPrice})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+
+    if(action === 'totalDiscount') {
+        const {documentID, discount, totalPrice} = req.body;
+        let discountedPrice = (totalPrice  - totalPrice * discount / 100).toFixed(2);
+        try {
+            let update = await Holders.updateOne({_id: documentID}, {
+                $set: {
+                    discount: discount,
+                    discountedTotal: discountedPrice
+                }
+            })
+            
+            return res.status(200).json({success: true})
+
+        } catch (e) {
+            return res.status(500).json({success: false})
         }
     }
 }

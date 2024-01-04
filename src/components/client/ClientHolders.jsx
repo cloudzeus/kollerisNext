@@ -24,7 +24,11 @@ const ClientHolder = ({ NAME }) => {
     const [deleteLoading, setDeleteLoading] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
-    const [refetch, setRefetch] = useState(false)
+    const [refetch, setRefetch] = useState({
+        grid: false,
+        holder: false,
+        products: false,
+    })
     const [loading, setLoading] = useState(false)
 
 
@@ -39,7 +43,7 @@ const ClientHolder = ({ NAME }) => {
 
     useEffect(() => {
         handleFetch();
-    }, [refetch, NAME])
+    }, [refetch.grid, NAME])
 
 
 
@@ -81,7 +85,7 @@ const ClientHolder = ({ NAME }) => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', { action: 'updateStatus', status: newData.status, id: newData._id, TRDR: newData.TRDR, data: newData.holders })
         setLoading(false)
-        setRefetch(prev => !prev)
+        setRefetch(prev => ({ ...prev, grid: !prev.grid }))
     };
 
 
@@ -110,7 +114,7 @@ const ClientHolder = ({ NAME }) => {
             await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id })
             // setLoading(false)
             setDeleteLoading(false)
-            setRefetch(prev => !prev)
+            setRefetch(prev => ({ ...prev, grid: !prev.grid }))
         }
 
         return (
@@ -139,7 +143,7 @@ const ClientHolder = ({ NAME }) => {
     }
 
     const RowExpansionTemplate = ({ holders, _id, TRDR }) => {
-        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch} TRDR={TRDR}  />
+        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch} refetch={refetch} TRDR={TRDR} />
     }
     return (
         <>
@@ -171,16 +175,25 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-const RowExpansionGrid = ({ holders, documentID, setRefetch, TRDR }) => {
+const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR }) => {
 
-  
+    const [totalPrice, setTotalPrice] = useState(null)
+    const [discount, setDiscount] = useState(0)
     const dispatch = useDispatch();
     const router = useRouter();
     const op = useRef(null);
-    const [rowRefetch, setRowRefetch] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-   
 
+
+
+    useEffect(() => {
+        const handleFooterData = async () => {
+            let { data } = await axios.post('/api/createOffer', { action: 'holdersTotalPrice', documentID: documentID })
+            console.log(data.result)
+            setTotalPrice(data.result)
+        }
+        handleFooterData();
+    }, [refetch])
     const allowExpansion = (rowData) => {
         return rowData
     };
@@ -206,26 +219,61 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, TRDR }) => {
                 isImpa={isImpa}
                 impaCode={impaCode}
                 TRDR={TRDR}
+                refetch={refetch}
+                setRefetch={setRefetch}
             />
         )
     }
 
-    
+
     const RenderHolderActions = ({ isImpa, impaCode, _id, products }) => {
         const op = useRef(null);
 
         const deleteHolder = async () => {
-            await axios.post('/api/createOffer', { action: 'deleteHolder', documentID: documentID,  holderId: _id })
-            setRefetch(prev => !prev)
+            await axios.post('/api/createOffer', { action: 'deleteHolder', documentID: documentID, holderId: _id })
+            setRefetch(prev => ({ ...prev, holder: !prev.holder }))
         }
         return (
             <div>
-            <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
-            <OverlayPanel className='w-15rem' ref={op}>
-                <Button label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={deleteHolder} />
-                <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
-            </OverlayPanel>
-        </div>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <Button label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={deleteHolder} />
+                    <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+                </OverlayPanel>
+            </div>
+        )
+    }
+
+    const Footer = () => {
+       
+        const handleDiscount = (e) => {
+            setDiscount(e.value)
+        }
+
+        const onValueChange = async () => {
+            let { data } = axios.post('/api/createOffer', { action: 'totalDiscount', documentID: documentID, discount: discount, totalPrice: totalPrice })
+
+        }
+        return (
+            <div className='flex align-items-center'>
+                <div>
+                    <span className='font-light'>Συνολική Τιμή: </span>
+                    <span>{totalPrice}</span>
+                </div>
+                <div className='ml-2 flex justify-content-center align-items-center'>
+                    <div className='flex'>
+                        <span className="p-input-icon-right">
+                            <span className='ml-2 font-light'>Έκπτωση: </span>
+                            <i className={`pi pi-check `} onClick={onValueChange} />
+                            <InputNumber value={discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                        </span>
+                    </div>
+                    <div className='bg-surface-400 ml-2'>
+                        <span className='font-light'>Τελική Τιμή:</span>
+                        <span> 321</span>
+                    </div>
+                </div>
+            </div>
         )
     }
 
@@ -239,6 +287,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, TRDR }) => {
                 </div>
             </OverlayPanel>
             <DataTable
+                footer={Footer}
                 header="Holders"
                 className='p-datatable-sm border-1 border-300'
                 expandedRows={expandedRows}
@@ -261,13 +310,12 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, TRDR }) => {
 
 
 
-const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) => {
+const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, refetch, setRefetch }) => {
     const [data, setData] = useState([])
     const toast = useRef(null);
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    const [refetch, setRefetch] = useState(false)
     const router = useRouter();
     useEffect(() => {
         const fetch = async () => {
@@ -284,8 +332,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
     const onRemove = (MTRL) => {
         setLoading(true)
         let { data } = axios.post('/api/createOffer', { action: 'removeHolderItems', mtrl: MTRL, documentID: documentID, holderID: holderID })
-        console.log(data)
-        setRefetch(prev => !prev)
+        setRefetch(prev => ({ ...prev, products: !prev.products }))
     }
     const RemoveItem = ({ MTRL }) => {
 
@@ -321,7 +368,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
     })
 
     const showError = (message) => {
-        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
     }
 
     const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
@@ -349,7 +396,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
                 holderID: holderID,
                 MTRL: MTRL
             })
-            setRefetch(prev => !prev)
+            setRefetch(prev => ({ ...prev, products: !prev.products }))
         }
 
         useEffect(() => {
@@ -376,11 +423,10 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
         )
     }
     const Discount = ({ MTRL, PRICE, QTY1, DISCOUNTED_PRICE, DISCOUNT }) => {
-     
+
         const [value, setValue] = useState(0)
 
         const onValueChange = async () => {
-           
             let { data } = await axios.post('/api/createOffer', {
                 action: 'updateDiscount',
                 discount: value,
@@ -391,17 +437,18 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
                 holderID: holderID,
                 TRDR: TRDR,
             })
-            if(!data.success && data?.message) {
+            if (!data.success && data?.message) {
                 showError(data.message)
             }
-            setRefetch(prev => !prev)
+            setRefetch(prev => ({ ...prev, products: !prev.products }))
+
         }
 
 
 
         useEffect(() => {
             setValue(DISCOUNT ? DISCOUNT : 0)
-            
+
 
         }, [])
 
@@ -412,7 +459,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
         return (
             <div className='flex'>
                 <span className="p-input-icon-right">
-                    <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' :  'text-green-400'}` } onClick={onValueChange}  />
+                    <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' : 'text-green-400'}`} onClick={onValueChange} />
                     <InputNumber value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                 </span>
             </div>
@@ -427,6 +474,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) =
                 loading={loading}
                 footer={footer}
             >
+
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
                 <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
