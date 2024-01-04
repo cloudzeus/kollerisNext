@@ -11,6 +11,7 @@ import CreatedAt from '../grid/CreatedAt'
 import XLSXDownloadButton from '../exportCSV/Download'
 import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
 import { setSelectedProducts } from '@/features/productsSlice'
+import { setSelectedImpa } from '@/features/impaofferSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { InputNumber } from 'primereact/inputnumber';
@@ -137,13 +138,12 @@ const ClientHolder = ({ NAME }) => {
     }
 
     const RowExpansionTemplate = ({ holders, _id }) => {
-        return <RowExpansionGrid holders={holders} documentID={_id} />
+        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch}  />
     }
     return (
         <>
             <DataTable
                 loading={loading}
-                // className='p-datatable-sm'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={RowExpansionTemplate}
@@ -170,14 +170,16 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-const RowExpansionGrid = ({ holders, documentID }) => {
+const RowExpansionGrid = ({ holders, documentID, setRefetch }) => {
 
-    console.log('holders')
-    console.log(holders)
+  
     const dispatch = useDispatch();
     const router = useRouter();
     const op = useRef(null);
+    const [rowRefetch, setRowRefetch] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
+
+   
 
     const allowExpansion = (rowData) => {
         return rowData
@@ -185,6 +187,7 @@ const RowExpansionGrid = ({ holders, documentID }) => {
 
     const createImpaHolder = () => {
         dispatch(setSelectedProducts([]))
+        dispatch(setSelectedImpa(null))
         router.push(`/dashboard/multi-offer/create-impa/${documentID}`)
     }
 
@@ -206,6 +209,25 @@ const RowExpansionGrid = ({ holders, documentID }) => {
         )
     }
 
+    
+    const RenderHolderActions = ({ isImpa, impaCode, _id, products }) => {
+        const op = useRef(null);
+
+        const deleteHolder = async () => {
+            await axios.post('/api/createOffer', { action: 'deleteHolder', documentID: documentID,  holderId: _id })
+            setRefetch(prev => !prev)
+        }
+        return (
+            <div>
+            <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+            <OverlayPanel className='w-15rem' ref={op}>
+                <Button label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={deleteHolder} />
+                <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
+            </OverlayPanel>
+        </div>
+        )
+    }
+
     return (
         <div className="p-2">
             <Button className='my-3' size="small" type="button" icon="pi pi-plus" label="Νέο Holder" onClick={(e) => op.current.toggle(e)} />
@@ -217,7 +239,6 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             </OverlayPanel>
             <DataTable
                 header="Holders"
-
                 className='p-datatable-sm border-1 border-300'
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -226,7 +247,7 @@ const RowExpansionGrid = ({ holders, documentID }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '40px' }} />
                 <Column header="Όνομα" field="name"></Column>
-                <Column body={HolderActions} style={{ width: '30px ' }}></Column>
+                <Column body={RenderHolderActions} style={{ width: '30px ' }}></Column>
 
             </DataTable>
         </div>
@@ -460,16 +481,5 @@ const CreatedFrom = ({ createdFrom }) => {
 
 
 
-const HolderActions = ({ products }) => {
-    const op = useRef(null);
-    return (
-        <div>
-            <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
-            <OverlayPanel className='w-15rem' ref={op}>
-                <Button label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' />
-                <XLSXDownloadButton data={products} fileName={`${products[0].clientName}.offer`} />
-            </OverlayPanel>
-        </div>
-    )
-}
+
 export default ClientHolder;

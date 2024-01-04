@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import ProductSearchGrid from '@/components/grid/ProductSearchGrid';
 import SelectedProducts from '@/components/grid/SelectedProducts';
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
+import { Toast } from 'primereact/toast';
 
 
 const ImpaHolder = () => {
@@ -21,34 +22,35 @@ const ImpaHolder = () => {
     const [loading, setLoading] = useState(false)
     const router = useRouter();
     const {id} = router.query;
-  
+    const toast = useRef(null);
+
 
 
     const { selectedProducts, mtrLines } = useSelector(state => state.products)
     const { selectedClient, holder, selectedImpa } = useSelector(state => state.impaoffer)
 
-
+    const showError = (message) => {
+        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 5000});
+    }
 
 
 
     const onHolderCompletions = async () => {
         setLoading(prev => !prev)
-      
-        // dispatch(setHolder({
-        //     isImpa: true,
-        //     name: fullName,
-        //     products: mtrLines
-        // }))
-
         const {data} = await axios.post('/api/createOffer', { action: 'createImpaHolder', impa: selectedImpa, products: mtrLines, holderId: id })
        console.log(data)
         setLoading(prev => !prev)
+        if(data.message) {
+            showError(data.message)
+            return;
+        }
         router.push('/dashboard/multi-offer')
     }
 
 
     return (
         <AdminLayout >
+            <Toast ref={toast} />
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button loading={loading} size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
             </div>

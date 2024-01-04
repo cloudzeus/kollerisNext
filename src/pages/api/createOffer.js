@@ -73,6 +73,9 @@ export default async function handler(req, res) {
     if (action === "createImpaHolder") {
         const { products, impa, holderId } = req.body;
         try {
+            console.log('impa')
+            console.log(impa)
+            console.log('holderId ' + holderId)
             console.log('products')
             console.log(products)
 
@@ -85,7 +88,7 @@ export default async function handler(req, res) {
 
             const checkimpa = await Holders.findOne({ _id: holderId, 'holders.impaCode': impa.code })
             if (checkimpa) {
-                return res.status(200).json({ success: false, result: `Υπάρχει ήδη Holder για τον impa ${impa.code}` })
+                return res.status(200).json({ success: false, result: null, message: `Υπάρχει ήδη Holder για τον impa ${impa.code}` })
             }
             const update = await Holders.findOneAndUpdate(
                 { _id: holderId },
@@ -102,7 +105,7 @@ export default async function handler(req, res) {
                 { new: true }
             );
             console.log(update)
-            return res.status(200).json({ success: true, result: update })
+            return res.status(200).json({ success: true, result: update, message: null })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
@@ -156,8 +159,7 @@ export default async function handler(req, res) {
                 return res.status(200).json({ success: true, result: null, existing: _existing })
             }
 
-            if (_existing.length == 0) {
-                console.log('we shpuld be here')
+            if (_products.length > 0) {
                 await Holders.findOneAndUpdate({
                     'holders._id': holderId
                 }, {
@@ -165,14 +167,12 @@ export default async function handler(req, res) {
                         'holders.$.products': { $each: _products }
                     }
                 })
+                return res.status(200).json({ success: true, existing: _existing })
             }
 
-
-            return res.status(200).json({ success: true, existing: _existing })
+            return res.status(200).json({ success: false })
         } catch (e) {
-            console.log(e)
-            throw 'error in addMoreToHolder'
-            // return res.status(200).json({ success: true, result: null, existing: []})
+            return res.status(200).json({ success: true, result: null, existing: []})
 
         }
     }
@@ -283,8 +283,7 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const holder = await Holders.findOne({ _id: documentID, 'holders._id': holderID }, { "holders.$": 1 })
-            console.log('find holder')
-            console.log(holder)
+          
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
@@ -525,6 +524,25 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true, result: deleted })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
+        }
+    }
+
+    if(action === "deleteHolder") {
+        const {holderId, documentID} = req.body;
+        console.log(holderId)
+        console.log(documentID)
+        try {
+            await connectMongo();
+            const deleted = await Holders.findOneAndUpdate({_id : documentID}, {
+                $pull: {
+                    holders: {_id: holderId}
+                }
+            });
+            console.log('deleted')
+            console.log(deleted)
+            return res.status(200).json({success: true, result: deleted})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
         }
     }
 }
