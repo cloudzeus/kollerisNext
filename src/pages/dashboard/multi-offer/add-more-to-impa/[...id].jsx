@@ -1,4 +1,3 @@
-import { PickListComp } from "../create-impa-holder"
 import AdminLayout from "@/layouts/Admin/AdminLayout";
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,30 +7,28 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 import axios from "axios";
 import InfoPanel from "@/components/InfoPannel";
 import { Toast } from 'primereact/toast';
-
+import { PickListComp } from "../create-impa/[id]";
 
 export default function Page() {
 
-    const { mtrLines } = useSelector(state => state.products)
+    const { mtrLines, selectedProducts } = useSelector(state => state.products)
     const { holder } = useSelector(state => state.impaoffer)
-    const op = useRef(null)
     const toast = useRef(null)
     const router = useRouter()
-    const dispatch = useDispatch()
     const holderId = router.query.id[0]
     const impaCode = router.query.id[1]
-    console.log(holderId, impaCode)
-    const showSuccess = () => {
-        toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});
-    }
+   
     
+    console.log(selectedProducts)
 
     const showError = (message) => {
         toast.current.show({severity: 'info', summary: 'Error', detail:message, life: 6000});
     }
 
     const onCompletion = async () => {
-        const {data} = await axios.post('/api/createOffer', { action: 'addMoreToHolder', products: mtrLines, holderId: holderId })
+       
+        const {data} = await axios.post('/api/createOffer', { action: 'addMoreToHolder', products: mtrLines, holderId: holderId})
+        const addtoimpa = await axios.post('/api/createOffer', { action: 'addProductsToImpa', products: selectedProducts, impa: impaCode})
         if(data.existing.length > 0) {
             for(let item of data.existing) {
                  showError(`Το προϊόν  ---- ${item} ---- υπάρχει ήδη στον holder`)
@@ -48,8 +45,7 @@ export default function Page() {
             <div className='flex align-items-center justify-content-between mb-5'>
                 <Button size="small" icon="pi pi-angle-left" label="Πίσω" onClick={() => router.back()} />
             </div>
-            <InfoPanel message="Αν επιθυμείτε να αυξήσετε την ποσότητα προϊόντων που υπάρχουν ήδη στον holder, 
-                προσθέστε τα στην λίστα, ρυθμίστε την ποσότητα που επιθυμείτε και πατήστε το κουμπί Προσθήκη" />
+         
             <PickListComp code={impaCode} disableImpaBtn={true} title="Προσθήκη Περισσότερων" />
 
             <div className='mt-4 mb-5'>

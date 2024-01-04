@@ -38,6 +38,8 @@ const ImpaHolder = () => {
     const onHolderCompletions = async () => {
         setLoading(prev => !prev)
         const {data} = await axios.post('/api/createOffer', { action: 'createImpaHolder', impa: selectedImpa, products: mtrLines, holderId: id })
+        await axios.post('/api/createOffer', { action: 'addProductsToImpa', products: selectedProducts, impa:selectedImpa.code})
+
        console.log(data)
         setLoading(prev => !prev)
         if(data.message) {
