@@ -12,10 +12,11 @@ import XLSXDownloadButton from '../exportCSV/Download'
 import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
 import { setSelectedProducts } from '@/features/productsSlice'
 import { setSelectedImpa } from '@/features/impaofferSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { InputNumber } from 'primereact/inputnumber';
 import Input from '../Forms/PrimeInput'
+import { Toast } from 'primereact/toast';
 
 
 const ClientHolder = ({ NAME }) => {
@@ -137,8 +138,8 @@ const ClientHolder = ({ NAME }) => {
         )
     }
 
-    const RowExpansionTemplate = ({ holders, _id }) => {
-        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch}  />
+    const RowExpansionTemplate = ({ holders, _id, TRDR }) => {
+        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch} TRDR={TRDR}  />
     }
     return (
         <>
@@ -170,7 +171,7 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-const RowExpansionGrid = ({ holders, documentID, setRefetch }) => {
+const RowExpansionGrid = ({ holders, documentID, setRefetch, TRDR }) => {
 
   
     const dispatch = useDispatch();
@@ -178,7 +179,6 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch }) => {
     const op = useRef(null);
     const [rowRefetch, setRowRefetch] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-
    
 
     const allowExpansion = (rowData) => {
@@ -205,6 +205,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch }) => {
                 holderID={_id}
                 isImpa={isImpa}
                 impaCode={impaCode}
+                TRDR={TRDR}
             />
         )
     }
@@ -260,8 +261,10 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch }) => {
 
 
 
-const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
+const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR }) => {
     const [data, setData] = useState([])
+    const toast = useRef(null);
+
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
@@ -317,7 +320,9 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
         productSum += product.QTY1
     })
 
-
+    const showError = (message) => {
+        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
+    }
 
     const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
 
@@ -371,13 +376,11 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
         )
     }
     const Discount = ({ MTRL, PRICE, QTY1, DISCOUNTED_PRICE, DISCOUNT }) => {
-        console.log('discount')
-        console.log(DISCOUNT)
+     
         const [value, setValue] = useState(0)
 
         const onValueChange = async () => {
            
-          
             let { data } = await axios.post('/api/createOffer', {
                 action: 'updateDiscount',
                 discount: value,
@@ -386,7 +389,11 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
                 PRICE: PRICE,
                 documentID: documentID,
                 holderID: holderID,
+                TRDR: TRDR,
             })
+            if(!data.success && data?.message) {
+                showError(data.message)
+            }
             setRefetch(prev => !prev)
         }
 
@@ -413,6 +420,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode }) => {
     }
     return (
         <div className='p-3'>
+            <Toast ref={toast} />
             <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
             <DataTable
                 value={data}

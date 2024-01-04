@@ -82,11 +82,6 @@ export default async function handler(req, res) {
 
             const subString = impa?.greekDescription || impa?.englishDescriptio
             const fullName = impa?.code + ': ' + subString
-            // let productsToImpa = await correlateProductsToImpa(products, impa);
-            // if(!productsToImpa.success) {
-            //     return res.status(500).json({ success: false, result: productsToImpa?.error })
-            // }
-
             const checkimpa = await Holders.findOne({ _id: holderId, 'holders.impaCode': impa.code })
             if (checkimpa) {
                 return res.status(200).json({ success: false, result: null, message: `Υπάρχει ήδη Holder για τον impa ${impa.code}` })
@@ -221,12 +216,20 @@ export default async function handler(req, res) {
     }
 
     if(action === "updateDiscount") {
-        const {discount, PRICE,  QTY1, MTRL, holderID, documentID} = req.body;
+        const {discount, PRICE,  QTY1, MTRL, holderID, documentID, TRDR} = req.body;
+
+        const mtrLine = [{
+            MTRL: MTRL,
+            QTY1: QTY1,
+            PRICE: PRICE
+        }]
         
-        console.log('discount')
-        console.log(discount)
-        console.log('PRICE')
-        console.log(PRICE)
+        
+        let salesdoc = await getNewSalesDoc(TRDR, mtrLine, discount)
+        console.log(salesdoc)
+        if(!salesdoc.success) {
+            return res.status(200).json({success: false, result: null, message: 'softone discount error'})
+        }
         const newPrice = PRICE - (PRICE * discount / 100);
         const newTotal = newPrice * QTY1;
       
@@ -535,3 +538,24 @@ export default async function handler(req, res) {
 
 
 
+async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
+    let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.parastatika/newSalesDoc`;
+    const response = await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            username: "Service",
+            password: "Service",
+            COMPANY: 1001,
+            SERIES: 7021,
+            PAYMENT: 1012,
+            TRDR: TRDR,
+            SOCARRIER: 238,
+            DISC1PRC: totalDiscount,
+            MTRLINES: MTRLINES
+        })
+    });
+
+    let responseJSON = await response.json();
+    console.log(responseJSON)
+    return responseJSON;
+}

@@ -25,7 +25,7 @@ const Page = () => {
 
     const onComplete = async (e) => {
         console.log(mtrLines)
-        const {data} = await axios.post('/api/createOffer', { action: 'addMoreToHolder', products: mtrLines, holderId: id, isImpa: true })
+        const {data} = await axios.post('/api/createOffer', { action: 'addMoreToHolder', products: mtrLines, holderId: id })
         console.log(data)
        
         if(data.existing.length > 0) {
