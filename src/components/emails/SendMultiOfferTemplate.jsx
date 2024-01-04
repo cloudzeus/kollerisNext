@@ -10,9 +10,6 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 const emails = [
     { email: 'kolleris@info.gr', default: true },
-    { email: 'johnchiout.dev@gmail.com', default: true },
-    { email: 'sample@gmail.com', default: false },
-    { email: 'sample@gmail.com', default: false }
 ];
 
 
@@ -21,13 +18,14 @@ const SendMultiOfferEmail = ({ email, mt, holders, num, _id, clientName, SALDOCN
     const [loading, setLoading] = useState(false)
     const [selectedCC, setSelectedCC] = useState([
         { email: 'kolleris@info.gr', default: true },
-        { email: 'johnchiout.dev@gmail.com', default: true }
+       
     ])
 
   
     const [state, setState] = useState({
         visible: false,
         subject: '',
+        email: email,
         message: '',
         checked: true,
         fileName: ''
@@ -60,16 +58,16 @@ const SendMultiOfferEmail = ({ email, mt, holders, num, _id, clientName, SALDOCN
     const handleMessage = (e) => {
         setState((prev) => ({ ...prev, message: e.target.value }))
     }
-    const handleCheck = (e) => {
-        setState((prev) => ({ ...prev, checked: e.checked }))
+    
+    const changeEmail = (e) => {
+        setState((prev) => ({ ...prev, email: e.target.value }))
     }
-
     const finalSubmit = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/createOffer', { 
             action: 'sendEmail', 
             holders: holders, 
-            clientEmail: email,
+            clientEmail: state.email,
             clientName: clientName,
             products:  products, 
             createdAt: createdAt,
@@ -106,7 +104,7 @@ const SendMultiOfferEmail = ({ email, mt, holders, num, _id, clientName, SALDOCN
             >
                 <div className="flex flex-column gap-2">
                     <label className='font-bold' htmlFor="username">Προς:</label>
-                    <InputText value={email} disabled={true} />
+                    <InputText value={state.email} onChange={changeEmail}  />
                 </div>
                 <div className="flex flex-column gap-2 mt-2">
                     <label className='font-bold mb01' htmlFor="username">Κοινοποίηση:</label>
@@ -130,10 +128,7 @@ const SendMultiOfferEmail = ({ email, mt, holders, num, _id, clientName, SALDOCN
                         />
                     </div>
                 </div>
-                {/* <div className="flex align-items-center mt-3">
-                    <Checkbox id="attach" onChange={handleCheck} checked={state.checked} />
-                    <label htmlFor="attach" className="ml-2">Το email να περιλαμβάνει csv αρχείο με τα προϊόντα</label>
-                </div> */}
+             
                 <div className="flex flex-column gap-2 mt-5">
                     <label className='font-bold' htmlFor="username">Όνομα αρχείου CSV:</label>
                     <InputText value={state.fileName} onChange={handleSubject} />
