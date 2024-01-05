@@ -5,7 +5,7 @@ import connectMongo from "../../../server/config";
 export default async function handler(req, res) {
     const { action } = req.body;
     if (action === "createPurDoc") {
-        const { mtrLines, TRDR, WHOUSE, supplier,  } = req.body;
+        const { mtrLines, TRDR, WHOUSE, supplier, remarks  } = req.body;
 
         //ALTER THE PRODUCTS ARRAY TO MATCH THE FORMAT OF THE API:
         let _newLines = mtrLines.map(item => {
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         })
         console.log('--------------- NEW LINES -----------------')
         console.log(_newLines)
-        let purdoc = await createPurDoc(WHOUSE, TRDR, _newLines );
+        let purdoc = await createPurDoc(WHOUSE, TRDR, _newLines,  remarks  );
         console.log('--------------- PURDOC -----------------')
         console.log(purdoc)
         if(!purdoc.success) {
@@ -64,6 +64,7 @@ export default async function handler(req, res) {
         await connectMongo();
         let createOBJ = {
             SALDOCNUM: saldocnum,
+            REMARKS: remarks,
             TRDR: INVOICE.TRDR,
             NAME: RESULT_TRDR.NAME,
             JOBTYPETRD: RESULT_TRDR.JOBTYPETRD,
@@ -107,7 +108,7 @@ export default async function handler(req, res) {
 
 
 
-    async function createPurDoc(whouse, trdr, mtrLines){
+    async function createPurDoc(whouse, trdr, mtrLines, remarks){
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/createPurDoc`;
         const response = await fetch(URL, {
             method: 'POST',
@@ -116,6 +117,7 @@ export default async function handler(req, res) {
                 password: "Service",
                 SERIES: 2025,
                 WHOUSE: whouse,
+                REMARKS: remarks,
                 TRDR: parseInt(trdr),
                 MTRLINES: mtrLines
             })

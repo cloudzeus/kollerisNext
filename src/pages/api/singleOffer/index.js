@@ -76,8 +76,9 @@ export default async function handler(req, res) {
         const {id} = req.body;
         try {
             await connectMongo();
-            let newsum =  await calculateTotal(id)
-            let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 1, totalPrice: 1, totalDiscount: 1})
+            // let newsum =  await calculateTotal(id)
+            let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 1, totalPrice: 1, discountedTotal: 1})
+            console.log(find)
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -122,35 +123,29 @@ export default async function handler(req, res) {
         }
     }
 
-   
-    if(action === "addDiscount") {
-        const {id, discount, products, TRDR, DISC1PRC } = req.body;
-
-        // console.log('products')
-        // console.log(products)
-
-        // console.log('id')
-        // console.log(id)
+    
+    if(action === "updateDiscount") {
+        const {id, discount, products, TRDR} = req.body;
         await connectMongo();
        
         
         try {
-            const mtrLines = products.map(item => {
-                return { MTRL: item.MTRL, QTY1: item.QTY1, DISC1PRC:  DISC1PRC };
-            })
+            // const mtrLines = products.map(item => {
+            //     return { MTRL: item.MTRL, QTY1: item.QTY1, DISC1PRC:  discount };
+            // })
             let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
             if(!discountSoftone.success) {
                 return res.status(200).json({ success: false, error: "softone saldocnum error" })
             }
      
             for(let product of products) {
-                let _discount = DISC1PRC / 100;
+                let _discount = discount / 100;
                 let _newPrice =  product.PRICE - (product.PRICE* _discount);
-                let _discounted_total = _newPrice * product.QTY1;
+                let _discounted_price = _newPrice * product.QTY1;
                 let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": product.MTRL}, {
                             $set: {
-                                "products.$.DISC1PRC": DISC1PRC,
-                                "products.$.DISCOUNTED_TOTAL": _discounted_total
+                                "products.$.DISCOUNT":  discount,
+                                "products.$.DISCOUNTED_PRICE": _discounted_price
                             }
                 }, {new: true})
                         
@@ -160,7 +155,7 @@ export default async function handler(req, res) {
            
       
             // CALCULATE TOTAL PRICE
-            await calculateTotal(id)
+            // await calculateTotal(id)
             return res.status(200).json({ success: true, result: true })
 
         } catch (e) {
@@ -185,8 +180,8 @@ export default async function handler(req, res) {
     
         // UPDATE TOTAL PRICE
         let newsum =  await calculateTotal(id)
-        // console.log('newsum')
-        // console.log(newsum)
+        console.log('newsum')
+        console.log(newsum)
         return res.status(200).json({ success: true })
     }
 
@@ -218,18 +213,19 @@ async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
 
 async function calculateTotal(id) {
     let find = await SingleOffer.findOne({_id: id});
+    console.log(find)
     let totalPrice = 0;
     for(let item of find.products) {
-        totalPrice += item.DISCOUNTED_TOTAL ? item.DISCOUNTED_TOTAL : item.TOTAL_PRICE
+        totalPrice += item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE
     }
 
-    if(find.totalDiscount) {
-        totalPrice = totalPrice - totalPrice * (find.totalDiscount / 100)
+    if(find.discountedTotal) {
+        totalPrice = totalPrice - totalPrice * (find.discountedTotal / 100)
     }
 
     let update = await SingleOffer.findOneAndUpdate({_id: id}, {
         $set: {
-            totalPrice: totalPrice.toFixed(2),
+            discountedTotal: discountedTotal.toFixed(2),
         }
     }, {new: true})
     return update;

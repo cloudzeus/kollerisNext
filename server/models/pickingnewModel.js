@@ -13,6 +13,7 @@ const pickingnewSchema = new mongoose.Schema({
         CITY: String,
         PHONE01: String,
         EMAIL: String,
+        REMARKS: String,
         MTRLINES: [{
             LINENUM: Number,
             MTRL: Number,

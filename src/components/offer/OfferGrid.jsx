@@ -227,26 +227,28 @@ const Status = ({ status }) => {
 const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
     const toast = useRef(null);
 
-
-    
-    const showSuccess = () => {
-        toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});
-    }
-
-    const showError = (message) => {
-        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
-    }
-
     const [state, setState] = useState({
         products: [],
         totalPrice: 0,
-        totalDiscount: 0,
+       discountedTotal: 0,
         loading: false,
         refetch: false
     })
+
+   
+    const showError = (message) => {
+        toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
+    }
+   
     const handleFetch = async () => {
         let { data } = await axios.post('/api/singleOffer', { action: 'findOfferProducts', id: id })
-        setState(prev => ({ ...prev, products: data.result.products, totalPrice: data.result.totalPrice, totalDiscount: data.result.totalDiscount}))
+        setState(prev => (
+            { 
+                ...prev, 
+                products: data.result.products, 
+                totalPrice: data.result.totalPrice, 
+                discountedTotal: data.result.discountedTotal
+            }))
     
     }
     useEffect(() => {
@@ -264,25 +266,16 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         )
     }
 
-    const TotalPrice = ({ TOTAL_PRICE, DISCOUNTED_TOTAL, DISC1PRC }) => {
-        return (
-            <div className='flex'>
-                <div>
-                    <p className={`font-bold  ${DISCOUNTED_TOTAL ? "line-through text-500" : null}`}>{TOTAL_PRICE + " €"}</p>
-                    
-                </div>
 
-                    {
-                        DISCOUNTED_TOTAL ? (
-                            <>
-                            <span className='font-bold ml-2 mr-2 text-primary'>{`-${DISC1PRC}%`}</span>
-                            <span className='font-bold'>{` ${DISCOUNTED_TOTAL} €`}</span>
-                            </>
-                        ) : null
-                    }
+    
+    const TotalPrice = ({ TOTAL_PRICE }) => {
+        return (
+            <div>
+                <p className='font-bold'>{TOTAL_PRICE + " €"}</p>
             </div>
         )
     }
+    
     const Price = ({ PRICE }) => {
         return (
             <div>
@@ -291,8 +284,6 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         )
     }
 
-   
-    // const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
 
     const Footer = () => {
         const [visible, setVisible] = useState(false)
@@ -352,7 +343,51 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
             </div>
         )
     }
-  
+
+    const Discount = ({NAME, MTRL, PRICE, QTY1, DISCOUNTED_PRICE, DISCOUNT }) => {
+        const [value, setValue] = useState(0)
+
+        const onValueChange = async () => {
+            let { data } = await axios.post('/api/singleOffer', {
+                action: 'updateDiscount',
+                discount: value,
+                products: [{
+                    NAME: NAME,
+                    MTRL: MTRL,
+                    QTY1: QTY1,
+                    PRICE: PRICE,
+                }],
+                id: id,
+                TRDR: TRDR,
+            })
+            if (!data.success && data?.message) {
+                showError(data.message)
+            }
+            setRefetch(prev => ({ ...prev, products: !prev.products }))
+
+        }
+
+
+
+        useEffect(() => {
+            setValue(DISCOUNT ? DISCOUNT : 0)
+
+
+        }, [])
+
+        const onChange = async (e) => {
+            console.log(e.value)
+            setValue(e.value)
+        }
+        return (
+            <div className='flex'>
+                <span className="p-input-icon-right">
+                    <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' : 'text-green-400'}`} onClick={onValueChange} />
+                    <InputNumber value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                </span>
+            </div>
+        )
+    }
 
     const DiscountTemplate = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL, DISC1PRC, QTY1, NAME, PRICE}) => {
         return (
@@ -371,6 +406,44 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
              />
         )
     }
+   
+    const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
+        const [quantity, setQuantity] = useState(QTY1)
+        const handleQuantity = async () => {
+            // let { data } = await axios.post('/api/createOffer', {
+            //     action: 'updateQuantity',
+            //     quantity: quantity,
+            //     price: PRICE,
+            //     discountedPrice: DISCOUNTED_PRICE,
+            //     documentID: documentID,
+            //     holderID: holderID,
+            //     MTRL: MTRL
+            // })
+            setRefetch(prev => ({ ...prev, products: !prev.products }))
+        }
+
+        useEffect(() => {
+            if (quantity === QTY1) return;
+            handleQuantity();
+        }, [quantity])
+        return (
+            <div>
+                <InputNumber
+                    value={quantity}
+                    size='small'
+                    min={0}
+                    onValueChange={(e) => setQuantity(e.value)}
+                    showButtons
+                    buttonLayout="horizontal"
+                    decrementButtonClassName="p-button-secondary"
+                    incrementButtonClassName="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    inputStyle={{ width: '70px', textAlign: 'center' }}
+                />
+            </div>
+        )
+    }
 
     return (
         <div  >
@@ -380,12 +453,19 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                 value={state.products}
                 footer={Footer }
             >
-                <Column body={DiscountTemplate} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
+                {/* <Column body={DiscountTemplate} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
                 <Column header="Όνομα" field="NAME"></Column>
                 <Column header="Τι." body={Price} field="PRICE" style={{ width: '90px' }}></Column>
                 <Column header="Ποσ." field="QTY1" style={{ width: '60px' }}></Column>
                 <Column header="Συν." body={TotalPrice} field="TOTAL_PRICE" ></Column>
-                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
+                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column> */}
+                <Column header="Όνομα Προϊόντος" field="NAME"></Column>
+                <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
+                <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
+                <Column header="Τιμ. Έκπ." style={{ width: '50px' }} field="DISCOUNTED_PRICE"></Column>
+                <Column header="Πoσ." field="QTY1" body={Quantity} style={{ width: '100px' }}></Column>
+                <Column header="ΣT" body={TotalPrice} style={{ width: '80px' }} field="TOTAL_PRICE"></Column>
+                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '30px' }}></Column>
             </DataTable>
         </div>
     )

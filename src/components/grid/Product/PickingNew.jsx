@@ -7,17 +7,16 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { InputTextarea } from "primereact/inputtextarea";
 
 const PickingNew = () => {
     const [show, setShow] = useState(true)
+    const [remarks, setRemarks] = useState('');
     const [btnLoading, setBtnLoading] = useState(false)
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
     const {mtrLines} = useSelector(state => state.products)
-
-    useEffect(() => {
-        console.log('mtrLines')
-        console.log(mtrLines)
-    }, [mtrLines])
+    
+ 
     const [selected, setSelected] = useState({ name: 'Wharehouse 1000', code: 1000 });
     const toast = useRef(null);
     const router = useRouter()
@@ -42,7 +41,6 @@ const PickingNew = () => {
     }, [selectedSupplier])
 
     const onSubmit = async () => {
-        
         if(!selectedSupplier) {
             showError('Επιλέξτε προμηθευτή')
             return;
@@ -51,7 +49,8 @@ const PickingNew = () => {
             TRDR: selectedSupplier?.TRDR,
             supplier: selectedSupplier?.NAME,
             WHOUSE: selected.code,
-            mtrLines: mtrLines 
+            mtrLines: mtrLines,
+            remarks: remarks
         }
         setBtnLoading(true)
         const {data} = await axios.post('/api/pickingnew', {action: "createPurDoc", ...obj})
@@ -81,6 +80,10 @@ const PickingNew = () => {
             <span className='font-bold block mt-3'>Aποθήκη</span>
             <div className='bg-white mt-2 p-3 border-1 border-round border-200 flex justify-content-between align-items-center'>
                 <ChoseWhareHouse selected={selected} setSelected={setSelected}/>
+            </div>
+            <span className='font-bold block mt-3'>Σχόλια</span>
+            <div className='bg-white mt-2 mb-2  flex justify-content-between align-items-center'>
+                <InputTextarea className='w-full' value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={5} cols={30} autoResize  />
             </div>
             <Button loading={btnLoading} onClick={onSubmit}  label="Αποστολή" className='mt-4' disabled={!selected || !selectedSupplier}/>
         </div>
