@@ -19,7 +19,6 @@ export default function Page() {
     const impaCode = router.query.id[1]
    
     
-    console.log(selectedProducts)
 
     const showError = (message) => {
         toast.current.show({severity: 'info', summary: 'Error', detail:message, life: 6000});

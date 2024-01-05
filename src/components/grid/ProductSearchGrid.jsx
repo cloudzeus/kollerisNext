@@ -37,6 +37,7 @@ const ProductSearchGrid = () => {
 
     useEffect(() => {
         dispatch(setSearchTerm(''))
+        dispatch(setSelectedProducts([]))
       
         if(selectedMarkes?.NAME) {
             dispatch(setMarka({softOne: {NAME: selectedMarkes.NAME, MTRMARK: selectedMarkes.mtrmark}}))

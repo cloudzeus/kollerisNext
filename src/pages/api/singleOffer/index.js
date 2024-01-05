@@ -20,44 +20,8 @@ export default async function handler(req, res) {
         });
      
         try {
-            async function getSaldoc() {
-                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
-                const response = await fetch(URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: "Service",
-                        password: "Service",
-                        SERIES: 7001,
-                        COMPANY: 1001,
-                        TRDR: TRDR,
-                        MTRLINES: mtrlArr
-                    })
-                });
-
-                let responseJSON = await response.json();
-                console.log(responseJSON)
-
-                return responseJSON;
-            }
-
-            async function getFinDoc(saldoc) {
-                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
-                const response = await fetch(URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: "Service",
-                        password: "Service",
-                        SALDOC: saldoc,
-                        SODTYPE: 13,
-                      
-                    })
-                });
-
-             
-                let data = await translateData(response)
-                return  data;
-            }
-            let saldoc = await getSaldoc();
+           
+            let saldoc = await getSaldoc(TRDR, mtrlArr);
             if (!saldoc.success) {
                 return res.status(200).json({ success: false, error: "softone saldocnum error" })
             }
@@ -269,4 +233,46 @@ async function calculateTotal(id) {
         }
     }, {new: true})
     return update;
+}
+
+
+
+
+
+ export async function getSaldoc(TRDR, mtrlArr) {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        SERIES: 7001,
+                        COMPANY: 1001,
+                        TRDR: TRDR,
+                        MTRLINES: mtrlArr
+                    })
+                });
+
+                let responseJSON = await response.json();
+                console.log(responseJSON)
+
+                return responseJSON;
+            }
+
+export async function getFinDoc(saldoc) {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        SALDOC: saldoc,
+                        SODTYPE: 13,
+                      
+                    })
+                });
+
+             
+                let data = await translateData(response)
+                return  data;
 }

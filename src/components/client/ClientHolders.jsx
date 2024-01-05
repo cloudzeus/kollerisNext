@@ -17,9 +17,12 @@ import { useRouter } from 'next/router'
 import { InputNumber } from 'primereact/inputnumber';
 import Input from '../Forms/PrimeInput'
 import { Toast } from 'primereact/toast';
+import { setPrintState } from '@/features/pdfSlice'
 
 
 const ClientHolder = ({ NAME }) => {
+    const dispatch = useDispatch();
+    const router = useRouter();
     const [expandedRows, setExpandedRows] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
@@ -90,14 +93,14 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-    const Actions = ({ clientEmail, clientName, holders, SALDOCNUM, createdAt, num, _id }) => {
+    const Actions = (props) => {
         const op = useRef(null);
         const _products = []
-        holders.map((holder) => {
+        props.holders.map((holder) => {
             holder.products.map((product) => {
                 _products.push({
-                    name: clientName,
-                    email: clientEmail,
+                    name: props.clientName,
+                    email: props.clientEmail,
                     holderName: holder.name,
                     productName: product.NAME,
                     productPrice: product.PRICE,
@@ -111,10 +114,14 @@ const ClientHolder = ({ NAME }) => {
         const handleDelete = async () => {
             // setLoading(true)
             setDeleteLoading(true)
-            await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id })
-            // setLoading(false)
+            await axios.post('/api/createOffer', { action: 'deleteOffer', id: props._id })
             setDeleteLoading(false)
             setRefetch(prev => ({ ...prev, grid: !prev.grid }))
+        }
+
+        const handlePDF = () => {
+            dispatch(setPrintState(props))
+            router.push(`/dashboard/multi-offer/pdf/`)
         }
 
         return (
@@ -122,19 +129,20 @@ const ClientHolder = ({ NAME }) => {
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
                     <Button loading={deleteLoading} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
-                    <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
+                    <XLSXDownloadButton data={_products} fileName={`${props.clientName}.offer`} />
                     <SendMultiOfferEmail
                         mt={2}
-                        email={clientEmail}
+                        email={props.clientEmail}
                         products={_products}
-                        clientName={clientName}
-                        SALDOCNUM={SALDOCNUM}
+                        clientName={props.clientName}
+                        SALDOCNUM={props.SALDOCNUM}
                         setRefetch={setRefetch}
-                        holders={holders}
-                        createdAt={createdAt}
-                        num={num}
-                        _id={_id}
+                        holders={props.holders}
+                        createdAt={props.createdAt}
+                        num={props.num}
+                        _id={props._id}
                     />
+                    <Button className='w-full mt-2' severity='warning'  label="pdf" icon="pi pi-file-pdf" onClick={handlePDF} />
                 </OverlayPanel>
             </div>
 
@@ -301,20 +309,24 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
                     <Button onClick={createHolder} className='w-full' type="button" label="Απλό Holder" />
                 </div>
             </OverlayPanel>
-            <DataTable
-                footer={Footer}
-                header="Holders"
-                className='p-datatable-sm border-1 border-300'
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={RowExpansionTemplate}
-                value={holders}
-            >
-                <Column expander={allowExpansion} style={{ width: '40px' }} />
-                <Column header="Όνομα" field="name"></Column>
-                <Column body={RenderHolderActions} style={{ width: '30px ' }}></Column>
+           {holders.length > 0 ? (
+             <DataTable
+             footer={Footer}
+             header="Holders"
+             className='p-datatable-sm border-1 border-300'
+             expandedRows={expandedRows}
+             onRowToggle={(e) => setExpandedRows(e.data)}
+             rowExpansionTemplate={RowExpansionTemplate}
+             value={holders}
+         >
+             <Column expander={allowExpansion} style={{ width: '40px' }} />
+             <Column header="Όνομα" field="name"></Column>
+             <Column body={RenderHolderActions} style={{ width: '30px ' }}></Column>
 
-            </DataTable>
+         </DataTable>
+           ) : (
+            <p>Δεν υπάρχει Ηolder</p>
+           )}
         </div>
     )
 };

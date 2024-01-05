@@ -6,6 +6,7 @@ import Holders from "../../../server/models/holderModel";
 import SingleOffer from "../../../server/models/singleOfferModel";
 import createCSVfile from "@/utils/createCSVfile";
 import { sendEmail } from "@/utils/offersEmailConfig";
+import { getSaldoc, getFinDoc } from "./singleOffer";
 
 function generateOfferNum(length) {
     const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
@@ -16,31 +17,6 @@ function generateOfferNum(length) {
 
 
 
-async function correlateProductsToImpa(products, impa) {
-    console.log(impa)
-    console.log('products')
-    console.log(products)
-    const ids = products.map((item) => item._id)
-    console.log(ids)
-    try {
-
-        let find = await ImpaCodes.updateOne(
-            { code: impa },
-            { $addToSet: { products: { $each: ids } } }
-
-        )
-     
-        return {
-            success: true,
-            result: find
-        };
-    } catch (e) {
-        return {
-            success: false,
-            error: 'failed to correlate products to impa'
-        }
-    }
-}
 
 export default async function handler(req, res) {
     const action = req.body.action
@@ -48,14 +24,29 @@ export default async function handler(req, res) {
 
 
     if (action === 'startOffer') {
+        console.log('start-offer')
         const { selectedClient, user } = req.body;
         let TRDR = selectedClient.TRDR;
         let clientName = selectedClient.NAME;
         let clientEmail = selectedClient.EMAIL;
         let clientPhone = selectedClient.PHONE01;
         const num = generateOfferNum(6);
-        console.log(selectedClient)
+
+
         try {
+            let saldoc = await getSaldoc();
+            if (!saldoc.success) {
+                return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            }
+            console.log('saldoc')
+            // console.log(saldoc)
+            // let finDoc = await getFinDoc(saldoc.SALDOCNUM);
+            // if (!finDoc.success) {
+            //     return res.status(200).json({ success: false, error: "softone findoc error" })
+            // }
+            
+            await connectMongo();
+
             let create = await Holders.create({
                 clientName: clientName,
                 clientEmail: clientEmail,
@@ -600,3 +591,5 @@ async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
     console.log(responseJSON)
     return responseJSON;
 }
+
+

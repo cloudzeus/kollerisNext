@@ -18,7 +18,7 @@ const ImpaDataTable = ({code}) => {
     const {selectedProducts} = useSelector(state => state.products)
     const dispatch = useDispatch()
 
-   
+   console.log('where the fuck is the code:' + code)
     
     useEffect(() => {
         if(code) {
