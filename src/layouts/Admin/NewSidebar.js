@@ -16,7 +16,7 @@ const NewSidebar = () => {
     return (
         <Container>
             <div className='top'>
-                <Image src="/uploads/logoPlain.png" width={150} height={35} alt="dgsoft-logo" />
+                <Image src="/uploads/logoPlain.png" width={150} height={35} alt="dgsoft-logo" priority />
                 {/* <h1>Kolleris<span className='kolleris'>.</span></h1> */}
 
                 <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem', color: 'black' }}></i>

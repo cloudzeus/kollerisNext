@@ -23,6 +23,8 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
+  blacklist: ['products'],
+
 }
 const reducers = combineReducers({
   user: userSlice,
@@ -33,6 +35,9 @@ const reducers = combineReducers({
     products: productsSlice,
     pdf: pdfSlice,
 })
+
+
+
 
 const persistedReducer = persistReducer(persistConfig, reducers)
 

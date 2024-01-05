@@ -22,11 +22,9 @@ const Page = () => {
     const {offerEmail} = useSelector(state => state.impaoffer);
     const { selectedClient } = useSelector(state => state.impaoffer)
     const user = session?.user?.user;
-    console.log(user)
     useEffect(() => {
-      if(!selectedClient) {
-        router.push('/dashboard/offer')
-      }
+        console.log('selectedClient')
+        console.log(selectedClient)
     }, [])
 
     const showSuccess = (message) => {
