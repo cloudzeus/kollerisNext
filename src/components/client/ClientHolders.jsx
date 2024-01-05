@@ -142,8 +142,17 @@ const ClientHolder = ({ NAME }) => {
         )
     }
 
-    const RowExpansionTemplate = ({ holders, _id, TRDR }) => {
-        return <RowExpansionGrid holders={holders} documentID={_id} setRefetch={setRefetch} refetch={refetch} TRDR={TRDR} />
+    const RowExpansionTemplate = ({ holders, _id, TRDR, discountedTotal, discount, totalPrice }) => {
+        return <RowExpansionGrid 
+            holders={holders} 
+            documentID={_id} 
+            setRefetch={setRefetch} 
+            refetch={refetch} 
+            TRDR={TRDR} 
+            totalPrice={totalPrice}
+            discountedTotal={discountedTotal}
+            discount={discount}
+            />
     }
     return (
         <>
@@ -175,25 +184,30 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR }) => {
+const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  discountedTotal, discount, totalPrice }) => {
 
-    const [totalPrice, setTotalPrice] = useState(null)
-    const [discount, setDiscount] = useState(0)
+    const [newtotalPrice, setNewTotalPrice] = useState(null)
+    const [newdiscount, setNewDiscount] = useState(0)
     const dispatch = useDispatch();
     const router = useRouter();
     const op = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
 
-
+    useEffect(() => {
+        setNewDiscount(discount ? discount : 0)
+    }, [])
 
     useEffect(() => {
         const handleFooterData = async () => {
             let { data } = await axios.post('/api/createOffer', { action: 'holdersTotalPrice', documentID: documentID })
             console.log(data.result)
-            setTotalPrice(data.result)
+            setNewTotalPrice(data.result)
         }
         handleFooterData();
     }, [refetch])
+
+
+
     const allowExpansion = (rowData) => {
         return rowData
     };
@@ -247,11 +261,12 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR }) =>
     const Footer = () => {
        
         const handleDiscount = (e) => {
-            setDiscount(e.value)
+            setNewDiscount(e.value)
         }
 
         const onValueChange = async () => {
-            let { data } = axios.post('/api/createOffer', { action: 'totalDiscount', documentID: documentID, discount: discount, totalPrice: totalPrice })
+            let { data } = axios.post('/api/createOffer', { action: 'totalDiscount', documentID: documentID, discount: newdiscount, totalPrice: newtotalPrice })
+            setRefetch(prev => ({ ...prev, grid: !prev.grid }))
 
         }
         return (
@@ -270,7 +285,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR }) =>
                     </div>
                     <div className='bg-surface-400 ml-2'>
                         <span className='font-light'>Τελική Τιμή:</span>
-                        <span> 321</span>
+                        <span>{discountedTotal}</span>
                     </div>
                 </div>
             </div>
