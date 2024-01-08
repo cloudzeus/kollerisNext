@@ -12,6 +12,7 @@ import SendEmailTemplate from '../emails/SendEmailTemplate';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
+import { useRouter } from 'next/router';
 
 
 const OfferGrid = ({ clientName }) => {
@@ -20,6 +21,7 @@ const OfferGrid = ({ clientName }) => {
     const [loading, setLoading] = useState({
         grid: false,
         delete: false,
+        findoc: false,
     })
     const [refetch, setRefetch] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
@@ -77,7 +79,7 @@ const OfferGrid = ({ clientName }) => {
 
     //SUBMIT ACTIONS, SEND EMAIL TO CLIENT:
     // const Actions = ({products, clientName, clientEmail, _id, SALDOCNUM,createdAt}) => {
-    const Actions = ({ clientEmail, clientName, products, SALDOCNUM, createdAt, _id }) => {
+    const Actions = ({ clientEmail, clientName, products, SALDOCNUM, createdAt, _id, TRDR, FINCODE }) => {
 
         const op = useRef(null);
         const _products = products.map((item, index) => {
@@ -101,10 +103,18 @@ const OfferGrid = ({ clientName }) => {
             setLoading(prev => ({ ...prev, delete: false }))
             setRefetch(prev => !prev)
         }
+        
+        const handleFinDoc = async () => {
+            setLoading(prev => ({ ...prev, findoc: true }))
+            let { data } = await axios.post('/api/singleOffer', { action: 'createFinDoc', id: _id, TRDR: TRDR  })
+            setLoading(prev => ({ ...prev, findoc: false }))
+            setRefetch(prev => !prev)
+        }
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
+                    <Button  disabled={FINCODE ? true : false} loading={loading.findoc}  className='w-full mb-2'  severity='secondary' label="Εκ. Παραστατικού" onClick={handleFinDoc}/>
                     <Button loading={loading.delete} label="Διαγραφή" severity='danger' className='w-full mb-2' icon="pi pi-trash" onClick={onDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
                     <SendEmailTemplate
@@ -116,6 +126,7 @@ const OfferGrid = ({ clientName }) => {
                         setRefetch={setRefetch}
                         op={op}
                     />
+                    
                 </OverlayPanel>
             </div>
 
@@ -225,6 +236,7 @@ const Status = ({ status }) => {
 
 const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
     const toast = useRef(null);
+    const router = useRouter();
 
     const [state, setState] = useState({
         products: [],
@@ -309,6 +321,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                 discount: state.totalDiscount, 
                 TRDR: TRDR
              })
+
             setState(prev => ({ ...prev, refetch: !prev.refetch }))
 
         }
@@ -416,9 +429,13 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         )
     }
 
+    const handleAddMore = () => {
+        router.push(`/dashboard/offer/add-more/${id}`)
+    }
     return (
         <div  >
             <Toast ref={toast} />
+            <Button label="Προσθήκη" icon="pi pi-plus" className='mb-2 mt-1' onClick={handleAddMore} />
             <DataTable
                 className=' p-datable-sm '
                 value={state.products}

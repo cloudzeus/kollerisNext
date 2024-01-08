@@ -5,6 +5,7 @@ import SingleOffer from "../../../../server/models/singleOfferModel";
 import { sendEmail } from "@/utils/offersEmailConfig";
 import createCSVfile from "@/utils/createCSVfile";
 import Offer from "@/components/grid/Product/Offer";
+import { mn } from "date-fns/locale";
 
 
 export default async function handler(req, res) {
@@ -173,7 +174,8 @@ export default async function handler(req, res) {
         try {
             
             let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
-        
+            console.log('discountSoftone')
+            console.log(discountSoftone)
             if(!discountSoftone.success) {
                 return res.status(200).json({ success: false, error: "softone saldocnum error" })
             }
@@ -213,10 +215,12 @@ export default async function handler(req, res) {
                 const PRICE = item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE;
                 return { MTRL, QTY1, PRICE };
             })
-            // let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
-            // if(!discountSoftone.success) {
-            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            // }
+            let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
+            console.log('discountSoftone')
+            console.log(discountSoftone)
+            if(!discountSoftone.success) {
+                return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            }
 
             let discountedTotal = offer.totalPrice - offer.totalPrice * (discount / 100);
             console.log('discountedTotal')
@@ -235,8 +239,6 @@ export default async function handler(req, res) {
         }
         // return res.status(200).json({ success: true })
     }
-
-
 
     
     if(action === "calculateTotal") {
@@ -266,6 +268,76 @@ export default async function handler(req, res) {
     
     }
 
+
+    if(action === "createFinDoc") {
+        const {id, TRDR} = req.body;
+        await connectMongo();
+        try {
+            let offer = await SingleOffer.findOne({_id: id})
+            const mtrLines = offer.products.map(item => {
+                const MTRL = parseInt(item.MTRL);
+                const QTY1 = parseInt(item.QTY1);
+                const PRICE = item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE;
+                return { MTRL, QTY1, PRICE };
+            })
+            let saldoc = await getSaldoc(TRDR, mtrLines);
+
+            let finDoc = await getFinDoc(saldoc.SALDOCNUM);
+          
+            if(!finDoc.success) {
+                return res.status(200).json({ success: false, error: "softone findoc error" })
+            }
+            let update = await SingleOffer.findOneAndUpdate({_id: id}, {
+                $set: {
+                    SALDOCNUM: saldoc.SALDOCNUM,
+                    FINCODE: finDoc.result[0].FINCODE,
+                }
+            }, {new: true})
+
+
+            return res.status(200).json({ success: true, result: true })
+
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+        // return res.status(200).json({ success: true })
+    }
+    if(action === "addMore") {
+        const {id, mtrLines} = req.body;
+        try {
+            await connectMongo();
+        
+            const _products = [];
+            const _existing = [];
+            await connectMongo();
+                let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 0})
+                let existingProducts = find.products;     
+                console.log('existingProducts')
+                console.log(existingProducts)
+                mtrLines.filter((product) => {
+                    let found = existingProducts.find((item) => item.MTRL === product.MTRL)
+                    if (!found) {
+                        _products.push(product)
+                    } else {
+                        _existing.push(product.NAME)
+                    }
+                })
+            console.log('existingProducts')
+            console.log(_products)
+            let update = await SingleOffer.findOneAndUpdate({_id: id}, {
+                $push: {
+                    products: _products
+                }
+            }, {new: true})
+            console.log('update')
+            console.log(update)
+            return res.status(200).json({ success: true, result: update  })
+        } catch (e) {
+
+        }
+        // console.log(id, mtrLines)
+        return res.status(200).json({ success: true })
+    }
 }
 
 
