@@ -165,9 +165,9 @@ const OfferGrid = ({ clientName }) => {
     const header = Header();
 
 
-    const RowExpansionTemplate = ({ products, _id, TRDR, totalPrice }) => {
+    const RowExpansionTemplate = ({ products, _id, TRDR, totalPrice, FINDOC }) => {
         return (
-            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR}  totalPrice={totalPrice}/>
+            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR}  totalPrice={totalPrice} FINDOC={FINDOC}/>
         )
     }
 
@@ -234,7 +234,7 @@ const Status = ({ status }) => {
 
 
 
-const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
+const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
     const toast = useRef(null);
     const router = useRouter();
 
@@ -276,12 +276,15 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
     }, [state.refetch])
 
     const onRemove = async (MTRL) => {
+        if(!FINDOC) return;
+        let { data } = await axios.post('/api/singleOffer', { action: 'removeProduct', id: id, MTRL: MTRL })
 
     }
+
     const RemoveItem = ({ MTRL }) => {
         return (
             <div>
-                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: 'red' }} onClick={() => onRemove(MTRL)}></i>
+                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: FINDOC ? "red" : "grey"}} onClick={() => onRemove(MTRL)}></i>
             </div>
         )
     }
@@ -306,14 +309,11 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
 
     const Footer = ({}) => {
-
         const handleDiscount = (e) => {
-            console.log(e.value)
             setState(prev => ({ ...prev, totalDiscount: e.value }))
         }
 
         // id, discount, products, TRDR
-
         const onValueChange = async () => {
             let { data } = axios.post('/api/singleOffer', { 
                 action: 'updateDiscountTotal', 
@@ -336,7 +336,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                         <span className="p-input-icon-right">
                             <span className='ml-2 font-light'>Έκπτωση: </span>
                             <i className={`pi pi-check `} onClick={onValueChange} />
-                            <InputNumber value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                            <InputNumber disabled={!FINDOC ? true : false} value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                         </span>
                     </div>
                     <div className='bg-surface-400 ml-2'>
@@ -385,7 +385,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
             <div className='flex'>
                 <span className="p-input-icon-right">
                     <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' : 'text-green-400'}`} onClick={onValueChange} />
-                    <InputNumber value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                    <InputNumber disabled={!FINDOC ? true : false} value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                 </span>
             </div>
         )
@@ -393,7 +393,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
  
    
-    const Quantity = ({ QTY1, MTRL, PRICE, }) => {
+    const Quantity = ({ QTY1, MTRL }) => {
         const [quantity, setQuantity] = useState(QTY1)
         const handleQuantity = async () => {
             const {data} = await axios.post('/api/singleOffer', {
@@ -413,6 +413,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         return (
             <div>
                 <InputNumber
+                    disabled={!FINDOC ? true : false}
                     value={quantity}
                     size='small'
                     min={0}
@@ -435,7 +436,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
     return (
         <div  >
             <Toast ref={toast} />
-            <Button label="Προσθήκη" icon="pi pi-plus" className='mb-2 mt-1' onClick={handleAddMore} />
+            <Button disabled={!FINDOC ? true : false} label="Προσθήκη" icon="pi pi-plus" className='mb-2 mt-1' onClick={handleAddMore} />
             <DataTable
                 className=' p-datable-sm '
                 value={state.products}
@@ -455,65 +456,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
 
 
-export const DiscountDialog = ({ 
-    MTRL, 
-    DISCOUNTED_TOTAL,
-    id, 
-    setState,
-    TRDR, 
-    QTY1, 
-    NAME,
-    PRICE,
-}) => {
-   
-    const [localState, setLocalState] = useState({
-        discount: 0,
-        visible: false,
-        loading: false,
 
-    })
-
-   
-
-    const handleCalculatePrice = (e) => {
-        setLocalState((prev) => ({ ...prev, discount: e.value }))
-    }
-
-   
-    const onSubmit = async () => {
-        let { data } = await axios.post('/api/singleOffer',
-            {
-                action: 'addDiscount',
-                DISC1PRC: localState.discount,
-                products: [{
-                    NAME: NAME,
-                    MTRL: MTRL,
-                    QTY1: QTY1,
-                    PRICE: PRICE,
-                }],
-                TRDR: TRDR,
-                id: id
-            })
-        setLocalState((prev) => ({ ...prev, visible: false, loading: false}))
-        setState(prev => ({ ...prev, refetch: !prev.refetch }))
-    }
-    return (
-        <div>
-            <div className={`text-white border-round text-sm ${DISCOUNTED_TOTAL ? "bg-green-500" : "bg-primary"}`}>
-                <i className="pi pi-percentage pointer p-1  text-sm" onClick={() => setLocalState(prev => ({ ...prev, visible: true }))}></i>
-            </div>
-            <Dialog header="%" visible={localState.visible} style={{ width: '20vw' }} onHide={() => setLocalState(prev => ({ ...prev, visible: false }))}>
-                <div className="flex-auto w-full">
-                    <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber  locale="gr-GR"  className='w-full' inputId="percent" value={localState.discount} max={100} onChange={handleCalculatePrice} minFractionDigits={0} maxFractionDigits={5}/>
-                </div>
-                <div className='flex align-items-center justify-content-end mt-6'>
-                    <Button label="Εφαρμογή" icon="pi pi-check" onClick={onSubmit} />
-                </div>
-            </Dialog>
-        </div>
-    )
-}
 
 export default OfferGrid
 
