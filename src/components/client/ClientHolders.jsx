@@ -518,6 +518,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
 
 
 
+
 const Status = ({ status }) => {
     let color;
     if (status === 'created') color = "bg-green-500"

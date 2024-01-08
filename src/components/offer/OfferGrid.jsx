@@ -29,7 +29,6 @@ const OfferGrid = ({ clientName }) => {
         let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
         setLoading(prev => ({ ...prev, grid: false }))
-
     }
 
 
@@ -229,12 +228,20 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
     const [state, setState] = useState({
         products: [],
-        totalPrice: 0,
-       discountedTotal: 0,
+        discount: 0,
+        discountedTotal: 0,
         loading: false,
         refetch: false
     })
 
+    useEffect(() => {
+        console.log('here')
+        const handleTotalPrice = async () => {
+           const {data} = await axios.post('/api/singleOffer', { action: 'calculateTotal', id: id })
+           setState(prev => ({ ...prev, discountedTotal: data.result.discountedTotal, totalPrice: data.result.totalPrice, discount: data.result.discount }))
+        }
+        handleTotalPrice()
+    }, [state.refetch, state.discount])
    
     const showError = (message) => {
         toast.current.show({severity:'error', summary: 'Error', detail:message, life: 3000});
@@ -245,9 +252,10 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         setState(prev => (
             { 
                 ...prev, 
-                products: data.result.products, 
+                products: data.result.products,
                 totalPrice: data.result.totalPrice, 
-                discountedTotal: data.result.discountedTotal
+                discountedTotal: data.result.discountedTotal,
+                discount: data.result.discount
             }))
     
     }
@@ -285,85 +293,66 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
     }
 
 
-    const Footer = () => {
-        const [visible, setVisible] = useState(false)
-        const [discount, setDiscount] = useState(0)
-        const [loading, setLoading] = useState(false)
+    const Footer = ({}) => {
 
+        const handleDiscount = (e) => {
+            console.log(e.value)
+            setState(prev => ({ ...prev, totalDiscount: e.value }))
+        }
 
-        let productSum = 0;
-        state.products && state.products.map((product) => {
-            productSum += product.QTY1
-        })
+        // id, discount, products, TRDR
 
-        const handleFooter = async () => {
-            setLoading(prev => !prev)
-            let { data } = await axios.post('/api/singleOffer',
-            {
-                action: 'totalDiscount',
-                discount: discount,
-                products: state.products,
-                TRDR: TRDR,
-                id: id
-            })
-            if(data.error) {
-                showError(data.message)
-                return;
-            }
-            setVisible(prev => !prev)
-            setLoading(prev => !prev)
-            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+        const onValueChange = async () => {
+            let { data } = axios.post('/api/singleOffer', { 
+                action: 'updateDiscountTotal', 
+                id: id, 
+                discount: state.totalDiscount, 
+                TRDR: TRDR
+             })
+            // setRefetch(prev => ({ ...prev, grid: !prev.grid }))
+
         }
         return (
-            <div className='flex justify-content-between align-items-center '>
+            <div className='flex align-items-center'>
                 <div>
-                    <div className='mb-2'>
-                        <span className='font-medium'>Συνολο Προϊόντων:</span>
-                        <span className='font-bold ml-2'>{productSum}</span>
+                    <span className='font-light'>Συνολική Τιμή: </span>
+                    <span>{state.totalPrice}</span>
+                </div>
+                <div className='ml-2 flex justify-content-center align-items-center'>
+                    <div className='flex'>
+                        <span className="p-input-icon-right">
+                            <span className='ml-2 font-light'>Έκπτωση: </span>
+                            <i className={`pi pi-check `} onClick={onValueChange} />
+                            <InputNumber value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                        </span>
                     </div>
-                    <div>
-                        <span className='font-medium'> Συνολο Τιμής:</span>
-                        <span className='font-bold ml-2'>{state.totalPrice}€</span>
-                    </div>
-                    <div  className='mt-1'>
-                        <span className='font-medium'>Eκπτωση στο σύνολo:</span>
-                        <span className='font-bold ml-2 text-primary'>{state.totalDiscount}%</span>
+                    <div className='bg-surface-400 ml-2'>
+                        <span className='font-light'>Τελική Τιμή:</span>
+                        <span>{state.discountedTotal}</span>
                     </div>
                 </div>
-                <Button onClick={() => setVisible(prev => !prev)} icon="pi pi-percentage" label="Συνολική έκπτωση" className='bg-primary text-white' />
-                <Dialog header="%" visible={visible} style={{ width: '20vw' }} onHide={() => setVisible(prev => !prev)}>
-                <div className="flex-auto w-full">
-                    <label htmlFor="percent" className="font-bold block mb-2">Έκπτωση</label>
-                    <InputNumber className='w-full' inputId="percent" value={discount} max={100} onChange={(e) => setDiscount(e.value)} minFractionDigits={2} maxFractionDigits={5} />
-                </div>
-                <div className='flex align-items-center justify-content-end mt-6'>
-                    <Button loading={loading} label="Εφαρμογή" icon="pi pi-check" onClick={handleFooter} />
-                </div>
-            </Dialog>
             </div>
         )
     }
 
-    const Discount = ({NAME, MTRL, PRICE, QTY1, DISCOUNTED_PRICE, DISCOUNT }) => {
+    const Discount = ({ NAME, MTRL, PRICE, QTY1, DISCOUNT }) => {
         const [value, setValue] = useState(0)
 
         const onValueChange = async () => {
             let { data } = await axios.post('/api/singleOffer', {
                 action: 'updateDiscount',
                 discount: value,
-                products: [{
-                    NAME: NAME,
-                    MTRL: MTRL,
-                    QTY1: QTY1,
-                    PRICE: PRICE,
-                }],
+                NAME: NAME,
+                MTRL: MTRL,
+                QTY1: QTY1,
+                PRICE: PRICE,
                 id: id,
                 TRDR: TRDR,
             })
             if (!data.success && data?.message) {
                 showError(data.message)
             }
-            setRefetch(prev => ({ ...prev, products: !prev.products }))
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
 
         }
 
@@ -389,23 +378,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
         )
     }
 
-    const DiscountTemplate = ({ TOTAL_PRICE, MTRL, DISCOUNTED_TOTAL, DISC1PRC, QTY1, NAME, PRICE}) => {
-        return (
-            <DiscountDialog 
-                TOTAL_PRICE={TOTAL_PRICE} 
-                MTRL={MTRL} 
-                id={id} 
-                setRefetch={setRefetch} 
-                setState={setState}
-                DISCOUNTED_TOTAL={DISCOUNTED_TOTAL} 
-                DISC1PRC={DISC1PRC}
-                TRDR={TRDR}
-                NAME={NAME}
-                QTY1={QTY1}
-                PRICE={PRICE}
-             />
-        )
-    }
+ 
    
     const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
         const [quantity, setQuantity] = useState(QTY1)
@@ -453,12 +426,6 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                 value={state.products}
                 footer={Footer }
             >
-                {/* <Column body={DiscountTemplate} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column>
-                <Column header="Όνομα" field="NAME"></Column>
-                <Column header="Τι." body={Price} field="PRICE" style={{ width: '90px' }}></Column>
-                <Column header="Ποσ." field="QTY1" style={{ width: '60px' }}></Column>
-                <Column header="Συν." body={TotalPrice} field="TOTAL_PRICE" ></Column>
-                <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '40px' }}></Column> */}
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
                 <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
@@ -534,3 +501,8 @@ export const DiscountDialog = ({
 }
 
 export default OfferGrid
+
+
+
+
+
