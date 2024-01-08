@@ -44,13 +44,7 @@ const CalculateTemplate = (item) => {
     }, [quantity])
 
 
-   useEffect(() => {
-        console.log('---------------------------------')
-        console.log('selected Products')
-        console.log(selectedProducts)
-        console.log('mtrlines')
-        console.log(mtrLines)
-   }, [mtrLines])
+  
 
     return (
        

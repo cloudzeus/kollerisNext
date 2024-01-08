@@ -24,7 +24,11 @@ const ClientHolder = ({ NAME }) => {
     const dispatch = useDispatch();
     const router = useRouter();
     const [expandedRows, setExpandedRows] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false)
+   const [loading, setLoading] = useState({
+        findoc: false,
+        delete: false,
+        grid: false,
+    })
     const [statuses] = useState(['pending', 'done', 'rejected']);
     const [data, setData] = useState([])
     const [refetch, setRefetch] = useState({
@@ -32,14 +36,17 @@ const ClientHolder = ({ NAME }) => {
         holder: false,
         products: false,
     })
-    const [loading, setLoading] = useState(false)
+
 
 
     const handleFetch = async () => {
-        setLoading(true)
+        setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/createOffer', { action: 'findClientHolder', clientName: NAME })
+        console.log('res')
+        console.log(res)
         setData(res.data.result)
-        setLoading(false)
+        setLoading(prev => ({ ...prev, grid: false }))
+
     }
 
 
@@ -112,10 +119,9 @@ const ClientHolder = ({ NAME }) => {
             })
         })
         const handleDelete = async () => {
-            // setLoading(true)
-            setDeleteLoading(true)
+            setLoading(prev => ({ ...prev, delete: true }))
             await axios.post('/api/createOffer', { action: 'deleteOffer', id: props._id })
-            setDeleteLoading(false)
+            setLoading(prev => ({ ...prev, delete: false }))
             setRefetch(prev => ({ ...prev, grid: !prev.grid }))
         }
 
@@ -124,13 +130,21 @@ const ClientHolder = ({ NAME }) => {
             router.push(`/dashboard/multi-offer/pdf/`)
         }
 
+        const handleFinDoc = async () => {
+            setLoading(prev => ({ ...prev, findoc: true }))
+            let { data } = await axios.post('/api/singleOffer', { action: 'createFinDoc', id: _id, TRDR: TRDR  })
+            setLoading(prev => ({ ...prev, findoc: false }))
+            setRefetch(prev => !prev)
+        }
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <Button loading={deleteLoading} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
+                    <Button loading={loading.findoc} label="Εκ. Παραστατικού" severity='secondary' className='w-full mb-2' onClick={handleFinDoc} />
+                    <Button loading={loading.delete} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${props.clientName}.offer`} />
                     <SendMultiOfferEmail
+
                         mt={2}
                         email={props.clientEmail}
                         products={_products}
@@ -165,7 +179,7 @@ const ClientHolder = ({ NAME }) => {
     return (
         <>
             <DataTable
-                loading={loading}
+                loading={loading.grid}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={RowExpansionTemplate}
@@ -179,7 +193,7 @@ const ClientHolder = ({ NAME }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column header="Όνομα Πελάτη" field="clientName" body={Client}></Column>
-                <Column header="SALDOCNUM" field="SALDOCNUM" style={{ maxWidth: '90px' }}></Column>
+                <Column header="Aρ. Παραστατικού" field="SALDOCNUM" style={{ maxWidth: '90px' }}></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
                 <Column field="createdFrom" body={CreatedFrom} header="Created From" style={{ width: '60px' }}></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>

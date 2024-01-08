@@ -35,6 +35,8 @@ const ProductSearchGrid = () => {
         active: true,
     })
 
+
+
     useEffect(() => {
         dispatch(setSearchTerm(''))
         dispatch(setSelectedProducts([]))

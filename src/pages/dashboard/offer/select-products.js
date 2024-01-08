@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 
-const Page = () => {
+const Page = ({}) => {
     const router = useRouter();
     const { data: session, update } = useSession();
 
@@ -22,10 +22,9 @@ const Page = () => {
     const {offerEmail} = useSelector(state => state.impaoffer);
     const { selectedClient } = useSelector(state => state.impaoffer)
     const user = session?.user?.user;
-    useEffect(() => {
-        console.log('selectedClient')
-        console.log(selectedClient)
-    }, [])
+   
+
+    
 
     const showSuccess = (message) => {
       toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 3000 });

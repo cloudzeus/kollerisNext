@@ -30,6 +30,7 @@ const OfferGrid = ({ clientName }) => {
         setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
+        console.log(res.data.result)
         setLoading(prev => ({ ...prev, grid: false }))
     }
 
@@ -44,7 +45,6 @@ const OfferGrid = ({ clientName }) => {
         switch (value) {
             case 'done':
                 return 'warning';
-
             case 'rejected':
                 return 'danger';
 
@@ -165,9 +165,9 @@ const OfferGrid = ({ clientName }) => {
     const header = Header();
 
 
-    const RowExpansionTemplate = ({ products, _id, TRDR, totalPrice, FINDOC }) => {
+    const RowExpansionTemplate = ({ products, _id, TRDR, totalPrice, FINCODE }) => {
         return (
-            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR}  totalPrice={totalPrice} FINDOC={FINDOC}/>
+            <RowExpansionGrid products={products} id={_id} setRefetch={setRefetch} TRDR={TRDR}  totalPrice={totalPrice} FINCODE={FINCODE}/>
         )
     }
 
@@ -234,7 +234,7 @@ const Status = ({ status }) => {
 
 
 
-const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
+const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
     const toast = useRef(null);
     const router = useRouter();
 
@@ -276,7 +276,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
     }, [state.refetch])
 
     const onRemove = async (MTRL) => {
-        if(!FINDOC) return;
+        if(FINCODE) return;
         let { data } = await axios.post('/api/singleOffer', { action: 'removeProduct', id: id, MTRL: MTRL })
 
     }
@@ -284,7 +284,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
     const RemoveItem = ({ MTRL }) => {
         return (
             <div>
-                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: FINDOC ? "red" : "grey"}} onClick={() => onRemove(MTRL)}></i>
+                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: FINCODE ? "red" : "grey"}} onClick={() => onRemove(MTRL)}></i>
             </div>
         )
     }
@@ -336,7 +336,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
                         <span className="p-input-icon-right">
                             <span className='ml-2 font-light'>Έκπτωση: </span>
                             <i className={`pi pi-check `} onClick={onValueChange} />
-                            <InputNumber disabled={!FINDOC ? true : false} value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                            <InputNumber disabled={FINCODE ? true : false} value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                         </span>
                     </div>
                     <div className='bg-surface-400 ml-2'>
@@ -385,7 +385,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
             <div className='flex'>
                 <span className="p-input-icon-right">
                     <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' : 'text-green-400'}`} onClick={onValueChange} />
-                    <InputNumber disabled={!FINDOC ? true : false} value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                    <InputNumber disabled={FINCODE ? true : false} value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                 </span>
             </div>
         )
@@ -413,7 +413,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
         return (
             <div>
                 <InputNumber
-                    disabled={!FINDOC ? true : false}
+                    disabled={FINDOC ? true : false}
                     value={quantity}
                     size='small'
                     min={0}
@@ -436,7 +436,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR, FINDOC }) => {
     return (
         <div  >
             <Toast ref={toast} />
-            <Button disabled={!FINDOC ? true : false} label="Προσθήκη" icon="pi pi-plus" className='mb-2 mt-1' onClick={handleAddMore} />
+            <Button disabled={FINCODE ? true : false} label="Προσθήκη" icon="pi pi-plus" className='mb-2 mt-1' onClick={handleAddMore} />
             <DataTable
                 className=' p-datable-sm '
                 value={state.products}

@@ -173,12 +173,12 @@ export default async function handler(req, res) {
         await connectMongo();
         try {
             
-            let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
-            console.log('discountSoftone')
-            console.log(discountSoftone)
-            if(!discountSoftone.success) {
-                return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            }
+            // let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
+            // console.log('discountSoftone')
+            // console.log(discountSoftone)
+            // if(!discountSoftone.success) {
+            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            // }
      
                 let _discount = discount / 100;
                 let _discounted_price = PRICE - (PRICE * _discount);
@@ -215,12 +215,12 @@ export default async function handler(req, res) {
                 const PRICE = item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE;
                 return { MTRL, QTY1, PRICE };
             })
-            let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
-            console.log('discountSoftone')
-            console.log(discountSoftone)
-            if(!discountSoftone.success) {
-                return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            }
+            // let discountSoftone = await getNewSalesDoc(TRDR, mtrLines, discount)
+            // console.log('discountSoftone')
+            // console.log(discountSoftone)
+            // if(!discountSoftone.success) {
+            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
+            // }
 
             let discountedTotal = offer.totalPrice - offer.totalPrice * (discount / 100);
             console.log('discountedTotal')
@@ -278,10 +278,12 @@ export default async function handler(req, res) {
                 const MTRL = parseInt(item.MTRL);
                 const QTY1 = parseInt(item.QTY1);
                 const PRICE = item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE;
-                return { MTRL, QTY1, PRICE };
+                const DISC1PRC = item.DISCOUNT ? item.DISCOUNT : 0;
+                return { MTRL, QTY1, PRICE,  DISC1PRC };
             })
-            let saldoc = await getSaldoc(TRDR, mtrLines);
+            
 
+            let saldoc = await getNewSalesDoc(TRDR, mtrLines, offer.discount)
             let finDoc = await getFinDoc(saldoc.SALDOCNUM);
           
             if(!finDoc.success) {
@@ -300,7 +302,6 @@ export default async function handler(req, res) {
         } catch (e) {
             return res.status(400).json({ success: false })
         }
-        // return res.status(200).json({ success: true })
     }
     if(action === "addMore") {
         const {id, mtrLines} = req.body;
@@ -364,30 +365,25 @@ async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
 }
 
 
+// export async function getSaldoc(TRDR, mtrlArr) {
+//                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
+//                 const response = await fetch(URL, {
+//                     method: 'POST',
+//                     body: JSON.stringify({
+//                         username: "Service",
+//                         password: "Service",
+//                         SERIES: 7001,
+//                         COMPANY: 1001,
+//                         TRDR: TRDR,
+//                         MTRLINES: mtrlArr
+//                     })
+//                 });
 
+//                 let responseJSON = await response.json();
+//                 console.log(responseJSON)
 
-
-
-
- export async function getSaldoc(TRDR, mtrlArr) {
-                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getSalesDoc`;
-                const response = await fetch(URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: "Service",
-                        password: "Service",
-                        SERIES: 7001,
-                        COMPANY: 1001,
-                        TRDR: TRDR,
-                        MTRLINES: mtrlArr
-                    })
-                });
-
-                let responseJSON = await response.json();
-                console.log(responseJSON)
-
-                return responseJSON;
-            }
+//                 return responseJSON;
+// }
 
 export async function getFinDoc(saldoc) {
                 let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
