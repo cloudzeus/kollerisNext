@@ -380,20 +380,18 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
 
  
    
-    const Quantity = ({ QTY1, MTRL, PRICE, DISCOUNTED_PRICE }) => {
+    const Quantity = ({ QTY1, MTRL, PRICE, }) => {
         const [quantity, setQuantity] = useState(QTY1)
         const handleQuantity = async () => {
-            // let { data } = await axios.post('/api/createOffer', {
-            //     action: 'updateQuantity',
-            //     quantity: quantity,
-            //     price: PRICE,
-            //     discountedPrice: DISCOUNTED_PRICE,
-            //     documentID: documentID,
-            //     holderID: holderID,
-            //     MTRL: MTRL
-            // })
-            setRefetch(prev => ({ ...prev, products: !prev.products }))
-        }
+            const {data} = await axios.post('/api/singleOffer', {
+                action: "updateQuantity",
+                QTY1: quantity,
+                MTRL: MTRL,
+                id: id,
+            })
+           
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+            }
 
         useEffect(() => {
             if (quantity === QTY1) return;

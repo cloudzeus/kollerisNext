@@ -11,7 +11,6 @@ export default async function handler(req, res) {
     const action = req.body.action
     if (action === 'createOrder') {
         const { data, email, name, TRDR, createdFrom } = req.body;
-  
         const mtrlArr = data.map(item => {
             const MTRL = parseInt(item.MTRL);
             const QTY1 = parseInt(item.QTY1);
@@ -35,7 +34,6 @@ export default async function handler(req, res) {
 
 
             let create = await SingleOffer.create({
-              
                 products: data,
                 status: 'created',
                 TRDR: TRDR,
@@ -47,8 +45,7 @@ export default async function handler(req, res) {
                 discount: 0,
 
             })
-            console.log('create')
-            console.log(create)
+           
             await Clients.updateOne({ TRDR: TRDR }, {
                 $set: {
                     OFFERSTATUS: true
@@ -85,7 +82,6 @@ export default async function handler(req, res) {
             await connectMongo();
             // let newsum =  await calculateTotal(id)
             let find = await SingleOffer.findOne({_id: id}, {products: 1, _id: 1, totalPrice: 1, discountedTotal: 1, discount: 1})
-            console.log(find)
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -131,6 +127,38 @@ export default async function handler(req, res) {
     }
 
     
+    //Alter the quantity of the products and the totalPrices
+    if(action === "updateQuantity") {
+        const {id, MTRL, QTY1,} = req.body;
+
+        await connectMongo();
+        try {
+            let find = await SingleOffer.findOne({_id: id, "products.MTRL": MTRL})
+            console.log('find')
+
+            let product = find.products.find(item => item.MTRL === MTRL);
+            let PRICE = product.DISCOUNTED_PRICE ? product.DISCOUNTED_PRICE : product.PRICE;
+            console.log('PRICE')
+            console.log(PRICE)
+            let TOTAL_PRICE = PRICE * QTY1;
+            console.log(TOTAL_PRICE)
+
+            let update = await SingleOffer.findOneAndUpdate({_id: id, "products.MTRL": MTRL}, {
+                $set: {
+                    "products.$.QTY1": QTY1,
+                    "products.$.TOTAL_PRICE": TOTAL_PRICE.toFixed(2),
+                }
+            }, {new: true})
+            console.log('update')
+            console.log(update)
+
+            
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+    //update the price of a single mtrl item in the offer
     if(action === "updateDiscount") {
         const {id, discount, TRDR, MTRL, PRICE, QTY1, } = req.body;
         const mtrLines = [{
@@ -170,6 +198,7 @@ export default async function handler(req, res) {
         // return res.status(200).json({ success: true })
     }
 
+    //update the price of all mtrl lines
     if(action === "updateDiscountTotal") {
         const {id, discount, TRDR} = req.body;
         await connectMongo();
@@ -208,25 +237,7 @@ export default async function handler(req, res) {
     }
 
 
-    // if(action === "totalDiscount") {
-    //     const {id, TRDR, discount, products } = req.body;
-    //     await connectMongo();
-    //     let discountSoftone = await getNewSalesDoc(TRDR, products, discount)
-    //     if(!discountSoftone.success) {
-    //         return res.status(200).json({ success: false, error: "softone saldocnum error" })
-    //     }
-    //     let updateDiscount = await SingleOffer.findOneAndUpdate({_id: id}, {
-    //         $set: {
-    //             totalDiscount: discount
-    //         }
-    //     }, {new: true})
-    
-    //     // UPDATE TOTAL PRICE
-    //     let newsum =  await calculateTotal(id)
-    //     console.log('newsum')
-    //     console.log(newsum)
-    //     return res.status(200).json({ success: true })
-    // }
+  
 
     if(action === "calculateTotal") {
         const {id} = req.body;
@@ -282,25 +293,6 @@ async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
 }
 
 
-async function calculateTotal(id) {
-    let find = await SingleOffer.findOne({_id: id});
-    console.log(find)
-    let totalPrice = 0;
-    for(let item of find.products) {
-        totalPrice += item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE
-    }
-
-    if(find.discountedTotal) {
-        totalPrice = totalPrice - totalPrice * (find.discountedTotal / 100)
-    }
-
-    let update = await SingleOffer.findOneAndUpdate({_id: id}, {
-        $set: {
-            discountedTotal: discountedTotal.toFixed(2),
-        }
-    }, {new: true})
-    return update;
-}
 
 
 
