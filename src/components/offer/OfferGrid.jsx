@@ -309,7 +309,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR }) => {
                 discount: state.totalDiscount, 
                 TRDR: TRDR
              })
-            // setRefetch(prev => ({ ...prev, grid: !prev.grid }))
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
 
         }
         return (

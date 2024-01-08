@@ -237,8 +237,8 @@ export default async function handler(req, res) {
     }
 
 
-  
 
+    
     if(action === "calculateTotal") {
         const {id} = req.body;
         await connectMongo();
@@ -250,16 +250,15 @@ export default async function handler(req, res) {
             totalPrice += _price * item.QTY1;
             
         }
-        // console.log('totalPrice')
-        // console.log(totalPrice)
-        // if(find.discountedTotal) {
-        //     totalPrice = totalPrice - totalPrice * (find?.discount / 100)
-        // }
-        // console.log('totalPrice')
-        // console.log(totalPrice)
+        let discountedPrice = totalPrice;
+        if(find.discount) {
+            discountedPrice = totalPrice - totalPrice * (find.discount / 100);
+        }
+        
         let update = await SingleOffer.findOneAndUpdate({_id: id}, {
             $set: {
                 totalPrice: totalPrice.toFixed(2),
+                discountedTotal: discountedPrice.toFixed(2)
             }
         }, {new: true})
         console.log('update')
