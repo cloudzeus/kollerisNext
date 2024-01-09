@@ -8,8 +8,6 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { fetchUser } from '@/features/userSlice';
-import { toast } from 'react-toastify';
-import Image from 'next/image'
 import CheckboxInput from '@/components/Forms/CheckboxInput';
 import { StyledHeader, Subheader } from '@/components/Forms/formStyles';
 import { signIn } from "next-auth/react"
@@ -19,6 +17,7 @@ import { PrimeInputPass } from "@/components/Forms/PrimeInputPassword";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
+import axios from "axios";
 const schema = yup.object().shape({
     email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
     password: yup.string().required('Συμπληρώστε τον κωδικό'),
@@ -42,23 +41,26 @@ const LoginForm = () => {
 
 
     const showError = () => {
-        toast.current.show({severity:'error', summary: 'Error', detail:'Δεν βρέθηκε χρήστης', life: 3000});
+        toast.current.show({severity:'error', summary: 'Error', detail:'Δεν μπορείτε να συνθεθείτε', life: 3000});
     }
 
 
     const onSubmit = async (data, event) => {
         event.preventDefault();
         setLoading(true)
+     
         const res = await signIn("credentials",
             {
                 username: data.email,
                 password: data.password,
                 redirect: false,
             })
+
+       
         if (res.ok == true && res.status == 200 && res.error == null) {
-            router.push('/dashboard/product')
             dispatch(fetchUser({ username: data.email, password: data.password }))
             showSuccess()
+            router.push('/dashboard/product')
         } else {
             showError()
         }

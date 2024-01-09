@@ -23,11 +23,11 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['products'],
+  blacklist: ['products', 'user'],
 
 }
 const reducers = combineReducers({
-  user: userSlice,
+    user: userSlice,
     grid: gridSlice,
     catalog: catalogSlice,
     impaoffer: impaofferSlice,

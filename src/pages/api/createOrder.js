@@ -106,7 +106,6 @@ export default async function handler(req, res) {
 
             //CHECK IF THERE IS ALREADY AN ORDER WITH THIS TRDR
             let find = await PendingOrders.findOne({ TRDR: TRDR });
-         
             if (find) {
                 return res.status(200).json({ success: false, result: "Υπάρχει ήδη ενεργή παραγγελία στον προμηθευτή" })
             }

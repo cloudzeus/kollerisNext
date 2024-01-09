@@ -107,6 +107,7 @@ const LeftSide = () => {
                                     <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
                                     <MenuBtn label="Ποσοτική τροποποίηση αποθήκης" onClick={() => setActiveIndex(4)} />
                                     <MenuBtn label="Picking new" onClick={() => setActiveIndex(5)} />
+                                    <MenuBtn label="Παραγγελία Μικρή" onClick={() => setActiveIndex(5)} />
                                 </div>
                             </div>
                         ) : null}

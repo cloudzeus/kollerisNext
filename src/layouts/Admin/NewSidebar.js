@@ -64,8 +64,9 @@ const SidebarList = () => {
             <SidebarHeader title={' Προμηθευτές'} id={4} setActiveTab={setActiveTab} activeTab={activeTab} goTo={'#'} dropdown />
             {activeTab == 4 ? (
                 <div >
-
                     <SidebarSubItem title={'Λίστα Προμηθευτών'} goTo={'/dashboard/suppliers'} />
+                    <SidebarSubItem title={'Picking'} goTo={'/dashboard/suppliers/picking'} />
+                    <SidebarSubItem title={'Λίστα Παραγγελίες (Χωρίς Όριο)'} goTo={'/dashboard/suppliers/picking'} />
                     {/* <SidebarSubItem title={'Όλοι οι κατάλογοι'} goTo={'/dashboard/catalogs/saved'} /> */}
 
 

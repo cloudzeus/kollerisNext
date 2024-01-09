@@ -51,21 +51,22 @@ const RegisterPage = () => {
 	});
 
 
-	useEffect(() => {
-		if(response.success == null) return;
-		if (!response.success) {
-			showError(response.error)
-			return;
-		}
-		showSuccess(response.user.firstName)
-		router.push('/auth/thankyouregistration')
-	}, [response, router])
+	// useEffect(() => {
+	// 	if(response.success == null) return;
+	// 	if (!response.success) {
+	// 		showError(response.error)
+	// 		return;
+	// 	}
+	// 	showSuccess(response.user.firstName)
+	// }, [response, router])
 
 
 	const onSubmit = async (data) => {
 		setLoading(true)
 		if (data?.firstName && data?.lastName && data?.email && data?.password) {
 			dispatch(registerUser({ firstName: data.firstName, password: data.password, lastName: data.lastName, email: data.email }))
+			router.push('/auth/thankyouregistration')
+
 		}
 	}
 

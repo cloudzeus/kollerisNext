@@ -22,9 +22,10 @@ export default async function handler(req, res) {
 			jti: user?._id,
 		  }
 
-      console.log('500 payload in login api: ' + JSON.stringify(payload))
 		  const accessToken = signJwtAccessToken(payload);
-      console.log('300: user in login Access Token : ' + JSON.stringify(accessToken))
+      if(user.role === 'user') {
+        return res.status(200).json({success: true, accessToken: accessToken, user: user, message: 'Ο χρήστης υπάρχει, αλλά δεν μπορείτε να συνδεθείτε ακόμα'});
+      }
      	return res.status(200).json({success: true, accessToken: accessToken, user: user});
     } 
     else {
