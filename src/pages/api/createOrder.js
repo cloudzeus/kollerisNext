@@ -129,11 +129,11 @@ export default async function handler(req, res) {
             let insert = await PendingOrders.create(obj)
             console.log('insert')
             console.log(insert)
-            // let suppliersupdate = await Supplier.updateOne({ TRDR: TRDR }, {
-            //     $set: {
-            //         ORDERSTATUS: true,
-            //     }
-            // })
+            let suppliersupdate = await Supplier.updateOne({ TRDR: TRDR }, {
+                $set: {
+                    ORDERSTATUS: true,
+                }
+            })
 
             return res.status(200).json({ success: true })
         } catch (e) {
@@ -153,12 +153,8 @@ export default async function handler(req, res) {
             let find = await PendingOrders.findOne({ TRDR: TRDR })
             //find products in the database with this TRDR
             let dbproducts = find?.products;
-            console.log('----------------------------------------')
-            console.log(find.orderCompletionValue )
-            console.log(calculateCompletion(products))
             let newordercompletion = parseFloat(find.orderCompletionValue) + calculateCompletion(products);
-            console.log('newordercompletion')
-            console.log(newordercompletion)
+         
           
           
             let _products = [];
@@ -179,15 +175,7 @@ export default async function handler(req, res) {
                 },
                 
             })
-            console.log('update')
-            console.log(update)
-            // let peding=  await PendingOrders.updateOne(
-            //     { TRDR: TRDR },
-            //     {
-            //         $set: {
-            //             orderCompletionValue: newordercompletion
-            //         }
-            //     })
+          
          
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
@@ -306,7 +294,7 @@ export default async function handler(req, res) {
     }
 
     if(action === "updateQuantity") {
-        const {id, QTY1, MTRL} = req.body;
+        const {id, QTY1, MTRL, TRDR} = req.body;
         
         
         try {
@@ -330,7 +318,11 @@ export default async function handler(req, res) {
                 }
             }, {new: true})
             
-
+            await Supplier.updateOne({ TRDR: TRDR }, {
+                $set: {
+                    orderCompletionValue: new_order_total.toFixed(2)
+                }
+            })
             return res.status(200).json({success: true})
 
         } catch (e) {

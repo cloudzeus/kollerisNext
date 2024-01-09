@@ -203,7 +203,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
 
         const handleQuantity = async () => {
             setState(prev => ({ ...prev, loading: !prev.loading }))
-            const {data} = await axios.post('/api/createOrder', {action: 'updateQuantity', QTY1: quantity, MTRL: MTRL, id: docId})
+            const {data} = await axios.post('/api/createOrder', {action: 'updateQuantity', QTY1: quantity, MTRL: MTRL, TRDR: id, id: docId})
             setState(prev => ({ ...prev, refetch: !prev.refetch, loading: !prev.loading }))
         }
 
