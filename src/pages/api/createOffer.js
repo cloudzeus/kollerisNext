@@ -35,16 +35,7 @@ export default async function handler(req, res) {
 
 
         try {
-            let saldoc = await getSaldoc();
-            if (!saldoc.success) {
-                return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            }
-            console.log('saldoc')
-            // console.log(saldoc)
-            // let finDoc = await getFinDoc(saldoc.SALDOCNUM);
-            // if (!finDoc.success) {
-            //     return res.status(200).json({ success: false, error: "softone findoc error" })
-            // }
+          
 
             await connectMongo();
 
@@ -57,8 +48,7 @@ export default async function handler(req, res) {
                 status: 'created',
                 num: num
             })
-            console.log('created')
-            console.log(create)
+            
             return res.status(200).json({ success: true, result: create })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

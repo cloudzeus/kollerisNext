@@ -296,11 +296,19 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
             setRefetch(prev => ({ ...prev, grid: !prev.grid }))
 
         }
+        const handleRefresh = async () => {
+            setRefetch(prev => ({ ...prev, grid: !prev.grid }))
+        }
         return (
             <div className='flex align-items-center'>
                 <div>
-                    <span className='font-light'>Συνολική Τιμή: </span>
-                    <span>{totalPrice}</span>
+                    <div>
+                        <span className='font-light'>Συνολική Τιμή: </span>
+                        <span>{totalPrice}</span>
+                    </div>
+                    <div>
+                        <span onClick={handleRefresh} className='cursor-pointer underline text-primary-700 font-medium'>ανανέωση τιμής</span>
+                    </div>
                 </div>
                 <div className='ml-2 flex justify-content-center align-items-center'>
                     <div className='flex'>
@@ -522,7 +530,6 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
                 loading={loading}
                 footer={footer}
             >
-
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
                 <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
