@@ -1,10 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { TabView, TabPanel } from 'primereact/tabview';
-import Gallery from '@/components/Gallery';
-import { DisabledDisplay } from '@/componentsStyles/grid';
-import { InputTextarea } from 'primereact/inputtextarea';
-import UrlInput from '@/components/Forms/PrimeUrlInput';
-import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button'
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
@@ -13,25 +7,19 @@ import axios from 'axios'
 import SendOrderEmail from '@/components/emails/SendOrderEmail';
 import StepHeader from '../multiOffer/StepHeader';
 import { useRouter } from 'next/router';
-import { setSelectedSupplier, setBrandHasActiveOrder, setSelectedMarkes, setOrderReady } from '@/features/supplierOrderSlice';
 import { setSelectedProducts } from '@/features/productsSlice';
-import { ProgressBar } from 'primereact/progressbar';
 import CreatedAt from '../grid/CreatedAt';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Toast } from 'primereact/toast';
+import { InputNumber } from 'primereact/inputnumber';
 
 const PendingOrders = ({ id }) => {
     const [data, setData] = useState([])
     const toast = useRef(null);
-    const dispatch = useDispatch()
-    const router = useRouter();
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-    const [minValues, setMinvalues] = useState({
-        minValue: 0,
-        minItem: 0,
-    })
+    
 
 
 
@@ -57,23 +45,17 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, orderCompletionValue }) => {
+    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, orderCompletionValue, _id }) => {
         const op = useRef(null);
         const onBulletsClick = (e) => {
-            if(orderCompletionValue < minOrderValue) {
-                showError()
-                return;
-            } else {
-                op.current.toggle(e)
-            }
-           
-
+            op.current.toggle(e)
         }
         return (
             <div>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
                     <SendOrderEmail
+                        disabled={orderCompletionValue < minOrderValue ? true : false}
                         mt={2}
                         email={supplierEmail}
                         products={products}
@@ -82,14 +64,25 @@ const PendingOrders = ({ id }) => {
                         setRefetch={setRefetch}
                         op={op}
                     />
+                    <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash"/>
                 </OverlayPanel>
 
             </div>
         )
     }
 
-    const RowExpansionTemplate = ({ products, NAME, supplierEmail }) => {
-        return <RowExpansionGrid products={products} NAME={NAME} supplierEmail={supplierEmail} id={id} />
+    const RowExpansionTemplate = ({ products, NAME, supplierEmail, _id, orderCompletionValue, }) => {
+        return (
+            <RowExpansionGrid 
+                products={products} 
+                setRefetch={setRefetch}
+                NAME={NAME} 
+                supplierEmail={supplierEmail} 
+                id={id} 
+                docId={_id} 
+                orderCompletionValue={orderCompletionValue}
+            />
+        )
     }
 
 
@@ -134,19 +127,51 @@ const PendingOrders = ({ id }) => {
 
 
 
-const RowExpansionGrid = ({ products, id }) => {
+const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
+    const [state, setState] = useState({
+        data: [],
+        completionValue: 0,
+        minOrderValue: 0,
+        loading: false,
+        refetch: false,
+    })
     const router = useRouter();
+
     const dispatch = useDispatch()
     const { selectedSupplier } = useSelector(state => state.supplierOrder)
 
+
+    const handleFetch = async () => {
+        setState(prev => ({ ...prev, loading: !prev.loading }))
+        let { data } = await axios.post('/api/createOrder', { action: 'findPending', TRDR: id })
+        console.log(data.result[0].products)
+        setState(prev => ({ 
+            ...prev, 
+            data: data.result[0].products, 
+            loading: !prev.loading,
+            completionValue: data.result[0].orderCompletionValue,
+            minOrderValue: data.result[0].minOrderValue
+        }))
+    }
+
+    useEffect(() => {
+        console.log(state.data)
+    }, [state.data])
+
+    useEffect(() => {
+        handleFetch();
+    }, [state.refetch, id])
 
     const onAddMore = () => {
         dispatch(setSelectedProducts([]))
         router.push(`/dashboard/suppliers/add-to-bucket/${id}`)
     }
 
+    const handleRefresh = () => {
+        setRefetch(prev => !prev)
+    }
+
     const Footer = () => {
-        let price = products.map(product => product.TOTAL_COST).reduce((a, b) => a + b, 0)
         let items = products.map(product => product.QTY1).reduce((a, b) => a + b, 0)
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
@@ -159,8 +184,13 @@ const RowExpansionGrid = ({ products, id }) => {
                         <span>{items}</span>
                     </div>
                     <div className='mr-3'>
-                        <span className='text-500 mr-1'>{`TOTAL PRICE:`}</span>
-                        <span>{` ${price.toFixed(2)} €`}</span>
+                        <div>
+                            <span className='text-500 mr-1'>{`TOTAL PRICE:`}</span>
+                            <span>{` ${state.completionValue}  / ${state.minOrderValue} €`}</span>
+                        </div>
+                        <div className='flex  justify-content-end mt-1'>
+                            <span onClick={handleRefresh} className='text-primary-600 underline font-light text-sm'>update grid</span>
+                        </div>
                     </div>
                 </div>
 
@@ -168,24 +198,64 @@ const RowExpansionGrid = ({ products, id }) => {
         )
 
     }
+    const Quantity = ({ QTY1, MTRL,  }) => {
+        const [quantity, setQuantity] = useState(QTY1)
+
+        const handleQuantity = async () => {
+            setState(prev => ({ ...prev, loading: !prev.loading }))
+            const {data} = await axios.post('/api/createOrder', {action: 'updateQuantity', QTY1: quantity, MTRL: MTRL, id: docId})
+            setState(prev => ({ ...prev, refetch: !prev.refetch, loading: !prev.loading }))
+        }
+
+        useEffect(() => {
+            if (quantity === QTY1) return;
+            handleQuantity();
+        }, [quantity])
+        return (
+            <div>
+                <InputNumber
+                  
+                    value={quantity}
+                    size='small'
+                    min={0}
+                    onValueChange={(e) => setQuantity(e.value)}
+                    showButtons
+                    buttonLayout="horizontal"
+                    decrementButtonClassName="p-button-secondary"
+                    incrementButtonClassName="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    inputStyle={{ width: '70px', textAlign: 'center' }}
+                />
+            </div>
+        )
+    }
 
     return (
         <div className="p-2">
             <p className='mb-3 font-bold ml-1'>Προϊόντα Παραγγελίας</p>
             <DataTable
                 className='border-1 border-300'
-                value={products}
+                value={state.data}
                 footer={Footer}
             >
                 <Column header="Όνομα" field="NAME"></Column>
-                <Column header="COST" style={{ width: '60px' }} field="COST"></Column>
-                <Column header="QT" style={{ width: '60px' }} field="QTY1"></Column>
-                <Column header="TOTAL" style={{ width: '60px' }} body={TotalTemplate} field="TOTAL_COST"></Column>
+                <Column header="COST" style={{ width: '110px' }} field="COST" body={Cost}></Column>
+                <Column header="QT" style={{ width: '60px' }} field="QTY1" body={Quantity}></Column>
+                <Column header="TOTAL" style={{ width: '100px' }} body={TotalTemplate} field="TOTAL_COST"></Column>
             </DataTable>
         </div>
     )
 };
 
+const Cost = ({COST}) => {
+    return (
+        <div>
+            <span className='font-bold'>{COST.toFixed(2) + " €"}</span>
+        </div>
+    )
+
+}
 
 const TotalTemplate = ({ TOTAL_COST }) => {
     return (

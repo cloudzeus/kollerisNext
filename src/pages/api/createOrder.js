@@ -79,16 +79,18 @@ export default async function handler(req, res) {
     function calculateCompletion(products) {
         let total = 0;
         for (let item of products) {
-            total += item.TOTAL_COST
+            total += item.COST * item.QTY1;
         }
-        return parseFloat(total);
+        console.log('total')
+        console.log(total)
+        return parseFloat(total.toFixed(2));
     }
 
 
 
     if (action === "createBucket") {
         const { products, email, TRDR, NAME, minOrderValue } = req.body;
-        console.log(TRDR)
+        
         //First time we create the order to the suppliers. 
         //So we create an id based on the last completed order and increment it by 10
         //Min order value is a fixed mumber that we get from the suppliers
@@ -104,13 +106,13 @@ export default async function handler(req, res) {
 
             //CHECK IF THERE IS ALREADY AN ORDER WITH THIS TRDR
             let find = await PendingOrders.findOne({ TRDR: TRDR });
-            console.log('find')
-            console.log(find)
+         
             if (find) {
                 return res.status(200).json({ success: false, result: "Υπάρχει ήδη ενεργή παραγγελία στον προμηθευτή" })
             }
-            console.log('next')
             let completion = calculateCompletion(products);
+            console.log('completion')
+            console.log(completion)
             let obj = {
                 orderNumber: await generateNextCode(),
                 supplierName: NAME,
@@ -121,18 +123,19 @@ export default async function handler(req, res) {
                 minOrderValue: minOrderValue,
                 orderCompletionValue: completion,
             }
+            console.log('obj')
             console.log(obj)
 
             let insert = await PendingOrders.create(obj)
             console.log('insert')
             console.log(insert)
-            await Supplier.updateOne({ TRDR: TRDR }, {
-                $set: {
-                    ORDERSTATUS: true,
-                }
-            })
+            // let suppliersupdate = await Supplier.updateOne({ TRDR: TRDR }, {
+            //     $set: {
+            //         ORDERSTATUS: true,
+            //     }
+            // })
 
-            return res.status(200).json({ success: true, result: insert })
+            return res.status(200).json({ success: true })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
@@ -144,63 +147,53 @@ export default async function handler(req, res) {
 
     if (action === 'updateBucket') {
         const { products, TRDR } = req.body;
-
+       
         try {
             await connectMongo();
             let find = await PendingOrders.findOne({ TRDR: TRDR })
             //find products in the database with this TRDR
             let dbproducts = find?.products;
-            let newordercompletion = find.orderCompletionValue + calculateCompletion(products);
-            //loop through the products that are sent from the client
-            // find those that already exist in the holder and update the quanityt and prices
-            // push those that do not exist
+            console.log('----------------------------------------')
+            console.log(find.orderCompletionValue )
+            console.log(calculateCompletion(products))
+            let newordercompletion = parseFloat(find.orderCompletionValue) + calculateCompletion(products);
+            console.log('newordercompletion')
+            console.log(newordercompletion)
+          
+          
+            let _products = [];
             for (let item of products) {
                 let itemDB = dbproducts.find(dbItem => dbItem.MTRL === item.MTRL);
-                if (itemDB) {
-                    await updateDB(item, itemDB);
-                } else {
-                    await pushToDB(item);
+                if(!itemDB) {
+                    _products.push(item)
                 }
             }
 
-            await PendingOrders.updateOne(
-                { TRDR: TRDR },
-                {
-                    $set: {
-                        orderCompletionValue: newordercompletion
-                    }
-                })
+           
+            let update = await PendingOrders.updateOne({ TRDR: TRDR }, {
+                $set: {
+                    orderCompletionValue: newordercompletion
+                 },
+                $push: {
+                    products: _products
+                },
+                
+            })
+            console.log('update')
+            console.log(update)
+            // let peding=  await PendingOrders.updateOne(
+            //     { TRDR: TRDR },
+            //     {
+            //         $set: {
+            //             orderCompletionValue: newordercompletion
+            //         }
+            //     })
+         
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
                     orderCompletionValue: newordercompletion
                 }
             })
-
-            async function updateDB(item, itemDB) {
-                let newQuantity = item.QTY1 + itemDB.QTY1;
-                let newTotal = parseFloat(item.TOTAL_COST) + parseFloat(itemDB.TOTAL_COST);
-                await PendingOrders.updateOne(
-                    {
-                        TRDR: TRDR,
-                        'products.MTRL': item.MTRL
-                    }, {
-                    $set: {
-                        'products.$.QTY1': newQuantity,
-                        'products.$.TOTAL_COST': newTotal,
-                    }
-                })
-            }
-            async function pushToDB(item) {
-                await PendingOrders.updateOne(
-                    { TRDR: TRDR },
-                    {
-                        $push: {
-                            products: item
-                        }
-                    })
-
-            }
-
             return res.status(200).json({ success: true })
 
         } catch (e) {
@@ -310,6 +303,40 @@ export default async function handler(req, res) {
         } catch (e) {
             return res.status(500).json({success: false, result: null})
         }
+    }
+
+    if(action === "updateQuantity") {
+        const {id, QTY1, MTRL} = req.body;
+        
+        
+        try {
+            await connectMongo();
+            let find = await PendingOrders.findOne({_id: id});
+            let products = find.products;
+
+            let total_order_cost = 0;
+            for(let item of products) {
+                total_order_cost += parseFloat(item.COST * item.QTY1);
+            }
+
+            let product = products.find(item => item.MTRL === MTRL);
+            let newTotal = parseFloat(product.COST) * QTY1;
+            let new_order_total = find.orderCompletionValue +  product.COST;
+            let update = await PendingOrders.findOneAndUpdate({_id: id, 'products.MTRL': MTRL}, {
+                $set: {
+                    'orderCompletionValue': new_order_total.toFixed(2),
+                    'products.$.QTY1': QTY1,
+                    'products.$.TOTAL_COST': newTotal.toFixed(2)
+                }
+            }, {new: true})
+            
+
+            return res.status(200).json({success: true})
+
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+
     }
 
 }

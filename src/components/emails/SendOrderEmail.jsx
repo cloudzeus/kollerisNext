@@ -15,7 +15,7 @@ const emails = [
 ];
 
 
-const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch}) => {
+const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch, disabled}) => {
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false)
     const [selectedCC, setSelectedCC] = useState([
@@ -94,7 +94,7 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
 
     return (
         <div>
-            <Button className={`mt-${mt} w-full`} label="Δημιουργία Εmail" icon="pi pi-envelope" onClick={() => setVisible(true)} />
+            <Button disabled={disabled} className={`mt-${mt} w-full`} label="Δημιουργία Εmail" icon="pi pi-envelope" onClick={() => setVisible(true)} />
             <Dialog
                 header="Εmail Template"
                 visible={visible}

@@ -9,6 +9,7 @@ const pendingOrderSchema = new mongoose.Schema({
         default: 10000,
     },
     minOrderValue: Number,
+    total_order_cost: Number,
     orderCompletionValue: {
         type: Number,
         default: 0,
