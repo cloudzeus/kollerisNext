@@ -22,18 +22,7 @@ export default async function handler(req, res) {
         let total = data.reduce((a, b) => a + (b['PRICE']), 0);
        
         try {
-           
-            // let saldoc = await getSaldoc(TRDR, mtrlArr);
-            // if (!saldoc.success) {
-            //     return res.status(200).json({ success: false, error: "softone saldocnum error" })
-            // }
         
-            // let finDoc = await getFinDoc(saldoc.SALDOCNUM);
-            // if (!finDoc.success) {
-            //     return res.status(200).json({ success: false, error: "softone findoc error" })
-            // }
-
-
             let create = await SingleOffer.create({
                 products: data,
                 status: 'created',
@@ -116,17 +105,32 @@ export default async function handler(req, res) {
 
     if(action === "deleteOffer") {
         const {id} = req.body;
-        console.log(id)
+     
         try {
             let del = await SingleOffer.deleteOne({_id: id})
-            console.log('delete offer')
-            console.log(del)
+           
             return res.status(200).json({ success: true, result: del })
         } catch (e) {
             return res.status(400).json({ success: false })
         }
     }
 
+    if(action === "removeProduct") {
+        const {id, mtrl} = req.body;
+        console.log(id, mtrl)
+        try {
+            let update = await SingleOffer.findOneAndUpdate({_id: id}, {
+                $pull: {
+                    'products': { MTRL: mtrl.toString() }
+                }
+            }, {new: true})
+            console.log('remove product')
+            console.log(update)
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
     
     //Alter the quantity of the products and the totalPrices
     if(action === "updateQuantity") {
@@ -150,7 +154,7 @@ export default async function handler(req, res) {
                     "products.$.TOTAL_PRICE": TOTAL_PRICE.toFixed(2),
                 }
             }, {new: true})
-            console.log('update')
+            console.log('update qantity')
             console.log(update)
 
             
@@ -245,7 +249,6 @@ export default async function handler(req, res) {
         const {id} = req.body;
         await connectMongo();
         let find = await SingleOffer.findOne({_id: id});
-        
         let totalPrice = 0;
         for(let item of find.products) {
             let _price = item.DISCOUNTED_PRICE ? item.DISCOUNTED_PRICE : item.PRICE;
@@ -257,14 +260,17 @@ export default async function handler(req, res) {
             discountedPrice = totalPrice - totalPrice * (find.discount / 100);
         }
         
-        let update = await SingleOffer.findOneAndUpdate({_id: id}, {
-            $set: {
-                totalPrice: totalPrice.toFixed(2),
-                discountedTotal: discountedPrice.toFixed(2)
-            }
-        }, {new: true})
-        console.log('update')
-        return res.status(200).json({ success: true, result: update })
+        try {
+            let update = await SingleOffer.findOneAndUpdate({_id: id}, {
+                $set: {
+                    totalPrice: totalPrice.toFixed(2),
+                    discountedTotal: discountedPrice.toFixed(2)
+                }
+            }, {new: true})
+            return res.status(200).json({ success: true, result: update })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
     
     }
 
@@ -386,19 +392,19 @@ async function getNewSalesDoc(TRDR, MTRLINES, totalDiscount) {
 // }
 
 export async function getFinDoc(saldoc) {
-                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
-                const response = await fetch(URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: "Service",
-                        password: "Service",
-                        SALDOC: saldoc,
-                        SODTYPE: 13,
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getFinDocInfo`;
+        const response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+            username: "Service",
+            password: "Service",
+            SALDOC: saldoc,
+            SODTYPE: 13,
                       
-                    })
-                });
+        })
+        });
 
              
-                let data = await translateData(response)
-                return  data;
+    let data = await translateData(response)
+    return  data;
 }

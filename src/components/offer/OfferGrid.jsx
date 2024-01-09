@@ -13,6 +13,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
+import { setLoading } from '@/features/productsSlice';
 
 
 const OfferGrid = ({ clientName }) => {
@@ -247,7 +248,6 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
     })
 
     useEffect(() => {
-        console.log('here')
         const handleTotalPrice = async () => {
            const {data} = await axios.post('/api/singleOffer', { action: 'calculateTotal', id: id })
            setState(prev => ({ ...prev, discountedTotal: data.result.discountedTotal, totalPrice: data.result.totalPrice, discount: data.result.discount }))
@@ -277,14 +277,15 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
 
     const onRemove = async (MTRL) => {
         if(FINCODE) return;
-        let { data } = await axios.post('/api/singleOffer', { action: 'removeProduct', id: id, MTRL: MTRL })
-
+        setState(prev => ({ ...prev, loading: true }))
+        let { data } = await axios.post('/api/singleOffer', { action: 'removeProduct', id: id, mtrl: MTRL })
+        setState(prev => ({ ...prev, loading: false, refetch: !prev.refetch }))
     }
 
     const RemoveItem = ({ MTRL }) => {
         return (
             <div>
-                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: FINCODE ? "red" : "grey"}} onClick={() => onRemove(MTRL)}></i>
+                <i className="pi pi-trash cursor-pointer p-1" style={{ fontSize: '1rem', color: !FINCODE ? "red" : "grey"}} onClick={() => onRemove(MTRL)}></i>
             </div>
         )
     }
@@ -336,7 +337,16 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
                         <span className="p-input-icon-right">
                             <span className='ml-2 font-light'>Έκπτωση: </span>
                             <i className={`pi pi-check `} onClick={onValueChange} />
-                            <InputNumber disabled={FINCODE ? true : false} value={state.discount} onChange={handleDiscount} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                            <InputNumber 
+                            disabled={FINCODE ? true : false} 
+                            value={state.discount} 
+                            onChange={handleDiscount} 
+                            onValueChange={onValueChange} 
+                            max={80} 
+                            min={0} 
+                            mode="decimal" 
+                            maxFractionDigits={2} 
+                            />
                         </span>
                     </div>
                     <div className='bg-surface-400 ml-2'>
@@ -352,6 +362,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
         const [value, setValue] = useState(0)
 
         const onValueChange = async () => {
+            setState(prev => ({ ...prev, loading: !prev.loading }))
             let { data } = await axios.post('/api/singleOffer', {
                 action: 'updateDiscount',
                 discount: value,
@@ -365,7 +376,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
             if (!data.success && data?.message) {
                 showError(data.message)
             }
-            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+            setState(prev => ({ ...prev, loading: !prev.loading, refetch: !prev.refetch }))
 
         }
 
@@ -393,18 +404,19 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
 
  
    
-    const Quantity = ({ QTY1, MTRL }) => {
+    const Quantity = ({ QTY1, MTRL,  }) => {
         const [quantity, setQuantity] = useState(QTY1)
+
         const handleQuantity = async () => {
+            setState(prev => ({ ...prev, loading: true}))
             const {data} = await axios.post('/api/singleOffer', {
                 action: "updateQuantity",
                 QTY1: quantity,
                 MTRL: MTRL,
                 id: id,
             })
-           
-            setState(prev => ({ ...prev, refetch: !prev.refetch }))
-            }
+            setState(prev => ({ ...prev, loading: false, refetch: !prev.refetch }))
+        }
 
         useEffect(() => {
             if (quantity === QTY1) return;
@@ -413,7 +425,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
         return (
             <div>
                 <InputNumber
-                    disabled={FINDOC ? true : false}
+                    disabled={FINCODE  ? true : false}
                     value={quantity}
                     size='small'
                     min={0}
@@ -445,7 +457,7 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
                 <Column header="Όνομα Προϊόντος" field="NAME"></Column>
                 <Column header="Τιμ. M" body={Price} style={{ width: '100px' }} field="PRICE"></Column>
                 <Column header="%" style={{ width: '100px' }} field="MTRL" body={Discount}></Column>
-                <Column header="Τιμ. Έκπ." style={{ width: '50px' }} field="DISCOUNTED_PRICE"></Column>
+                <Column header="Τιμ. Έκπ." style={{ width: '50px' }} field="DISCOUNTED_PRICE" body={DiscountedPrice}></Column>
                 <Column header="Πoσ." field="QTY1" body={Quantity} style={{ width: '100px' }}></Column>
                 <Column header="ΣT" body={TotalPrice} style={{ width: '80px' }} field="TOTAL_PRICE"></Column>
                 <Column body={RemoveItem} bodyStyle={{ textAlign: 'center' }} style={{ width: '30px' }}></Column>
@@ -455,7 +467,14 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
 };
 
 
-
+const DiscountedPrice = ({DISCOUNTED_PRICE}) => {
+    console.log(DISCOUNTED_PRICE)
+    return (
+        <div>
+            <p className='font-bold'>{`${DISCOUNTED_PRICE >= 0 ? DISCOUNTED_PRICE + " €": '' } `}</p>
+        </div>
+    )
+}
 
 
 export default OfferGrid
