@@ -13,7 +13,7 @@ const holderchema = new mongoose.Schema({
     status: String,
     createdFrom: String,
     SALDOCNUM: Number,
-    FINDOC: Number,
+    FINCODE: String,
     totalPrice: Number,
     discount: Number,
     discountedTotal: Number,

@@ -92,9 +92,9 @@ const ClientHolder = ({ NAME }) => {
 
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
-        setLoading(true)
+        setLoading(prev => ({ ...prev, grid: true }))
         let { data } = await axios.post('/api/createOffer', { action: 'updateStatus', status: newData.status, id: newData._id, TRDR: newData.TRDR, data: newData.holders })
-        setLoading(false)
+        setLoading(prev => ({ ...prev, grid: false }))
         setRefetch(prev => ({ ...prev, grid: !prev.grid }))
     };
 
@@ -132,7 +132,11 @@ const ClientHolder = ({ NAME }) => {
 
         const handleFinDoc = async () => {
             setLoading(prev => ({ ...prev, findoc: true }))
-            let { data } = await axios.post('/api/singleOffer', { action: 'createFinDoc', id: _id, TRDR: TRDR  })
+            let { data } = await axios.post('/api/createOffer', { action: 'createFinDoc', id: props._id, TRDR: props.TRDR  })
+            if(!data.success && data?.error){
+                showError(data.error)
+            
+            }
             setLoading(prev => ({ ...prev, findoc: false }))
             setRefetch(prev => !prev)
         }
@@ -140,11 +144,10 @@ const ClientHolder = ({ NAME }) => {
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <Button loading={loading.findoc} label="Εκ. Παραστατικού" severity='secondary' className='w-full mb-2' onClick={handleFinDoc} />
+                    <Button disabled={props.FINCODE} loading={loading.findoc} label="Εκ. Παραστατικού" severity='secondary' className='w-full mb-2' onClick={handleFinDoc} />
                     <Button loading={loading.delete} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${props.clientName}.offer`} />
                     <SendMultiOfferEmail
-
                         mt={2}
                         email={props.clientEmail}
                         products={_products}
@@ -164,7 +167,7 @@ const ClientHolder = ({ NAME }) => {
         )
     }
 
-    const RowExpansionTemplate = ({ holders, _id, TRDR, discountedTotal, discount, totalPrice }) => {
+    const RowExpansionTemplate = ({ holders, _id, TRDR, discountedTotal, discount, totalPrice, FINCODE }) => {
         return <RowExpansionGrid 
             holders={holders} 
             documentID={_id} 
@@ -174,6 +177,7 @@ const ClientHolder = ({ NAME }) => {
             totalPrice={totalPrice}
             discountedTotal={discountedTotal}
             discount={discount}
+            FINCODE={FINCODE}
             />
     }
     return (
@@ -193,7 +197,7 @@ const ClientHolder = ({ NAME }) => {
             >
                 <Column expander={allowExpansion} style={{ width: '20px', textAlign: 'center' }} />
                 <Column header="Όνομα Πελάτη" field="clientName" body={Client}></Column>
-                <Column header="Aρ. Παραστατικού" field="SALDOCNUM" style={{ maxWidth: '90px' }}></Column>
+                <Column header="Kωδ. Παραστατικού" field="FINCODE" style={{ maxWidth: '90px' }}></Column>
                 <Column header="createdAt" field="createdAt" body={CreatedAt}></Column>
                 <Column field="createdFrom" body={CreatedFrom} header="Created From" style={{ width: '60px' }}></Column>
                 <Column header="Status" field="status" body={Status} style={{ width: '160px' }} editor={(options) => statusEditor(options)}></Column>
@@ -206,7 +210,7 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  discountedTotal, discount, totalPrice }) => {
+const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  discountedTotal, discount, totalPrice, FINCODE }) => {
 
     const [newtotalPrice, setNewTotalPrice] = useState(null)
     const [newdiscount, setNewDiscount] = useState(0)
@@ -249,6 +253,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
     const RowExpansionTemplate = ({ products, _id, name, isImpa, impaCode }) => {
         return (
             <SubRowExpansionGrid
+                FINCODE={FINCODE}
                 products={products}
                 documentID={documentID}
                 holderID={_id}
@@ -262,7 +267,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
     }
 
 
-    const RenderHolderActions = ({ isImpa, impaCode, _id, products }) => {
+    const RenderHolderActions = ({  _id, products }) => {
         const op = useRef(null);
 
         const deleteHolder = async () => {
@@ -316,7 +321,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
 
     return (
         <div className="p-2">
-            <Button className='my-3' size="small" type="button" icon="pi pi-plus" label="Νέο Holder" onClick={(e) => op.current.toggle(e)} />
+            <Button disabled={FINCODE} className='my-3' size="small" type="button" icon="pi pi-plus" label="Νέο Holder" onClick={(e) => op.current.toggle(e)} />
             <OverlayPanel ref={op}>
                 <div className="">
                     <Button onClick={createImpaHolder} className='w-full mb-1' type="button" label="Με ΙMPA" severity='warning' />
@@ -351,7 +356,7 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
 
 
 
-const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, refetch, setRefetch }) => {
+const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, refetch, setRefetch, FINCODE }) => {
     const [data, setData] = useState([])
     const toast = useRef(null);
 
@@ -371,6 +376,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
     }, [refetch])
 
     const onRemove = (MTRL) => {
+        if(FINCODE) return;
         setLoading(true)
         let { data } = axios.post('/api/createOffer', { action: 'removeHolderItems', mtrl: MTRL, documentID: documentID, holderID: holderID })
         setRefetch(prev => ({ ...prev, products: !prev.products }))
@@ -379,7 +385,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
 
         return (
             <div>
-                <i className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: 'red' }} onClick={() => onRemove(MTRL)}></i>
+                <i  className="pi pi-trash pointer p-1" style={{ fontSize: '1rem', color: FINCODE ? 'grey' : '' }} onClick={() => onRemove(MTRL)}></i>
             </div>
         )
     }
@@ -409,7 +415,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
     })
 
     const showError = (message) => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 5000 });
     }
 
     const footer = `Συνολο Προϊόντων: ${productSum}  /  Συνολο Τιμής: ${sum}€  `;
@@ -448,6 +454,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
         return (
             <div>
                 <InputNumber
+                    disabled={FINCODE}
                     value={quantity}
                     size='small'
                     min={0}
@@ -501,7 +508,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
             <div className='flex'>
                 <span className="p-input-icon-right">
                     <i className={`pi pi-check ${value == DISCOUNT ? 'text-500' : 'text-green-400'}`} onClick={onValueChange} />
-                    <InputNumber value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
+                    <InputNumber disabled={FINCODE} value={value} onChange={onChange} onValueChange={onValueChange} max={80} min={0} mode="decimal" maxFractionDigits={2} />
                 </span>
             </div>
         )
@@ -509,7 +516,7 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
     return (
         <div className='p-3'>
             <Toast ref={toast} />
-            <Button className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
+            <Button disabled={FINCODE} className='my-3 bg-primary-400' size="small" label="προσθήκη" icon="pi pi-plus" onClick={handleAddMore} />
             <DataTable
                 value={data}
                 loading={loading}

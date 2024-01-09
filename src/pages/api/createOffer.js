@@ -7,6 +7,7 @@ import SingleOffer from "../../../server/models/singleOfferModel";
 import createCSVfile from "@/utils/createCSVfile";
 import { sendEmail } from "@/utils/offersEmailConfig";
 import { getSaldoc, getFinDoc } from "./singleOffer";
+import { get } from "mongoose";
 
 function generateOfferNum(length) {
     const max = Math.pow(10, length) - 1; // Generates a number like 999999 for length = 6
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
             // if (!finDoc.success) {
             //     return res.status(200).json({ success: false, error: "softone findoc error" })
             // }
-            
+
             await connectMongo();
 
             let create = await Holders.create({
@@ -69,7 +70,7 @@ export default async function handler(req, res) {
     if (action === "createImpaHolder") {
         const { products, impa, holderId } = req.body;
         try {
-            
+
 
             const subString = impa?.greekDescription || impa?.englishDescriptio
             const fullName = impa?.code + ': ' + subString
@@ -101,7 +102,7 @@ export default async function handler(req, res) {
     if (action === "createHolder") {
         const { products, name, holderId } = req.body;
         try {
-        
+
             const update = await Holders.findOneAndUpdate(
                 { _id: holderId },
                 {
@@ -123,11 +124,11 @@ export default async function handler(req, res) {
 
     if (action === "addMoreToHolder") {
         const { holderId, products } = req.body;
-        
+
         const _products = [];
         const _existing = [];
         await connectMongo();
-        
+
         try {
             let findImpaProducts = await Holders.findOne({ 'holders._id': holderId }, { 'holders.$': 1, _id: 0 })
             let existingProducts = findImpaProducts.holders[0].products
@@ -157,16 +158,16 @@ export default async function handler(req, res) {
 
             return res.status(200).json({ success: false })
         } catch (e) {
-            return res.status(200).json({ success: true, result: null, existing: []})
+            return res.status(200).json({ success: true, result: null, existing: [] })
 
         }
     }
 
 
-    if(action === "updateQuantity") {
-        const {quantity, holderId, MTRL, holderID, documentID, price, discountedPrice} = req.body;
+    if (action === "updateQuantity") {
+        const { quantity, holderId, MTRL, holderID, documentID, price, discountedPrice } = req.body;
         let newPrice = discountedPrice ? discountedPrice : price;
-        let newTotalPrice = quantity * newPrice ;
+        let newTotalPrice = quantity * newPrice;
         let _new = parseFloat(newTotalPrice).toFixed(2);
         try {
             await connectMongo();
@@ -190,40 +191,40 @@ export default async function handler(req, res) {
                             new: true
                         }
                     );
-            
+
                     console.log(update);
                     return update;
                 } catch (error) {
-                   
+
                 }
             }
-            
+
             updateProductQuantity(documentID, holderID, MTRL, quantity);
-            
-            return res.status(200).json({success: true})
+
+            return res.status(200).json({ success: true })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === "updateDiscount") {
-        const {discount, PRICE,  QTY1, MTRL, holderID, documentID, TRDR} = req.body;
+    if (action === "updateDiscount") {
+        const { discount, PRICE, QTY1, MTRL, holderID, documentID, TRDR } = req.body;
 
         const mtrLine = [{
             MTRL: MTRL,
             QTY1: QTY1,
             PRICE: PRICE
         }]
-        
+
 
         let salesdoc = await getNewSalesDoc(TRDR, mtrLine, discount)
         console.log(salesdoc)
-        if(!salesdoc.success) {
-            return res.status(200).json({success: false, result: null, message: 'softone discount error'})
+        if (!salesdoc.success) {
+            return res.status(200).json({ success: false, result: null, message: 'softone discount error' })
         }
         const newPrice = PRICE - (PRICE * discount / 100);
         const newTotal = newPrice * QTY1;
-      
+
         try {
             const update = await Holders.findOneAndUpdate(
                 {
@@ -231,7 +232,7 @@ export default async function handler(req, res) {
                 },
                 {
                     $set: {
-                        'holders.$[holder].products.$[product].DISCOUNTED_PRICE':newPrice,
+                        'holders.$[holder].products.$[product].DISCOUNTED_PRICE': newPrice,
                         'holders.$[holder].products.$[product].DISCOUNT': discount,
                         'holders.$[holder].products.$[product].TOTAL_PRICE': newTotal
                     }
@@ -244,15 +245,15 @@ export default async function handler(req, res) {
                     new: true
                 }
             );
-            return res.status(200).json({success: true})
+            return res.status(200).json({ success: true })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
 
         }
-               
-            
-        
-    
+
+
+
+
     }
     if (action === "findImpaProducts") {
         let { code } = req.body
@@ -276,14 +277,14 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             const holder = await Holders.findOne({ _id: documentID, 'holders._id': holderID }, { "holders.$": 1 })
-          
+
             return res.status(200).json({ success: true, result: holder })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
     }
 
-   
+
 
     if (action == "saveNewEmail") {
         try {
@@ -434,7 +435,7 @@ export default async function handler(req, res) {
 
             )
 
-           
+
             return res.status(200).json({ success: true, result: find })
         } catch (e) {
             console.log(e)
@@ -507,64 +508,104 @@ export default async function handler(req, res) {
         }
     }
 
-    if(action === "deleteHolder") {
-        const {holderId, documentID} = req.body;
+    if (action === "deleteHolder") {
+        const { holderId, documentID } = req.body;
         console.log(holderId)
         console.log(documentID)
         try {
             await connectMongo();
-            const deleted = await Holders.findOneAndUpdate({_id : documentID}, {
+            const deleted = await Holders.findOneAndUpdate({ _id: documentID }, {
                 $pull: {
-                    holders: {_id: holderId}
+                    holders: { _id: holderId }
                 }
             });
             console.log('deleted')
             console.log(deleted)
-            return res.status(200).json({success: true, result: deleted})
+            return res.status(200).json({ success: true, result: deleted })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === "holdersTotalPrice") {
-        const {documentID} = req.body;
+    if (action === "holdersTotalPrice") {
+        const { documentID } = req.body;
         try {
             await connectMongo();
-            const holder = await Holders.findOne({_id: documentID}, {holders: 1})
+            const holder = await Holders.findOne({ _id: documentID }, { holders: 1 })
             let totalPrice = 0;
-            for(let item of holder.holders) {
-                for(let product of item.products) {
+            for (let item of holder.holders) {
+                for (let product of item.products) {
                     totalPrice += product.TOTAL_PRICE
                 }
             }
             console.log(totalPrice)
-            let update = await Holders.updateOne({_id: documentID}, {
+            let update = await Holders.updateOne({ _id: documentID }, {
                 $set: {
                     totalPrice: totalPrice
                 }
             })
-            return res.status(200).json({success: true, result: totalPrice})
+            return res.status(200).json({ success: true, result: totalPrice })
         } catch (e) {
-            return res.status(500).json({success: false, result: null})
+            return res.status(500).json({ success: false, result: null })
         }
     }
 
-    if(action === 'totalDiscount') {
-        const {documentID, discount, totalPrice} = req.body;
-        let discountedPrice = (totalPrice  - totalPrice * discount / 100).toFixed(2);
+    if (action === 'totalDiscount') {
+        const { documentID, discount, totalPrice } = req.body;
+        let discountedPrice = (totalPrice - totalPrice * discount / 100).toFixed(2);
         try {
-            let update = await Holders.updateOne({_id: documentID}, {
+            let update = await Holders.updateOne({ _id: documentID }, {
                 $set: {
                     discount: discount,
                     discountedTotal: discountedPrice
                 }
             })
-            
-            return res.status(200).json({success: true})
+
+            return res.status(200).json({ success: true })
 
         } catch (e) {
-            return res.status(500).json({success: false})
+            return res.status(500).json({ success: false })
         }
+    }
+    if (action === 'createFinDoc') {
+        const { id, TRDR } = req.body;
+        console.log(id)
+        console.log(TRDR)
+        try {
+            await connectMongo();
+            let products = await Holders.findOne({ _id: id })
+            let mtrLines = [];
+            let totalDiscount = products.discount ? products.discount : 0;
+            for (let item of products.holders) {
+                for (let product of item.products) {
+                    let obj = {
+                        MTRL: product.MTRL,
+                        QTY1: product.QTY1,
+                        PRICE: product.PRICE,
+                        DISC1PRC: product.DISCOUNT ? product.DISCOUNT : 0,
+                    }
+                    mtrLines.push(obj)
+                }
+            }
+
+
+            let salcoc = await getNewSalesDoc(TRDR, mtrLines, totalDiscount)
+            if (!salcoc.success) {
+                return res.status(200).json({ success: false, error: "softone disc1prc error" })
+            }
+
+            let fincode = await getFinDoc(salcoc.SALDOCNUM)
+            if (!fincode.success) {
+                return res.status(200).json({ success: false, error: "softone findoc error" })
+            }
+            let update = await Holders.findOneAndUpdate({ _id: id }, {
+                $set: {
+                    FINCODE: fincode.result[0].FINCODE
+                }
+            }, { new: true})
+            return res.status(200).json({ success: true })
+        } catch (e) { }
+        return res.status(200).json({ success: true })
     }
 }
 
