@@ -44,15 +44,27 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, orderCompletionValue, _id }) => {
+    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, TRDR, orderCompletionValue, _id }) => {
         const op = useRef(null);
         const onBulletsClick = (e) => {
             op.current.toggle(e)
+        }
+
+        const handleDelete = async () => {
+            await axios.post('/api/createSmallOrder', {action: 'deleteOrder', id: _id})
+            setRefetch(prev => !prev)
+        }
+
+        const handleSubmit = async () => {
+            let {data} = await axios.post('/api/createSmallOrder', {action: 'issueFinDoc', id: _id, TRDR: TRDR})
+            console.log(data)
+            setRefetch(prev => !prev)
         }
         return (
             <div>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
+                    <Button className='w-full' severity='secondary' label='Εκ. Παραστατικού' onClick={handleSubmit} />
                     <SendOrderEmail
                         disabled={orderCompletionValue < minOrderValue ? true : false}
                         mt={2}
@@ -63,14 +75,14 @@ const PendingOrders = ({ id }) => {
                         setRefetch={setRefetch}
                         op={op}
                     />
-                    <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash"/>
+                    <Button onClick={handleDelete} className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash"/>
                 </OverlayPanel>
 
             </div>
         )
     }
 
-    const RowExpansionTemplate = ({ products, NAME, supplierEmail, _id }) => {
+    const RowExpansionTemplate = ({ products, NAME, supplierEmail, _id,  PURDOCNUM }) => {
         return (
             <RowExpansionGrid 
                 id={_id}
@@ -78,6 +90,7 @@ const PendingOrders = ({ id }) => {
                 setRefetch={setRefetch}
                 NAME={NAME} 
                 supplierEmail={supplierEmail} 
+                PURDOCNUM={PURDOCNUM}
             />
         )
     }
@@ -102,7 +115,7 @@ const PendingOrders = ({ id }) => {
               >
                   <Column expander={allowExpansion} style={{ width: '5rem' }} />
                   <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
-                  <Column header="Κωδικός Παρ." style={{ width: '150px' }} field="orderNumber"></Column>
+                  <Column header="Κωδικός Παρ." style={{ width: '150px' }} field="PURDOCNUM"></Column>
                   <Column header="Email" field="supplierEmail"></Column>
                   <Column header="Ημερομ. Δημ" style={{minWidth: '250px'}} body={CreatedAt}></Column>
                   <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
@@ -117,7 +130,7 @@ const PendingOrders = ({ id }) => {
 
 
 
-const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
+const RowExpansionGrid = ({ products, id,  PURDOCNUM}) => {
     const [state, setState] = useState({
         products: [],
         total_cost: 0,
@@ -150,16 +163,14 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         router.push(`/dashboard/suppliers/add-more-sm-bucket/${id}`)
     }
 
-    const handleRefresh = () => {
-        setRefetch(prev => !prev)
-    }
+   
 
     const Footer = () => {
         let items = products.map(product => product.QTY1).reduce((a, b) => a + b, 0)
         return (
             <div className='flex justify-content-between align-items-center p-2 w-full'>
                 <div>
-                    <Button size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onAddMore} />
+                    <Button disabled={PURDOCNUM} size="small" icon={'pi pi-plus'} severity={"secondary"} className="p-button-sm  mr-2" onClick={onAddMore} />
                 </div>
                 <div className='flex'>
                     <div className='mr-3'>
@@ -197,6 +208,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         return (
             <div>
                 <InputNumber
+                    disabled={PURDOCNUM}
                     value={quantity}
                     size='small'
                     min={0}
@@ -215,13 +227,13 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
 
     const Delete = ({ MTRL}) => {
         const handleDelete = async () => {
-            console.log('delete')
+            if(PURDOCNUM) return;
             await axios.post('/api/createSmallOrder', {action: 'deleteProduct', id: id, MTRL: MTRL})
             setState(prev => ({ ...prev, refetch: !prev.refetch }))
         }
         return (
             <div>
-                <i onClick={handleDelete} className="pi pi-trash cursor-pointer" style={{ fontSize: '0.9rem', color: 'red' }}></i>
+                <i onClick={handleDelete} className="pi pi-trash cursor-pointer" style={{ fontSize: '0.9rem', color: PURDOCNUM ? 'grey' : 'red' }}></i>
             </div>
         )
     }
@@ -230,6 +242,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         <div className="p-2">
             <p className='mb-3 font-bold ml-1'>Προϊόντα Παραγγελίας</p>
             <DataTable
+                disabled={PURDOCNUM}
                 laoding={state.loading}
                 className='border-1 border-300'
                 value={state.products}

@@ -1,8 +1,7 @@
 
-import { toNamespacedPath } from "path";
 import connectMongo from "../../../server/config";
 import SmallOrders from "../../../server/models/smallOrdersModel";
-import { calculateCompletion } from "./createOrder";
+import { calculateCompletion, getPurdoc } from "./createOrder";
 
 export default async function handler(req, res) {
      const {action} = req.body;
@@ -177,5 +176,47 @@ export default async function handler(req, res) {
         } catch (e) {
             return res.status(500).json({success: false})
         }
+    }
+    if(action === "deleteOrder") {
+        const {id} = req.body;
+        try {
+            await connectMongo();
+            let deleteOffer = await SmallOrders.deleteOne({_id: id});
+
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+    }
+    if(action === "issueFinDoc") {
+        const {id, MTRL, TRDR} = req.body;
+
+       
+        try {
+            await connectMongo();
+            let find = await SmallOrders.findOne({_id: id}, {}).select('products');
+            const products = find.products;
+            const mtrlArr = products.map(item => {
+                const MTRL = parseInt(item.MTRL);
+                const QTY1 = parseInt(item.QTY1);
+                return { MTRL, QTY1 };
+            });
+            console.log(mtrlArr )
+            const purdoc = await getPurdoc(mtrlArr, TRDR);
+            console.log('purdoc')
+            console.log(purdoc)
+            if (!purdoc) {
+                return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
+            }
+            await SmallOrders.findOneAndUpdate({_id: id}, {
+                $set: {
+                    PURDOCNUM: purdoc
+                }
+            }, {new: true})
+            return res.status(200).json({success: true, message: null})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+
     }
 }

@@ -335,7 +335,7 @@ export default async function handler(req, res) {
 
 
 
-const getPurdoc = async (data, TRDR) => {
+export const getPurdoc = async (data, TRDR) => {
     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getPurDoc`;
     const response = await fetch(URL, {
         method: 'POST',
