@@ -6,6 +6,17 @@ import CompletedOrders from "../../../server/models/completedOrdes";
 import createCSVfile from "@/utils/createCSVfile";
 import { sendEmail } from "@/utils/offersEmailConfig";
 
+export function calculateCompletion(products) {
+    let total = 0;
+    for (let item of products) {
+        total += item.COST * item.QTY1;
+    }
+    console.log('total')
+    console.log(total)
+    return parseFloat(total.toFixed(2));
+}
+
+
 export default async function handler(req, res) {
 
     const action = req.body.action;
@@ -76,15 +87,7 @@ export default async function handler(req, res) {
     }
 
     //FUNCTIONS:
-    function calculateCompletion(products) {
-        let total = 0;
-        for (let item of products) {
-            total += item.COST * item.QTY1;
-        }
-        console.log('total')
-        console.log(total)
-        return parseFloat(total.toFixed(2));
-    }
+   
 
 
 
@@ -301,19 +304,15 @@ export default async function handler(req, res) {
             let find = await PendingOrders.findOne({_id: id});
             let products = find.products;
 
-            let total_order_cost = 0;
-            for(let item of products) {
-                total_order_cost += parseFloat(item.COST * item.QTY1);
-            }
 
             let product = products.find(item => item.MTRL === MTRL);
             let newTotal = parseFloat(product.COST) * QTY1;
             let new_order_total = find.orderCompletionValue +  product.COST;
             let update = await PendingOrders.findOneAndUpdate({_id: id, 'products.MTRL': MTRL}, {
                 $set: {
-                    'orderCompletionValue': new_order_total.toFixed(2),
+                    'orderCompletionValue': parseInt(new_order_total.toFixed(2)),
                     'products.$.QTY1': QTY1,
-                    'products.$.TOTAL_COST': newTotal.toFixed(2)
+                    'products.$.TOTAL_COST': parseInt(newTotal.toFixed(2))
                 }
             }, {new: true})
             

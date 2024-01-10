@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMtrLines } from '@/features/productsSlice';
 import PickingNew from './PickingNew';
 import { InputNumber } from 'primereact/inputnumber';
+import SmallOrders from './SmallOrders';
+
 //TOOLBAR STUFF THAT DISPLAYS ON THE GRID:
 const ProductToolbar = () => {
     return (
@@ -107,7 +109,7 @@ const LeftSide = () => {
                                     <MenuBtn label="Προσφορά" onClick={() => setActiveIndex(3)} />
                                     <MenuBtn label="Ποσοτική τροποποίηση αποθήκης" onClick={() => setActiveIndex(4)} />
                                     <MenuBtn label="Picking new" onClick={() => setActiveIndex(5)} />
-                                    <MenuBtn label="Παραγγελία Μικρή" onClick={() => setActiveIndex(5)} />
+                                    <MenuBtn label="Παραγγελία Μικρή" onClick={() => setActiveIndex(6)} />
                                 </div>
                             </div>
                         ) : null}
@@ -120,6 +122,7 @@ const LeftSide = () => {
                         {activeIndex === 3 ? (<Offer />) : null}
                         {activeIndex === 4 ? (<WhareHouseActions/>) : null}
                         {activeIndex === 5 ? (<PickingNew/>) : null}
+                        {activeIndex === 6 ? (<SmallOrders/>) : null}
                     </SecondScreen>
                 ) : null}
             </Sidebar>

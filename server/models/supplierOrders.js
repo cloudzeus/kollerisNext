@@ -3,11 +3,6 @@ import mongoose from 'mongoose';
 
 
 const supplierOrderSchema = new mongoose.Schema({
-    orderNumber: {
-        type: Number,
-        unique: true,
-        default: 10000,
-    },
     supplierName: String,
     TRDR: String,
     NAME: String,
@@ -17,7 +12,6 @@ const supplierOrderSchema = new mongoose.Schema({
     createdFrom: String,
     products: [
         {
-            _id: String,
             MTRL: String,
             PRICE: Number,
             NAME: String,
