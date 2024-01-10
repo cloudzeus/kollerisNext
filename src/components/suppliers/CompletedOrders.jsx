@@ -13,7 +13,6 @@ import SendOrderEmail from '../emails/SendOrderEmail'
 
 const CompletedOrders = ({ id }) => {
     const [data, setData] = useState(false)
-    const [statuses] = useState(['pending', 'done', 'rejected']);
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false) 
     const [expandedRows, setExpandedRows] = useState(null);
@@ -32,35 +31,8 @@ const CompletedOrders = ({ id }) => {
         handleFetch();
     }, [refetch, id, orderReady])
 
-    const getSeverity = (value) => {
-        switch (value) {
-            case 'pending':
-                return 'success';
-
-            case 'done':
-                return 'warning';
-
-            case 'rejected':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    };
-
-    const statusEditor = (options) => {
-        return (
-            <Dropdown
-                value={options.value}
-                options={statuses}
-                onChange={(e) => options.editorCallback(e.value)}
-                placeholder="Select a Status"
-                itemTemplate={(option) => {
-                    return <Tag value={option} severity={getSeverity(option)}></Tag>;
-                }}
-            />
-        );
-    };
+   
+    
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
         console.log(newData, index)
@@ -70,7 +42,7 @@ const CompletedOrders = ({ id }) => {
 
 
     
-
+    
   
     const Actions = ({ supplierName, supplierEmail, products, minOrderValue, orderCompletionValue, _id }) => {
         const op = useRef(null);

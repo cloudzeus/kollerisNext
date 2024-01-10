@@ -20,7 +20,7 @@ const PendingOrders = ({ id }) => {
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-
+    const dispatch = useDispatch()
 
 
 
@@ -53,15 +53,14 @@ const PendingOrders = ({ id }) => {
         }
 
         const issuePurdoc = async () => {
-    
             if (orderCompletionValue < minOrderValue) {
                 showError();
                 return;
             }
             setLoading(true)
             let { data } = await axios.post('/api/createOrder', { action: 'issuePurdoc', TRDR: id, id: _id })
-            setOrderReady(true)
             setLoading(false)
+            dispatch(setOrderReady())
             setRefetch(prev => !prev)
         }
         return (
@@ -210,7 +209,7 @@ const RowExpansionGrid = ({ products, id, docId, refresh, setRefetch }) => {
                             <span>{` ${state.completionValue}  / ${state.minOrderValue} €`}</span>
                         </div>
                         <div className='flex  justify-content-end mt-1'>
-                            <span onClick={handleRefresh} className='text-primary-600 underline font-light text-sm'>update grid</span>
+                            <span onClick={handleRefresh} className='cursor-pointer text-primary-600 underline font-light text-sm'>update grid</span>
                         </div>
                     </div>
                 </div>
@@ -219,6 +218,8 @@ const RowExpansionGrid = ({ products, id, docId, refresh, setRefetch }) => {
         )
 
     }
+
+
     const Quantity = ({ QTY1, MTRL, }) => {
         const [quantity, setQuantity] = useState(QTY1)
 
@@ -251,6 +252,17 @@ const RowExpansionGrid = ({ products, id, docId, refresh, setRefetch }) => {
             </div>
         )
     }
+    const Delete = ({ MTRL}) => {
+        const handleDelete = async () => {
+            await axios.post('/api/createOrder', {action: 'deleteProduct', id: docId, MTRL: MTRL})
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+        }
+        return (
+            <div>
+                <i onClick={handleDelete} className="pi pi-trash cursor-pointer" style={{ fontSize: '0.9rem', color:  'red' }}></i>
+            </div>
+        )
+    }
 
     return (
         <div className="p-2">
@@ -264,6 +276,8 @@ const RowExpansionGrid = ({ products, id, docId, refresh, setRefetch }) => {
                 <Column header="COST" style={{ width: '110px' }} field="COST" body={Cost}></Column>
                 <Column header="QT" style={{ width: '60px' }} field="QTY1" body={Quantity}></Column>
                 <Column header="TOTAL" style={{ width: '100px' }} body={TotalTemplate} field="TOTAL_COST"></Column>
+                <Column style={{ width: '50px' }} body={Delete}></Column>
+
             </DataTable>
         </div>
     )

@@ -25,7 +25,6 @@ const SmallOrders = ({ orders }) => {
         })
         setLoading(false)
         router.push(`/dashboard/suppliers/small-orders`)
-   
     }
 
    

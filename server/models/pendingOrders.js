@@ -3,11 +3,7 @@ import mongoose from 'mongoose';
 
 
 const pendingOrderSchema = new mongoose.Schema({
-    orderNumber: {
-        type: Number,
-        unique: true,
-        default: 10000,
-    },
+   
     minOrderValue: Number,
     total_order_cost: Number,
     orderCompletionValue: {
@@ -19,9 +15,9 @@ const pendingOrderSchema = new mongoose.Schema({
     TRDR: String,
     status: String,
     createdFrom: String,
+    updatedFrom: String,
     products: [
         {
-            _id: String,
             MTRL: String,
             NAME: String,
             QTY1: Number,

@@ -32,42 +32,7 @@ export default async function handler(req, res) {
         }
     }
 
-    if (action === "updateStatus") {
-        const { status, id } = req.body;
-        try {
-            await connectMongo();
-            let update = await CompletedOrders.updateOne({ _id: id }, {
-                $set: {
-                    status: status
-                }
-            })
-            return res.status(200).json({ success: true, result: update })
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-
-
-    if (action === 'fetchSuppliers') {
-        const { skip, limit } = req.body
-        try {
-            await connectMongo();
-            let totalRecords = await Supplier.countDocuments({});
-            let suppliers = await Supplier.find({}).skip(skip).limit(limit)
-
-            return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords });
-        } catch (e) {
-            return res.status(500).json({ success: false, result: null })
-        }
-    }
-
-    if (action === "searchSupplier") {
-        let { skip, limit, searchTerm } = req.body;
-        let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-        const totalRecords = await Supplier.countDocuments({ NAME: regexSearchTerm })
-        let suppliers = await Supplier.find({ NAME: regexSearchTerm }).skip(skip).limit(limit).select({ NAME: 1, EMAIL: 1, TRDR: 1, _id: 1 })
-        return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords })
-    }
+  
 
     if (action === "saveNewEmail") {
         let { email, id } = req.body;
@@ -86,37 +51,21 @@ export default async function handler(req, res) {
         }
     }
 
-    //FUNCTIONS:
-   
-
-
-
     if (action === "createBucket") {
         const { products, email, TRDR, NAME, minOrderValue } = req.body;
         
-        //First time we create the order to the suppliers. 
-        //So we create an id based on the last completed order and increment it by 10
-        //Min order value is a fixed mumber that we get from the suppliers
-        //First time we create the order the order completion value is 0 and we just add the sum, the rest of the proccess will happen when we add more products to the order
 
         try {
             await connectMongo();
-            const generateNextCode = async () => {
-                const lastDoc = await CompletedOrders.find().sort({ orderNumber: -1 }).limit(1).exec();
-                const lastCode = (lastDoc.length > 0) ? lastDoc[0].orderNumber : 100000; // Start from 100000 if no document is present
-                return lastCode + 10;
-            };
-
+          
             //CHECK IF THERE IS ALREADY AN ORDER WITH THIS TRDR
             let find = await PendingOrders.findOne({ TRDR: TRDR });
             if (find) {
                 return res.status(200).json({ success: false, result: "Υπάρχει ήδη ενεργή παραγγελία στον προμηθευτή" })
             }
             let completion = calculateCompletion(products);
-            console.log('completion')
-            console.log(completion)
+           
             let obj = {
-                orderNumber: await generateNextCode(),
                 supplierName: NAME,
                 supplierEmail: email || '',
                 status: "pending",
@@ -125,12 +74,9 @@ export default async function handler(req, res) {
                 minOrderValue: minOrderValue,
                 orderCompletionValue: completion,
             }
-            console.log('obj')
-            console.log(obj)
+        
 
             let insert = await PendingOrders.create(obj)
-            console.log('insert')
-            console.log(insert)
             let suppliersupdate = await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
                     ORDERSTATUS: true,
@@ -144,8 +90,6 @@ export default async function handler(req, res) {
 
 
     }
-
-
 
     if (action === 'updateBucket') {
         const { products, TRDR } = req.body;
@@ -196,20 +140,16 @@ export default async function handler(req, res) {
 
     }
 
-
-
     if (action === 'findPending') {
         const { TRDR } = req.body;
         try {
             await connectMongo();
             const order = await PendingOrders.find({ TRDR: TRDR })
-            console.log(order)
             return res.status(200).json({ success: true, result: order })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })
         }
     }
-
 
     if (action === "findCompleted") {
         const { TRDR } = req.body;
@@ -224,19 +164,23 @@ export default async function handler(req, res) {
 
     if(action === "issuePurdoc") {
         const {id, TRDR} = req.body;
+
+
         try {
             await connectMongo();
-            let find = await PendingOrders.findOne({ TRDR: TRDR });
+            let find = await PendingOrders.findOne({ _id: id });
+            console.log('find')
+            console.log(find)
             const products = find.products;
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
                 const QTY1 = parseInt(item.QTY1);
                 return { MTRL, QTY1 };
             });
+            console.log('mtrlArr')
+            console.log(mtrlArr)
 
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
-            console.log('PURDOC')
-            console.log(PURDOC)
             if (!PURDOC) {
                 throw new Error('purdcocum not created')
             }
@@ -249,19 +193,31 @@ export default async function handler(req, res) {
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
             }
-          
-            let create = await CompletedOrders.create(obj);
-            if(!create) {
-                throw new Error('order not transfered to completed')
-                // return res.status(500).json({ success: false, result: null, message: 'order not transfered to completed' })
+            console.log('obj')
+            console.log(obj)
+            try {
+                let create = await CompletedOrders.create(obj);
+                console.log('create')
+                console.log(create)
+            } catch (e) {
+                console.log('create error')
+                console.log(e)
+                return res.status(200).json({ success: false, result: null, message: 'order not transfered to completed' })
+
             }
-            await PendingOrders.deleteOne({ TRDR: TRDR });
-            await Supplier.updateOne({ TRDR: TRDR }, {
+           
+            
+            let deleteOne = await PendingOrders.deleteOne({ TRDR: TRDR });
+            console.log('deleteOne')
+            console.log(deleteOne)
+            let updateSupplier = await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
                     ORDERSTATUS: false,
                 }
             })
-            return res.status(200).json({success: true,result: create, message: null})
+            console.log('updateSupplier')
+            console.log(updateSupplier)
+            return res.status(200).json({success: true, message: null})
         } catch (e) {
             return res.status(500).json({success: false})
         }
@@ -321,23 +277,38 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let find = await PendingOrders.findOne({_id: id});
+
+
+
+
+
             let products = find.products;
-
-
+            //find the products that the quantity doesnt change
+            let rest_products = products.filter(item => item.MTRL !== MTRL);
+            //The item that we change the QUANTITY
             let product = products.find(item => item.MTRL === MTRL);
-            let newTotal = parseFloat(product.COST) * QTY1;
-            let new_order_total = find.orderCompletionValue +  product.COST;
+
+            //ESTIMATE THE NEW TOTAL:
+            let total = 0;
+            for(let item of rest_products) {
+                total += item.TOTAL_COST;
+            }
+            let itemTotal = QTY1 * product.COST;
+            itemTotal = parseFloat(itemTotal.toFixed(2));
+            total += itemTotal;
+            total = parseFloat(total.toFixed(2));
+
             let update = await PendingOrders.findOneAndUpdate({_id: id, 'products.MTRL': MTRL}, {
                 $set: {
-                    'orderCompletionValue': parseInt(new_order_total.toFixed(2)),
+                    'orderCompletionValue': total,
                     'products.$.QTY1': QTY1,
-                    'products.$.TOTAL_COST': parseInt(newTotal.toFixed(2))
+                    'products.$.TOTAL_COST': itemTotal
                 }
             }, {new: true})
             
             await Supplier.updateOne({ TRDR: TRDR }, {
                 $set: {
-                    orderCompletionValue: new_order_total.toFixed(2)
+                    orderCompletionValue:  total
                 }
             })
             return res.status(200).json({success: true})
@@ -346,6 +317,42 @@ export default async function handler(req, res) {
             return res.status(500).json({success: false})
         }
 
+    }
+
+    if(action ==="deleteProduct") {
+        const {id, MTRL} = req.body;
+        console.log(id, MTRL)
+        try {
+            await connectMongo();
+            let find = await PendingOrders.findOne({_id: id, 'products.MTRL': MTRL});
+            let products = find.products;
+            console.log('products')
+            console.log(products)
+            let remaining = products.filter(item => item.MTRL !== MTRL);
+            console.log('remaining')
+            console.log(remaining)
+            let total = 0;
+            for(let item of remaining) {
+                total += item.COST * item.QTY1;
+            }
+
+            console.log('total')
+            console.log(total)
+            let update = await PendingOrders.findOneAndUpdate({_id: id, 'products.MTRL': MTRL}, {
+                $set: {
+                    orderCompletionValue: total
+                },
+                $pull: {
+                    products: {
+                        MTRL: MTRL
+                    }
+                }
+            }, {new: true})
+            console.log(update);
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
     }
 
 }

@@ -190,7 +190,6 @@ export default async function handler(req, res) {
     }
     if(action === "issueFinDoc") {
         const {id, MTRL, TRDR} = req.body;
-
        
         try {
             await connectMongo();

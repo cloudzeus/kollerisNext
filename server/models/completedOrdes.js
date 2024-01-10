@@ -3,20 +3,14 @@ import mongoose from 'mongoose';
 
 
 const completedOrderSchema = new mongoose.Schema({
-    orderNumber: {
-        type: Number,
-        unique: true,
-        default: 10000,
-    },
     supplierName: String,
     supplierEmail: String,
     TRDR: String,
     status: String,
-    PURDOCNUM: String,
+    PURDOCNUM: Number,
     createdFrom: String,
     products: [
         {
-            _id: String,
             MTRL: String,
             NAME: String,
             PRICE: Number,

@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
-	
     selectedSupplier: null,
 	selectedProducts: [],
 	selectedMarkes: null,
@@ -80,7 +79,7 @@ const supplierOrderSlice = createSlice({
 			state.brandHasActiveOrder = payload;
 		},
 		setOrderReady: (state, {payload}) => {
-			state.orderReady = payload		
+			state.orderReady = !state.orderReady;	
 		}
 
 		
