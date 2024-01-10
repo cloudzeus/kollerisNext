@@ -139,10 +139,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
 
     }
 
-    useEffect(() => {
-        console.log('products')
-        console.log(state.products)
-    }, [state.products])
+
 
     useEffect(() => {
         handleFetch();
@@ -216,6 +213,19 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         )
     }
 
+    const Delete = ({ MTRL}) => {
+        const handleDelete = async () => {
+            console.log('delete')
+            await axios.post('/api/createSmallOrder', {action: 'deleteProduct', id: id, MTRL: MTRL})
+            setState(prev => ({ ...prev, refetch: !prev.refetch }))
+        }
+        return (
+            <div>
+                <i onClick={handleDelete} className="pi pi-trash cursor-pointer" style={{ fontSize: '0.9rem', color: 'red' }}></i>
+            </div>
+        )
+    }
+    
     return (
         <div className="p-2">
             <p className='mb-3 font-bold ml-1'>Προϊόντα Παραγγελίας</p>
@@ -229,10 +239,12 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
                 <Column header="COST" style={{ width: '110px' }} field="COST" body={Cost}></Column>
                 <Column header="QT" style={{ width: '60px' }} field="QTY1" body={Quantity}></Column>
                 <Column header="TOTAL" style={{ width: '100px' }} body={TotalTemplate} field="TOTAL_COST"></Column>
+                <Column style={{ width: '50px' }} body={Delete}></Column>
             </DataTable>
         </div>
     )
 };
+
 
 const Cost = ({COST}) => {
     return (

@@ -148,4 +148,34 @@ export default async function handler(req, res) {
         }
 
     }
+    if(action ==="deleteProduct") {
+        const {id, MTRL} = req.body;
+
+
+        try {
+            await connectMongo();
+            let find = await SmallOrders.findOne({_id: id, 'products.MTRL': MTRL});
+            let products = find.products;
+            let remaining = products.filter(item => item.MTRL !== MTRL);
+            let total = 0;
+            for(let item of remaining) {
+                total += item.COST * item.QTY1;
+            }
+
+            let update = await SmallOrders.findOneAndUpdate({_id: id, 'products.MTRL': MTRL}, {
+                $set: {
+                    total_cost: total
+                },
+                $pull: {
+                    products: {
+                        MTRL: MTRL
+                    }
+                }
+            }, {new: true})
+            console.log(update);
+            return res.status(200).json({success: true})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+    }
 }
