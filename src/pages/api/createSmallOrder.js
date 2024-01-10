@@ -73,7 +73,8 @@ export default async function handler(req, res) {
             let find = await SmallOrders.findOne({ _id: id })
             //find products in the database with this TRDR
             let dbproducts = find?.products;
-            let newtotal = parseFloat(find.total_cost) + calculateCompletion(mtrLines);
+            let newtotal =find.total_cost + calculateCompletion(mtrLines);
+            newtotal = parseFloat(newtotal.toFixed(2));
          
           
             let _products = [];
