@@ -9,9 +9,7 @@ import { Checkbox } from "primereact/checkbox";
 import axios from 'axios';
 const emails = [
     { email: 'kolleris@info.gr', default: true },
-    { email: 'johnchiout.dev@gmail.com', default: true },
-    { email: 'sample@gmail.com', default: false },
-    { email: 'sample@gmail.com', default: false }
+   
 ];
 
 
@@ -20,7 +18,7 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
     const [loading, setLoading] = useState(false)
     const [selectedCC, setSelectedCC] = useState([
         { email: 'kolleris@info.gr', default: true },
-        { email: 'johnchiout.dev@gmail.com', default: true }
+        // { email: 'johnchiout.dev@gmail.com', default: true }
     ])
 
     const [state, setState] = useState({
@@ -69,7 +67,7 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
         setLoading(true)
         let { data } = await axios.post('/api/createOrder', 
             { 
-                action: 'submitOrder',
+                action: 'sentEmail',
                 cc: selectedCC,
                 subject: state.subject,
                 message: state.message,

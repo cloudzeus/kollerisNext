@@ -12,6 +12,7 @@ import CreatedAt from '../grid/CreatedAt';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Toast } from 'primereact/toast';
 import { InputNumber } from 'primereact/inputnumber';
+import { setOrderReady } from '@/features/supplierOrderSlice'
 
 const PendingOrders = ({ id }) => {
     const [data, setData] = useState([])
@@ -19,12 +20,12 @@ const PendingOrders = ({ id }) => {
     const [refetch, setRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expandedRows, setExpandedRows] = useState(null);
-    
+
 
 
 
     const showError = () => {
-        toast.current.show({severity:'error', summary: 'Error', detail:'Δεν έχετε συμπληρώσει το ποσό για αποστολή παραγγελίας', life: 3000});
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Δεν έχετε συμπληρώσει το ποσό για αποστολή παραγγελίας', life: 3000 });
     }
 
     const allowExpansion = (rowData) => {
@@ -45,15 +46,35 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, orderCompletionValue, _id }) => {
+    const Actions = ({ supplierName, supplierEmail, products, minOrderValue, orderCompletionValue, _id }) => {
         const op = useRef(null);
         const onBulletsClick = (e) => {
             op.current.toggle(e)
+        }
+
+        const issuePurdoc = async () => {
+    
+            if (orderCompletionValue < minOrderValue) {
+                showError();
+                return;
+            }
+            setLoading(true)
+            let { data } = await axios.post('/api/createOrder', { action: 'issuePurdoc', TRDR: id, id: _id })
+            setOrderReady(true)
+            setLoading(false)
+            setRefetch(prev => !prev)
         }
         return (
             <div>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
+                    <Button 
+                        disabled={orderCompletionValue < minOrderValue ? true : false}
+                        label="Εκ. Παραστατικού" 
+                        className='w-full mb-2' 
+                        severity='secondary' 
+                        onClick={issuePurdoc} 
+                    />
                     <SendOrderEmail
                         disabled={orderCompletionValue < minOrderValue ? true : false}
                         mt={2}
@@ -64,7 +85,7 @@ const PendingOrders = ({ id }) => {
                         setRefetch={setRefetch}
                         op={op}
                     />
-                    <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash"/>
+                    <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash" />
                 </OverlayPanel>
 
             </div>
@@ -73,50 +94,50 @@ const PendingOrders = ({ id }) => {
 
     const RowExpansionTemplate = ({ products, NAME, supplierEmail, _id, orderCompletionValue, }) => {
         return (
-            <RowExpansionGrid 
-                products={products} 
+            <RowExpansionGrid
+                products={products}
                 setRefetch={setRefetch}
-                NAME={NAME} 
-                supplierEmail={supplierEmail} 
-                id={id} 
-                docId={_id} 
+                NAME={NAME}
+                supplierEmail={supplierEmail}
+                id={id}
+                docId={_id}
                 orderCompletionValue={orderCompletionValue}
             />
         )
     }
 
 
- 
- 
+
+
     return (
         <div className='mt-4 mb-5'>
             <Toast ref={toast} />
             <StepHeader text="Ενεργή Παραγγελία" />
             {data && data.length ? (
-                  <DataTable
-                  loading={loading}
-                  expandedRows={expandedRows}
-                  onRowToggle={(e) => setExpandedRows(e.data)}
-                  rowExpansionTemplate={RowExpansionTemplate}
-                  value={data}
-                  editMode="row"
-                  showGridlines
+                <DataTable
+                    loading={loading}
+                    expandedRows={expandedRows}
+                    onRowToggle={(e) => setExpandedRows(e.data)}
+                    rowExpansionTemplate={RowExpansionTemplate}
+                    value={data}
+                    editMode="row"
+                    showGridlines
 
-              >
-                  <Column expander={allowExpansion} style={{ width: '5rem' }} />
-                  <Column header="Αρ. παραγγελίας" style={{ width: '150px' }} field="orderNumber"></Column>
-                  <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
-                  <Column header="Email" field="supplierEmail"></Column>
-                  <Column header="Ημερομ. Δημιουργίας" style={{minWidth: '250px'}} body={CreatedAt}></Column>
-                  <Column header="Min Order" field="minOrderValue" style={{minWidth: '200px'}} body={Completion}></Column>
-                  <Column header="Aποστολή" body={Actions} style={{ width: "120px" }} bodyStyle={{ textAlign: 'center' }}></Column>
-              </DataTable>
-            ): (
+                >
+                    <Column expander={allowExpansion} style={{ width: '5rem' }} />
+                    <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
+                    <Column header="Status" field="status"></Column>
+                    <Column header="Email" field="supplierEmail"></Column>
+                    <Column header="Ημερομ. Δημιουργίας" style={{ minWidth: '250px' }} body={CreatedAt}></Column>
+                    <Column header="Min Order" field="minOrderValue" style={{ minWidth: '200px' }} body={Completion}></Column>
+                    <Column  body={Actions} style={{ width: "6px" }} bodyStyle={{ textAlign: 'center' }}></Column>
+                </DataTable>
+            ) : (
                 <div className='p-4 bg-white border-round'>
-                <p>Δεν υπάρχει ενεργή παραγγελία</p>
-            </div>
+                    <p>Δεν υπάρχει ενεργή παραγγελία</p>
+                </div>
             )}
-          
+
 
 
         </div>
@@ -127,7 +148,7 @@ const PendingOrders = ({ id }) => {
 
 
 
-const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
+const RowExpansionGrid = ({ products, id, docId, refresh, setRefetch }) => {
     const [state, setState] = useState({
         data: [],
         completionValue: 0,
@@ -145,9 +166,9 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         setState(prev => ({ ...prev, loading: !prev.loading }))
         let { data } = await axios.post('/api/createOrder', { action: 'findPending', TRDR: id })
         console.log(data.result[0].products)
-        setState(prev => ({ 
-            ...prev, 
-            data: data.result[0].products, 
+        setState(prev => ({
+            ...prev,
+            data: data.result[0].products,
             loading: !prev.loading,
             completionValue: data.result[0].orderCompletionValue,
             minOrderValue: data.result[0].minOrderValue
@@ -198,12 +219,12 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         )
 
     }
-    const Quantity = ({ QTY1, MTRL,  }) => {
+    const Quantity = ({ QTY1, MTRL, }) => {
         const [quantity, setQuantity] = useState(QTY1)
 
         const handleQuantity = async () => {
             setState(prev => ({ ...prev, loading: !prev.loading }))
-            const {data} = await axios.post('/api/createOrder', {action: 'updateQuantity', QTY1: quantity, MTRL: MTRL, TRDR: id, id: docId})
+            const { data } = await axios.post('/api/createOrder', { action: 'updateQuantity', QTY1: quantity, MTRL: MTRL, TRDR: id, id: docId })
             setState(prev => ({ ...prev, refetch: !prev.refetch, loading: !prev.loading }))
         }
 
@@ -214,7 +235,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
         return (
             <div>
                 <InputNumber
-                  
+
                     value={quantity}
                     size='small'
                     min={0}
@@ -248,7 +269,7 @@ const RowExpansionGrid = ({ products, id, docId,  refresh, setRefetch }) => {
     )
 };
 
-const Cost = ({COST}) => {
+const Cost = ({ COST }) => {
     return (
         <div>
             <span className='font-bold'>{COST.toFixed(2) + " €"}</span>
@@ -269,7 +290,7 @@ const Completion = ({ minOrderValue, orderCompletionValue }) => {
     let condition = orderCompletionValue >= minOrderValue;
     return (
         <div>
-            <span className={`${condition ? "text-green-500 font-bold" : null }`}> {`${orderCompletionValue.toFixed(2)}`} </span>
+            <span className={`${condition ? "text-green-500 font-bold" : null}`}> {`${orderCompletionValue.toFixed(2)}`} </span>
             <span>/</span>
             <span className='font-bold'>{` ${minOrderValue} €`}</span>
         </div>

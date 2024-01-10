@@ -222,16 +222,11 @@ export default async function handler(req, res) {
         }
     }
 
-
-    if (action === "submitOrder") {
-        const { TRDR, products, cc, subject, message, fileName, includeFile, name, email, createdAt } = req.body;
-        let newcc = []
-        for (let item of cc) {
-            newcc.push(item.email)
-        }
+    if(action === "issuePurdoc") {
+        const {id, TRDR} = req.body;
         try {
+            await connectMongo();
             let find = await PendingOrders.findOne({ TRDR: TRDR });
-            let nextcode = find.orderNumber;
             const products = find.products;
             const mtrlArr = products.map(item => {
                 const MTRL = parseInt(item.MTRL);
@@ -240,23 +235,48 @@ export default async function handler(req, res) {
             });
 
             const PURDOC = await getPurdoc(mtrlArr, TRDR)
+            console.log('PURDOC')
+            console.log(PURDOC)
             if (!PURDOC) {
-                return res.status(200).json({ success: false, result: null, message: 'ORDER NOT CREATED' })
+                throw new Error('purdcocum not created')
             }
 
             let obj = {
                 supplierName: find?.supplierName,
-                supplierEmail: email,
-                status: "sent",
+                supplierEmail: find?.supplierEmail,
+                status: "issued",
                 products: products,
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
-                orderNumber: nextcode,
-
             }
+          
             let create = await CompletedOrders.create(obj);
-
-
+            if(!create) {
+                throw new Error('order not transfered to completed')
+                // return res.status(500).json({ success: false, result: null, message: 'order not transfered to completed' })
+            }
+            await PendingOrders.deleteOne({ TRDR: TRDR });
+            await Supplier.updateOne({ TRDR: TRDR }, {
+                $set: {
+                    ORDERSTATUS: false,
+                }
+            })
+            return res.status(200).json({success: true,result: create, message: null})
+        } catch (e) {
+            return res.status(500).json({success: false})
+        }
+    }
+    if (action === "sentEmail") {
+        const { TRDR, cc, subject, message, fileName, includeFile,  email } = req.body;
+        
+        
+        let newcc = []
+        for (let item of cc) {
+            newcc.push(item.email)
+        }
+        try {
+            let find = await CompletedOrders.findOne({ TRDR: TRDR });
+            const products = find.products;
             const _products = products.map((item, index) => {
                 return {
                     PRODUCT_NAME: item.NAME,
@@ -268,16 +288,15 @@ export default async function handler(req, res) {
             console.log(_products)
             let csv = await createCSVfile(_products)
             let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
-            if (PURDOC) {
-                await PendingOrders.deleteOne({ TRDR: TRDR });
-
-            }
-            await Supplier.updateOne({ TRDR: TRDR }, {
+            let update = await CompletedOrders.findOneAndUpdate({ TRDR: TRDR }, {
                 $set: {
-                    ORDERSTATUS: false,
+                    status: "sent"
                 }
+            }, { new: true
             })
-            return res.status(200).json({ success: true, result: create, send: send })
+            console.log('update')
+            console.log(update)
+            return res.status(200).json({ success: true,  send: send })
 
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

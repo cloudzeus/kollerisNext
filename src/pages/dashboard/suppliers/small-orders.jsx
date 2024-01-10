@@ -44,7 +44,7 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const Actions = ({ supplierName, supplierEmail,products, minOrderValue, TRDR, orderCompletionValue, _id }) => {
+    const Actions = ({ supplierName, supplierEmail,products,  TRDR, PURDOCNUM, _id }) => {
         const op = useRef(null);
         const onBulletsClick = (e) => {
             op.current.toggle(e)
@@ -66,12 +66,12 @@ const PendingOrders = ({ id }) => {
                 <OverlayPanel className='w-15rem' ref={op}>
                     <Button className='w-full' severity='secondary' label='Εκ. Παραστατικού' onClick={handleSubmit} />
                     <SendOrderEmail
-                        disabled={orderCompletionValue < minOrderValue ? true : false}
+                        disabled={!PURDOCNUM}
                         mt={2}
                         email={supplierEmail}
                         products={products}
                         name={supplierName}
-                        TRDR={id}
+                        TRDR={TRDR}
                         setRefetch={setRefetch}
                         op={op}
                     />

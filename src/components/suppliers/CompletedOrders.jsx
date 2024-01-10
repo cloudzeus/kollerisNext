@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-
 import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -9,9 +8,8 @@ import StepHeader from '../multiOffer/StepHeader';
 import { Tag } from 'primereact/tag'
 import CreatedAt from '@/components/grid/CreatedAt'
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button'
-
+import SendOrderEmail from '../emails/SendOrderEmail'
 
 const CompletedOrders = ({ id }) => {
     const [data, setData] = useState(false)
@@ -19,7 +17,7 @@ const CompletedOrders = ({ id }) => {
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false) 
     const [expandedRows, setExpandedRows] = useState(null);
-    const [sortOffers, setSortOffers] = useState(0)
+    const {orderReady} = useSelector(state => state.supplierOrder)
     const handleFetch = async () => {
             const {data} = await axios.post('/api/createOrder', {action: "findCompleted", TRDR: id})
             setData(data.result)
@@ -32,7 +30,7 @@ const CompletedOrders = ({ id }) => {
     }
     useEffect(() => {
         handleFetch();
-    }, [refetch, id])
+    }, [refetch, id, orderReady])
 
     const getSeverity = (value) => {
         switch (value) {
@@ -71,26 +69,45 @@ const CompletedOrders = ({ id }) => {
     };
 
 
-    const Actions = ({_id}) => {
-        const handleClick = (e) => {
+    
+
+  
+    const Actions = ({ supplierName, supplierEmail, products, minOrderValue, orderCompletionValue, _id }) => {
+        const op = useRef(null);
+        const onBulletsClick = (e) => {
+            op.current.toggle(e)
+        }
+
+      
+        const handleDelete = async (e) => {
             console.log(_id)
-            axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id})
+             const {data} = await axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id})
             setRefetch(prev => !prev)
         }
         return (
             <div>
-                <i className="pi pi-trash pointer" style={{ fontSize: '1.1rem', color: 'red' }} onClick={handleClick}></i>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <SendOrderEmail
+                        mt={2}
+                        email={supplierEmail}
+                        products={products}
+                        name={supplierName}
+                        TRDR={id}
+                        setRefetch={setRefetch}
+                        op={op}
+                    />
+                    <Button onClick={handleDelete} className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash" />
+                </OverlayPanel>
+
             </div>
         )
     }
 
-  
-
-
     return (
         <div>
                <div className='mt-4 mb-5'>
-            <StepHeader text="Ολοκληρωμένες Παραγγελίες" />
+            <StepHeader text="Προς Αποστολή" />
             {data && data.length ? (
                  <DataTable
                  loading={loading}
@@ -103,13 +120,11 @@ const CompletedOrders = ({ id }) => {
                  showGridlines
              >
                  <Column expander={allowExpansion} style={{ width: '5rem' }} />
-                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="orderNumber"></Column>
-                 <Column header="Αρ. παραγγελίας" style={{ width: '120px' }} field="PURDOCNUM"></Column>
+                 <Column header="Κωδ. Παραστατικού" style={{ width: '120px' }} field="PURDOCNUM"></Column>
                  <Column header="Όνομα προμηθευτή" field="supplierName"></Column>
                  <Column header="Ημερομηνία" body={CreatedAt} field="createdAt"></Column>
-                 <Column header="Status" style={{ width: '120px' }} field="status" body={Status} editor={(options) => statusEditor(options)}></Column>
-                 <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
-                 <Column header="Aποστολή" body={Actions} style={{ width: "90px" }} bodyStyle={{ textAlign: 'center' }}></Column>
+                 <Column header="Status" style={{ width: '120px' }} field="status"></Column>
+                 <Column  body={Actions} style={{ width: "90px" }}></Column>
 
              </DataTable>
             ) : (
