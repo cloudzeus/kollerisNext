@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 
 
 const pendingOrderSchema = new mongoose.Schema({
-   
     minOrderValue: Number,
     total_order_cost: Number,
     orderCompletionValue: {

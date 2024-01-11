@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import axios from 'axios'
-import SendOrderEmail from '@/components/emails/SendOrderEmail';
+import SendSmallOrderEmail from '@/components/emails/SmallOrdersEmail'
 import StepHeader from '@/components/StepHeader'
 import { useRouter } from 'next/router';
 import { setSelectedProducts } from '@/features/productsSlice';
@@ -64,14 +64,15 @@ const PendingOrders = ({ id }) => {
             <div>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={onBulletsClick}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <Button className='w-full' severity='secondary' label='Εκ. Παραστατικού' onClick={handleSubmit} />
-                    <SendOrderEmail
+                    <Button disabled={PURDOCNUM} className='w-full' severity='secondary' label='Εκ. Παραστατικού' onClick={handleSubmit} />
+                    <SendSmallOrderEmail
                         disabled={!PURDOCNUM}
                         mt={2}
                         email={supplierEmail}
                         products={products}
                         name={supplierName}
                         TRDR={TRDR}
+                        id={_id}
                         setRefetch={setRefetch}
                         op={op}
                     />

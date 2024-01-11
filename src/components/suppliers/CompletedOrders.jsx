@@ -52,7 +52,6 @@ const CompletedOrders = ({ id }) => {
 
       
         const handleDelete = async (e) => {
-            console.log(_id)
              const {data} = await axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id})
             setRefetch(prev => !prev)
         }
@@ -65,6 +64,7 @@ const CompletedOrders = ({ id }) => {
                         email={supplierEmail}
                         products={products}
                         name={supplierName}
+                        id={_id}
                         TRDR={id}
                         setRefetch={setRefetch}
                         op={op}

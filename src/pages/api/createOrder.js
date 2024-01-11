@@ -223,15 +223,19 @@ export default async function handler(req, res) {
         }
     }
     if (action === "sentEmail") {
-        const { TRDR, cc, subject, message, fileName, includeFile,  email } = req.body;
+        const { TRDR, cc, subject, message, fileName, includeFile,  email, id } = req.body;
+        console.log('id')
+            console.log(id)
         
-        
+        if(email === 'no-email' || email === null) {
+            return res.status(200).json({success: false, message: 'Δεν υπάρχει email για τον προμηθευτή'})
+        }
         let newcc = []
         for (let item of cc) {
             newcc.push(item.email)
         }
         try {
-            let find = await CompletedOrders.findOne({ TRDR: TRDR });
+            let find = await CompletedOrders.findOne({ _id: id });
             const products = find.products;
             const _products = products.map((item, index) => {
                 return {
@@ -244,14 +248,13 @@ export default async function handler(req, res) {
             console.log(_products)
             let csv = await createCSVfile(_products)
             let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
-            let update = await CompletedOrders.findOneAndUpdate({ TRDR: TRDR }, {
+            let update = await CompletedOrders.findOneAndUpdate({ _id: id }, {
                 $set: {
                     status: "sent"
                 }
             }, { new: true
             })
-            console.log('update')
-            console.log(update)
+           
             return res.status(200).json({ success: true,  send: send })
 
         } catch (e) {

@@ -2,6 +2,9 @@
 import connectMongo from "../../../server/config";
 import SmallOrders from "../../../server/models/smallOrdersModel";
 import { calculateCompletion, getPurdoc } from "./createOrder";
+import createCSVfile from "@/utils/createCSVfile";
+import { sendEmail } from "@/utils/offersEmailConfig";
+
 
 export default async function handler(req, res) {
      const {action} = req.body;
@@ -215,6 +218,58 @@ export default async function handler(req, res) {
             return res.status(200).json({success: true, message: null})
         } catch (e) {
             return res.status(500).json({success: false})
+        }
+
+    }
+    if (action === "sentEmail") {
+        const { TRDR, cc, subject, message, fileName, includeFile,  email, id } = req.body;
+        console.log(email)
+        console.log('sent email')
+        
+        if(email === 'no-email' || email === null) {
+            return res.status(200).json({success: false, message: 'Δεν υπάρχει email για τον προμηθευτή'})
+        }
+        let newcc = []
+        for (let item of cc) {
+            newcc.push(item.email)
+        }
+
+       async function findProducts(id) {
+            try {
+                let find = await SmallOrders.findOne({ _id: id });
+                console.log('find')
+                console.log(find)
+                let products = find.products;
+                let _products = products.map((item, index) => {
+                    return {
+                        PRODUCT_NAME: item.NAME,
+                        COST: item.COST,
+                        QTY1: item.QTY1,
+                        TOTAL_COST: item.TOTAL_COST
+                    }
+                })
+                return _products;
+            } catch (e) {
+                console.log(e)
+                return res.status(500).json({ success: false, result: null, message: 'Αδυναμία έυρεσης προϊόντων' })
+            }
+       }
+        try {
+            const _products = await findProducts(id);
+            let csv = await createCSVfile(_products)
+            let send = await sendEmail(email, newcc, subject, message, fileName, csv, includeFile);
+        
+            let update = await SmallOrders.findOneAndUpdate({ _id: id }, {
+                $set: {
+                    status: "sent"
+                }
+            }, { new: true
+            })
+           
+            return res.status(200).json({ success: true,  send: send })
+
+        } catch (e) {
+            return res.status(500).json({ success: false, result: null })
         }
 
     }

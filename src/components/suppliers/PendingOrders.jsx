@@ -52,6 +52,7 @@ const PendingOrders = ({ id }) => {
             op.current.toggle(e)
         }
 
+      
         const issuePurdoc = async () => {
             if (orderCompletionValue < minOrderValue) {
                 showError();
@@ -74,16 +75,18 @@ const PendingOrders = ({ id }) => {
                         severity='secondary' 
                         onClick={issuePurdoc} 
                     />
-                    <SendOrderEmail
+                    {/* <SendOrderEmail
                         disabled={orderCompletionValue < minOrderValue ? true : false}
                         mt={2}
+                        id={_id}
                         email={supplierEmail}
                         products={products}
                         name={supplierName}
                         TRDR={id}
+                    
                         setRefetch={setRefetch}
                         op={op}
-                    />
+                    /> */}
                     <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash" />
                 </OverlayPanel>
 

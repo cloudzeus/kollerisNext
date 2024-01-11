@@ -5,7 +5,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from "primereact/inputtext";
 import { MultiSelect } from 'primereact/multiselect';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Checkbox } from "primereact/checkbox";
 import { Toast } from 'primereact/toast';
 
 
@@ -16,7 +15,7 @@ const emails = [
 ];
 
 
-const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch, disabled, id}) => {
+const SendSmallOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch, disabled, id}) => {
     const [visible, setVisible] = useState(false);
     const toast = useRef(null);
 
@@ -72,7 +71,7 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
 
     const finalSubmit = async () => {
         setLoading(true)
-        let { data } = await axios.post('/api/createOrder', 
+        let { data } = await axios.post('/api/createSmallOrder', 
             { 
                 action: 'sentEmail',
                 cc: selectedCC,
@@ -88,9 +87,9 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
                 id: id
             })
 
-        if(!data.success && data.message) {
-            showWarn(data.message)
-        }
+        // if(!data.success && data.message) {
+        //     showWarn(data.message)
+        // }
         setVisible(false)
         setLoading(false)
         setRefetch(prev => !prev)
@@ -157,4 +156,4 @@ const SendOrderEmail = ({ email, mt,  name, TRDR, createdAt, products,setRefetch
 }
 
 
-export default SendOrderEmail;
+export default SendSmallOrderEmail;
