@@ -101,10 +101,6 @@ const ClientHolder = ({ NAME }) => {
 
 
     const Actions = ({_id, holders, TRDR, SALDOCNUM, clientName, clientEmail, createdAt, num, FINCODE }) => {
-        
-
-        console.log('saldocnum')
-        console.log(SALDOCNUM)
         const op = useRef(null);
         const _products = []
         holders.map((holder) => {

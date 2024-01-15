@@ -27,6 +27,7 @@ export default async function handler(req, res) {
                 })
             });
             let resJson = await response.json();
+            console.log(resJson.result)
             return res.status(200).json({ success: true, message: null, result: resJson.result })
         } catch (e) {
             return res.status(500).json({ success: false, result: null, message: "Προέκυψε σφάλμα κατά την δημιουργία PDF" })

@@ -13,19 +13,22 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPrintState } from '@/features/pdfSlice'
 import { FaFilePdf } from "react-icons/fa6";
-
+import { OverlayPanel } from 'primereact/overlaypanel'
 
 const Picking= () => {
     const [expandedRows, setExpandedRows] = useState(null);
     const toast = useRef(null);
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)  
+    const [pdfLoading, setPdfLoading] = useState(false)
     const [lazyState, setlazyState] = useState({
         first: 0,
         rows: 10,
         page: 1,
     });
 
+    console.log('data')
+    console.log(data)
    
     const [totalRecords, setTotalRecords] = useState(0);
     const showError = (message) => {
@@ -51,9 +54,33 @@ const Picking= () => {
     }, [lazyState])
 
 
-    const handlePDF = () => {
-        // ReactPDF.render(<MyDocument />, `${__dirname}/example.pdf`);
+    const Actions = ({SALDOCNUM}) => {
+    const op = useRef(null);
 
+        const createPDF = async () => {
+            setPdfLoading(true)
+            const {data} = await axios.post('/api/createPDF', {
+                FINDOCTYPE: 'PURDOC',
+                FINDOCNUM: SALDOCNUM,
+                PRINTFORM: 1012
+            })
+            if(data.result) {
+                window.open(data.result, "_blank")
+            }
+            setPdfLoading(false)
+          
+        }
+        return (
+            <div className='flex justify-content-center'>
+                <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel className='w-15rem' ref={op}>
+                    <span>{SALDOCNUM}</span>
+                    <Button disabled={!SALDOCNUM} loading={loading.pdf}  severity='warning' className='w-full mt-2' label="Δημιουργία PDF" onClick={createPDF} />
+                </OverlayPanel>
+            </div>
+
+
+        )
     }
 
     const allowExpansion = (rowData) => {
@@ -80,7 +107,6 @@ const Picking= () => {
                 rowExpansionTemplate={rowExpansionTemplate}
             >   
                 <Column expander={allowExpansion} style={{ width: '5rem'}}  />
-                <Column  header="PDF" body={ViewPDF} style={{width: '30px'}}></Column>
                 <Column field="NAME" header="ΌΝΟΜΑ"></Column>
                 <Column field="AFM" header="ΑΦΜ"></Column>
                 <Column field="ZIP" header="ZIP"></Column>
@@ -88,6 +114,7 @@ const Picking= () => {
                 <Column field="ADDRESS" header="ΔΙΕΥΘΥΝΣΗ"></Column>
                 <Column field="INVOICE.TAXSERIES" header="TAXSERIES"></Column>
                 <Column field="createdAt" body={CreatedAt} header="ΗΜΕΡΟΜΗΝΙΑ ΔΗΜ."></Column>
+                <Column headerStyle={{ width: '30px' }} bodyStyle={{ textAlign: 'end' }} body={Actions}></Column>
             </DataTable>
     </AdminLayout>
   )
