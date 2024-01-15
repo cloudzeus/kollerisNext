@@ -13,16 +13,19 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
-import { setLoading } from '@/features/productsSlice';
+import Link from 'next/link';
+import { uploadBunnyFolderName } from '@/utils/bunny_cdn';
 
 
 const OfferGrid = ({ clientName }) => {
     const [expandedRows, setExpandedRows] = useState(null);
+    const [pdf, setPdf] = useState(null)    
     const [data, setData] = useState([])
     const [loading, setLoading] = useState({
         grid: false,
         delete: false,
         findoc: false,
+        pdf: false,
     })
     const [refetch, setRefetch] = useState(false)
     const [statuses] = useState(['pending', 'done', 'rejected']);
@@ -111,6 +114,23 @@ const OfferGrid = ({ clientName }) => {
             setLoading(prev => ({ ...prev, findoc: false }))
             setRefetch(prev => !prev)
         }
+
+        const createPDF = async () => {
+            setLoading(prev => ({ ...prev, pdf: true }))
+            const {data} = await axios.post('/api/createPDF', {
+                FINDOCTYPE: 'SALDOC',
+                FINDOCNUM: SALDOCNUM,
+                PRINTFORM: 1109
+            })
+            if(data.result) {
+                window.open(data.result, "_blank")
+            }
+            setLoading(prev => ({ ...prev, pdf: true }))
+
+            // setLoading(prev => ({ ...prev, pdf: false }))
+            // setPdf(data.result)
+
+        }
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
@@ -127,7 +147,8 @@ const OfferGrid = ({ clientName }) => {
                         setRefetch={setRefetch}
                         op={op}
                     />
-                    
+                    <span className='font-bold mt-2 block'>PDF:</span>
+                    <Button loading={loading.pdf} tooltipOptions={{ position: 'top' }}  tooltip='1) Δημουργείστε το PDF 2) Πατήστε για να δείτε το PDF' severity='warning' className='w-full mt-2' label="Δημιουργία PDF" onClick={createPDF} />
                 </OverlayPanel>
             </div>
 

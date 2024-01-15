@@ -123,10 +123,13 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response);
+
         return buffer;
     }
 
     async function getInvoiceId(saldoc) {
+        console.log('saldoc ')
+        console.log(saldoc)
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/invoiceDetailsa`;
         const response = await fetch(URL, {
             method: 'POST',
@@ -138,7 +141,8 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        console.log('buffer')
+        console.log('buffer invoices saldoc')
+        console.log(buffer)
         return buffer;
     }
 
