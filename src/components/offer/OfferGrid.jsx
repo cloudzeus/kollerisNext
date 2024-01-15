@@ -127,15 +127,14 @@ const OfferGrid = ({ clientName }) => {
             }
             setLoading(prev => ({ ...prev, pdf: true }))
 
-            // setLoading(prev => ({ ...prev, pdf: false }))
-            // setPdf(data.result)
+          
 
         }
         return (
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <Button  disabled={FINCODE ? true : false} loading={loading.findoc}  className='w-full mb-2'  severity='secondary' label="Εκ. Παραστατικού" onClick={handleFinDoc}/>
+                    <Button  disabled={FINCODE} loading={loading.findoc}  className='w-full mb-2'  severity='secondary' label="Εκ. Παραστατικού" onClick={handleFinDoc}/>
                     <Button loading={loading.delete} label="Διαγραφή" severity='danger' className='w-full mb-2' icon="pi pi-trash" onClick={onDelete} />
                     <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
                     <SendEmailTemplate
@@ -148,7 +147,7 @@ const OfferGrid = ({ clientName }) => {
                         op={op}
                     />
                     <span className='font-bold mt-2 block'>PDF:</span>
-                    <Button loading={loading.pdf} tooltipOptions={{ position: 'top' }}  tooltip='1) Δημουργείστε το PDF 2) Πατήστε για να δείτε το PDF' severity='warning' className='w-full mt-2' label="Δημιουργία PDF" onClick={createPDF} />
+                    <Button disabled={!FINCODE} loading={loading.pdf}  severity='warning' className='w-full mt-2' label="Δημιουργία PDF" onClick={createPDF} />
                 </OverlayPanel>
             </div>
 

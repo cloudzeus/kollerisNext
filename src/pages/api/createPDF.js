@@ -13,6 +13,7 @@ const headers = {
 
 export default async function handler(req, res) {
     const {FINDOCTYPE, FINDOCNUM, PRINTFORM  } = req.body;
+    console.log(FINDOCTYPE, FINDOCNUM, PRINTFORM)
         try {
             const URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.parastatika/getSoftOnePrint`;
             const response = await fetch(URL, {

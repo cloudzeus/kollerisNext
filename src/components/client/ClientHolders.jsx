@@ -100,39 +100,53 @@ const ClientHolder = ({ NAME }) => {
 
 
 
-    const Actions = (props) => {
+    const Actions = ({_id, holders, TRDR, SALDOCNUM, clientName, clientEmail, createdAt, num, FINCODE }) => {
+        
+
+        console.log('saldocnum')
+        console.log(SALDOCNUM)
         const op = useRef(null);
         const _products = []
-        props.holders.map((holder) => {
+        holders.map((holder) => {
             holder.products.map((product) => {
                 _products.push({
-                    name: props.clientName,
-                    email: props.clientEmail,
+                    name: clientName,
+                    email: clientEmail,
                     holderName: holder.name,
                     productName: product.NAME,
                     productPrice: product.PRICE,
                     productQuantity: product.QTY1,
                     productTotalPrice: product.TOTAL_PRICE
-
                 })
 
             })
         })
         const handleDelete = async () => {
             setLoading(prev => ({ ...prev, delete: true }))
-            await axios.post('/api/createOffer', { action: 'deleteOffer', id: props._id })
+            await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id })
             setLoading(prev => ({ ...prev, delete: false }))
             setRefetch(prev => ({ ...prev, grid: !prev.grid }))
         }
 
-        const handlePDF = () => {
-            dispatch(setPrintState(props))
-            router.push(`/dashboard/multi-offer/pdf/`)
+        const handlePDF = async () => {
+            console.log('pdf')
+            console.log(SALDOCNUM)
+            setLoading(prev => ({ ...prev, pdf: true }))
+            const {data} = await axios.post('/api/createPDF', {
+                FINDOCTYPE: 'SALDOC',
+                FINDOCNUM: SALDOCNUM,
+                PRINTFORM: 1109
+            })
+           
+            if(data.result) {
+                window.open(data.result, "_blank")
+            }
+            setLoading(prev => ({ ...prev, pdf: true }))
         }
 
         const handleFinDoc = async () => {
             setLoading(prev => ({ ...prev, findoc: true }))
-            let { data } = await axios.post('/api/createOffer', { action: 'createFinDoc', id: props._id, TRDR: props.TRDR  })
+            let { data } = await axios.post('/api/createOffer', { action: 'createFinDoc', id: _id, TRDR: TRDR  })
             if(!data.success && data?.error){
                 showError(data.error)
             
@@ -144,22 +158,22 @@ const ClientHolder = ({ NAME }) => {
             <div className='flex justify-content-center'>
                 <i className="pi pi-ellipsis-v pointer" style={{ fontSize: '1.1rem', color: 'blue' }} onClick={(e) => op.current.toggle(e)}></i>
                 <OverlayPanel className='w-15rem' ref={op}>
-                    <Button disabled={props.FINCODE} loading={loading.findoc} label="Εκ. Παραστατικού" severity='secondary' className='w-full mb-2' onClick={handleFinDoc} />
+                    <Button disabled={FINCODE} loading={loading.findoc} label="Εκ. Παραστατικού" severity='secondary' className='w-full mb-2' onClick={handleFinDoc} />
                     <Button loading={loading.delete} label="Διαγραφή" icon="pi pi-trash" severity='danger' className='w-full mb-2' onClick={handleDelete} />
-                    <XLSXDownloadButton data={_products} fileName={`${props.clientName}.offer`} />
+                    <XLSXDownloadButton data={_products} fileName={`${clientName}.offer`} />
                     <SendMultiOfferEmail
                         mt={2}
-                        email={props.clientEmail}
+                        email={clientEmail}
                         products={_products}
-                        clientName={props.clientName}
-                        SALDOCNUM={props.SALDOCNUM}
+                        clientName={clientName}
+                        SALDOCNUM={SALDOCNUM}
                         setRefetch={setRefetch}
-                        holders={props.holders}
-                        createdAt={props.createdAt}
-                        num={props.num}
-                        _id={props._id}
+                        holders={holders}
+                        createdAt={createdAt}
+                        num={num}
+                        _id={_id}
                     />
-                    <Button className='w-full mt-2' severity='warning'  label="pdf" icon="pi pi-file-pdf" onClick={handlePDF} />
+                    <Button disabled={!FINCODE} className='w-full mt-2' severity='warning'  label="pdf" icon="pi pi-file-pdf" onClick={handlePDF} />
                 </OverlayPanel>
             </div>
 
