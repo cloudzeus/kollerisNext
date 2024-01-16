@@ -22,37 +22,25 @@ const StepshowData = () => {
   }, [])
 
   useEffect(() => {
-  
+    // console.log('new data')
+    // console.log(newData)
     if (gridData === null) return;
-    const fixedColumns = ['PRICER', 'PRICEW', 'PRICER01'];
-    const _newData = newData.map(row => {
-      let newRow = {};
-      fixedColumns.forEach(col => {
-        if (row[col] !== undefined) {
-          newRow[col] = row[col];
+    const _newData = gridData.map(row => {
+      return mongoKeys.reduce((newRow, keyObj) => {
+        if (keyObj.related !== 0) {
+          newRow[keyObj.related] = row[keyObj.oldKey];
         }
-      });
-        console.log('mongoKeys')
-        console.log(mongoKeys)
-        mongoKeys.forEach(keyObj => {
-          if (row[keyObj.oldKey] !== undefined && keyObj.related !== 0  ) {
-            newRow[keyObj.related] = row[keyObj.oldKey];
-          }
-        });
-
-      return newRow;
+        return newRow;
+      }, {});
     });
 
     setShowData(_newData)
-
     function extractKeys(dataset) {
-      // Extract top-level keys
-      if (dataset === undefined) return;
-      const topLevelKeys = Object.keys(dataset).filter(key => key !== 'attributes');
-      const uniqueKeys = [...new Set([...topLevelKeys])];
-      return uniqueKeys;
+      return Object.keys(dataset?.[0] || {});
     }
-    const result = extractKeys(_newData[0]);
+    
+    const result = extractKeys(_newData);
+
     if (result === undefined) return;
     setDynamicColumns(result)
 
@@ -78,7 +66,7 @@ const StepshowData = () => {
 }
 
 
-const Table = ({ showData, dynamicColumns, setReturnedProducts, loading, setLoading }) => {
+const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
   const { selectedSupplier } = useSelector(state => state.supplierOrder)
   const [newData, setNewData] = useState([])
 
@@ -115,12 +103,22 @@ const Table = ({ showData, dynamicColumns, setReturnedProducts, loading, setLoad
         UNIQUE_CODE: code,
       })
       // products.push(data.result)
-       await handleFetch(code, showData[i].NAME )
+      console.log('data')
+      console.log(data)
+      const returned =  await handleFetch(code, showData[i].NAME )
+      console.log('returned')
+      console.log( returned)
     }
     // setReturnedProducts(products)
     setLoading(false)
 
   }
+
+
+  useEffect(() => {
+    console.log('dynamic columns')
+    console.log(dynamicColumns)
+  }, [])
 
   return (
     <>

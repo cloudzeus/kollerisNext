@@ -6,43 +6,48 @@ import { ConnectedOverlayScrollHandler } from "primereact/utils";
 import UploadedProduct from "../../../server/models/uploadedProductsModel";
 export default async function handler(req, res) {
     const { data,  UNIQUE_CODE } = req.body;
-    
+    console.log('data')
+    console.log(data)
+    console.log('UNIQUE_CODE')
+    console.log(UNIQUE_CODE)
  
     try {
         await connectMongo();
         let productData = {
             DESCRIPTION: data?.description || '',
-            NAME: data.NAME,
+            NAME: data?.NAME,
             SOFTONESTATUS: false,
             COUNTRY: data?.COUNTRY || '',
             VAT: data?.VAT || '',
             CODE1: data?.CODE1 || '',
             CODE2: data?.CODE2 ,
-            PRICER: data.PRICER,
-            PRICEW: data.PRICEW,
-            COST: parseFloat(data.COST.toFixed(2)),
-            PRICER01: data.PRICER01,
+            PRICER: data.PRICER ? parseFloat(data.PRICER.toFixed(2)) : 0,
+            PRICEW: data.PRICEW ? parseFloat(data.PRICEW.toFixed(2)) : 0,
+            COST: data.COST ? parseFloat(data.COST.toFixed(2)) : 0 ,
+            PRICER01: data?.PRICER01 ? parseFloat(data?.PRICER01.toFixed(2)) : 0,
             WIDTH: data?.WIDTH || '',
             HEIGHT: data?.HEIGHT || '',
-            LENGTH: data["ΠΛΑΤΟΣ"] || '',
+            LENGTH: data["ΠΛΑΤΟΣ"] ? data["ΠΛΑΤΟΣ"] : '',
             hasImage: false,
             uploaded: true,
-            // uploadedDate: 
         }
 
         console.log('productData')
         console.log(productData)
         //CREATE THE UPLOADED PRODUCT FOR THIS SUPPLIER
-        let uploadedProduct = await UploadedProduct.create({
+        const uploadedOBJ = {
             NAME: data.NAME,
-            EANCODE: data.EANCODE,
-            PRICER: data.PRICER,
-            PRICEW: data.PRICEW,
-            COST: parseFloat(data.COST.toFixed(2)),
-            PRICER01: data.PRICER01,
-            SUPPLER_TRDR: data.SUPPLER_TRDR,
+            PRICER: data.PRICER ? parseFloat(data.PRICER.toFixed(2)) : 0,
+            PRICEW: data.PRICEW ? parseFloat(data.PRICEW.toFixed(2)) : 0,
+            COST: data.COST ? parseFloat(data.COST.toFixed(2)) : 0,
+            PRICER01: data?.PRICER01 ? parseFloat(data?.PRICER01.toFixed(2)) : 0,
             UNIQUE_CODE:  UNIQUE_CODE,
-        })
+        }
+        console.log('uploadedOBJ')
+        console.log(uploadedOBJ)
+        let uploadedProduct = await UploadedProduct.create(uploadedOBJ)
+        console.log('uploadedProduct')
+        console.log(uploadedProduct)
         //CREATE A FILTER WITH EITHER THE NAME OR THE CODE OF THE PRODUCT FROM THE UPLOADED FILE
         const filter = {
          CODE2: data.CODE2  
@@ -90,7 +95,7 @@ export default async function handler(req, res) {
 
         if (!find) {
             let product = await SoftoneProduct.create(productData);
-            console.log('created Product')
+            console.log('created product')
             console.log(product)
             //UPDATE THE STATUS TO CRATED
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
@@ -125,6 +130,7 @@ export default async function handler(req, res) {
                 })
             });
             let responseJSON = await response.json();
+            'sonftone update'
             console.log(responseJSON)
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {

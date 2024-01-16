@@ -27,6 +27,12 @@ const Page = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 6000 });
     }
 
+
+    useEffect(() => {
+        console.log('mongo keyssssssssssssss')
+        console.log(mongoKeys)
+    }, [mongoKeys])
+
     const SelectTemplate = ({ field }) => {
         const dispatch = useDispatch()
         const [dvalue, setdValue] = useState('')
@@ -34,7 +40,7 @@ const Page = () => {
         console.log(field)
         const handleChange = (e) => {
             console.log('eeeeeeee')
-            console.log(e)
+            console.log(e.target.value)
             setdValue(e.value)
             dispatch(setSelectedMongoKey({
                 oldKey: field,
@@ -121,6 +127,22 @@ const OurDatabaseKeys = [
     {
         key: 'NAME',
         value: 'Όνομα'
+    },
+    {
+        key: 'PRICER',
+        value: 'ΤΙΜΗ'
+    },
+    {
+        key: 'PRICER01',
+        value: 'ΤΙΜΗ SKROUTZ'
+    },
+    {
+        key: 'PRICEW',
+        value: 'ΤΙΜΗ ΛΙΑΝΙΚΗΣ'
+    },
+    {
+        key: 'COST',
+        value: 'ΚΟΣΤΟΣ'
     },
     {
         key: 'description',
