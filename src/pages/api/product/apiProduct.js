@@ -709,9 +709,9 @@ export default async function handler(req, res) {
                         COST: data.COST,
                         isSkroutz: parseInt(data.isSkroutz) === 1 ? true : false,
                         availability: {
-                            DIATHESIMA: data.DIATHESIMA,
-                            SEPARAGELIA: data.SEPARAGELIA,
-                            DESVMEVMENA: data.DESVMEVMENA,
+                            DIATHESIMA: data.DIATHESIMA.toString(),
+                            SEPARAGELIA: data.SEPARAGELIA.toString(),
+                            DESVMEVMENA: data.DESVMEVMENA.toString(),
                             date: date.toString()
                         }
                     }
