@@ -28,10 +28,7 @@ const Page = () => {
     }
 
 
-    useEffect(() => {
-        console.log('mongo keyssssssssssssss')
-        console.log(mongoKeys)
-    }, [mongoKeys])
+  
 
     const SelectTemplate = ({ field }) => {
         const dispatch = useDispatch()

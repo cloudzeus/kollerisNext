@@ -20,6 +20,7 @@ const UploadCatalog = () => {
     const router = useRouter();
     const { gridData, headers, data } = useSelector((state) => state.catalog)
 
+    
     return (
         <AdminLayout >
 
