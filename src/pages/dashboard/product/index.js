@@ -773,7 +773,7 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
                     <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
                     <p className='text-500'>softone</p>
                 </div>
-                {availability.DIATHESIMA === '0' ? (
+                {availability?.DIATHESIMA === '0' ? (
                      <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center  mt-1' 
                      style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px', maxWidth: '70px'}}>
                         <p style={{marginBottom: '2px'}}>not available</p>
@@ -912,7 +912,7 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }
                         <p className='text-500'>skroutz</p>
                     </div>
                 ) : null}
-                {availability.DIATHESIMA === '0' ? (
+                {availability?.DIATHESIMA === '0' ? (
                      <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1' 
                      style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px',  maxWidth: '70px'}}>
                         <p style={{marginBottom: '2px'}}>not available</p>
