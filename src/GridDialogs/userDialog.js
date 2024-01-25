@@ -139,7 +139,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                         control={control}
                     />
-
+                   
                  
                     <PrimeSelect
                         control={control}
@@ -157,6 +157,14 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         optionValue={'role'}
 
                     />
+                     <Input
+                        label={'Νέος Κωδικός'}
+                        name={'newPassword'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                    />
+
                         <Button 
                             onClick={() => setShowDetails(prev => !prev)} 
                             outlined  

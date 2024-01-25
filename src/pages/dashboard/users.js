@@ -19,6 +19,8 @@ import { useSession } from 'next-auth/react';
 import GridOverlay from '@/components/grid/GridOverlay';
 import GridActions from '@/components/grid/GridActions';
 import StepHeader from '@/components/StepHeader';
+import { OverlayPanel } from 'primereact/overlaypanel';
+
 
 export default function TemplateDemo() {
     const [editData, setEditData] = useState(null)
@@ -42,6 +44,7 @@ export default function TemplateDemo() {
     const handleFetch = async () => {
     try {
         const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
+        console.log(resp.data.result)
         setData(resp.data.result)
     } catch (error) {
         console.log(error)
@@ -62,7 +65,6 @@ export default function TemplateDemo() {
 
    
     //TEMPLATES
-
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
 
@@ -78,9 +80,7 @@ export default function TemplateDemo() {
     const onGlobalFilterChange = (event) => {
         const value = event.target.value;
         let _filters = { ...filters };
-
         _filters['global'].value = value;
-
         setFilters(_filters);
     };
 
@@ -126,9 +126,19 @@ export default function TemplateDemo() {
     // CUSTOM TEMPLATES FOR COLUMNS
   
 
-    const actionBodyTemplate = (rowData) => {
+    const ActionBodyTemplate = (rowData) => {
+            // <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+        const op = useRef(null);
         return (
-            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+            <div className='flex align-items-center justify-content-center'>
+                <i className="pi pi-cog mr-2 cursor-pointer text-primary" style={{ fontSize: '13px' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel ref={op}>
+                    <div className='flex flex-column'>
+                        <Button label="Διαμόρφωση" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
+                        <Button onClick ={() => onDelete(rowData._id)} label="Διαγραφή" severity='danger' icon="pi pi-trash" className='w-full mb-2'  />
+                    </div>
+                </OverlayPanel>
+            </div>
         )
     }
 
@@ -157,6 +167,7 @@ export default function TemplateDemo() {
             <StepHeader text="Χρήστες" />
             {role === 'admin' ?  <Toolbar  left={leftToolbarTemplate} ></Toolbar> : null }
             <DataTable
+                className='p-datatable-sm'
                 header={header}
                 value={data}
                 paginator
@@ -181,7 +192,7 @@ export default function TemplateDemo() {
                 <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
                
                 {role === 'admin' ? (
-                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
+                    <Column body={ActionBodyTemplate } exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
                 ) : null}
 
             </DataTable>

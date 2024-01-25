@@ -18,7 +18,8 @@ export default async function handler(req, res) {
 			await connectMongo();
 		
 			const users = await User.find({});
-		
+			const _users = [...users]
+			
             // console.log('users: ' + JSON.stringify(users))
 			return res.status(200).json({ success: true, result: users});
 
@@ -59,18 +60,33 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'update') {
+		const {id, data} = req.body;
+		console.log('data')
+		console.log(data)
+		const update = {
+			firstName: data.firstName,
+			lastName: data.lastName,
+			email: data.email,
+			role: data.role,
+			address: data.address || {},
+			phone: data.phone || {},
 
-		let data= req.body.data;
-		let id = req.body.id
-			
-		const filter = { _id: id };
-		const update = { $set: {...data} };
-		console.log('update data:')
-		console.log(update)
+		}
+
+		if(data.newPassword) {
+			const password = data.newPassword;
+			const salt = await bcrypt.genSalt(10);
+			const hashPassword = await bcrypt.hash(password, salt);
+			update.password = hashPassword;
+			}
+			console.log('update')
+			console.log(update)
 		try {
 			await connectMongo();
-			const result = await User.updateOne(filter, update);
-			console.log('result')
+			const result = await User.updateOne({_id: id}, {
+				$set: update
+			});
+			console.log('resutl')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
