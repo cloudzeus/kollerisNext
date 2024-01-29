@@ -1023,7 +1023,7 @@ const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
                 options={options}
                 onChange={onChange}
                 optionLabel="groupName"
-                placeholder="Φίλτρο Κατηγορίας"
+                placeholder="Φίλτρο Ομάδας"
                 className="p-column-filter  grid-filter"
                 style={{ minWidth: '14rem', fontSize: '12px' }}
             />

@@ -1,55 +1,124 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { ProductQuantityContext } from '@/_context/ProductGridContext';
 import { setSubmitted } from '@/features/productsSlice';
-import { set } from 'mongoose';
 const TreeSelectComp = () => {
-
+    const dispatch = useDispatch();
+    const toast = useRef(null)
     const {selectedProducts} = useSelector(state => state.products)
-    const [categories, setCategories] = useState(null);
-    const [category, setCategory] = useState(null);
+    const [loading, setLoading] = useState(false)
+    const [categoriesOptions, setCategoriesOptions] = useState([])
+    const [groupOptions, setGroupOptions] = useState([])
+    const [subGroupOptions, setSubGroupOptions] = useState([])
+    const [selectState, setSelectState] = useState({
+        category: null,
+        group: null,
+        subgroup: null,
+    })
 
-    const [groups, setGroups] = useState(null);
-    const [group, setGroup] = useState(null);
+    const showSuccess = (name) => {
+        toast.current.show({severity:'success', detail:`Επιτυχής Ενημέρωση MTRL : ${name}`, life: 3000});
+    }
 
-    const [subgroups, setSubgroups] = useState(null);
-    const [subgroup, setSubgroup] = useState(null);
+    const showError = (name, message) => {
+        toast.current.show({severity:'error', detail:`Aποτυχία Ενημέρωσης MTRL : ${name} // ${message}`, life: 3000});
+    }
 
-    const toast = useRef(null);
-    const { gridRowData } = useSelector(store => store.grid)
+    const handleCategory = (e) => {setSelectState({...selectState, category: e.value})}
+    const handleGroup = (e) => {setSelectState({...selectState, group: e.value})}
+    const handleSubGroup = (e) => {setSelectState({...selectState, subgroup: e.value})}
 
+    const onCategoryDelete = () => {
+        setSelectState({...selectState, category: null, group: null, subgroup: null})
+    
+    }
+
+    const onGroupDelete = () => {
+        setSelectState({...selectState, group: null, subgroup: null})
+    
+    }
+    const onSubGroupDelete = () => {
+        setSelectState({...selectState, subgroup: null})
+    
+    }
 
     useEffect(() => {
-        setCategories(null)
-        setCategory(null)
-        setGroups(null)
-        setGroup(null)
-        setSubgroups(null)
-        setSubgroup(null)
-    }, [gridRowData])
+        console.log (selectState)
+    }, [selectState])
+    const onSubmit = async () => {
+        console.log('selectedProducts')
+        console.log(selectState)
+        setLoading(true)
+        let obj = {
+            gridData: selectedProducts, 
+            categoryid: selectState.category.softOne.MTRCATEGORY, 
+            categoryName: selectState.category?.categoryName,
+            groupid: selectState.group?.softOne.MTRGROUP, 
+            groupName: selectState.group?.groupName,
+            subgroupid: selectState.subgroup?.softOne.cccSubgroup2 || 0,
+            subGroupName: selectState.subgroup?.subGroupName || ""
+        }
+        console.log('update obj')
+        console.log(obj)
+        // setSubmitted(false)
+        let res = await axios.post('/api/product/apiProduct', { 
+            action: 'updateClass', 
+            ...obj
+        })
+      
+        setLoading(false)
+            if(!res.data.success) {
+                res.data.result.map((item) => {
+                    showError(item?.name)
+                })
+            }
 
+            res.data.result.map((item) => {
+                if(item.mtrl && item.updated) {
+                    showSuccess(item?.name)
+                } else {
+                    showError(item?.name, 'ΤΟ ΠΡΟΪΟΝ ΔΕΝ ΕΧΕΙ MTRL. ΠΡΟΣΘΕΣΤΕ ΤΟ ΣΤΟ SOFTONE')
+                }
+              
+            })
+            dispatch(setSubmitted())
+         
+    }
     return (
         <div>
-             <Toast ref={toast} />
-            <TreeSelectDropDown
-                gridRowData={gridRowData}
-                categories={categories}
-                setCategories={setCategories}
-                category={category}
-                setCategory={setCategory}
-                groups={groups}
-                setGroups={setGroups}
-                group={group}
-                setGroup={setGroup}
-                setSubgroups={setSubgroups}
-                subgroups={subgroups}
-                subgroup={subgroup}
-                setSubgroup={setSubgroup}
-            />
+            <Toast ref={toast} />
+               <CategoriesRowFilterTemplate 
+                options={categoriesOptions} 
+                setOptions={setCategoriesOptions}
+                value={selectState.category}
+                onChange={handleCategory}
+                onDelete={onCategoryDelete}
+                />
+                <div className='w-full mt-4'>
+                    <GroupRowFilterTemplate 
+                        options={groupOptions} 
+                        setOptions={setGroupOptions}
+                        value={selectState.group}
+                        onChange={handleGroup}
+                        category={selectState.category}
+                        onDelete={onGroupDelete}
+                    />
+                </div>
+                <div className='w-full mt-4'>
+                    <SubGroupsTemplate
+                        options={subGroupOptions} 
+                        setOptions={setSubGroupOptions}
+                        value={selectState.subgroup}
+                        onChange={handleSubGroup}
+                        group={selectState.group}
+                        onDelete={onSubGroupDelete}
+                    />
+                </div>
+                <Button loading={loading} disabled={!selectState.category} size="small"  label="Αποστολή" icon="pi pi-chevron-right" className="mt-2" onClick={onSubmit} />
+
         </div>
     )
 }
@@ -204,12 +273,14 @@ const TreeSelectDropDown = ({
                             placeholder="Επιλογή Εμπορικής Κατηγορίας" className="w-full" />
 
                     </div>
+                    <CategoriesRowFilterTemplate />
                     {category ? (
-                        <div className="card flex justify-content-center  mb-3">
-                            <Dropdown value={group} onChange={chooseGroup} options={groups} optionLabel="name"
-                                placeholder="Επιλογή Ομάδας" className="w-full" />
+                        // <div className="card flex justify-content-center  mb-3">
+                        //     <Dropdown value={group} onChange={chooseGroup} options={groups} optionLabel="name"
+                        //         placeholder="Επιλογή Ομάδας" className="w-full" />
 
-                        </div>
+                        // </div>
+                        <GroupRowFilterTemplate category={category} options={groups} value={group} />
                     ) : null}
                     {group ? (
                         <div className="card flex justify-content-center  mb-3">
@@ -225,5 +296,111 @@ const TreeSelectDropDown = ({
         </div>
     );
 }
+
+
+const CategoriesRowFilterTemplate = ({ value, options, onChange, setOptions, onDelete }) => {
+    useEffect(() => {
+        const handleCategories = async () => {
+            let { data } = await axios.post('/api/product/apiProductFilters', {
+                action: 'findCategories',
+            })
+           
+            setOptions(data.result)
+        }
+        handleCategories()
+    }, [])
+
+  
+    return (
+        <div className="flex align-items-center">
+            <Dropdown
+                emptyMessage="Δεν υπάρχουν κατηγορίες"
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="categoryName"
+                placeholder="Φίλτρο Κατηγορίας"
+                className="p-column-filter  grid-filter w-full mt-2"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
+        </div>
+
+    )
+};
+
+
+
+const GroupRowFilterTemplate = ({ category, options, setOptions, onChange, value, onDelete  }) => {
+
+    
+    const dispatch = useDispatch()
+    useEffect(() => {
+        const handleCategories = async () => {
+
+            let { data } = await axios.post('/api/product/apiProductFilters', {
+                action: 'findGroups',
+                categoryID: category?.softOne?.MTRCATEGORY
+            })
+            setOptions(data.result)
+        }
+        handleCategories()
+    }, [category])
+
+
+    return (
+        <div className='flex align-items-center'>
+            <Dropdown
+                disabled={!category ? true : false}
+                emptyMessage="Δεν υπάρχουν ομάδες"
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="groupName"
+                placeholder="Φίλτρο Ομάδας"
+                className="p-column-filter  grid-filter w-full"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
+        </div>
+
+    )
+};
+
+const SubGroupsTemplate = ({ value, options, setOptions, group, onChange, onDelete }) => {
+   
+    const dispatch = useDispatch()
+    useEffect(() => {
+        const handleCategories = async () => {
+            let { data } = await axios.post('/api/product/apiProductFilters', {
+                action: 'findSubGroups',
+                groupID: group?.softOne.MTRGROUP
+            })
+            setOptions(data.result)
+        }
+        handleCategories()
+    }, [group])
+
+    return (
+        <div className="flex align-items-center">
+            <Dropdown
+                emptyMessage="Δεν υπάρχουν υποομάδες"
+                size="small"
+                disabled={!group ? true : false}
+                value={value}
+                options={options}
+                onChange={onChange}
+                optionLabel="subGroupName"
+                placeholder="Φίλτρο Υποομάδας"
+                className="p-column-filter grid-filter w-full"
+                style={{ minWidth: '14rem', fontSize: '12px' }}
+            />
+            <i className="pi pi-times ml-2 cursor-pointer" onClick={onDelete} ></i>
+        </div>
+    )
+};
+
+
 
 export default TreeSelectComp
