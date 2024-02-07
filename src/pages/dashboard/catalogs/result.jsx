@@ -17,9 +17,7 @@ const StepshowData = () => {
   const [dynamicColumns, setDynamicColumns] = useState([])
   const router = useRouter()
 
-  useEffect(() => {
-    if (!newData.length) router.push('/dashboard/suppliers');
-  }, [])
+ 
 
   useEffect(() => {
     // console.log('new data')
@@ -115,10 +113,7 @@ const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
   }
 
 
-  useEffect(() => {
-    console.log('dynamic columns')
-    console.log(dynamicColumns)
-  }, [])
+ 
 
   return (
     <>
