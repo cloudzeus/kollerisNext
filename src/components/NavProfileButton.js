@@ -1,3 +1,4 @@
+'use client'
 import React, {useRef} from 'react'; 
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
@@ -11,7 +12,7 @@ import { signOut } from 'next-auth/react';
 import { logoutUser } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-
+import { useSession } from 'next-auth/react';
 
 
 export default function ProfileButton() {
@@ -20,28 +21,23 @@ export default function ProfileButton() {
     const menuRight = useRef(null);
     const route = useRouter();
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.user)
+    const { data: session, status } =  useSession()
+    let user = session?.user?.user;
     let items = [
         { 
           
             template: (item, options) => {
                 return (
-                    // <Link href="#">
+                    <Link href="/dashboard/profile">
                     <PopupTopBar className={classNames(options.className, 'w-full p-link flex align-items-center')}>
-                        <Avatar 
-                            aria-controls="popup_menu_left"  
-                            icon="pi pi-user" 
-                            size="small" 
-                            onClick={(event) => menuLeft.current.toggle(event)} 
-                            style={{ backgroundColor: 'primary', color: '#ffffff', fontSize: '1rem' }} 
-                            shape="circle"
-                            />
+                    <Avatar icon="pi pi-user " size="small" shape="circle" onClick={(event) => menuLeft.current.toggle(event)}  />
+                       
                         <div className='name-div'>
                             <span className="font-bold">{user?.lastName}</span>
                             <span className="text-sm">{user?.role}</span>
                         </div>
                     </PopupTopBar>
-                    // </Link>
+                 </Link>
                    
                 )
         }},
@@ -69,8 +65,6 @@ export default function ProfileButton() {
                 aria-controls="popup_menu_left"  
                 icon="pi pi-user" 
                 onClick={(event) => menuLeft.current.toggle(event)} 
-                style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--primary-400)', border:'none'}} 
-                
                 />
             <Menu 
                 model={items} 
@@ -84,23 +78,17 @@ export default function ProfileButton() {
 }
 
 
-const Container = styled.div`
-
-`
 
 const PopupTopBar  = styled.button`
     display: flex;
     align-items: center;
-    width: 100%;
     .name-div {
         display: flex;
         flex-direction: column;
         margin-left: 0.5rem;
         justify-content: center;
     }
-    .name-div span:first-child {
-
-    }
+   
     .name-div span:last-child {
         font-size: 0.7rem;
         font-style: italic;

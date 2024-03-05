@@ -2,18 +2,15 @@ import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import { BasicContainer } from '@/components/styles'
 import { useRouter } from 'next/router'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Button from '@/components/Buttons/Button'
-
+import { Button } from 'primereact/button'
 const AdminEmailConfirmation = () => {
-
     const router = useRouter()
    
     return (
         <Container>
             <MessageBoard >
                 <div>
-                    <CheckCircleIcon color="success" />
+                <i className="pi pi-check" ></i>
                     <h1>Oλοκληρώθηκε η Εγγραφή</h1>
                 </div>
                 <Button 

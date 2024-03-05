@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { BasicContainer } from '@/components/styles'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ThanksRegister = () => {
         
@@ -12,7 +11,8 @@ const ThanksRegister = () => {
         <Container>
             <MessageBoard >
                 <div>
-                    <CheckCircleIcon color="success" />
+                <i className="pi pi-check" ></i>
+
                 </div>
                 <div>
                     <h1>Ευχαριστούμε για την εγγραφή σας!</h1>

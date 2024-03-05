@@ -1,23 +1,7 @@
 import User from '../../../../server/models/userModel';
 import connectMongo from '../../../../server/config';
-import nodemailer from 'nodemailer';
+import { transporter } from '@/utils/nodemailerConfig';
 
-const email = 'johnchiout.dev@gmail.com'
-const pass = 'ypbytdbjwumhepop'
-
-
-
-
-export const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: email,
-        pass: pass
-    }
-})
-
-
- 
 
 const emailTemplate = (user) =>  `
     <p>Γειά σου, <strong>${user.firstName}</strong></p>
@@ -39,19 +23,24 @@ export default async function handler(req, res) {
 
 
         if (user && user.role === 'employee') {
-            const mailOptions = {
-                from: email,
+          
+            const mail = {
+                from: 'info@kolleris.com',
                 to: user.email,
-            }
-
-            await transporter.sendMail({
-                ...mailOptions,
+                cc: ['info@kolleris.com', 'johnchiout.dev@gmail.com'],
                 subject: `Επιβεβαίωση Εγγραφής`,
                 text: "Mπορείτε πλέον να συνδεθείτε κανονικά στην ιστοσελίδα μας.",
                 html: emailTemplate(user)
-            })
-
-            // return res.status(200).json({ success: true, user });
+            };
+        
+            transporter.sendMail(mail, (err, info) => {
+                if (err) {
+                    console.log(err);
+        
+                } else {
+                    console.log('Email sent successfully!');
+                }
+            });
             res.redirect('/auth/admin-email-confirmation');
 
         } else {

@@ -52,8 +52,9 @@ const StyledChip = styled.span`
     align-items: center;
     background-color:#e7e7e7 ;
     border-radius: 30px;
-    width: 90px;
+    width: 100px;
     padding: 4px;
+   
     .first {
         background-color: ${props => props.color ? props.color : '#e7e7e7'};
         border-radius: 50%;

@@ -1,5 +1,6 @@
 import axios from "axios";
-import User from "../../../../server/models/contactInfoModel";
+
+import User from "../../../../server/models/userModel"
 import connectMongo from "../../../../server/config";
 import bcrypt from 'bcrypt';
 
@@ -17,7 +18,8 @@ export default async function handler(req, res) {
 			await connectMongo();
 		
 			const users = await User.find({});
-		
+			const _users = [...users]
+			
             // console.log('users: ' + JSON.stringify(users))
 			return res.status(200).json({ success: true, result: users});
 
@@ -29,33 +31,23 @@ export default async function handler(req, res) {
 
 	if (action === 'create') {
 		let { data } = req.body
-		const password = data.password;
+		let _data = data
 
-		console.log('data: ' + JSON.stringify(data))
+		const password = data.password;
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hash(password, salt);
-		console.log('hassPassword' + JSON.stringify(hashPassword ))
+
+		_data.password = hashPassword;
+		_data.status = true;
 
 		try {
-            let object = {
-                firstName: data.firstName,
-                lastName: data.lastName,
-				status: true,
-                email: data.email,
-                password: hashPassword,
-                role: data?.role,
-            }
-
 			await connectMongo();
 			const alreadyEmailCheck = await User.findOne({ email: data.email })
 			if(alreadyEmailCheck) {
-				console.log(alreadyEmailCheck)
-			return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
+				return res.status(200).json({success: false,  error: 'Το email είναι ήδη εγγεγραμένο', result: null})
 			}
-            console.log(object)
 
-			const user = await User.create({...object});
-            console.log(user)
+			const user = await User.create(_data)
 			if (!user) return res.status(200).json({ success: false, result: null, error: 'Αποτυχία εισαγωγής στη βάση δεδομένων' });
 			return res.status(200).json({ success: true, result: user, error: null });
 
@@ -68,34 +60,33 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'update') {
+		const {id, data} = req.body;
+		console.log('data')
+		console.log(data)
+		const update = {
+			firstName: data.firstName,
+			lastName: data.lastName,
+			email: data.email,
+			role: data.role,
+			address: data.address || {},
+			phone: data.phone || {},
 
-		let body = req.body.data;
-		console.log('update brand body')
-		console.log(body)
-		let id = req.body.id
-		
-	
-		function hashPassword(password) {
-			const saltRounds = 10;
-			const salt = bcrypt.genSaltSync(saltRounds);
-			let hassed = bcrypt.hashSync(password, salt);
-			return hassed;
-		  } 
+		}
 
-		  function updateUserPassword(data, newPassword) {
-			if (newPassword) {
-			  const hashedPassword = hashPassword(newPassword);
-			  data.password = hashedPassword;
+		if(data.newPassword) {
+			const password = data.newPassword;
+			const salt = await bcrypt.genSalt(10);
+			const hashPassword = await bcrypt.hash(password, salt);
+			update.password = hashPassword;
 			}
-		  }
-
-		  updateUserPassword(body, body.newpassword);
-			
-		const filter = { _id: id };
-		const update = { $set: {...body} };
+			console.log('update')
+			console.log(update)
 		try {
 			await connectMongo();
-			const result = await User.updateOne(filter, update);
+			const result = await User.updateOne({_id: id}, {
+				$set: update
+			});
+			console.log('resutl')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
@@ -112,15 +103,10 @@ export default async function handler(req, res) {
 		await connectMongo();
 
 		let id = req.body.id;
-		console.log('backend id')
-		console.log(id)
-		const filter = { _id: id };
-		const update = { $set: {
-			status: false
-		} };
 		try {
 			await connectMongo();
-			const result = await User.updateOne(filter, update);
+			const result = await User.deleteOne({_id: id});
+			console.log('resutl')
 			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {

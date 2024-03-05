@@ -9,15 +9,12 @@ const LoginLayout = ({ children }) => {
   )
 }
 
-
-
 const Box = styled.div`
   height: 100vh;
   align-items: center;
   justify-content: center;
   display: flex;
   flex-direction: column;
-  /* background-color: ${({ theme }) => theme.palette.background}; */
   background-color: white;
 `
 

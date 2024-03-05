@@ -30,6 +30,8 @@ const GallerySmall = ({ label, images }) => {
 
 
 const Gallery = ({images, label}) => {
+    console.log('gallery images');
+    console.log(images);
     const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const handleImageSelect = (image) => {
@@ -39,7 +41,6 @@ const Gallery = ({images, label}) => {
     const handlePrevImage = () => {
         const currentIndex = images.indexOf(selectedImage);
         const prevIndex = (currentIndex - 1 + images.length) % images.length;
-        console.log(prevIndex)
         setSelectedImage(images[prevIndex]);
     };
 
@@ -47,11 +48,8 @@ const Gallery = ({images, label}) => {
         const currentIndex = images.indexOf(selectedImage);
     
         const nextIndex = (currentIndex + 1) % images.length;
-        console.log(nextIndex)
         setSelectedImage(images[nextIndex]);
     };
-
-  
 
     return (
         <>  

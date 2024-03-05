@@ -15,8 +15,7 @@ const gridSlice = createSlice({
 		},
 		resetGridRowData: (state, action) => {
 			state.gridRowData = [];
-			console.log('reset gird row data')
-			console.log(state.gridRowData)
+			
 		},
 		
 		

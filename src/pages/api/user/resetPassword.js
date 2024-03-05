@@ -1,5 +1,5 @@
-import { transporter, email } from "@/utils/nodemailerConfig"
-import User from "../../../../server/models/contactInfoModel"
+import { transporter } from "@/utils/nodemailerConfig"
+import User from "../../../../server/models/userModel";
 import connectMongo from "../../../../server/config"
 import bcrypt from 'bcrypt';
 
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
                 const {firstName, lastName } = user
                 await transporter.sendMail({
-                    from: email,
+                    from: 'info@kolleris.com',
                     to: emailTo,
                     subject: 'Αλλαγή Κωδικού',
                     html: emailBody(emailTo , firstName , lastName)

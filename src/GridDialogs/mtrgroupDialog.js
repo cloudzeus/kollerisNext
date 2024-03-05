@@ -3,116 +3,94 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
-import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
 import axios from 'axios';
-import styled from 'styled-components';
 import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
+import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
-import AddDeleteImages from '@/components/GalleryListSmall';
-import { original } from '@reduxjs/toolkit';
-
-
+import DialogGallery from '@/components/DialogGallery';
+import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
+import { Dropdown } from 'primereact/dropdown';
+import TranslateInput from '@/components/Forms/TranslateInpit';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
-    //This component has one Image only:
-    const [image, setImage] = useState([gridRowData?.groupImage])
-    const [logo, setLogo] = useState([gridRowData?.groupIcon])
+    const [translateName, setTranslateName] = useState('')
+    
+  
     const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
 
-
+    const handleTranslate =  async (value) => {
+        setTranslateName(value)
+    }
 
     useEffect(() => {
-        // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
+
+
+    
     
     useEffect(() => {
+        setTranslateName(gridRowData?.englishName)
         const handleFetch = async () => {
             let res = await axios.post('/api/product/apiGroup', { action: 'findCategoriesNames' })
             setParent(res.data.result)
-
+            
         }
         handleFetch()
+        // setCategory({categoryName: gridRowData?.CATEGORY_NAME , softOne: {MTRCATEGORY: gridRowData?.MTRCATEGORY}})
 
         //In the database empty logo is saved as an empty string, so we need to convert it to an empty array
-        setLogo(gridRowData?.groupIcon ? [gridRowData?.groupIcon] : [])
-        setImage(gridRowData?.groupImage ? [gridRowData?.groupImage] : [])
+        // setLogo(gridRowData?.groupIcon ? [gridRowData?.groupIcon] : [])
+        // setImage(gridRowData?.groupImage ? [gridRowData?.groupImage] : [])
     }, [gridRowData])
 
 
-   
+
     const handleEdit = async (data) => {
-        let originalCategory = gridRowData?.category?._id
-        if(typeof data.categoryid === 'undefined') {
-            data.categoryid = gridRowData?.category?._id
-        } 
+        console.log(translateName)
+        const { groupIcon, groupImage, categoryid,...rest } = data;
+        let originalCategory =  gridRowData?.category?._id
+        let newCategory =  categoryid || gridRowData?.category?._id
+        let user = session.user.user.lastName
+        const object = {...rest, updatedFrom: user, englishName: translateName }
 
-        
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
-        let newImage = image[0]
-        if(image.length === 0) {
-            newImage = ''
-
-        }
-        const object = {
-            ...data,
-            groupIcon: newLogo,
-            groupImage: newImage,
-           
-        }
-        console.log('newIamge: ' + JSON.stringify(newImage))
-        console.log('logo: ' + JSON.stringify(logo))
-        let mtrcategory = gridRowData?.category?.softOne?.MTRCATEGORY
         try {
-            let user = session.user.user.lastName
-            let resp = await axios.post('/api/product/apiGroup', 
-            {
-                action: "update", 
-                data: {...object, updatedFrom: user, }, 
-                id: gridRowData._id, 
-                mtrgroup: gridRowData?.softOne?.MTRGROUP,
-                mtrcategory: mtrcategory,
-                originalCategory: originalCategory
-            })
-            // if(!resp.data.success) {
-            //     return showError(resp.data.softoneError)
-            // }
-           console.log(resp.data)
-            setSubmitted(true)
-            showSuccess('Η εγγραφή ενημερώθηκε')
-            showSuccess(resp.data.message)
+       
+            let resp = await axios.post('/api/product/apiGroup',
+                {
+                    action: "update",
+                    data: object,
+                    groupid: gridRowData._id,
+                    originalCategory: originalCategory,
+                    newCategory: newCategory,
+                })
+                console.log('edit response')
+                console.log(resp.data)
+            setSubmitted(prev=> !prev)
+            // showSuccess(resp.data.message)
             hideDialog()
-            
-               
+
+
         } catch (e) {
             console.log(e)
         }
-       
+
     }
 
     const showSuccess = (message) => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 6000 });
     }
     const showError = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
@@ -138,50 +116,49 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Group"
+                    header="Διόρθωση Ομάδας"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                   <FormTitle>Λεπτομέριες</FormTitle>
-                <PrimeSelect
-                    control={control}
-                    name="categoryid"
-                    required
-                    label={'Κατηγορία'}
-                    options={parent}
-                    optionLabel={'label'}
-                    optionValue={'value._id'}
-                    placeholder={gridRowData?.category?.categoryName}
+                    <PrimeSelect
+                        control={control}
+                        name="categoryid"
+                        required
+                        label={'Κατηγορία'}
+                        options={parent}
+                        optionLabel={'label'}
+                        optionValue={'value._id'}
+                        placeholder={gridRowData?.category?.categoryName}
                     // error={errors.categoryName}
                     />
-                <Input
-                    label={'Όνομα Κατηγορίας'}
-                    name={'groupName'}
-                    control={control}
-                    required
-                    // error={errors.groupName}
-                />
-              
-                <FormTitle>Λογότυπο</FormTitle>
-                    <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={false}
-                       
+                    
+                    
+                    <Input
+                        label={'Όνομα Ομάδας'}
+                        name={'groupName'}
+                        control={control}
+                        required
+                        // error={errors.categoryName}
                     />
+                      <TranslateInput
+                            label={'Όνομα κατηγορίας αγγλικά'}
+                            state={translateName}
+                            handleState={handleTranslate}
+                            targetLang="en-GB"
+                        />
 
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
-                        state={image}
-                        setState={setImage}
-                        multiple={false}
-                        singleUpload={false}
-                       
-                    />
+
+                    <div>
+                    <FormTitle>Φωτογραφίες</FormTitle>
+                        <UploadImage id={gridRowData._id} image={gridRowData.groupImage} />
+                    </div>
+                    <div>
+                    <FormTitle>Λογότυπο</FormTitle>
+                        <UploadLogo id={gridRowData._id} image={gridRowData.groupImage} />
+                    </div>
                 </Dialog>
             </form>
         </Container>
@@ -190,6 +167,93 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 }
 
 
+const UploadImage = ({ id, }) => {
+
+    console.log(id)
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [visible, setVisible] = useState(false)
+    const [refetch, setRefetch] = useState(false)
+    const [data, setData] = useState(false)
+
+    const onAdd = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'addImage', imageName: uploadedFiles[0].name, id: id })
+        console.log(data)
+        setRefetch(prev => !prev)
+        return data;
+    }
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'getImages', id: id })
+        setData(data.result.groupImage)
+    }
+    const onDelete = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'deleteImage', id: id })
+        setRefetch(prev => !prev)
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [refetch])
+    return (
+        <div>
+            <SingleImageUpload
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                visible={visible}
+                data={data}
+                setVisible={setVisible}
+                onAdd={onAdd}
+                onDelete={onDelete}
+
+            />
+        </div>
+
+    )
+}
+const UploadLogo = ({ id }) => {
+
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [visible, setVisible] = useState(false)
+    const [refetch, setRefetch] = useState(false)
+    const [data, setData] = useState(false)
+
+    const onAdd = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'addLogo', imageName: uploadedFiles[0].name, id: id })
+        setRefetch(prev => !prev)
+        return data;
+    }
+
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'getImages', id: id })
+        console.log('data')
+        console.log(data)
+        setData(data.result?.groupIcon)
+
+    }
+    const onDelete = async () => {
+        let { data } = await axios.post('/api/product/apiGroup', { action: 'deleteLogo', id: id })
+        setRefetch(prev => !prev)
+    }
+
+    useEffect(() => {
+        handleFetch()
+    }, [refetch])
+    return (
+        <div>
+            <SingleImageUpload
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                visible={visible}
+                data={data}
+                setVisible={setVisible}
+                onAdd={onAdd}
+                onDelete={onDelete}
+
+            />
+        </div>
+
+    )
+}
 
 const addSchema = yup.object().shape({
     groupName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -200,7 +264,8 @@ const addSchema = yup.object().shape({
 const AddDialog = ({
     dialog,
     hideDialog,
-    setSubmitted
+    setSubmitted,
+   
 }) => {
 
 
@@ -227,7 +292,7 @@ const AddDialog = ({
         reset()
     }
 
-   
+
     useEffect(() => {
         setDisabled(false)
         const handleFetch = async () => {
@@ -241,18 +306,16 @@ const AddDialog = ({
 
 
     const handleAdd = async (data) => {
-     
+
         let user = session.user.user.lastName
-        const body ={
+        const body = {
             ...data,
-            groupIcon: logo[0],
-            groupImage: images[0],
             createdFrom: user
         }
 
 
         let res = await axios.post('/api/product/apiGroup', { action: 'create', data: body })
-        if(!res.data.success) return showError(res.data.softoneError)
+        if (!res.data.success) return showError(res.data.softoneError)
         let parent = res.data.parent
         setDisabled(true)
         setSubmitted(true)
@@ -285,7 +348,7 @@ const AddDialog = ({
                 visible={dialog}
                 style={{ width: '32rem' }}
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                header="Προσθήκη ΜTRGroup"
+                header="Προσθήκη Ομάδας"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
@@ -298,10 +361,10 @@ const AddDialog = ({
                     label={'Κατηγορία'}
                     options={parent}
                     optionLabel={'label'}
-                    placeholder='label'
+                    placeholder='Επίλεξε κατηγορία'
                     optionValue={'value._id'}
                     error={errors.categoryName}
-                    />
+                />
                 <Input
                     toolip="Σε ποιά κατηγορία ανήκει;"
                     label={'Όνομα Κατηγορίας'}
@@ -310,24 +373,6 @@ const AddDialog = ({
                     required
                     error={errors.groupName}
                 />
-              
-                <FormTitle>Λογότυπο</FormTitle>
-                <PrimeUploads
-                    setState={setLogo}
-                    multiple={false}
-                    singleUpload={true}
-                    mb={'20px'} />
-
-
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <PrimeUploads
-                    setState={setImages}
-                    multiple={false}
-                    mb={'30px'}
-                    singleUpload={true}
-                    />
-               
-
             </Dialog>
         </form>
     )
@@ -335,6 +380,30 @@ const AddDialog = ({
 }
 
 
+export const Categories = ({ state, setState }) => {
+    const [options, setOptions] = useState([])
+   
+    const handleFetch = async () => {
+        let { data } = await axios.post('/api/product/apiProductFilters', { action: 'findCategories' })
+        setOptions(data.result)
+    }
+    useEffect(() => {
+        handleFetch();
+    }, [])
+
+
+    return (
+        <div className="card mb-3">
+            <span className='mb-2 block'>Επιλογή Kατηγορίας</span>
+            <div className='flex align-items-center'>
+                <Dropdown value={state} onChange={(e) => setState(e.value)} options={options} optionLabel="categoryName"
+                    placeholder="Κατηγορία" className="w-full" />
+            </div>
+
+
+        </div>
+    )
+}
 
 
 

@@ -1,16 +1,23 @@
+
+import multer from 'multer';
+import path from 'path';
 import fs from 'fs';
 
-export default function handler(req, res) {
-  const {name} =req.body
-console.log(name)
-  const filePath = `public/uploads/${filename}`;
 
-  // Check if the file exists
-  if (fs.existsSync(filePath)) {
-    // Delete the file
-    fs.unlinkSync(filePath);
-    return res.json({ message: 'Image deleted successfully' });
-  } else {
-    return res.status(404).json({ error: 'Image not found' });
-  }
+export default async function handler(req, res) {
+    const { filename } = req.body;
+    if (!filename || typeof filename !== 'string') {
+      return res.status(400).json({ error: 'Invalid filename provided' });
+    }
+  
+    const folderPath = path.join('public/uploads/');
+    const fullPath = path.join(folderPath, filename);
+
+    fs.unlink(fullPath, (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error deleting the image' });
+      }
+      return res.json({ success: true, message: 'Image deleted successfully' });
+    });
+
 }

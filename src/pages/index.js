@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import styled from 'styled-components';
-import { CircularProgress } from '@mui/material';
+import { ProgressSpinner } from 'primereact/progressspinner';
+
 export default function Home() {
     const session = useSession();
     const router = useRouter();
@@ -19,7 +20,7 @@ export default function Home() {
         <>
             
             <Container>
-                <CircularProgress color="primary"/>
+                <ProgressSpinner  fill="blue"/>
             </Container>
 
         </>

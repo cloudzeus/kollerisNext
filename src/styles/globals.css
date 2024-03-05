@@ -1,24 +1,45 @@
 
-@import "./material.css";
 @import "primereact/resources/themes/lara-light-indigo/theme.css";     
 @import "primereact/resources/primereact.min.css"; 
 @import 'primeicons/primeicons.css';
-
+@import './product.css';
+@import './holder.css';
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-
-}
-
-* {
   margin: 0;
   padding: 0;
 }
 
+.diathesima-warning {
+  /* background: #F4B5AB!important; */
+  /* color: black!important;
+  font-weight: 800; */
+  /* color: white!important; */
+}
+
+.wharehouse-msg  .p-inline-message-text  {
+  font-size: 0.76rem;
+}
+.wharehouse-msg  .p-inline-message-icon {
+ 
+  width: 0.8rem;
+  height: 0.8rem;
+}
+.grid-filter .p-inputtext {
+  font-size: 0.8rem;
+}
+
+.product-datatable.p-datatable .p-datatable-tbody > tr > td {
+  padding: 5px 10px;
+}
 
 
+.p-component {
+  font-size: 0.85rem;
+}
 .p-fileupload .p-fileupload-content {
   padding: 10px;
 }
@@ -33,22 +54,16 @@ html,
 body {
   max-width: 100vw;
   overflow: hidden;
-  padding: 0;
-  margin: 0;
+ 
   font-size: 15px;
   height: 100vh;
   font-family: 'Roboto', sans-serif;
   /* color: #575353; */
   font-weight: 300;
-  overflow: hidden;
   background-color: #f0f0f0;
-  /* font-family: var(--font-family); */
 }
 
-input {
-  font-family: 'Roboto', sans-serif;
 
-}
 
 a {
   color: inherit;
@@ -57,27 +72,6 @@ a {
 
 
 
-/* h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #1f2020;
-} */
-
-
-h2 {
-  font-size: 25px;
-}
-
-h3 {
-  font-size: 20px;
-}
-
-
-
-/* Custom ScrollBar */
 
 form {
   width: 100%;
@@ -86,6 +80,7 @@ form {
 
 ::-webkit-scrollbar {
   width: 5px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
@@ -94,18 +89,34 @@ form {
 
 ::-webkit-scrollbar-thumb {
   background: #cdcdcda7;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 
-.fade-in {
-  opacity: 0;
-  transition: opacity 0.5s ease-in;
+
+.offer_input .p-inputtext {
+    width: 70px;
 }
 
-.fade-in.active {
-  opacity: 1;
+
+.offer_disctount_btn {
+    width: 25px;
+    height: 25px;
+    font-size: 0.8rem;
+    background-color: white;
+    /* border: 1px solid var(--primary-color); */
+    background-color: rgb(130, 197, 29);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
+.offer_disctount_btn i {
+   color: var(--primary-color);
+   color: white;
+   font-size: 12px;
+}
 
 

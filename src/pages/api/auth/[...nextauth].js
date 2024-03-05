@@ -1,7 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import axios from 'axios';
-console.log('NEXTAUTH_SECRET:' + process.env.NEXTAUTH_SECRET)
 
 export default NextAuth({
   session: {
@@ -21,11 +19,16 @@ export default NextAuth({
               body: JSON.stringify(credentials),
               headers: { "Content-Type": "application/json" },
             });
-            const user = await res.json();
-			
-            if (user && user.success == true) {
+            let user = await res.json();
+           
+
+            if(user.user.role === 'user') {
+              user = {message: 'Δεν μπορείτε να συνθεθείτε ακόμα'}
+            }
+            if (user.user  && user.success == true) {
               return user;
-            } else {
+            } 
+            else {
               return null;
             }
             
@@ -36,7 +39,12 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-	async jwt({ token, user}) {
+	async jwt({ token, user, trigger, session }) {
+
+    if(trigger === 'update') {
+      return {...token, ...session.user};
+    }
+
 	  return {...token, ...user};
     },
     async session({ session, token }) {

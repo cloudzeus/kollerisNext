@@ -3,19 +3,15 @@ import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
-import { object } from "yup";
+
 export default async function handler(req, res) {
 
 	
 	///handler for softone catergories
 	let action = req.body.action;
 	
-	
-
-	
 
     if (action === 'findAll') {
-        console.log('find all MtrGroup')
 		try {
 			await connectMongo();
             const mtrgroup = await MtrGroup.find({})
@@ -29,7 +25,6 @@ export default async function handler(req, res) {
             })
            
                 
-            console.log('find all groups: ' + JSON.stringify(mtrgroup))
 			return res.status(200).json({ success: true, result: mtrgroup });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -106,65 +101,70 @@ export default async function handler(req, res) {
 		}
 	}
     if (action === 'update') {
-		
-
-        let originalCategory = req.body.originalCategory
-		let body = req.body.data;
-
-        //id of the group:
-        let id = req.body.id
-
-        console.log('group id: ' + id)
-	
+        const {originalCategory, newCategory, data, groupid} = req.body;
+        // console.log(data)
+        console.log('GROUP ID')
+        console.log(groupid)
+		console.log('original category id')
+		console.log(originalCategory)
+		console.log('new category id')
+		console.log(newCategory)
+        //CONSTRUCT OBJECT TO UPDATE MONGO DB:
         let obj = {
-            category: body.categoryid,
-            groupName: body.groupName,
-            groupIcon: body.groupIcon,
-            groupImage: body.groupImage,
-            softOne: body.softOne,
-            status: true,
-            localized: body.localized,
-            updatedFrom: body?.updatedFrom,
-
+            category: newCategory,
+            groupName:data.groupName,
+            softOne: data.softOne,
+            updatedFrom: data?.updatedFrom,
+            englishName: data.englishName,
         }
-
-        console.log('obj: ' + JSON.stringify(obj))
-        // let sonftoneObj = {
-        //     mtrgroup: parseInt(mtrgroup),
-        //     username: "Service",
-        //     password: "Service",
-        //     name: body.groupName,
-        //     company: '1001',
-        //     mtrcategory:  parseInt(mtrcategory),
-        // }
-        // console.log('sonftoneObj: ' + JSON.stringify(sonftoneObj))
-   
-		// if(body?.groupName) {
-		// 	let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
-		// 	let softoneResponse = await axios.post(URL, {...sonftoneObj})
-        //     console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
+        //CONSTRUCT OBJECT TO UPDATE SOFTONE:
+        let softoneObj = {
+			mtrgroup: data.softOne.MTRGROUP,
+			username:"Service",
+			password:"Service",
+            name: data.softOne.NAME,
+            company: 1001,
+            mtrcategory: data.category.softOne.MTRCATEGORY,
+			isactive: 1
+        }
+      
+		console.log('obj: ' + JSON.stringify( softoneObj))
+        //UPDATE SOFTONE:
+		if(data.softOne.NAME) {
+			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrGroup/updateMtrGroup`;
+			let softoneResponse = await axios.post(URL, softoneObj)
+            console.log('softoneresponse')
+			console.log(softoneResponse.data)
             
-		// }
+		}
 		
        
 		try {
 			await connectMongo();
             const updatedGroup = await MtrGroup.findOneAndUpdate(
-                { _id: id  },
+                { _id: groupid },
                 obj,
                 { new: true }
               );
+            
+            // WHEN we change the category of the grou we need to push it to the new category, and pull it from the old category
 
-            const updatedCategory = await MtrCategory.updateOne({_id: body.categoryid}, {$push: {groups: id}})
-            const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: id}})
+            const updatedCategory = await MtrCategory.updateOne({_id: newCategory}, {$push: {groups: groupid}})
+			console.log('push to new category: ' + JSON.stringify(updatedCategory))
+            const pull = await MtrCategory.updateOne({_id: originalCategory}, {$pull: {groups: groupid}})
+			
+			console.log('pull from old category: ' + JSON.stringify(pull))
+         
             let message;
 
 
             if(updatedCategory) {
-                message = `Η κατηγορία ${body.category.categoryName} ενημερώθηκε. Μία εγγραφή προστέθηκε στην κατηγορία`
+                message = `Η κατηγορία ενημερώθηκε. Μία εγγραφή προστέθηκε στην νέα κατηγορία`
+            }
+            if(pull) {
+                message += ` Επιτυχής αφαίρεση από την παλιά κατηγορία ${data.category.softOne.NAME} `
             }
            
-            console.log('result: ' + JSON.stringify(updatedGroup ))
 			return res.status(200).json({ success: true, result: updatedGroup, message: message });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null });
@@ -176,6 +176,93 @@ export default async function handler(req, res) {
 
 	}
    
+    
+
+    if(action === "getImages") {
+		const {id} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			const category = await MtrGroup.findOne({_id: id}, {groupImage: 1, groupIcon: 1, _id: 0});
+			console.log(category)
+			return res.status(200).json({ success: true, result: category });
+		} catch (e) {
+
+		}
+	}
+	if(action === "addImage") {
+		const { imageName, id} = req.body;
+        console.log('image Name')
+        console.log(imageName)
+        console.log('id')
+        console.log(id)
+		try {
+			await connectMongo();
+			let add = await MtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					groupImage: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteImage') {
+		const {id} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			let deleted = await  MtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					groupImage: ''
+				}}	
+			  	);
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+	if(action === "addLogo") {
+		const { imageName, id} = req.body;
+		try {
+			await connectMongo();
+			let add = await MtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					groupIcon: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteLogo') {
+		const {id} = req.body;
+		console.log('delete logo')
+		console.log(id)
+		try {
+			await connectMongo();
+			let deleted = await  MtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					groupIcon: ''
+				}}	
+			  	);
+
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
 
 }
 

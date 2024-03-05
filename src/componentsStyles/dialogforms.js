@@ -22,7 +22,7 @@ const Divider = styled.div`
     width: 100%;
     height: 1px;
     background-color: #e8e8e8;
-    margin: 40px 0;
+    margin: 20px 0;
 `
 
 

@@ -1,18 +1,41 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import AdminLayout from '@/layouts/Admin/AdminLayout';
-import { useSession, signIn, signOut } from "next-auth/react"
-
-const DashboardIndex = () => {
-  const session = useSession();
- 
+import UploadedProductsGrid from '@/components/grid/UploadedProductsGrid';
+import ProductStats from '@/components/grid/ProductStats';
+import StepHeader from '@/components/StepHeader';
+import { DataTable } from 'primereact/datatable';
+import OffersSection from '@/components/grid/Product/OffersSection';
+import { ProductCard } from '@/components/grid/ProductStats';
+const Page = () => {
 
 
   return (
-        <AdminLayout>
-        <h1>Admin Dashboard</h1>
-      </AdminLayout>
+    <AdminLayout>
+        <div className='ml-2'>
+      <StepHeader text={"Προϊόν"} />
+      </div>
+        <div className='grid mt-1 '>
+        <div className='col-4'>
+        < ProductStats />
+        </div>
+        <div className='col-8'>
+          <ProductCard />
+        </div>
+      </div>
+     <OffersSection />
+      <div className="col bg-white border-round mb-3">
+        < UploadedProductsGrid />
+      </div>
     
+    
+    </AdminLayout>
+
   )
 }
 
-export default DashboardIndex;
+
+
+
+
+
+export default Page;

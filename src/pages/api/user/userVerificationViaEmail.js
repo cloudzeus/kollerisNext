@@ -1,35 +1,29 @@
 
-import nodemailer from 'nodemailer';
+import { transporter } from '@/utils/nodemailerConfig';
 
-
-const email = 'johnchiout.dev@gmail.com'
-const pass = 'ypbytdbjwumhepop'
-
-
-export const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: email,
-        pass: pass
-    }
-})
-
-export const mailOptions  = {
-    from: email,
-    to: email,
-}
 
 export default async function handler(req, res) {
-    const data = req.body
-    console.log('data', JSON.stringify(data))
-    // console.log()
+    const data = req.body;
     try {
-        await transporter.sendMail({
-            ...mailOptions,
-            subject: 'Νέα Εγγραφή Χρήστη',
+        const mail = {
+            from: 'info@kolleris.com',
+            to: ['info@kolleris.com',  `${process.env.NEXT_PUBLIC_NODEMAILER_EMAIL}`],
+            cc: 'johnchiout.dev@gmail.com',
             text: "Ένας νέος χρήστης έχει ζητήσει να εγγραφεί στην ιστοσελίδα σας.",
+            subject: 'Νέα Εγγραφή Χρήστη',
             html: data
-        })
+        };
+    
+        transporter.sendMail(mail, (err, info) => {
+            if (err) {
+                console.log(err);
+                emailSent = false
+    
+            } else {
+                console.log('Email sent successfully!');
+                emailSent = true
+            }
+        });
         return res.status(200).json({success: true, error: null})
     } catch (error) {
         console.log(error)

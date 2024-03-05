@@ -6,10 +6,12 @@ import { toast } from 'react-toastify';
 const initialState = {
 	user: getUserFromLocalStorage(),
 	error: null,
-	response: null,
+	response: {
+		success: null,
+		error: null,
+	},
 	isLoading: false,
-	isSidebarOpen: false,
-	asycnedMarkes: 0,
+	isSidebarOpen:true,
 }
 
 
@@ -100,7 +102,9 @@ const userSlice = createSlice({
 			})
 			.addCase(registerUser.fulfilled, (state, { payload }) => {
 				state.isLoading = false;
-				state.user = payload.user;
+				console.log('payload')
+				console.log(payload)
+				state.user = payload?.user;
 				state.response = payload;
 			})
 			.addCase(registerUser.rejected, (state, { payload }) => {

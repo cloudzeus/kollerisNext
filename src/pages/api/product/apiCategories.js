@@ -1,8 +1,10 @@
 import axios from "axios";
-import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
+import { connect } from "mongoose";
+import Groups from "@/pages/dashboard/product/mtrgroup";
+
 export default async function handler(req, res) {
 
 
@@ -23,7 +25,7 @@ export default async function handler(req, res) {
 			}
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/createMtrCategory`;
             let addedSoftone = await axios.post(URL, softoneobj)
-            if(!addedSoftone.data.success) {return res.status(500).json({ success: false, error: 'Αποτυχία εισαγωγής στο Softone' })} 
+            if(!addedSoftone.data.success) {return res.status(500).json({ success: false, error: 'Αποτυχία εισαγωγής στο Softone' })}
 
 			let createobj ={
 				...data,
@@ -50,7 +52,6 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'findAll') {
-        console.log('find all')
 
 		try {
 			await connectMongo();
@@ -67,12 +68,10 @@ export default async function handler(req, res) {
 	}
 	if(action === 'update') {
 		console.log('update')
-		let { data } = req.body;
+		const { data, updatedFrom } = req.body;
+
 		let {id} = req.body
-		// let {softoneID} = req.body
-		// console.log(data)
-		console.log(id)
-		// console.log(softoneID)
+	
 
 		let softoneobj = {
 			mtrcategory : data.softOne.MTRCATEGORY,
@@ -83,18 +82,18 @@ export default async function handler(req, res) {
 		}
 
 		try {
-		
-			console.log(softoneobj)
+
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/updateMtrCategory`;
 			let  softone = await axios.post(URL, softoneobj)
-			console.log(softone.data)
 			// if(!softone.data.success) {
 			// 	return res.status(500).json({ success: false, error: 'Αποτυχία update στο Softone' })
 			// }
 			await connectMongo();
 			const updatecategory = await MtrCategory.findOneAndUpdate(
                 { _id: id  },
-                data,
+               {
+				...data, updatedFrom: updatedFrom,
+			   },
                 { new: true }
               );
 			return res.status(200).json({ success: true, result: updatecategory });
@@ -102,42 +101,128 @@ export default async function handler(req, res) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
-	if (action === 'syncCategories') {
+	
+	if(action === "findGroups") {
+		const {categoryId} = req.body;
 		try {
 			await connectMongo();
-			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrCategory/getMtrCategory`;
-			console.log(URL)
-			let { data } = await axios.get(URL)
-			let array = []
-			for (let category of data.result) {
-				let object = {
-					categoryName: '',
-					categoryIcon: '',
-					categoryImage: '',
-					softOne: {
-						MTRCATEGORY: category.MTRCATEGORY,
-						CODE: category.CODE,
-						NAME: category.NAME,
-						ISACTIVE: category.ISACTIVE
-					},
-					localized: [{
-							locale: 'en-US',
-							name: 'English',
-							description: 'English',
-					}],
-				}
-				array.push(object)
-			
-			}
-			let res = await MtrCategory.insertMany(array)
-			console.log('res ' + res)
-			// return res.status(200).json({ success: true, result: res });
+			let groups = await  MtrGroup.find({category: categoryId})
+			.populate({
+                path: 'category',
+            
+            })
+            .populate({
+                path: 'subGroups',
+            
+            })
+			return res.status(200).json({ success: true, result: groups });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === "findSubGroups") {
+		const {groupId} = req.body;
+		try {
+			await connectMongo();
+			let result = await SubMtrGroup.find({group: groupId})
+			.populate( 'group', 'groupName')
+			return res.status(200).json({ success: true, result: result });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
 
+
+	
+
+	if(action === "getImages") {
+		const {id, createNew} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			const category = await MtrCategory.findOne({_id: id}, {categoryImage: 1, categoryIcon: 1, _id: 0});
+			console.log(category)
+			return res.status(200).json({ success: true, result: category });
+		} catch (e) {
+
+		}
+	}
+	if(action === "addImage") {
+		const { imageName, id} = req.body;
+		try {
+			await connectMongo();
+			let add = await MtrCategory.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					categoryImage: imageName
+				}}	
+			  	);
+				console.log('add')
+			console.log(add)
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteImage') {
+		const {id} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			let deleted = await MtrCategory.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					categoryImage: ''
+				}}	
+			  	);
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+	if(action === "addLogo") {
+		const { imageName, id} = req.body;
+		try {
+			await connectMongo();
+			let add = await MtrCategory.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					categoryIcon: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteLogo') {
+		const {id} = req.body;
+		console.log('delete logo')
+		console.log(id)
+		try {
+			await connectMongo();
+			let deleted = await MtrCategory.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					categoryIcon: ''
+				}}	
+			  	);
+
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+
+	
+	
 }
+
 
 
 

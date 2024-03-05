@@ -1,22 +1,20 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { InputText } from 'primereact/inputtext';
 import styled from 'styled-components';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller} from 'react-hook-form';
 import { classNames } from 'primereact/utils';
-import { Toast } from 'primereact/toast';
-import { Button } from 'primereact/button';
+
 import { InputTextarea } from 'primereact/inputtextarea';
 
 
-const Input = ({ label, name, mb, mt, control, required, error, type }) => {
+const Input = ({ label, name, mb, mt, control, required, error, type, disabled }) => {
     return (
 
         < InputContainer mb={mb} mt={mt} error={error}>
             <Controller
                 name={name}
                 control={control}
-                // rules={rules}
                 render={({ field, fieldState }) => (
                     <>
                        
@@ -28,6 +26,7 @@ const Input = ({ label, name, mb, mt, control, required, error, type }) => {
                                 type={type}
                                 id={field.name}
                                 value={field.value}
+                                disabled={disabled}
                                 className={classNames({ 'p-invalid': fieldState.error })}
                                 onChange={(e) => field.onChange(e.target.value)} />
                         </span>
@@ -51,7 +50,6 @@ export const TextAreaInput = ({ label, name, mb, mt, control, error, autoResize,
             <Controller
                 name={name}
                 control={control}
-                // rules={rules}
                 render={({ field, fieldState }) => (
                     <>
                        

@@ -38,6 +38,14 @@ const ActionDiv = styled.span`
 
 `
 
+const CartDiv = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span {
+        font-size: 14px;
+    }
+`
 const  DisabledDisplay  = styled.div`
     .disabled-card{
         margin-bottom: 10px;
@@ -91,5 +99,6 @@ export {
     DisabledDisplay ,
     SyncButtonContainer,
     SubGridStyles,
-    TemplateContainer
+    TemplateContainer,
+    CartDiv
 };

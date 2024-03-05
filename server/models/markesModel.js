@@ -1,19 +1,26 @@
 import { model, models } from 'mongoose';
 import mongoose from 'mongoose';
-
-
+import Supplier from './suppliersSchema';
+import BrandCatalog from './catalogsModel';
 
 
 const markesSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        require: true
-    },
+  
     description:String,
+    // minItemsOrder:{
+    //     type:Number,
+    //     default:0
+    // },
+    // minValueOrder:{
+    //     type:Number,
+    //     default:0    
+    // },
+    // minYearPurchases:{
+    //     type:Number,
+    //     default:0
+    // },
     logo:{
-    //ALWAYS VECTOR LOGO PATH
         type:String,
-        require:true
     },
     videoPromoList:[
         {
@@ -21,12 +28,9 @@ const markesSchema = new mongoose.Schema({
             videoUrl:String
         }
     ],
-    photosPromoList:[
-        {
-            name:String,
-            photosPromoUrl:String
-        }
-    ],
+    images: [{
+        name: String,
+    }],
     pimAccess:{
         pimUrl:String,
         pimUserName:String,
@@ -47,10 +51,17 @@ const markesSchema = new mongoose.Schema({
         NAME: String,
         ISACTIVE:Number
     },
-    status: Boolean,
+
     updatedFrom: String,
-    createdFrom: String,
-    deletedFrom: String,
+    catalogs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BrandCatalog'
+    }],
+    supplier: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplier'
+    },
+    
   
 },{
     timestamps: true

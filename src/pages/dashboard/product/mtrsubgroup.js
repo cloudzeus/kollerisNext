@@ -11,14 +11,16 @@ import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/mtrsubgroupDialog';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import {  ActionDiv, SubGridStyles } from '@/componentsStyles/grid';
-
+import {  ActionDiv} from '@/componentsStyles/grid';
+import GridActions from '@/components/grid/GridActions';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
 
 import GridLogoTemplate from '@/components/grid/gridLogoTemplate';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
+import TranslateField from '@/components/grid/GridTranslate';
+import { useSession } from 'next-auth/react';
+import StepHeader from '@/components/StepHeader';
 
 
 
@@ -32,6 +34,8 @@ export default function Categories() {
     const toast = useRef(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
     const [filters, setFilters] = useState({
@@ -88,11 +92,7 @@ export default function Categories() {
     };
 
 
-    const allowExpansion = (rowData) => {
-        return rowData
-
-    };
-
+   
 
 
 
@@ -105,24 +105,11 @@ export default function Categories() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <>
-                {/* <SyncBrand 
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            /> */}
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
+   
 
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -150,20 +137,21 @@ export default function Categories() {
     // CUSTOM TEMPLATES FOR COLUMNS
     const logoTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupIcon} />
-     }
-
-
-    const imageTemplate = (data) => {
+    }
+    const ImageTemplate = (data) => {
         return <GridLogoTemplate logo={data.subGroupImage} />
-     }
-    
+    }
+
+     
+
+   
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
-        );
+        //     <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
+        <div>
+            <i className="pi pi-pencil" style={{marginRight: '5px'}} onClick={() => editProduct(rowData)}></i>
+        </div>
+        )
     };
 
     const showSuccess = () => {
@@ -181,13 +169,13 @@ export default function Categories() {
 
     };
 
-
-  
+   
 
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <StepHeader text="Υποομάδες" />
+            <Toolbar  start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -202,18 +190,18 @@ export default function Categories() {
                 onFilter={(e) => setFilters(e.filters)}
                 loading={loading}
                 editMode="row"
+                className='p-datatable-sm'
                 selectOnEdit
             >
-                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate} ></Column>
-                <Column field="group.groupName" header="Κατηγορία" sortable ></Column>
-                <Column field="subGroupName" header="Όνομα Sub Group" sortable ></Column>
-                {/* <Column field="subGroupImage" header="Φωτογραφία Group" body={imageTemplate} ></Column> */}
-                  <Column body={LocaleTemplate} header="Localized" ></Column>
-              
-                <Column field="status" sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
-                <Column field="createdFrom" sortable header="createdFrom" tableStyle={{ width: '5rem' }} body={CreatedFromTemplate}></Column>
-                <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                <Column field="subGroupIcon" header="Λογότυπο" body={logoTemplate}  style={{ width: '50px' }}></Column>
+                <Column field="subGroupImage" header="Φωτογραφία" body={ImageTemplate }  style={{ width: '50px' }}></Column>
+                <Column field="group.groupName" header="Κατηγορία" ></Column>
+                <Column field="subGroupName" header="Όνομα Sub Group"  ></Column>
+                <Column field="englishName" header="Μετάφραση"  ></Column>
+                <Column field="updatedFrom"  header="updatedFrom" style={{ width: '90px' }} body={UpdatedFromTemplate}></Column>
+                {user?.role === 'admin' ? (
+                <Column body={actionBodyTemplate} exportable={false}  bodyStyle={{ textAlign: 'center' }} style={{width: '40px'}} ></Column>
+                ) : null}
 
             </DataTable>
           
@@ -254,14 +242,6 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <>
-            {localized.length > 0 ? ( <GridLanguageTemplate localized={localized} />) : null}
-        </>
-    )
-
-}
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
@@ -275,6 +255,7 @@ const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
 
     )
 }
+
 const CreatedFromTemplate = ({ createdFrom, createdAt }) => {
     return (
         <RegisterUserActions

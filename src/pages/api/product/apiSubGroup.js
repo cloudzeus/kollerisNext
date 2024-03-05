@@ -1,5 +1,4 @@
 import axios from "axios";
-import mongoose from "mongoose";
 
 import { MtrGroup, MtrCategory, SubMtrGroup } from "../../../../server/models/categoriesModel";
 import connectMongo from "../../../../server/config";
@@ -10,14 +9,11 @@ export default async function handler(req, res) {
 	let action = req.body.action;
 	
     if (action === 'findAll') {
-        console.log('find all SubGroups')
 		try {
 			await connectMongo();
             const subgroup = await SubMtrGroup.find({})
             .populate( 'group', 'groupName')
             
-            
-            console.log('find all groups: ' + JSON.stringify(subgroup))
 			return res.status(200).json({ success: true, result: subgroup });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -103,14 +99,15 @@ export default async function handler(req, res) {
       
 
        
-        let {originalGroup, cccSubgroup2, originalSubGroupName} = req.body
-        let body = req.body.data;
+        const {originalGroup, cccSubgroup2, data, originalSubGroupName, id} = req.body
+        // let body = req.body.data;
         let mtrgroupid;
-        let subgroupid = req.body.id
+        let subgroupid = id
         let originalGroupID = originalGroup._id
-        let newGroupID = body.groupid || originalGroupID
-       
+        let newGroupID = data.groupid || originalGroupID
         
+        console.log(data.updatedFrom)
+    
         try {
             //find mtrgroup id to update softone
             await connectMongo();
@@ -126,27 +123,24 @@ export default async function handler(req, res) {
 	
         let obj = {
             group: newGroupID,
-            subGroupName: body.subGroupName,
-            subGroupIcon: body.subGroupIcon,
-            subGroupImage: body.subGroupImage,
-            softOne: body.softOne,
+            subGroupName: data.subGroupName,
+            softOne: data.softOne,
             status: true,
-            localized: body.localized,
-            updatedFrom: body?.updatedFrom,
-
+            updatedFrom: data.updatedFrom,
+            englishName: data.englishName,
         }
 
-        console.log('obj: ' + JSON.stringify(obj))
         let sonftoneObj = {
             username:"Service",
             password: "Service",
             cccSubgroup2: cccSubgroup2,
             short: cccSubgroup2,
-            name: body.subGroupName,
+            name: data.subGroupName,
             mtrgroup: mtrgroupid,
+          
         }
 
-		if(body?.subGroupName !== originalSubGroupName) {
+		if(data?.subGroupName !== originalSubGroupName) {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.cccGroup/updateCccGroup`;
 			let softoneResponse = await axios.post(URL, {...sonftoneObj})
             console.log('softoneResponse: ' + JSON.stringify(softoneResponse.data))
@@ -158,12 +152,11 @@ export default async function handler(req, res) {
        
 		try {
 			await connectMongo();
-            const updatedsubGroup = await SubMtrGroup.findOneAndUpdate(
+            const updatedsubGroup = await SubMtrGroup.updateOne(
                 { _id: subgroupid  },
                 obj,
-                { new: true }
               );
-            // return res.status(200).json({ success: true, result: updatedsubGroup, error: null });
+              console.log(updatedsubGroup)
             const updatedGroup = await MtrGroup.findOneAndUpdate({_id: newGroupID}, {$push: {subGroups: subgroupid}})
             const pull = await MtrGroup.findOneAndUpdate({_id: originalGroupID}, {$pull: {subGroups:subgroupid}})
 
@@ -201,6 +194,91 @@ export default async function handler(req, res) {
         }
 
     }
+
+    if(action === "getImages") {
+		const {id} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			const result = await SubMtrGroup.findOne({_id: id}, {subGroupImage: 1, subGroupIcon: 1, _id: 0});
+			console.log(result )
+			return res.status(200).json({ success: true, result: result });
+		} catch (e) {
+
+		}
+	}
+	if(action === "addImage") {
+		const { imageName, id} = req.body;
+        
+		try {
+			await connectMongo();
+			let add = await SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupImage: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteImage') {
+		const {id} = req.body;
+		console.log(id)
+		try {
+			await connectMongo();
+			let deleted = await  SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupImage: ''
+				}}	
+			  	);
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+    if(action === "addLogo") {
+		const { imageName, id} = req.body;
+		try {
+			await connectMongo();
+			let add = await SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupIcon: imageName
+				}}	
+			  	);
+			
+			return res.status(200).json({ success: true, result: add  });
+		} catch (e) {
+			return res.status(400).json({ success: false, result: null });
+		}
+	}
+	if(action === 'deleteLogo') {
+		const {id} = req.body;
+	
+		try {
+			await connectMongo();
+			let deleted = await  SubMtrGroup.findOneAndUpdate(
+				{_id: id},
+				{$set : {
+					subGroupIcon: ''
+				}}	
+			  	);
+
+			console.log(deleted)
+			return res.status(200).json({ success: true, result: deleted  });
+		} catch (e) {	
+			return res.status(400).json({ success: false, result: null });
+		}
+	} 
+
+
+   
 }
 
 

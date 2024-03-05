@@ -8,34 +8,50 @@ import axios from 'axios';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
+import { FormTitle, Container } from '@/componentsStyles/dialogforms';
 
 import { PrimeInputPass } from '@/components/Forms/PrimeInputPassword';
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import { useSession } from "next-auth/react"
 
+
+
+
+const addSchema = yup.object().shape({
+    lastName: yup.string().required('Συμπληρώστε το επώνυμο'),
+    email: yup.string().email('Λάθος format email').required('Συμπληρώστε το email'),
+    password: yup.string().required('Συμπληρώστε τον κωδικό'),
+    role: yup.string().required('Συμπληρώστε τα δικαιώματα χρήστη'),
+});
+
+
+
+
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
-    const dispatch = useDispatch();
-    const [images, setImages] = useState([])
-    const [logo, setLogo] = useState([])
+    const [showDetails, setShowDetails] = useState(false)
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
     const { data: session, status } = useSession()
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
-            firstName: gridRowData?.firstName,
-            lastName: gridRowData?.lastName,
-            email: gridRowData?.email,
-            role: gridRowData?.role,
+            firstName: '',
+            lastName: '',
+            email: '',
+            role: '',
+            mobile: '',
+            landline: '',
+            country: '',
+            address: '',
+            city: '',
+            postalcode: '',
         }
     });
 
-    console.log(gridRowData)
-   
+
     useEffect(() => {
         // Reset the form values with defaultValues when gridRowData changes
         reset({ ...gridRowData });
@@ -45,25 +61,23 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleEdit = async (data) => {
+        console.log('edit data');
+        console.log(data)
 
-        const object = {
-            ...data,
-        }
         try {
             const updatedFrom = session.user.user.lastName
+            let resp = await axios.post('/api/user/apiUser',
+                {
+                    action: "update",
+                    data: { ...data, updatedFrom: updatedFrom },
+                    id: gridRowData._id
+                })
 
-            let resp = await axios.post('/api/user/apiUser', 
-            {
-                action: "update", 
-                data: {...object, updatedFrom: updatedFrom}, 
-                id: gridRowData._id
-            })
-            
-            if(!resp.data.success) showError(resp.data.error)
+            if (!resp.data.success) showError(resp.data.error)
             showSuccess()
             setSubmitted(true)
             hideDialog()
-               
+
         } catch (e) {
             console.log(e)
         }
@@ -103,47 +117,118 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     onHide={hideDialog}
                     maximizable
                 >
-                    
-                <Input
-                    label={'Όνομα'}
-                    name={'firstName'}
-                    mb={'10px'}
-                    required
-                    control={control}
-                />
-                 <Input
-                    label={'Eπώνυμο'}
-                    name={'lastName'}
-                    mb={'10px'}
-                    required
-                    control={control}
-                />
-                 <Input
-                    label={'Εmail'}
-                    name={'email'}
-                    mb={'10px'}
-                    required
-                    control={control}
-                />
-               
-                <PrimeInputPass
-                    control={control}
-                    name="newpassword"
-                    label={'Νέος Κωδικός'}
-                />
-                <PrimeSelect 
-                    control={control}
-                    name="role"
-                    required
-                    label={'Δικαιώματα Χρήστη'}
-                    values={[
+
+                    <Input
+                        label={'Όνομα'}
+                        name={'firstName'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                    />
+                    <Input
+                        label={'Eπώνυμο'}
+                        name={'lastName'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                    />
+                    <Input
+                        label={'Εmail'}
+                        name={'email'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                    />
+                   
+                 
+                    <PrimeSelect
+                        control={control}
+                        name="role"
+                        required
+                        label={'Δικαιώματα Χρήστη'}
+                        options={[
                             { role: 'user' },
                             { role: 'employee' },
                             { role: 'manager' },
                             { role: 'admin' },
                         ]}
-                  
+                        optionLabel={'role'}
+                        placeholder='label'
+                        optionValue={'role'}
+
                     />
+                     <Input
+                        label={'Νέος Κωδικός'}
+                        name={'newPassword'}
+                        mb={'10px'}
+                        required
+                        control={control}
+                    />
+
+                        <Button 
+                            onClick={() => setShowDetails(prev => !prev)} 
+                            outlined  
+                            className='min-w-min w-4 mt-4' 
+                            size='small' 
+                            label="Λεπτομέριες" 
+                            icon="pi pi-angle-down" 
+                            severity="secondary"
+                            iconPos="right" />
+                {showDetails ? (
+                    <div>
+                        <FormTitle>Διεύθυνση</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Χώρα'}
+                                    name={'address.country'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Διεύθυνση'}	
+                                    name={'address.address'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Πόλη'}	
+                                    name={'address.city'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Τ.Κ.'}	
+                                    name={'address.postalcode'}
+                                    control={control}
+                                />
+                            </div>
+                       
+                         
+                        </div>
+                        <FormTitle>Τηλέφωνα</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.mobile'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.landline'}
+                                    control={control}
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                ) : null}
                 </Dialog>
             </form>
         </Container>
@@ -153,33 +238,37 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
-const addSchema = yup.object().shape({
-    name: yup.string().required('Συμπληρώστε το όνομα'),
-});
 
-
-const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
-
-
+const AddDialog = ({ dialog, hideDialog, setSubmitted }) => {
+    const [showDetails, setShowDetails] = useState(false)
     const {
         control,
         formState: { errors },
         handleSubmit,
         reset
     } = useForm({
-        // resolver: yupResolver(addSchema),
+        resolver: yupResolver(addSchema),
         defaultValues: {
             firstName: '',
             lastName: '',
             email: '',
             password: '',
             role: '',
+            address: {
+                country: '',
+                address: '',
+                city: '',
+                postalcode: '',
+            },
+            phones: {
+                mobile: '',
+                landline: ''
+            }
         }
     });
 
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-    
 
 
     const cancel = () => {
@@ -192,9 +281,8 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
         console.log('data')
         console.log(data)
         setDisabled(false)
-      
         let resp = await axios.post('/api/user/apiUser', { action: 'create', data: data })
-        if(!resp.data.success) return showError(resp.data.error)
+        if (!resp.data.success) return showError(resp.data.error)
         setDisabled(true)
         setSubmitted(true)
         showSuccess()
@@ -203,10 +291,10 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
     }
 
     const productDialogFooter = (
-        <>
+        <div >
             <Button label="Ακύρωση" icon="pi pi-times" outlined onClick={cancel} />
             <Button label="Αποθήκευση" icon="pi pi-check" type="submit" onClick={handleSubmit(handleAdd)} disabled={disabled} />
-        </>
+        </div>
     );
 
     const showSuccess = () => {
@@ -225,48 +313,124 @@ const AddDialog = ({dialog,hideDialog,setSubmitted}) => {
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
                 header="Προσθήκη Χρήστη"
                 modal
+                maximizable
                 className="p-fluid"
                 footer={productDialogFooter}
                 onHide={hideDialog}>
-               
+
                 <Input
                     label={'Όνομα'}
                     name={'firstName'}
                     mb={'10px'}
                     required
                     control={control}
+                    error={errors.firstName}
                 />
-                 <Input
+                <Input
                     label={'Eπώνυμο'}
                     name={'lastName'}
                     mb={'10px'}
                     required
                     control={control}
+                    error={errors.lastName}
                 />
-                 <Input
+                <Input
                     label={'Εmail'}
                     name={'email'}
                     mb={'10px'}
                     required
                     control={control}
+                    error={errors.email}
                 />
                 <PrimeInputPass
                     control={control}
                     name="password"
                     label={'Κωδικός'}
+                    error={errors.password}
                 />
-                <PrimeSelect 
+
+                <PrimeSelect
                     control={control}
                     name="role"
                     required
                     label={'Δικαιώματα Χρήστη'}
-                    values={[
+                    options={[
                         { role: 'user' },
                         { role: 'employee' },
                         { role: 'manager' },
                         { role: 'admin' },
                     ]}
-                    />
+                    optionLabel={'role'}
+                    placeholder=''
+                    optionValue={'role'}
+                    error={errors.role}
+                />
+
+                {/* <FormTitle>Λεπτομέριες</FormTitle> */}
+                <Button 
+                    onClick={() => setShowDetails(prev => !prev)}   
+                    severity="secondary" 
+                    outlined 
+                    className='min-w-min w-4 mt-4' 
+                    size='small' 
+                    label="Λεπτομέριες" 
+                    icon="pi pi-angle-down" 
+                    iconPos="right" />
+                {showDetails ? (
+                    <div>
+                        <FormTitle>Διεύθυνση</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Χώρα'}
+                                    name={'address.country'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Διεύθυνση'}	
+                                    name={'address.address'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Πόλη'}	
+                                    name={'address.city'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Τ.Κ.'}	
+                                    name={'address.postalcode'}
+                                    control={control}
+                                />
+                            </div>
+                       
+                         
+                        </div>
+                        <FormTitle>Τηλέφωνα</FormTitle>
+                        <div className='grid'>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.mobile'}
+                                    control={control}
+                                />
+                            </div>
+                            <div className='col-6'>
+                                <Input
+                                    label={'Κινητό'}
+                                    name={'phones.landline'}
+                                    control={control}
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                ) : null}
             </Dialog>
         </form>
     )

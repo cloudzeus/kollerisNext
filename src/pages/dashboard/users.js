@@ -6,17 +6,20 @@ import { Button } from 'primereact/button';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import axios from 'axios';
 import { Tag } from 'primereact/tag';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { FilterMatchMode} from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { AddDialog, EditDialog } from '@/GridDialogs/userDialog';
 import UserRoleChip from '@/components/RoleChip';
 import { useDispatch } from 'react-redux';
 import { setGridRowData } from '@/features/grid/gridSlice';
-import { ActionDiv } from '@/componentsStyles/grid';
-import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import GridIconTemplate from '@/components/grid/gridIconTemplate';
+import { useSession } from 'next-auth/react';
+import GridOverlay from '@/components/grid/GridOverlay';
+import GridActions from '@/components/grid/GridActions';
+import StepHeader from '@/components/StepHeader';
+import { OverlayPanel } from 'primereact/overlaypanel';
 
 
 export default function TemplateDemo() {
@@ -24,29 +27,30 @@ export default function TemplateDemo() {
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+   
     const [data, setData] = useState([])
     const dispatch = useDispatch();
     const toast = useRef(null);
-    const [expandedRows, setExpandedRows] = useState(null);
+    const { data: session, status } = useSession()
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     });
 
-
+    const role = session?.user?.user?.role
+ 
 
     const handleFetch = async () => {
-
     try {
         const resp = await axios.post('/api/user/apiUser', { action: 'findAll' })
-        // console.log(resp.data.result)
+        console.log(resp.data.result)
         setData(resp.data.result)
     } catch (error) {
         console.log(error)
 
     }
-}
+    }
 
     useEffect(() => {
         handleFetch();
@@ -54,7 +58,6 @@ export default function TemplateDemo() {
 
     //Refetch on add edit:
     useEffect(() => {
-        console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
     }, [submitted])
 
@@ -62,7 +65,6 @@ export default function TemplateDemo() {
 
    
     //TEMPLATES
-
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
 
@@ -78,9 +80,7 @@ export default function TemplateDemo() {
     const onGlobalFilterChange = (event) => {
         const value = event.target.value;
         let _filters = { ...filters };
-
         _filters['global'].value = value;
-
         setFilters(_filters);
     };
 
@@ -99,8 +99,6 @@ export default function TemplateDemo() {
 
     //Edit:
     const editProduct = async (product) => {
-        // console.log('edit product: ' + JSON.stringify(product))
-
         setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
@@ -119,22 +117,31 @@ export default function TemplateDemo() {
     };
 
     const onDelete = async (id) => {
-        
-        let res = await axios.post('/api/product/apiMarkes', { action: 'delete', id: id })
+        let res = await axios.post('/api/user/apiUser', { action: 'delete', id: id })
         if(!res.data.success) return showError()
         handleFetch()
         showSuccess()
     }
 
     // CUSTOM TEMPLATES FOR COLUMNS
-    const actionBodyTemplate = (rowData) => {
+  
+
+    const ActionBodyTemplate = (rowData) => {
+            // <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData} />
+        const op = useRef(null);
         return (
-            <ActionDiv>
-                <Button size="small" style={{width: '40px', height: '40px'}}  /*disabled={!rowData.status}*/ icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status}  />
-            </ActionDiv>
-        );
-    };
+            <div className='flex align-items-center justify-content-center'>
+                <i className="pi pi-cog mr-2 cursor-pointer text-primary" style={{ fontSize: '13px' }} onClick={(e) => op.current.toggle(e)}></i>
+                <OverlayPanel ref={op}>
+                    <div className='flex flex-column'>
+                        <Button label="Διαμόρφωση" icon="pi pi-pencil" className='w-full mb-2' onClick={() => editProduct(rowData)} />
+                        <Button onClick ={() => onDelete(rowData._id)} label="Διαγραφή" severity='danger' icon="pi pi-trash" className='w-full mb-2'  />
+                    </div>
+                </OverlayPanel>
+            </div>
+        )
+    }
+
 
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Επιτυχής διαγραφή', life: 4000 });
@@ -157,15 +164,16 @@ export default function TemplateDemo() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} ></Toolbar>
+            <StepHeader text="Χρήστες" />
+            {role === 'admin' ?  <Toolbar  left={leftToolbarTemplate} ></Toolbar> : null }
             <DataTable
+                className='p-datatable-sm'
                 header={header}
                 value={data}
                 paginator
                 rows={8}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 showGridlines
-                onRowToggle={(e) => setExpandedRows(e.data)}
                 dataKey="_id"
                 filters={filters}
                 paginatorRight={true}
@@ -177,11 +185,15 @@ export default function TemplateDemo() {
             >
                 <Column field="firstName" header="'Ονομα" body={nameTemplate} ></Column>
                 <Column field="lastName" header="Επώνυμο" sortable></Column>
+                <Column field="details" body={gridDetails} header="Λεπτομέριες" sortable></Column>
                 <Column field="email" header="Email" sortable tableStyle={{ width: '5rem' }} body={emailTemplate}></Column>
                 <Column field="createdAt"  body={userCreate} sortable header="Ημερομηνία Δημιουργίας" tableStyle={{ width: '5rem' }}></Column>
-                <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column>
+                {/* <Column field="status"  sortable header="Status" tableStyle={{ width: '5rem' }} body={ActiveTempate}></Column> */}
                 <Column field="role"  sortable header="Role" tableStyle={{ width: '5rem' }} body={(data) => UserRoleChip(data.role)}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} tableStyle={{ width: '4rem' }} filterMenuStyle={{ width: '5rem' }}></Column>
+               
+                {role === 'admin' ? (
+                    <Column body={ActionBodyTemplate } exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '90px' }} ></Column>
+                ) : null}
 
             </DataTable>
             <EditDialog
@@ -220,13 +232,7 @@ const ActiveTempate = ({ status }) => {
 
 }
 
-const RoleTemplate = ({ role }) => {
-    switch (role) {
-        case 'admin':
-            return 
-    }
 
-}
 
 const emailTemplate = (data) => {
     return (
@@ -255,6 +261,34 @@ const nameTemplate = (data) => {
 
 const userCreate = ({createdAt}) => {
     return createdAt.split('T')[0]
+}
+
+
+const gridDetails = (data) => {
+ 
+    return (
+        <GridOverlay title="info">
+              <DataTable
+                value={[data]}
+                rows={8}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                showGridlines
+                dataKey="_id"
+                removableSort
+                onFilter={(e) => setFilters(e.filters)}
+                editMode="row"
+            >
+                <Column field="address.country" header="'Χώρα" ></Column>
+                <Column field="address.city" header="Πόλη" ></Column>
+                <Column field="address.address" header="Διεύθυνση" ></Column>
+                <Column field="address.postalcode" header="Τ.Κ." ></Column>
+                <Column field="phones.mobile" header="Κινητό" ></Column>
+                <Column field="phones.landline" header="Σταθερό" ></Column>
+                
+
+            </DataTable>
+        </GridOverlay>
+    )
 }
 
 

@@ -3,11 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-import GallerySmall from '@/components/GalleryListSmall';
-import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
+
 import axios from 'axios';
-import styled from 'styled-components';
-import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,11 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
-import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
-import PrimeSelect from '@/components/Forms/PrimeSelect';
-import AddDeleteImages from '@/components/GalleryListSmall';
-import { original } from '@reduxjs/toolkit';
+
 
 const addSchema = yup.object().shape({
     // subGroupName: yup.string().required('Συμπληρώστε το όνομα'),
@@ -32,10 +26,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
  
-    //This component has one Image only:
-    const [image, setImage] = useState([])
-    const [logo, setLogo] = useState([])
-    const [parent, setParent] = useState([])
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -47,54 +37,28 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
-    useEffect(() => {
-        setLogo(gridRowData?.categoryIcon ? [gridRowData?.categoryIcon] : [])
-        setImage(gridRowData?.categoryImage ? [gridRowData?.categoryImage] : [])
-    }, [gridRowData])
-
-
-    console.log('gridrowdata')
-    console.log(gridRowData)
-   
-    const handleEdit = async (data) => {
-        console.log(gridRowData)
-        let user = session.user.user.lastName
-        let newLogo = logo[0]
-        if(logo.length === 0) {
-            newLogo = ''
-
-        }
-        let newImage = image[0]
-        if(image.length === 0) {
-            newImage = ''
-
-        }
-        const object = {
-            ...data,
-            categoryIcon: newLogo,
-            categoryImage: newImage,
-           
-        }
  
 
+
+   
+   
+    const handleEdit = async (data) => {
+        let user = session.user.user.lastName
+       
+        const object = {
+            action: "update", 
+            NAME: data.NAME,
+            MTRMANFCTR: gridRowData.MTRMANFCTR,
+            id: gridRowData._id, 
+            updatedFrom: user
+        }
+
         try {
-           
-            let resp = await axios.post('/api/product/apiCategories', 
-            {
-                action: "update", 
-                data: {...object, updatedFrom: user, }, 
-                id: gridRowData._id, 
-                
-               
-            })
-            // if(!resp.data.success) {
-            //     return showError()
-            // }
-            setSubmitted(true)
+            let resp = await axios.post('/api/product/apiManufacturers', object)
+            setSubmitted((prev) => !prev)
+            if(!resp.data.success) return showError()
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-            
-            
                
         } catch (e) {
             console.log(e)
@@ -129,7 +93,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Group"
+                    header= "Διόρθωση Κατασκευαστή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
@@ -139,29 +103,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    <FormTitle>Λεπτομέριες</FormTitle>
               
                    <Input
-                    label={'Όνομα Κατηγορίας'}
-                    name={'categoryName'}
-                    control={control}
-                    required
-                    error={errors.categoryName}
-                />
+                   label={'Όνομα Kατασκευαστή'}
+                   name={'NAME'}
+                   control={control}
+                   required
+                   error={errors.NAME}
+               />
               
-                <FormTitle>Λογότυπο</FormTitle>
-                    <AddDeleteImages 
-                        state={logo}
-                        setState={setLogo}
-                        multiple={false}
-                        singleUpload={false}
-                    />
-
-                <FormTitle>Φωτογραφίες</FormTitle>
-                <AddDeleteImages 
-                        state={image}
-                        setState={setImage}
-                        multiple={false}
-                        singleUpload={false}
-                       
-                    />
                 </Dialog>
             </form>
         </Container>

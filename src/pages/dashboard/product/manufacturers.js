@@ -15,11 +15,12 @@ import {ActionDiv } from '@/componentsStyles/grid';
 import DeletePopup from '@/components/deletePopup';
 import { Toast } from 'primereact/toast';
 import RegisterUserActions from '@/components/grid/GridRegisterUserActions';
-import GridLanguageTemplate from '@/components/grid/GridLanguageTemplate';
-
-
+import GridActions from '@/components/grid/GridActions';
+import { useSession } from 'next-auth/react';
+import StepHeader from '@/components/StepHeader';
 
 export default function Manufacturers() {
+
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -28,6 +29,8 @@ export default function Manufacturers() {
     const dispatch = useDispatch();
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
+    const { data: session } =  useSession()
+    let user = session?.user?.user;
 
 
     const [filters, setFilters] = useState({
@@ -36,21 +39,17 @@ export default function Manufacturers() {
 
 
     const handleFetch = async () => {
+        setLoading(true)
         let res = await axios.post('/api/product/apiManufacturers', { action: 'findAll' })
         setData(res.data.result)
+        setLoading(false)
     }
-
-
-    useEffect(() => {
-        handleFetch()
-    }, [])
 
 
 
     //Refetch on add edit:
     useEffect(() => {
-        console.log('submitted: ' + submitted)
-        if (submitted) handleFetch()
+        handleFetch()
     }, [submitted])
 
 
@@ -92,26 +91,14 @@ export default function Manufacturers() {
         );
     };
 
-    const rightToolbarTemplate = () => {
-        return (
-            <>
-                {/* <SyncBrand 
-                refreshGrid={handleFetch}  
-                addToDatabaseURL= '/api/product/apiMarkes'
-            /> */}
-                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => console.log('export pdf')} /> */}
-            </>
-        );
-
-    };
-
+ 
 
     //Edit:
     const editProduct = async (product) => {
         // console.log('edit product: ' + JSON.stringify(product))
-        setSubmitted(false);
         setEditDialog(true)
         dispatch(setGridRowData(product))
+        setSubmitted(true);
     };
 
     //Add product
@@ -134,14 +121,10 @@ export default function Manufacturers() {
         showSuccess()
     }
 
-    // CUSTOM TEMPLATES FOR COLUMNS
   
     const actionBodyTemplate = (rowData) => {
         return (
-            <ActionDiv>
-                <Button disabled={!rowData.status} style={{ width: '40px', height: '40px' }} icon="pi pi-pencil" onClick={() => editProduct(rowData)} />
-                <DeletePopup onDelete={() => onDelete(rowData._id)} status={rowData.status} />
-            </ActionDiv>
+            <GridActions onDelete={onDelete} onEdit={editProduct} rowData={rowData}/>
         );
     };
 
@@ -165,7 +148,8 @@ export default function Manufacturers() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+            <StepHeader text="Κατασκευαστές" />
+            <Toolbar start={leftToolbarTemplate} ></Toolbar>
             <DataTable
                 header={header}
                 value={data}
@@ -182,11 +166,14 @@ export default function Manufacturers() {
                 editMode="row"
                 selectOnEdit
             >
-                <Column field="softOne.NAME" header="Kατασκευαστής" sortable></Column>
+                <Column field="NAME" header="Kατασκευαστής" sortable></Column>
                 <Column field="updatedFrom" sortable header="updatedFrom"  body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column>
-                <Column field="status" sortable header="Status"  body={ActiveTempate} style={{ width: '90px' }}></Column>
-                <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} filterMenuStyle={{ width: '5rem' }}></Column>
+                {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
+                {/* <Column field="status" sortable header="Status"  body={ActiveTempate}  bodyStyle={{ textAlign: 'center' }}  style={{ width: '90px' }}></Column> */}
+                {user?.role === 'admin' ? (
+                    <Column body={actionBodyTemplate} exportable={false} sortField={'delete'} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }}></Column>
+                ) : null}
+               
             </DataTable>
             <EditDialog
                 style={dialogStyle}
@@ -225,12 +212,7 @@ const ActiveTempate = ({ status }) => {
 }
 
 
-const LocaleTemplate = ({ localized }) => {
-    return (
-        <GridLanguageTemplate localized={localized} />
-    )
 
-}
 
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
