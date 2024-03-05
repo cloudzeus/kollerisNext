@@ -192,13 +192,14 @@ export default async function handler(req, res) {
     }
 
     if (action === 'updateClass') {
+        
         let { categoryid, groupid, subgroupid, gridData, categoryName, groupName, subGroupName } = req.body;
         let OBJ = {
             MTRGROUP: groupid,
             GROUP_NAME: groupName,
             MTRCATEGORY: categoryid,
             CATEGORY_NAME: categoryName,
-            CCCSUBGOUP2: subgroupid,
+            CCCSUBGROUP2: subgroupid,
             SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
@@ -217,7 +218,6 @@ export default async function handler(req, res) {
                     MTRCATEGORY: categoryid,
                     MTRGROUP: groupid,
                     CCCSUBGOUP2: subgroupid,
-                    CCCSUBGROUP3: ""
                 })
             });
 
@@ -242,13 +242,8 @@ export default async function handler(req, res) {
                     }, {
                         ...OBJ
                     })
-                    // let result = await SoftoneProduct.findOneAndUpdate({
-                    //     MTRL: MTRLID
-                    // }, {
-                    //     $set: OBJ
-                    // }, { new: true })
-                    console.log('result')
-                    console.log(result)
+                 
+                    
                     if (result.modifiedCount > 0 && item.hasOwnProperty('MTRL')) {
                         results.push({ name: item.NAME, updated: true, mtrl: true })
                     }
