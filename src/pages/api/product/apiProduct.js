@@ -112,9 +112,9 @@ export default async function handler(req, res) {
                     CODE: data.CODE,
                     CODE1: data.CODE1,
                     CODE2: data.CODE2,
-                    MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
-                    MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
-                    CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
+                    // MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
+                    // MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
+                    // CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
                     MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
                     VAT: data.vat.VAT,
                     COUNTRY: data.COUNTRY,
@@ -138,6 +138,7 @@ export default async function handler(req, res) {
                     COST: data?.COST,
                 }
             })
+            console.log(updateSoftoneProduct);
             systemMessage = 'Εγινε ενημέρωση στο σύστημα'
             return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage });
 

@@ -130,7 +130,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                     onHide={hideDialog}
                     maximizable
                 >
-                    <Categories
+                    {/* <Categories
                         state={selectState.category}
                         setState={setSelectState}
                     />
@@ -143,7 +143,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         state={selectState.subgroup}
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
-                    />
+                    /> */}
                     <OptionsVat
                         state={selectState.vat}
                         setState={setSelectState}
