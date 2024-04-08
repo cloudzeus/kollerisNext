@@ -165,8 +165,8 @@ export default async function handler(req, res) {
             sortPrice,
             stateFilters,
         } = req.body;
-        
-        console.log(searchTerm)
+        console.log('subgroupID')
+        console.log(subgroupID)
         try {
             await connectMongo();
     
@@ -235,6 +235,12 @@ export default async function handler(req, res) {
 
          
               
+            console.log('filterConditions')
+            console.log(filterConditions)
+            console.log('seatchTerm')
+            console.log(searchTerm)
+            console.log('sortObject')
+            console.log(sortObject)
             
             
           
@@ -260,7 +266,13 @@ export default async function handler(req, res) {
                 .skip(skip)
                 .limit(limit)
             }
-            
+            // console.log('result')
+            // console.log(softonefind)
+            console.log('totalRecords')
+            console.log(totalRecords)
+            console.log('-----------------------------')
+            // console.log('softone find')
+            // console.log(softonefind)
           
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {

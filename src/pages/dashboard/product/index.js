@@ -156,7 +156,10 @@ function Product() {
         skroutz: null,
         active: true,
     })
-    
+
+    useEffect(() => {
+        console.log(category, group, subgroup)
+    }, [category, group, subgroup])
     const dispatch = useDispatch();
 
     useEffect(() => {
