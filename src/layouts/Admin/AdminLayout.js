@@ -29,7 +29,7 @@ const AdminLayout = ({ children }) => {
 						text aria-label="navburger"
 						style={{width: '35px', height: '35px', fontSize: '12px',  backgroundColor: 'var(--surface-50)', border:'none', color: 'var(--primary-400)'}}
 						onClick={handleToggleSidebar}
-X					/>
+				/>
 					<div className='navbar-rightdiv'>
 						<FullScreen>
 							{children}

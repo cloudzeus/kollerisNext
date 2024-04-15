@@ -158,7 +158,6 @@ function Product() {
     })
 
     useEffect(() => {
-        console.log(category, group, subgroup)
     }, [category, group, subgroup])
     const dispatch = useDispatch();
 
@@ -535,7 +534,7 @@ function Product() {
         return <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
     }
 
-
+   
     
     return (
         <AdminLayout >
@@ -557,9 +556,8 @@ function Product() {
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
-
-
-            <DataTable
+                <div className="dataTable">
+                <DataTable
                 header={header}
                 first={lazyState2.first}
                 lazy
@@ -571,7 +569,7 @@ function Product() {
                 onSelectionChange={onSelection}
                 paginator
                 rows={lazyState2.rows}
-                rowsPerPageOptions={[50, 100, 200, 500]}
+                rowsPerPageOptions={[10, 50, 100, 200, 500]}
                 value={data}
                 showGridlines
                 dataKey="_id"
@@ -582,6 +580,7 @@ function Product() {
                 rowExpansionTemplate={rowExpansionTemplate}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
+
             >
 
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
@@ -675,6 +674,9 @@ function Product() {
                 {visibleColumns.some(column => column.id === 7) && <Column field="PRICER01" header="Τιμή Scroutz"></Column>}
                 {/* <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column> */}
             </DataTable>
+                </div>
+
+         
             <EditDialog
                 style={dialogStyle}
                 dialog={editDialog}

@@ -286,6 +286,7 @@ const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [refetch, setRefetch] = useState(false);
+    const [selected, setSelected] = useState(null)
 
     useEffect(() => {
         const handleFetch = async () => {
@@ -310,18 +311,19 @@ const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
     }
     const header = renderHeader()
 
+    const handleDelete = async () => {
+        setLoading(true);
+        let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', id: product._id, impaId: id })
+        if (!data.success) showError('Αποτυχία Διαγραφής')
+        showSuccess('Επιτυχής Διαγραφή')
+        setLoading(false);
+        setRefetch(prev => !prev)
+
+    }
 
     const DeleteProducts = (product) => {
 
-        const handleDelete = async () => {
-            setLoading(true);
-            let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', id: product._id, impaId: id })
-            if (!data.success) showError('Αποτυχία Διαγραφής')
-            showSuccess('Επιτυχής Διαγραφή')
-            setLoading(false);
-            setRefetch(prev => !prev)
-
-        }
+      
         return (
             <div>
                 <i className="pi pi-trash text-red-400 cursor-pointer" onClick={handleDelete}></i>
@@ -332,13 +334,17 @@ const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
         <div className="p-4">
             <p className="font-semibold mb-3 ">Προϊόντα συσχετισμένα με impa:</p>
             <DataTable
+                //    selectionMode={'checkbox'}
+                //    selection={selected}
+                //    onSelectionChange={(e) => setSelected(e.value)}
                 loading={loading}
                 showGridlines
                 header={header}
                 dataKey="_id"
                 value={data}>
-                <Column field="NAME" header="Προϊόν"></Column>
-                <Column field="CODE" style={{ width: '50px' }} body={DeleteProducts}></Column>
+                    {/* <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column> */}
+                    <Column field="NAME" header="Προϊόν"></Column>
+                    <Column field="CODE" style={{ width: '50px' }} body={DeleteProducts}></Column>
 
             </DataTable>
         </div>

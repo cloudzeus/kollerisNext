@@ -4,6 +4,7 @@
 @import 'primeicons/primeicons.css';
 @import './product.css';
 @import './holder.css';
+@import './dataTable.css';
 
 *,
 *::before,
@@ -13,12 +14,7 @@
   padding: 0;
 }
 
-.diathesima-warning {
-  /* background: #F4B5AB!important; */
-  /* color: black!important;
-  font-weight: 800; */
-  /* color: white!important; */
-}
+
 
 .wharehouse-msg  .p-inline-message-text  {
   font-size: 0.76rem;

@@ -34,35 +34,38 @@ const Page = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
     }
 
-    const StartContent = () => {
-
-        const handleClick = async () => {
-            setLoading(true)
-            console.log(selectedProducts)
-            if(!id) {
-                showError('Λάθος με την επιλογή Impa');
-                router.back();
-            }
-            const res = await axios.post('/api/product/apiImpa', {
-                action: 'correlateImpa',
-                dataToUpdate: selectedProducts,
-                id: id
-            })
-            if(res.data.success) {
-                showSuccess();
-                router.back();
-            } else {
-                showError(res.data.error);
-            }
-            console.log(res.data)
-            setLoading(false)
+    const handleClick = async () => {
+        setLoading(true)
+        console.log(selectedProducts)
+        if(!id) {
+            showError('Λάθος με την επιλογή Impa');
+            router.back();
         }
+        const res = await axios.post('/api/product/apiImpa', {
+            action: 'correlateImpa',
+            dataToUpdate: selectedProducts,
+            id: id
+        })
+        if(res.data.success) {
+            showSuccess();
+            router.back();
+        } else {
+            showError(res.data.error);
+        }
+        console.log(res.data)
+        setLoading(false)
+    }
+
+
+    const StartContent = () => {
+        
         return (
             <div>
                 <Button loading={loading} disabled={!selectedProducts.length} label="Συσχετισμός Επιλεγμένων" className="p-button-success" onClick={ handleClick} />
             </div>
         )
     }
+    
     return (
         <AdminLayout>
             <Toast ref={toast} />
@@ -71,11 +74,14 @@ const Page = () => {
             </div>
             <div className="mt-3">
                 <StepHeader text="Προσθήκη προϊόντων σε impa" />
-                <Toolbar start={StartContent } />
+                <Toolbar start={StartContent}/>
                 <ProductSearchGrid />
             </div>
         </AdminLayout>
     )
 }
+
+
+
 
 export default Page;
