@@ -73,6 +73,7 @@ export default async function handler(req, res) {
 
     if(action === 'findAll') {
         const {skip, limit, searchTerm, fetchActive} = req.body;
+        console.log('find all impas')
         let totalRecords;
         let impas;
         let filterConditions = {};
@@ -99,7 +100,7 @@ export default async function handler(req, res) {
                 totalRecords = await ImpaCodes.countDocuments(filterConditions);
             }
             
-            impas = await ImpaCodes.find(filterConditions).skip(skip).limit(limit);
+            impas = await ImpaCodes.find(filterConditions).sort({products: -1}).skip(skip).limit(limit);
             return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
         } catch (e) {
             return res.status(500).json({success: false, result: null})
@@ -108,7 +109,6 @@ export default async function handler(req, res) {
 
     if(action === 'findImpaProducts') {
         const {id} = req.body;
-        console.log(id)
         try {
             await connectMongo();
             const impa = await ImpaCodes.findOne({_id: id}).populate('products', 'NAME');
@@ -138,55 +138,74 @@ export default async function handler(req, res) {
 
     //Action that happens in product basket:
     if(action === 'correlateImpa') {
-        let {dataToUpdate, id} = req.body
-        
-        console.log(dataToUpdate)
-        console.log(id)
-        try {
         await connectMongo();
-            let arrayProductID = [];
-            let count = 0;
-            let errorArray = [];
-            for(let item of dataToUpdate) {
-                let response = await SoftoneProduct.updateOne({_id: item._id}, {$set: {impas: id}}, {upsert: true})
-                console.log('response impa')
-                console.log(response)
-                if(response.modifiedCount == 1) {
-                    count++;
-                } else {
-                    errorArray.push(item?.name)
-                }
-                arrayProductID.push(item._id)
-              
-            }  
-
-            let updateImpa = await ImpaCodes.updateOne({_id: id}, {$push: {products: {$each: arrayProductID}}})
-            console.log('updateImpa')
-            console.log(updateImpa)
-            
-            if(count === dataToUpdate.length && updateImpa) {
-                return res.status(200).json({success: true, message: 'Update Impa ολοκληρώθηκε'})
-            } else {
-                return res.status(200).json({success: true, message: 'Δεν ολοκληρώθηκε το update', result: errorArray})
-            }
-            
-           
-        }catch (e) {
-          return res.status(400).json({success: false, result: null, error: "Προέκυψε κάποιο σφάλμα στην Εμημέρωση Impa και Προϊόντων"})
+        let {dataToUpdate, id} = req.body
+        const response = {
+            success: true,
+            message: '',
+            result: null,
+            error: ''
         }
+     
+        for(let item of dataToUpdate) {
+            let productID = await updateProduct(response, item)
+            updateImpas(response, id, productID)
+        }
+        async function updateProduct(response, item) {
+            
+            try {
+                let res = await SoftoneProduct.updateOne(
+                    {_id: item._id}, 
+                    {$set: {impas: id}}, 
+                    {upsert: true
+                    })
+                    if(res.modifiedCount != 1) {
+                        response.error = 'Item not modified'
+                    }
+                return item._id;
+            } catch (e) {
+                response.error = e;
+                response.sucess = false;
+            }
+        }
+
+        async function updateImpas(response, id, productID) {
+            try {
+                let updateImpa = await ImpaCodes.updateOne(
+                    {_id: id}, 
+                    {$addToSet: {products: productID}
+                })
+                console.log('update Impa')
+                console.log(updateImpa)
+                if(updateImpa.modifiedCount != 1) {
+                    response.error = 'Impa not modified'
+                }
+                return updateImpa;
+            } catch (e) {
+                response.error = e;
+                response.sucess = false;
+            }
+        }
+
+        return res.status(200).json(response)
+      
     }
 
     if(action === 'deleteImpaProduct') {
-        const {id, impaId} = req.body;
-        console.log(id)
-        console.log(impaId)
+        const {selected, impaId} = req.body;
+
         await connectMongo();
         try {
-            let deleteproduct= await ImpaCodes.updateOne({_id: impaId}, {$pull: {products: id}})
-            console.log(deleteproduct.modifiedCount)
-            let updatesoftone = await SoftoneProduct.updateOne({_id: id}, {$unset: {impas: 1}})
-            console.log('update softone')
-            console.log(updatesoftone)
+            selected.forEach(async item => {
+                let id = item._id
+                let deletePromise = ImpaCodes.updateOne({_id: impaId}, {$pull: {products: id}})
+                let updatePromise = SoftoneProduct.updateOne({_id: id}, {$unset: {impas: 1}})
+                const [deleteItem, updateItem] = await Promise.all([ deletePromise,  updatePromise]);
+                console.log(deleteItem)
+                console.log(updateItem)
+                
+            })
+           
             return res.status(200).json({success: true})
         } catch (e) {
             return res.status(500).json({success: false})
@@ -195,6 +214,7 @@ export default async function handler(req, res) {
 
     if(action === "deactivate") {
         const {selected} = req.body;
+        console.log('deactivate')
         console.log(selected)
      
         let ids = selected.map(item => item._id)

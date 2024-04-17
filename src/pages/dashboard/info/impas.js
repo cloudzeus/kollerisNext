@@ -15,6 +15,7 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/router";
 import { OverlayPanel } from 'primereact/overlaypanel';
+import { Tooltip } from 'primereact/tooltip';
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -76,7 +77,6 @@ const Impas = () => {
 
 
     useEffect(() => {
-        console.log('it should run')
         handleFetch()
     }, [searchTerm, lazyState.rows, lazyState.first, submitted])
 
@@ -164,24 +164,7 @@ const Impas = () => {
 
         }
     }
-    const LeftToolbarTemplate = () => {
-        return (
-            <div className="flex flex-wrap gap-2">
-                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
-                <div className="card flex justify-content-center">
-                    <Button icon="pi pi-angle-down" type="button" label="Impa Status" onClick={(e) => op.current.toggle(e)} />
-                    <OverlayPanel ref={op} >
-                        <div className="flex flex-column">
-                            <Button className="mb-2" icon="pi pi-times" label="Απενεργοποίηση Impa" severity="danger" onClick={onDeactivate} />
-                            <Button label="Eνεργοποίηση Impa" icon="pi pi-check" severity="success" onClick={onActivate} />
-                        </div>
-                    </OverlayPanel>
-                </div>
-
-
-            </div>
-        );
-    };
+  
 
     const ActionBodyTemplate = (rowData) => {
         return (
@@ -216,7 +199,15 @@ const Impas = () => {
         <AdminLayout>
             <Toast ref={toast} />
             <StepHeader text="Κωδικοί Impas" />
-            <Toolbar start={LeftToolbarTemplate} ></Toolbar>
+            <Toolbar start={() => (
+                <LeftToolbarTemplate 
+                    selected={selected}
+                    onDeactivate={onDeactivate} 
+                    op={op}
+                    onActivate={onActivate}
+                    openNew={openNew}
+                />
+            )} ></Toolbar>
             <DataTable
                 selectionMode={'checkbox'}
                 selection={selected}
@@ -240,7 +231,7 @@ const Impas = () => {
             >
                 <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column>
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="code" header="code" filter filterElement={searchCode} showFilterMenu={false} body={ImpaCode}></Column>
+                <Column field="code" header="Κωδικός Impa" filter filterElement={searchCode} showFilterMenu={false} body={ImpaCode}></Column>
                 <Column field="englishDescription" header="Αγγλική Περιγραφή" filter filterElement={searchEngName} showFilterMenu={false}></Column>
                 <Column field="greekDescription" header="Ελληνική Περιγραφή" filter filterElement={searchGreekName} showFilterMenu={false}></Column>
                 <Column field="unit" header="Unit"></Column>
@@ -267,7 +258,29 @@ const Impas = () => {
 }
 
 
+
+const LeftToolbarTemplate = ({op, openNew, onActivate, onDeactivate, selected}) => {
+    return (
+        <div className="flex flex-wrap gap-2">
+            <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+            <div className="card flex justify-content-center">
+                <Button icon="pi pi-angle-down" type="button" tooltip="Επιλέξτε Impa για να τα Ενεργοποιήσετε/Απενεργοποιήσετε" tooltipOptions={{position: 'top'}} label="Aλλαγή Impa Status" onClick={(e) => op.current.toggle(e)} />
+                <OverlayPanel ref={op} >
+                    <div className="flex flex-column">
+                        <Button disabled={!selected || !selected.length}  className="mb-2" icon="pi pi-times" label="Απενεργοποίηση Impa" severity="danger" onClick={onDeactivate} />
+                        <Button disabled={!selected || !selected.length}  label="Eνεργοποίηση Impa" icon="pi pi-check" severity="success" onClick={onActivate} />
+                    </div>
+                </OverlayPanel>
+            </div>
+
+
+        </div>
+    );
+};
+
+
 const ImpaCode = ({ code, products }) => {
+   
     return (
         <div>
             <span className="block font-bold">{code}</span>
@@ -281,70 +294,79 @@ const ImpaCode = ({ code, products }) => {
     )
 }
 
-const ExpandedDataTable = ({ id, setSubmitted, showSuccess, showError }) => {
+
+
+const ExpandedDataTable = ({ id, showSuccess, showError, setSubmitted }) => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
-    const [refetch, setRefetch] = useState(false);
     const [selected, setSelected] = useState(null)
-
-    useEffect(() => {
-        const handleFetch = async () => {
-            setLoading(true);
+    const handleFetch = async () => {
+        setLoading(true);
+        try {
             let { data } = await axios.post('/api/product/apiImpa', { action: 'findImpaProducts', id: id })
+            console.log(data)
             setData(data.result)
             setLoading(false);
-
+        } catch (e) {
+            console.log(e)
+            setData([])
+            showError('Προσπαθήστε ξανά')
+            setLoading(false)
         }
+       
+
+    }
+    useEffect(() => {
         handleFetch()
-    }, [refetch])
+    }, [])
 
+
+ 
+    
+
+    const handleClick = () => {
+        router.push(`/dashboard/products-to-impa/${id}`)
+    }
+
+    const handleDeleteItems = async () => {
+        setLoading(true)
+        let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', impaId: id , selected: selected })
+        if (!data.success) showError('Αποτυχία Διαγραφής')
+        setSubmitted(prev => !prev)
+        showSuccess('Επιτυχής Διαγραφή')
+        setLoading(false);
+
+    }
     const renderHeader = () => {
-        const handleClick = () => {
-            router.push(`/dashboard/products-to-impa/${id}`)
-        }
+       
         return (
             <div>
-                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={handleClick} />
+                <Button label="Νέο"  tooltip="Προσθήκη νέου προϊόντος" tooltipOptions={{ position: 'top' }} icon="pi pi-plus" severity="secondary" onClick={handleClick} />
+                <Button disabled={!selected || !selected.length } className="ml-2"  tooltip="Επιλέξτε προϊόντα για να τα διαγράψετε" tooltipOptions={{ position: 'top' }} icon="pi pi-trash" severity="danger" onClick={handleDeleteItems} />
             </div>
         )
     }
     const header = renderHeader()
 
-    const handleDelete = async () => {
-        setLoading(true);
-        let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', id: product._id, impaId: id })
-        if (!data.success) showError('Αποτυχία Διαγραφής')
-        showSuccess('Επιτυχής Διαγραφή')
-        setLoading(false);
-        setRefetch(prev => !prev)
+   
 
-    }
-
-    const DeleteProducts = (product) => {
-
-      
-        return (
-            <div>
-                <i className="pi pi-trash text-red-400 cursor-pointer" onClick={handleDelete}></i>
-            </div>
-        )
-    }
+  
     return (
         <div className="p-4">
             <p className="font-semibold mb-3 ">Προϊόντα συσχετισμένα με impa:</p>
             <DataTable
-                //    selectionMode={'checkbox'}
-                //    selection={selected}
-                //    onSelectionChange={(e) => setSelected(e.value)}
+                   selectionMode={'checkbox'}
+                   selection={selected}
+                   onSelectionChange={(e) => setSelected(e.value)}
                 loading={loading}
                 showGridlines
                 header={header}
                 dataKey="_id"
                 value={data}>
-                    {/* <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column> */}
+                    <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="NAME" header="Προϊόν"></Column>
-                    <Column field="CODE" style={{ width: '50px' }} body={DeleteProducts}></Column>
+                    <Column field="CODE" style={{ width: '50px' }} ></Column>
 
             </DataTable>
         </div>
@@ -366,7 +388,7 @@ const Actions = ({ onEdit, onDelete, isActive }) => {
     return (
         <div>
             <i className="pi pi-pencil text-primary mr-3 cursor-pointer" onClick={onEdit}></i>
-            <i className="pi pi-trash text-red-400 cursor-pointer" onClick={onDelete}></i>
+            <i className="pi pi-trash text-red-400 cursor-pointer" onClick={onDelete} ></i>
         </div>
     )
 }
