@@ -15,8 +15,7 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/router";
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { Tooltip } from 'primereact/tooltip';
-
+import { Tooltip } from "primereact/tooltip";
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
     display: 'flex',
@@ -36,6 +35,7 @@ const Impas = () => {
         english: '',
         greek: '',
     })
+    const [sort, setSort] = useState(0)
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
@@ -48,6 +48,9 @@ const Impas = () => {
         first: 0,
         rows: 10,
     });
+
+
+
     const showSuccess = (detail) => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: detail, life: 4000 });
     }
@@ -67,7 +70,8 @@ const Impas = () => {
             action: 'findAll',
             skip: lazyState.first,
             limit: lazyState.rows,
-            searchTerm: searchTerm
+            searchTerm: searchTerm,
+            sortWithProducts: sort,
         })
         setData(data.result)
         setTotalRecords(data.totalRecords)
@@ -78,7 +82,7 @@ const Impas = () => {
 
     useEffect(() => {
         handleFetch()
-    }, [searchTerm, lazyState.rows, lazyState.first, submitted])
+    }, [searchTerm, lazyState.rows, lazyState.first, submitted, sort])
 
 
     const rowExpansionTemplate = (props) => {
@@ -92,9 +96,7 @@ const Impas = () => {
         )
     }
 
-    const onPage = (event) => {
-        setlazyState(event);
-    };
+   
 
     const openNew = () => {
         setSubmitted(false);
@@ -128,43 +130,21 @@ const Impas = () => {
             </div>
         )
     }
-    const searchCode = () => {
-        return (
-            <div className="flex justify-content-start ">
-                <span className="p-input-icon-left w-5">
-                    <i className="pi pi-search" />
-                    <InputText value={searchTerm.code} onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} />
-                </span>
-            </div>
-        )
-    }
+   
 
-    const onDeactivate = async () => {
+    const onStatusChange = async (action) => {
+        let error = action === 'deactivate' ? 'Αποτυχία απενεργοποίησης' : 'Αποτυχία ενεργοποίησης'
         try {
-            let { data } = await axios.post('/api/product/apiImpa', { action: 'deactivate', selected: selected })
-            if (!data.success) return showError('Αποτυχία απενεργοποίησης')
+            let { data } = await axios.post('/api/product/apiImpa', { action: action, selected: selected })
+            if (!data.success) return showError(error)
             setSelected([])
             setSubmitted(prev => !prev)
-
-
         } catch (e) {
             showError('Προσπαθήστε ξανά')
 
         }
     }
-    const onActivate = async () => {
-        try {
-            let { data } = await axios.post('/api/product/apiImpa', { action: 'activate', selected: selected })
-            if (!data.success) return showError('Αποτυχία απενεργοποίησης')
-            setSelected([])
-            setSubmitted(prev => !prev)
-
-        } catch (e) {
-            showError('Προσπαθήστε ξανά')
-
-        }
-    }
-  
+   
 
     const ActionBodyTemplate = (rowData) => {
         return (
@@ -201,10 +181,9 @@ const Impas = () => {
             <StepHeader text="Κωδικοί Impas" />
             <Toolbar start={() => (
                 <LeftToolbarTemplate 
+                    onStatusChange={onStatusChange}
                     selected={selected}
-                    onDeactivate={onDeactivate} 
                     op={op}
-                    onActivate={onActivate}
                     openNew={openNew}
                 />
             )} ></Toolbar>
@@ -217,7 +196,7 @@ const Impas = () => {
                 value={data}
                 first={lazyState.first}
                 rows={lazyState.rows}
-                onPage={onPage}
+                onPage={(event) =>  setlazyState(event)}
                 lazy
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
@@ -231,7 +210,14 @@ const Impas = () => {
             >
                 <Column selectionMode="multiple" filed="selection" headerStyle={{ width: '3rem' }}></Column>
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="code" header="Κωδικός Impa" filter filterElement={searchCode} showFilterMenu={false} body={ImpaCode}></Column>
+                <Column field="code" header="Κωδικός Impa" filter filterElement={() => (
+                     <SearchCode 
+                        searchTerm={searchTerm} 
+                        setSearchTerm={setSearchTerm}
+                        sort={sort}
+                        setSort={setSort}
+                        />
+                )} showFilterMenu={false} body={ImpaCode}></Column>
                 <Column field="englishDescription" header="Αγγλική Περιγραφή" filter filterElement={searchEngName} showFilterMenu={false}></Column>
                 <Column field="greekDescription" header="Ελληνική Περιγραφή" filter filterElement={searchGreekName} showFilterMenu={false}></Column>
                 <Column field="unit" header="Unit"></Column>
@@ -259,7 +245,7 @@ const Impas = () => {
 
 
 
-const LeftToolbarTemplate = ({op, openNew, onActivate, onDeactivate, selected}) => {
+const LeftToolbarTemplate = ({op, openNew,  selected, onStatusChange}) => {
     return (
         <div className="flex flex-wrap gap-2">
             <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
@@ -267,8 +253,8 @@ const LeftToolbarTemplate = ({op, openNew, onActivate, onDeactivate, selected}) 
                 <Button icon="pi pi-angle-down" type="button" tooltip="Επιλέξτε Impa για να τα Ενεργοποιήσετε/Απενεργοποιήσετε" tooltipOptions={{position: 'top'}} label="Aλλαγή Impa Status" onClick={(e) => op.current.toggle(e)} />
                 <OverlayPanel ref={op} >
                     <div className="flex flex-column">
-                        <Button disabled={!selected || !selected.length}  className="mb-2" icon="pi pi-times" label="Απενεργοποίηση Impa" severity="danger" onClick={onDeactivate} />
-                        <Button disabled={!selected || !selected.length}  label="Eνεργοποίηση Impa" icon="pi pi-check" severity="success" onClick={onActivate} />
+                        <Button disabled={!selected || !selected.length}  className="mb-2" icon="pi pi-times" label="Απενεργοποίηση Impa" severity="danger" onClick={() =>  onStatusChange('deactivate')} />
+                        <Button disabled={!selected || !selected.length}  label="Eνεργοποίηση Impa" icon="pi pi-check" severity="success" onClick={() => onStatusChange('activate')} />
                     </div>
                 </OverlayPanel>
             </div>
@@ -277,6 +263,43 @@ const LeftToolbarTemplate = ({op, openNew, onActivate, onDeactivate, selected}) 
         </div>
     );
 };
+
+
+//Search element for Sorting Impa Codes:
+const SearchCode = ({
+    searchTerm, 
+    setSearchTerm,
+    sort, 
+    setSort
+}) => {
+
+
+    const onSort = () => {
+        if(sort === 0) return setSort(1)
+        if(sort === 1) return setSort(-1)
+        if(sort === -1) return setSort(0)
+    }
+    return (
+        <div className="flex justify-content-start align-items-center">
+            <span className="p-input-icon-left w-5">
+                <i className="pi pi-search" />
+                <InputText 
+                    value={searchTerm.code} 
+                    onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} 
+                    />
+            </span>
+            <div 
+                tooltip="Ταξινόμηση Ιmpa με Προϊόντα / Χωρίς Προϊόντα"  
+                className='ml-3 pointer'
+                tooltipOptions={{position: 'top'}}
+                >
+                    {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
+                    {sort === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
+                    {sort === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>) : null}
+                </div>
+        </div>
+    )
+}
 
 
 const ImpaCode = ({ code, products }) => {

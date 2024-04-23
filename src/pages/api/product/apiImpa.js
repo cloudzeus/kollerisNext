@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     // }
 
     if(action === 'findAll') {
-        const {skip, limit, searchTerm, fetchActive} = req.body;
+        const {skip, limit, searchTerm, fetchActive, sortWithProducts} = req.body;
         console.log('find all impas')
         let totalRecords;
         let impas;
@@ -100,7 +100,7 @@ export default async function handler(req, res) {
                 totalRecords = await ImpaCodes.countDocuments(filterConditions);
             }
             
-            impas = await ImpaCodes.find(filterConditions).sort({products: -1}).skip(skip).limit(limit);
+            impas = await ImpaCodes.find(filterConditions).sort({products: sortWithProducts}).skip(skip).limit(limit);
             return res.status(200).json({success: true, result: impas, totalRecords: totalRecords})
         } catch (e) {
             return res.status(500).json({success: false, result: null})
@@ -214,10 +214,11 @@ export default async function handler(req, res) {
 
     if(action === "deactivate") {
         const {selected} = req.body;
-        console.log('deactivate')
+        console.log('test')
         console.log(selected)
      
         let ids = selected.map(item => item._id)
+        console.log(ids)
         try {
             await connectMongo();
             let update = await ImpaCodes.updateMany(

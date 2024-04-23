@@ -56,7 +56,6 @@ const dialogStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-
 };
 
 

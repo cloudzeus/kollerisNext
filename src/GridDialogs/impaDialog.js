@@ -26,7 +26,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
+
+    console.log(gridRowData);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -34,9 +35,9 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     useEffect(() => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
-    
- 
-   
+
+
+
     const handleEdit = async (data) => {
         let user = session.user.user.lastName
         let obj = {
@@ -44,18 +45,18 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             englishDescription: data.englishDescription,
             user: user
         }
-      
+
         try {
-            let resp = await axios.post('/api/product/apiImpa', {action: 'updateImpa', data: obj, id: gridRowData._id})
+            let resp = await axios.post('/api/product/apiImpa', { action: 'updateImpa', data: obj, id: gridRowData._id })
             setSubmitted(true)
-            if(!resp.data.success) return showError()
+            if (!resp.data.success) return showError()
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
-               
+
         } catch (e) {
             console.log(e)
         }
-       
+
     }
 
     const showSuccess = (message) => {
@@ -68,6 +69,20 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         hideDialog()
     }
 
+    const onStatusChange = async (action) => {
+        let error = action === 'deactivate' ? 'Αποτυχία απενεργοποίησης' : 'Αποτυχία ενεργοποίησης'
+        try {
+            let { data } = await axios.post('/api/product/apiImpa', { action: action, selected: [gridRowData] })
+            console.log('data')
+            console.log(data)
+            if (!data.success) return showError(error)
+            setSelected([])
+            setSubmitted(prev => !prev)
+        } catch (e) {
+            showError('Προσπαθήστε ξανά')
+
+        }
+    }
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Ακύρωση" icon="pi pi-times" severity="info" outlined onClick={handleClose} />
@@ -83,27 +98,32 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Κατασκευαστή"
+                    header="Διόρθωση Κατασκευαστή"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                   <FormTitle>Λεπτομέριες</FormTitle>
-                   <Input
-                   label={'Αγγλική Περιγραφή'}
-                   name={'englishDescription'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Eλληνική Περιγραφή'}
-                   name={'greekDescription'}
-                   control={control}
-                   required
-               />
-              
+                    <FormTitle>Λεπτομέριες</FormTitle>
+                    <Input
+                        label={'Αγγλική Περιγραφή'}
+                        name={'englishDescription'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'Eλληνική Περιγραφή'}
+                        name={'greekDescription'}
+                        control={control}
+                        required
+                    />
+
+                    <StatusChange  
+                        onClick={onStatusChange}
+                        isActive={gridRowData?.isActive} 
+                    />
+                    
                 </Dialog>
             </form>
         </Container>
@@ -112,7 +132,28 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 }
 
 
-
+const StatusChange = ({isActive, onClick}) => {
+    let isActiveText = isActive ? "Ενεργοποιημένο" : "Απενεργοποιημένο";
+    let isActiveButton = isActive ? "Απενεργοποίηση" : "Ενεργοποίηση";
+    let postAction = isActive ? 'deactivate' : 'activate'
+    
+  
+   
+    return (
+        <>
+            <div className="flex">
+            <div
+                style={{ width: '18px', height: '18px' }}
+                className={`${isActive ? "bg-green-500" : "bg-red-500"}  border-round flex align-items-center justify-content-center`}>
+                {isActive ? <i className="pi pi-check text-white text-xs"></i> : <i className="pi pi-times text-white text-xs"></i>}
+            </div>
+            <p className='ml-1'>{isActiveText}</p>
+          
+        </div>
+        <p onClick={() => onClick(postAction)} className='underline text-primary text-xs'>{isActiveButton}</p>
+        </>
+    )
+}
 
 
 const AddDialog = ({
@@ -136,7 +177,7 @@ const AddDialog = ({
     });
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-   
+
     const cancel = () => {
         hideDialog()
         reset()
@@ -146,7 +187,7 @@ const AddDialog = ({
         console.log(data)
         let res = await axios.post('/api/product/apiImpa', { action: 'createImpa', data: data })
         console.log(res.data)
-        if(!res.data.success) return showError(res.data.error)
+        if (!res.data.success) return showError(res.data.error)
         setDisabled(true)
         setSubmitted(true)
         showSuccess('Επιτυχής εισαγωγή στην βάση')
