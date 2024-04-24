@@ -8,6 +8,7 @@ const initialState = {
     orderLines: [],
     loading: false,
     sort: 0,
+    sortImpa: 0,
     sortPrice: 0,
     sortAvailability: 0,
     searchTerm: '',
@@ -165,6 +166,17 @@ const productsSlice = createSlice({
                 return;
             };
         },
+        setSortImpa: (state) => {
+            if(state.sortImpa == 0) {
+                state.sortImpa = 1;
+                return;
+            };
+            if(state.sortImpa == 1) {
+                state.sortImpa= 0;
+                return;
+            };
+          
+        },
         setSortPrice: (state) => {
             if(state.sortPrice == 0) {
                 state.sortPrice = 1;
@@ -241,7 +253,8 @@ export const {
     setSoftoneFilter,
     setSortAvailability,
     setSortPrice,
-    setSubmitted
+    setSubmitted,
+    setSortImpa,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

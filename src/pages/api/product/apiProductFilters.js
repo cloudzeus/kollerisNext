@@ -7,6 +7,7 @@ import SoftoneProduct from "../../../../server/models/newProductModel";
 import Markes from "../../../../server/models/markesModel";
 import Vat from "../../../../server/models/vatModel";
 import greekUtils from 'greek-utils';
+import { ImpaCodes } from "../../../../server/models/impaSchema";
 
 export const config = {
     api: {
@@ -163,13 +164,16 @@ export default async function handler(req, res) {
             sort,
             marka,
             sortPrice,
+            sortImpa,
             stateFilters,
         } = req.body;
         console.log('subgroupID')
         console.log(subgroupID)
         try {
             await connectMongo();
-    
+            
+            console.log('stateFilters')
+            console.log(stateFilters)
             let totalRecords;
             let sortObject = {};
             let filterConditions = {};
@@ -183,6 +187,19 @@ export default async function handler(req, res) {
             }
             if(sort !== 0) {
                 sortObject = { NAME: sort }
+            }
+
+
+            //handle impa sort and search:
+            if(sortImpa == 1) {
+                filterConditions.impas = { $exists: true, $ne: null };
+            }
+
+            if (stateFilters.impaSearch !== '') {
+                let regex = new RegExp(stateFilters.impaSearch, 'i');
+                let impas = await findImpaProducts(regex);
+                console.log(impas)
+                
             }
 
             if(sortPrice !== 0) {
@@ -200,9 +217,7 @@ export default async function handler(req, res) {
                 filterConditions.ISACTIVE = stateFilters.active;
             }
             
-            if (stateFilters.impa === 1) {
-                filterConditions.impas = { $exists: true, $ne: null };
-            }
+            
     
             if (groupID) {
                 filterConditions.MTRGROUP = groupID;
@@ -250,29 +265,23 @@ export default async function handler(req, res) {
                 totalRecords = await SoftoneProduct.countDocuments();
             } else {
                 totalRecords = await SoftoneProduct.countDocuments(filterConditions);
+             
             }
-    
-            let softonefind;
-            if (Object.keys(sortObject).length === 0) {
-                softonefind = await SoftoneProduct.find(filterConditions)
-                .populate('impas')
-                .sort(sortObject)
-                .skip(skip)
-                .limit(limit)
-            } else {
-                softonefind = await SoftoneProduct.find(filterConditions)
-                .populate('impas')
-                .sort(sortObject)
-                .skip(skip)
-                .limit(limit)
-            }
-            // console.log('result')
-            // console.log(softonefind)
+            
             console.log('totalRecords')
             console.log(totalRecords)
-            console.log('-----------------------------')
-            // console.log('softone find')
+              let softonefind = await SoftoneProduct.find(filterConditions)
+                .populate('impas')
+                .sort(sortObject)
+                .skip(skip)
+                .limit(limit)
+            // console.log('result')
             // console.log(softonefind)
+            // console.log('totalRecords')
+            // console.log(totalRecords)
+            // console.log('-----------------------------')
+            // console.log('softone find')
+            // console.log(softonefind[0])
           
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {
@@ -284,5 +293,15 @@ export default async function handler(req, res) {
 
 }
 
+
+
+async function findImpaProducts(impaRegex) {
+    let impas = await ImpaCodes.find({ code: impaRegex });
+    console.log(impas)
+    let productIDs = impas.products
+    console.log(productIDs)
+   
+    return impas.products;
+}
 
 

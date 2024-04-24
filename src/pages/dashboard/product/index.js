@@ -44,6 +44,7 @@ import {
     setSubmitted,
     setMarka,
     setSortPrice,
+    setSortImpa,
     setSelectedProducts
 } from "@/features/productsSlice";
 import Image from 'next/image';
@@ -141,7 +142,23 @@ function Product() {
     const { data: session } = useSession()
     let user = session?.user?.user;
     const [data, setData] = useState([]);
-    const { selectedProducts, submitted, filters, category, group, subgroup, lazyState2, loading, searchTerm, sort, softoneFilter, sortAvailability, marka, sortPrice } = useSelector(store => store.products)
+    const { 
+        selectedProducts, 
+        submitted, 
+        filters, 
+        category, 
+        group, 
+        subgroup, 
+        lazyState2, 
+        loading, 
+        searchTerm, 
+        sort, 
+        softoneFilter, 
+        sortAvailability, 
+        marka, 
+        sortPrice,
+        sortImpa,
+    } = useSelector(store => store.products)
     const [totalRecords, setTotalRecords] = useState(0);
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
@@ -149,7 +166,7 @@ function Product() {
     const [expandedRows, setExpandedRows] = useState(null);
     const [addDialog, setAddDialog] = useState(false);
     const [stateFilters, setStateFilters] = useState({
-        impa: 0,
+        impaSearch: '',
         images: null,
         codeSearch: '',
         skroutz: null,
@@ -183,6 +200,7 @@ function Product() {
                 groupID: group?.softOne.MTRGROUP,
                 subgroupID: subgroup?.softOne.cccSubgroup2,
                 sort: sort,
+                sortImpa: sortImpa,
                 softoneFilter: softoneFilter,
                 marka: marka,
                 sortPrice: sortPrice,
@@ -191,12 +209,12 @@ function Product() {
             )
             setData(data.result);
             setTotalRecords(data.totalRecords)
-            dispatch(setLoading(false))
 
         } catch (e) {
             console.log(e)
+           
         }
-
+        dispatch(setLoading(false))
     }
     useEffect(() => {
         fetch();
@@ -214,6 +232,7 @@ function Product() {
         submitted,
         stateFilters,
         sortPrice,
+        sortImpa
       
     ])
 
@@ -415,7 +434,9 @@ function Product() {
     };
 
 
-
+    useEffect(() => {
+        console.log(stateFilters)
+    }, [stateFilters])
 
     const hideDialog = () => {
         setEditDialog(false);
@@ -439,18 +460,21 @@ function Product() {
             { name: 'Όλα', value: 0 },
         ]
 
+
+        let onSortImpa = () => {
+            dispatch(setSortImpa())
+        }
+
         return (
             <div className="flex align-items-center">
-                <Dropdown
-                    size="small"
-                    value={stateFilters.filterImpa}
-                    options={options}
-                    onChange={onFilterImpa}
-                    optionLabel="name"
-                    placeholder="Φίλτρο Impa"
-                    className="p-column-filter grid-filter"
-                    style={{ minWidth: '14rem', fontSize: '12px' }}
-                />
+               <div className="p-input-icon-left w-full">
+                        <i className="pi pi-search" />
+                        <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={(e) => setStateFilters(prev => ({...prev, impaSearch: e.target.value}))} />
+                    </div>
+                <div className='ml-3'>
+                        {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
+                        {sortImpa === 0 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
+                    </div>
             </div>
         )
     };
@@ -613,6 +637,7 @@ function Product() {
                 {visibleColumns.some(column => column.id === 6) && (
                     <Column
                         field="impas.code"
+                        style={{ minWidth: '250px' }}
                         header="Κωδικός Impa"
                         body={ImpaCode}
                         filter
