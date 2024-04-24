@@ -1,6 +1,6 @@
-import SoftoneProduct from "../../../../../server/models/newProductModel"
-import connectMongo from "../../../../../server/config"
-import Markes from "../../../../../server/models/markesModel"
+import SoftoneProduct from "../../../../../server/models/newProductModel";
+import Markes from "../../../../../server/models/markesModel";
+import connectMongo from "../../../../../server/config";
 export const config = {
   api: {
     responseLimit: false,
@@ -14,8 +14,10 @@ export default async function handler(req, res) {
     message: 'request did not work',
     result: [],
   }
+  let action = req.body.action;
 
-  if (req.method === 'POST') {
+
+  if (req.method === 'POST' && action === 'getProducts' ) {
     await connectMongo();
     console.log('reqbody')
     console.log(req.body)
@@ -88,6 +90,32 @@ export default async function handler(req, res) {
     return res.status(200).json(response)
   }
 
+  if (req.method === 'POST' && action === 'createProduct') {
+    let response = {
+      count: 0,
+      error: null,
+      success: false,
+      message: 'request did not work',
+      result: [],
+    }
+
+
+    await connectMongo();
+    try {
+      let product = req.body.product;
+      console.log('product')
+      console.log(product)
+      let newProduct = await SoftoneProduct.create(product);
+      response.result = newProduct;
+      response.success = true;
+      response.message = 'Product created successfully';
+    } catch (e) {
+      response.error = e;
+      response.success = false;
+      return res.status(500).json(response)
+    }
+    return res.status(200).json(response)
+  }
 
    
 
