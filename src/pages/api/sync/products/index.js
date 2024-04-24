@@ -99,10 +99,14 @@ export default async function handler(req, res) {
       result: [],
     }
 
-
+    let product = req.body.product;
+    if(conditions(product, response)) {
+      return res.status(400).json(response)
+    }
     await connectMongo();
     try {
-      let product = req.body.product;
+     
+    
       console.log('product')
       console.log(product)
       let newProduct = await SoftoneProduct.create(product);
@@ -117,6 +121,71 @@ export default async function handler(req, res) {
     return res.status(200).json(response)
   }
 
-   
+  if (req.method === 'PUT') {
+    let response = {
+      error: null,
+      success: false,
+      message: 'update did not work',
+      result: [],
+    }
+    await connectMongo();
 
+    let {findByMTRL, findByID, product} = req.body;
+    
+    //Check if the product has the required fields:
+    if(conditions(product, response)) {
+      return res.status(400).json(response)
+    }
+    
+
+    try {
+      let update = await SoftoneProduct.findOneAndUpdate({
+        $or: [
+          {MTRL: findByMTRL},
+          {_id: findByID}
+        ]
+      }, product);
+   
+      if(update) {
+        response.success = true;
+        response.message = 'Product updated successfully';
+        response.result = update;
+      } else {
+        response.success = false;
+        response.message = 'Product not found';
+      }
+        
+     
+    } catch (e) {
+      response.error = e;
+    }
+    return res.status(200).json(response)
+  }
+
+
+}
+
+
+function conditions(product, response) {
+//RETURN CONDITIONS:
+let error = false;
+if(product.MTRCATEGORY && !product.CATEGORY_NAME) {
+  response.message = 'If your provide MTRCATEGORY, CATEGORY_NAME is required',
+  error = true
+}
+if(product.MTRGROUP && !product.GROUP_NAME) {
+  response.message = 'If your provide MTRGROUP, GROUP_NAME is required'
+  error = true
+
+}
+if(product.MTRSUBGROUP && !product.SUBGROUP_NAME) {
+  response.message = 'If your provide MTRSUBGROUP, SUBGROUP_NAME is required'
+  error = true
+
+}
+if(product.MTRMANFCTR && !product.MMTRMANFCTR_NAME) {
+  response.message = 'If your provide MTRMANFCTR, MMTRMANFCTR_NAME is required'
+  error = true
+}
+return error;
 }
