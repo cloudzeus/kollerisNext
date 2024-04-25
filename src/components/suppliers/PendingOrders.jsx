@@ -24,8 +24,12 @@ const PendingOrders = ({ id }) => {
 
 
 
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Δεν έχετε συμπληρώσει το ποσό για αποστολή παραγγελίας', life: 3000 });
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+    }
+
+    const showSuccess = (message) => {
+        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
     }
 
     const allowExpansion = (rowData) => {
@@ -55,7 +59,7 @@ const PendingOrders = ({ id }) => {
       
         const issuePurdoc = async () => {
             if (orderCompletionValue < minOrderValue) {
-                showError();
+                showError('Δεν έχετε συμπληρώσει το ποσό για αποστολή παραγγελίας');
                 return;
             }
             setLoading(true)
@@ -63,6 +67,21 @@ const PendingOrders = ({ id }) => {
             setLoading(false)
             dispatch(setOrderReady())
             setRefetch(prev => !prev)
+        }
+        
+        const deletePendingOffer = async () => {
+            setLoading(true)
+            try {
+                let { data } = await axios.post('/api/createOrder', { action: 'deletePendingOrder', TRDR: id, id: _id })
+                console.log(data)
+                showSuccess('Επιτυχής διαγραφή προσφοράς')
+                setRefetch(prev => !prev)
+
+            } catch (e) {
+                 showError('Αποτυχία διαγραφής προσφοράς')
+            }
+           
+            setLoading(false)
         }
         return (
             <div>
@@ -87,7 +106,7 @@ const PendingOrders = ({ id }) => {
                         setRefetch={setRefetch}
                         op={op}
                     /> */}
-                    <Button className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash" />
+                    <Button onClick={deletePendingOffer} className='mt-2 w-full' severity='danger' label="Διαγραφή" icon="pi pi-trash" />
                 </OverlayPanel>
 
             </div>

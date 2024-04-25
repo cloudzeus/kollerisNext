@@ -355,8 +355,7 @@ const ExpandedDataTable = ({ id, showSuccess, showError, setSubmitted }) => {
     const handleDeleteItems = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', impaId: id , selected: selected })
-        console.log('data delete')
-        console.log(data)
+     
         if (!data.success) showError('Αποτυχία Διαγραφής')
         setSubmitted(prev => !prev)
         showSuccess('Επιτυχής Διαγραφή')

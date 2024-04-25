@@ -44,7 +44,7 @@ const CompletedOrders = ({ id }) => {
     
     
   
-    const Actions = ({ supplierName, supplierEmail, products, minOrderValue, orderCompletionValue, _id }) => {
+    const Actions = ({TRDR, supplierName, supplierEmail, products, _id }) => {
         const op = useRef(null);
         const onBulletsClick = (e) => {
             op.current.toggle(e)
@@ -52,7 +52,8 @@ const CompletedOrders = ({ id }) => {
 
       
         const handleDelete = async (e) => {
-             const {data} = await axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id})
+             const {data} = await axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id, TRDR: TRDR})
+             console.log(data)
             setRefetch(prev => !prev)
         }
         return (

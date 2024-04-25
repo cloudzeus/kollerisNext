@@ -18,8 +18,9 @@ export default async function handler(req, res) {
             if (searchTerm.address) filterConditions.ADDRESS = new RegExp(searchTerm.address, 'i');
         
             let query = Supplier.find(filterConditions);
-        
-            if (sortOffers === 1) {
+            console.log('sortOffers')
+            console.log(sortOffers)
+            if (sortOffers === 1 ) {
               query = query.sort({ ORDERSTATUS: 1 });
             } else if (sortOffers === -1) {
               query = query.sort({ ORDERSTATUS: -1 });

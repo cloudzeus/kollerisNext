@@ -119,14 +119,13 @@ const ClientHolder = ({ NAME }) => {
         })
         const handleDelete = async () => {
             setLoading(prev => ({ ...prev, delete: true }))
-            await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id })
+            await axios.post('/api/createOffer', { action: 'deleteOffer', id: _id, TRDR: TRDR })
             setLoading(prev => ({ ...prev, delete: false }))
             setRefetch(prev => ({ ...prev, grid: !prev.grid }))
         }
 
         const handlePDF = async () => {
-            console.log('pdf')
-            console.log(SALDOCNUM)
+            
             setLoading(prev => ({ ...prev, pdf: true }))
             const {data} = await axios.post('/api/createPDF', {
                 FINDOCTYPE: 'SALDOC',

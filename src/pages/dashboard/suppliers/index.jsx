@@ -17,15 +17,12 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { useSelector } from 'react-redux';
 import { setSelectedSupplier } from '@/features/supplierOrderSlice';
 import styled from 'styled-components';
-import { setGridData, setHeaders, setSelectedPriceKey, } from '@/features/catalogSlice';
+import { setGridData, setHeaders } from '@/features/catalogSlice';
 import * as XLSX from 'xlsx';
-import { uploadBunny, uploadBunnyFolderName } from '@/utils/bunny_cdn';
-import MarkesOverlay from '@/components/markesGrid';
-import { set } from 'mongoose';
+import {  uploadBunnyFolderName } from '@/utils/bunny_cdn';
 
 
 export default function Page() {
-    const { selectedSupplier, inputEmail, mtrl } = useSelector(state => state.supplierOrder)
 
     const { gridData } = useSelector(state => state.catalog)
     const fileInputRef = useRef(null);
@@ -40,7 +37,7 @@ export default function Page() {
     const [addDialog, setAddDialog] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fileLoading, setFileLoading] = useState(false)
-    const [sortOffers, setSortOffers] = useState(1)
+    const [sortOffers, setSortOffers] = useState(-1)
     const [expandedRows, setExpandedRows] = useState(null);
     const [searchTerm, setSearchTerm] = useState({
         name: '',

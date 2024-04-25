@@ -186,8 +186,9 @@ export default function Clients() {
     }
 
 
-    const ShowOffers = ({ OFFERSTATUS, NAME }) => {
-        
+    const ShowOffers = ({ OFFERSTATUS, NAME, _id }) => {
+        console.log('clientId')
+        console.log(_id)
         const handleClick = () => {
             const encodedString = encodeURIComponent(NAME);
             router.push(`/dashboard/clients/offers/${encodedString}`)

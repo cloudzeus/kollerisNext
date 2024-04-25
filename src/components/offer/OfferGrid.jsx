@@ -103,7 +103,7 @@ const OfferGrid = ({ clientName }) => {
 
         const onDelete = async () => {
             setLoading(prev => ({ ...prev, delete: true }))
-            let { data } = await axios.post('/api/singleOffer', { action: 'deleteOffer', id: _id })
+            let { data } = await axios.post('/api/singleOffer', { action: 'deleteOffer', id: _id, TRDR: TRDR})
             setLoading(prev => ({ ...prev, delete: false }))
             setRefetch(prev => !prev)
         }
