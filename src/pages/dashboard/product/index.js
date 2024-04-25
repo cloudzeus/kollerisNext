@@ -472,8 +472,9 @@ function Product() {
                         <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={(e) => setStateFilters(prev => ({...prev, impaSearch: e.target.value}))} />
                     </div>
                 <div className='ml-3'>
-                        {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
-                        {sortImpa === 0 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
+                        {sortImpa === 0 ? (<i className="pi pi-sort-alt" onClick={onSortImpa}></i>) : null}
+                        {sortImpa=== 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
+                        {sortImpa === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
                     </div>
             </div>
         )

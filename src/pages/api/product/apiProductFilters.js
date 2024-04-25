@@ -191,16 +191,11 @@ export default async function handler(req, res) {
 
 
             //handle impa sort and search:
-            if(sortImpa == 1) {
-                filterConditions.impas = { $exists: true, $ne: null };
+            if(sortImpa !== 0) {
+                sortObject = { impas: sortImpa }
             }
 
-            if (stateFilters.impaSearch !== '') {
-                let regex = new RegExp(stateFilters.impaSearch, 'i');
-                let impas = await findImpaProducts(regex);
-                console.log(impas)
-                
-            }
+           
 
             if(sortPrice !== 0) {
                 sortObject = { PRICER: sortPrice }
@@ -257,8 +252,18 @@ export default async function handler(req, res) {
             console.log('sortObject')
             console.log(sortObject)
             
-            
-          
+            console.log(stateFilters)
+            if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
+                let regex = new RegExp(stateFilters.impaSearch, 'i');
+                let productIds = await findImpaProducts(regex);
+                let totalRecords  = await SoftoneProduct.countDocuments({ _id: { $in: productIds } })
+              
+                let products = await SoftoneProduct.find({ _id: { $in: productIds } })
+                .populate('impas')
+                .skip(skip)
+                .limit(limit);
+                return res.status(200).json({ success: true, totalRecords: totalRecords, result: products });
+            }
     
             if (Object.keys(filterConditions).length === 0) {
                 // No specific filters, fetch all products
@@ -275,13 +280,7 @@ export default async function handler(req, res) {
                 .sort(sortObject)
                 .skip(skip)
                 .limit(limit)
-            // console.log('result')
-            // console.log(softonefind)
-            // console.log('totalRecords')
-            // console.log(totalRecords)
-            // console.log('-----------------------------')
-            // console.log('softone find')
-            // console.log(softonefind[0])
+          
           
             return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
         } catch (e) {
@@ -296,12 +295,20 @@ export default async function handler(req, res) {
 
 
 async function findImpaProducts(impaRegex) {
-    let impas = await ImpaCodes.find({ code: impaRegex });
-    console.log(impas)
-    let productIDs = impas.products
-    console.log(productIDs)
+    let impas = await ImpaCodes.find({ 
+        code: impaRegex,
+        products: { $exists: true, $not: { $size: 0 } }
+
+    }).populate('products', '_id') 
    
-    return impas.products;
+     let ids = [];
+     for(let impa of impas) {
+         for(let product of impa.products) {
+             ids.push(product._id)
+         }
+     }
+
+    return ids;
 }
 
 

@@ -172,7 +172,11 @@ const productsSlice = createSlice({
                 return;
             };
             if(state.sortImpa == 1) {
-                state.sortImpa= 0;
+                state.sortImpa = -1;
+                return;
+            };
+            if(state.sortImpa == -1) {
+                state.sortImpa = 0;
                 return;
             };
           

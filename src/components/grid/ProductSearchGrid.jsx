@@ -30,6 +30,7 @@ const ProductSearchGrid = () => {
     const [data, setData] = useState([])
     const [codeSearch, setCodeSearch] = useState('');
     const [stateFilters, setStateFilters] = useState({
+        impaSearch: '',
         codeSearch: '',
         skroutz: null,
         active: true,
@@ -67,6 +68,7 @@ const ProductSearchGrid = () => {
                 softoneFilter: null,
                 codeSearch: codeSearch,
                 stateFilters: stateFilters,
+                
             })
             console.log(data.result)
             setData(data.result);
