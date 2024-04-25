@@ -260,6 +260,7 @@ export default function Page() {
     };
 
     const ActionTemplate = (rowData) => {
+        console.log(rowData)
         const op = useRef(null);
 
         return (

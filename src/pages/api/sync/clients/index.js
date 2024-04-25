@@ -1,5 +1,5 @@
 import connectMongo from "../../../../../server/config";
-import Supplier from "../../../../../server/models/suppliersSchema";
+import Clients from "../../../../../server/models/modelClients";
 export const config = {
   api: {
     responseLimit: false,
@@ -7,6 +7,7 @@ export const config = {
 }
 export default async function handler(req, res) {
   let response = {
+    count: 0,
     error: null,
     success: false,
     message: 'request did not work',
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
      
         try {
-            let result = await Supplier.find({}).sort({Brands: 1});
+            let result = await Clients.find({});
             console.log(result)
             response.result = result;
             response.success = true;
@@ -39,19 +40,22 @@ export default async function handler(req, res) {
         return res.status(400).json({message: 'No body provided'})
       }
 
-      if(!body.NAME || !body.TRDR || !body.CODE ) {
+      if(!body.NAME || !body.TRDR  ) {
         response.error = true;
-        response.message = 'Please provide a NAME, TRDR and CODE';
+        response.message = 'Please provide a NAME, TRDR';
         return res.status(400).json(response)
       }
       try {
-        let create = await Supplier.create(body);
+        let create = await Clients.create(body);
         response.success = true;
-        response.message = 'Supplier created';
+        response.message = 'Client created';
         response.result = create;
         return res.status(200).json(response);
       } catch (e) {
-
+        response.error = e;
+        response.message = 'request did not work';
+        response.success = false;
+        return res.status(200).json(response);
       }
   } 
 
@@ -72,23 +76,22 @@ export default async function handler(req, res) {
       return res.status(400).json(response)
     }
 
-    if(!body.NAME || !body.TRDR || !body.CODE ) {
+    if(!body.NAME || !body.TRDR ) {
       response.error = true;
-      response.message = 'Please provide a NAME, TRDR and CODE';
+      response.message = 'Please provide a NAME, TRDR ';
       return res.status(400).json(response)
     }
     try {
    
-      let update = await Supplier.findOneAndUpdate({
+      let update = await Clients.findOneAndUpdate({
         $or: [
           {TRDR: identifierTRDR},
           {_id: identifierID}
         ]
       }, body, { new: true});
-      console.log('update')
-      console.log(update)
+    
       response.success = true;
-      response.message = 'Supplier updated';
+      response.message = 'Client updated';
       response.result = update;
       return res.status(200).json(response);
     } catch (e) {

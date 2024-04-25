@@ -65,6 +65,7 @@ const supplierSchema = new mongoose.Schema({
         type: String,
     },
     updatedFrom: String,
+    minOrderValue: Number,
     ORDERSTATUS: Boolean,
     //delete later:
     catalogName: String,
