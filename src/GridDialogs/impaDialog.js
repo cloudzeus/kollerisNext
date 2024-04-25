@@ -62,23 +62,26 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const showSuccess = (message) => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
     }
-    const showError = () => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης', life: 4000 });
+    const showError = (message) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: `Αποτυχία ενημέρωσης βάσης ${message}`, life: 4000 });
     }
     const handleClose = () => {
         hideDialog()
     }
 
     const onStatusChange = async (action) => {
-        let error = action === 'deactivate' ? 'Αποτυχία απενεργοποίησης' : 'Αποτυχία ενεργοποίησης'
+        console.log('onStatusChange')
+        let error = 'Αποτυχία απενεργοποίησης'
         try {
-            let { data } = await axios.post('/api/product/apiImpa', { action: action, selected: [gridRowData] })
-            console.log('data')
-            console.log(data)
-            if (!data.success) return showError(error)
-            setSelected([])
+            let { data } = await axios.post('/api/product/apiImpa', { action: "deactivate", selected: [gridRowData] })
+            
+            if (!data.success) {
+                console.log('why do we enter')
+                return showError(error)
+            }
             setSubmitted(prev => !prev)
         } catch (e) {
+            console.log(e)
             showError('Προσπαθήστε ξανά')
 
         }
@@ -98,7 +101,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header="Διόρθωση Κατασκευαστή"
+                    header="Διόρθωση Impa"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
@@ -106,6 +109,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                     <FormTitle>Λεπτομέριες</FormTitle>
+                    {/* <div className="flex mb-3">
+                        <div
+                            style={{ width: '18px', height: '18px' }}
+                            className={`bg-green-500 border-round flex align-items-center justify-content-center`}>
+                           <i className="pi pi-check text-white text-xs"></i>
+                        </div>
+                        <p className='ml-2'>Ενεργό</p>
+
+                    </div> */}
                     <Input
                         label={'Αγγλική Περιγραφή'}
                         name={'englishDescription'}
@@ -119,11 +131,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                         required
                     />
 
-                    <StatusChange  
+                    <StatusChange
                         onClick={onStatusChange}
-                        isActive={gridRowData?.isActive} 
+                        isActive={gridRowData?.isActive}
                     />
-                    
+
                 </Dialog>
             </form>
         </Container>
@@ -132,25 +144,19 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 }
 
 
-const StatusChange = ({isActive, onClick}) => {
-    let isActiveText = isActive ? "Ενεργοποιημένο" : "Απενεργοποιημένο";
-    let isActiveButton = isActive ? "Απενεργοποίηση" : "Ενεργοποίηση";
-    let postAction = isActive ? 'deactivate' : 'activate'
-    
-  
-   
+const StatusChange = ({ isActive, onClick }) => {
     return (
         <>
             <div className="flex">
-            <div
-                style={{ width: '18px', height: '18px' }}
-                className={`${isActive ? "bg-green-500" : "bg-red-500"}  border-round flex align-items-center justify-content-center`}>
-                {isActive ? <i className="pi pi-check text-white text-xs"></i> : <i className="pi pi-times text-white text-xs"></i>}
+                <div
+                    style={{ width: '18px', height: '18px' }}
+                    className={`${isActive ? "bg-green-500" : "bg-red-500"}  border-round flex align-items-center justify-content-center`}>
+                    {isActive ? <i className="pi pi-check text-white text-xs"></i> : <i className="pi pi-times text-white text-xs"></i>}
+                </div>
+                <p className='ml-1'>Ενεργοποιημένο</p>
+
             </div>
-            <p className='ml-1'>{isActiveText}</p>
-          
-        </div>
-        <p onClick={() => onClick(postAction)} className='underline text-primary text-xs'>{isActiveButton}</p>
+            <p onClick={onClick} className='underline cursor-pointer text-primary text-xs'>Απενεργοποίηση</p>
         </>
     )
 }
@@ -208,7 +214,7 @@ const AddDialog = ({
         toast.current.show({ severity: 'success', summary: 'Success', detail: detail, life: 4000 });
     }
     const showError = (message) => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης: ' + message, life: 5000 });
     }
 
     return (
@@ -218,7 +224,7 @@ const AddDialog = ({
                 visible={dialog}
                 style={{ width: '32rem' }}
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                header="Προσθήκη Κατασκευαστή"
+                header="Προσθήκη Impa"
                 modal
                 className="p-fluid"
                 footer={productDialogFooter}
