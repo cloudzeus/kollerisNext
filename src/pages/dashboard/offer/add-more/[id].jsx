@@ -13,10 +13,8 @@ import SoftoneStatusButton from '@/components/grid/SoftoneStatusButton';
 
 const Page = ({}) => {
     const router = useRouter();
-    const { data: session } = useSession();
     const { id } = router.query;
-    console.log('id')
-    console.log(id)
+  
     const toast = useRef(null);
     const {selectedProducts, mtrLines} = useSelector(state => state.products);
 
