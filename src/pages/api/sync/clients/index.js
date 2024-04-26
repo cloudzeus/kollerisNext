@@ -83,12 +83,12 @@ export default async function handler(req, res) {
   } 
 
   if(req.method === 'PUT') {
-    let {body, identifierTRDR, identifierID } = req.body;
+    let {body, identifierTRDR, identifierID, identifierPhone, identifierAFM } = req.body;
     console.log('update')
     console.log(body)
  
 
-    if(!identifierTRDR && !identifierID) {
+    if(!identifierTRDR && !identifierID && !identifierPhone && !identifierAFM) {
       response.error = true;
       response.message = 'Please provide an identifier';
       return res.status(400).json(response)
@@ -109,7 +109,9 @@ export default async function handler(req, res) {
       let update = await Clients.findOneAndUpdate({
         $or: [
           {TRDR: identifierTRDR},
-          {_id: identifierID}
+          {_id: identifierID},
+          {PHONE01: identifierPhone},
+          {AFM: identifierAFM}
         ]
       }, body, { new: true});
     
