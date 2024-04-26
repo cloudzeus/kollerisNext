@@ -14,13 +14,31 @@ export default async function handler(req, res) {
   }
   
   await connectMongo();
-  if (req.method === 'GET') {
-     
+  if (req.method === 'POST' && req.body.action === 'getSuppliers') {
+
+        const {name, TRDR, phone, afm, id} = req.body;
+        let filterConditions = {};
+        if(name) {
+          filterConditions.NAME = new RegExp("^" + name, 'i');
+        }
+        if(TRDR) {
+          filterConditions.TRDR = TRDR;
+        }
+        if(afm) {
+          filterConditions.AFM = afm;
+        }
+        if(id) {
+          filterConditions._id = id;
+        }
+        if(phone) {
+          filterConditions.PHONE01 = phone;
+        }
         try {
-            let result = await Supplier.find({}).sort({Brands: 1});
+            let result = await Supplier.find(filterConditions);
             console.log(result)
             response.result = result;
             response.success = true;
+            response.message = 'Suppliers found';
             response.count = result.length;
             return res.status(200).json(response);
         } catch (e) {
@@ -33,19 +51,19 @@ export default async function handler(req, res) {
   }
 
 
-  if(req.method === 'POST') {
-      let body = req.body;
-      if(!body) {
+  if(req.method === 'POST' && req.body.action === 'createSupplier') {
+      let {supplier} = req.body;
+      if(!supplier) {
         return res.status(400).json({message: 'No body provided'})
       }
 
-      if(!body.NAME || !body.TRDR || !body.CODE ) {
+      if(!supplier.NAME || !supplier.TRDR || !supplier.CODE ) {
         response.error = true;
         response.message = 'Please provide a NAME, TRDR and CODE';
         return res.status(400).json(response)
       }
       try {
-        let create = await Supplier.create(body);
+        let create = await Supplier.create(supplier);
         response.success = true;
         response.message = 'Supplier created';
         response.result = create;

@@ -15,17 +15,39 @@ export default async function handler(req, res) {
   }
   
   await connectMongo();
-  if (req.method === 'GET') {
+  if (req.method === 'POST' && req.body.action === 'getClients') {
+        console.log(req.body)
+        const {name, TRDR, afm, id, phone} = req.body;
+        let filterConditions = {};
+        if(name) {
+          filterConditions.NAME = new RegExp("^" + name, 'i');
+        }
+        if(TRDR) {
+          filterConditions.TRDR = TRDR;
+        }
+        if(afm) {
+          filterConditions.AFM = afm;
+        }
+        if(id) {
+          filterConditions._id = id;
+        }
+
+        if(phone) {
+          filterConditions.PHONE01 = phone;
+        }
+
 
         try {
-            let result = await Clients.find({});
-            // console.log(result)
+            let result = await Clients.find(filterConditions);
+            console.log(result)
             response.result = result;
             response.success = true;
+            response.message = 'Clients found';
             response.count = result.length;
             return res.status(200).json(response);
         } catch (e) {
             response.error = e;
+            console.log(e)
             response.message = 'request did not work';
             response.success = false;
         
@@ -34,19 +56,20 @@ export default async function handler(req, res) {
   }
 
 
-  if(req.method === 'POST') {
-      let body = req.body;
-      if(!body) {
+  if(req.method === 'POST' && req.body.action === 'createClient') {
+      let {client} = req.body;
+      console.log(client)
+      if(!client) {
         return res.status(400).json({message: 'No body provided'})
       }
 
-      if(!body.NAME || !body.TRDR  ) {
+      if(!client.NAME || !client.TRDR  ) {
         response.error = true;
         response.message = 'Please provide a NAME, TRDR';
         return res.status(400).json(response)
       }
       try {
-        let create = await Clients.create(body);
+        let create = await Clients.create(client);
         response.success = true;
         response.message = 'Client created';
         response.result = create;

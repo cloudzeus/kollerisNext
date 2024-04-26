@@ -35,7 +35,7 @@ const Impas = () => {
         english: '',
         greek: '',
     })
-    const [sort, setSort] = useState(0)
+    const [sort, setSort] = useState(-1)
     const [editData, setEditData] = useState(null)
     const [editDialog, setEditDialog] = useState(false);
     const [addDialog, setAddDialog] = useState(false);
