@@ -288,10 +288,11 @@ const SearchCode = ({
                     onChange={(e) => setSearchTerm((prev) => ({ ...prev, code: e.target.value }))} 
                     />
             </span>
-            <div 
-                tooltip="Ταξινόμηση Ιmpa με Προϊόντα / Χωρίς Προϊόντα"  
-                className='ml-3 pointer'
-                tooltipOptions={{position: 'top'}}
+            <Tooltip target=".custom-target-div" />
+            <div    
+                data-pr-tooltip="Ταξινόμηση Ιmpa με Προϊόντα / Χωρίς Προϊόντα"
+                className='ml-3 pointer custom-target-div'
+               
                 >
                     {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
                     {sort === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSort}></i>) : null}
@@ -328,7 +329,6 @@ const ExpandedDataTable = ({ id, showSuccess, showError, setSubmitted }) => {
         setLoading(true);
         try {
             let { data } = await axios.post('/api/product/apiImpa', { action: 'findImpaProducts', id: id })
-            console.log(data)
             setData(data.result)
             setLoading(false);
         } catch (e) {
@@ -355,6 +355,7 @@ const ExpandedDataTable = ({ id, showSuccess, showError, setSubmitted }) => {
     const handleDeleteItems = async () => {
         setLoading(true)
         let { data } = await axios.post('/api/product/apiImpa', { action: 'deleteImpaProduct', impaId: id , selected: selected })
+     
         if (!data.success) showError('Αποτυχία Διαγραφής')
         setSubmitted(prev => !prev)
         showSuccess('Επιτυχής Διαγραφή')

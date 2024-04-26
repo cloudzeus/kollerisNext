@@ -488,10 +488,21 @@ export default async function handler(req, res) {
     }
 
     if (action === 'deleteOffer') {
-        const { id } = req.body;
+        const { id, TRDR } = req.body;
+        //client shcema has a boolean field OFFERSTATUS, if there are no offers or holders, OFFERSTATUS is set to false
+
         try {
             await connectMongo();
             const deleted = await Holders.deleteOne({ _id: id });
+            let offers = await SingleOffer.find({TRDR: TRDR});
+            let holders = await Holders.find({TRDR: TRDR});
+            if(offers.length === 0 && holders.length === 0) {
+                await Clients.updateOne({ TRDR: TRDR }, {
+                    $set: {
+                        OFFERSTATUS: false
+                    }
+                })
+            }
             return res.status(200).json({ success: true, result: deleted })
         } catch (e) {
             return res.status(500).json({ success: false, result: null })

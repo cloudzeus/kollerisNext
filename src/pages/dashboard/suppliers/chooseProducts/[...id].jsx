@@ -33,6 +33,7 @@ const ChooseProducts = () => {
     let NAME = id[1];
     let EMAIL = id[2];
     let minOrderValue= parseInt(id[3]);
+    
     setState({
       TRDR: TRDR,
       NAME: NAME,

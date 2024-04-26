@@ -6,6 +6,7 @@ import { sendEmail } from "@/utils/offersEmailConfig";
 import createCSVfile from "@/utils/createCSVfile";
 import Offer from "@/components/grid/Product/Offer";
 import { mn } from "date-fns/locale";
+import Holders from "../../../../server/models/holderModel";
 
 
 export default async function handler(req, res) {
@@ -104,11 +105,22 @@ export default async function handler(req, res) {
     }
 
     if(action === "deleteOffer") {
-        const {id} = req.body;
-     
+        const {id, TRDR} = req.body;
+        //client shcema has a boolean field OFFERSTATUS, if there are no offers or holders, OFFERSTATUS is set to false
         try {
             let del = await SingleOffer.deleteOne({_id: id})
-           
+            let offers = await SingleOffer.find({TRDR: TRDR})
+            let holders = await Holders.find({TRDR: TRDR})
+            
+
+            
+            if(offers.length === 0 && holders.length === 0) {
+                await Clients.updateOne({ TRDR: TRDR }, {
+                    $set: {
+                        OFFERSTATUS: false
+                    }
+                })
+            }
             return res.status(200).json({ success: true, result: del })
         } catch (e) {
             return res.status(400).json({ success: false })

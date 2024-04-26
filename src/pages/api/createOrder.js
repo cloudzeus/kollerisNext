@@ -193,8 +193,7 @@ export default async function handler(req, res) {
                 TRDR: TRDR,
                 PURDOCNUM: PURDOC,
             }
-            console.log('obj')
-            console.log(obj)
+           
             try {
                 let create = await CompletedOrders.create(obj);
                 console.log('create')
@@ -263,10 +262,38 @@ export default async function handler(req, res) {
 
     }
     if (action === "deleteCompletedOrder") {
-        const {id} = req.body;
+        const {id, TRDR} = req.body;
         try {
             await connectMongo();
             let deleted = await CompletedOrders.deleteOne({_id: id})
+            let completed = await CompletedOrders.findOne({TRDR: TRDR});
+            let pending = await PendingOrders.findOne({TRDR: TRDR});
+            if(!completed && !pending) {
+                await Supplier.updateOne({ TRDR: TRDR }, {
+                    $set: {
+                        ORDERSTATUS: false
+                    }
+                })
+            }
+            return res.status(200).json({success: true, result: deleted})
+        } catch (e) {
+            return res.status(500).json({success: false, result: null})
+        }
+    }
+    if (action === "deletePendingOrder") {
+        const {id, TRDR} = req.body;
+        try {
+            await connectMongo();
+            let deleted = await PendingOrders.deleteOne({_id: id});
+            let completed = await CompletedOrders.findOne({TRDR: TRDR});
+            let pending = await PendingOrders.findOne({TRDR: TRDR});
+            if(!completed && !pending) {
+                await Supplier.updateOne({ TRDR: TRDR }, {
+                    $set: {
+                        ORDERSTATUS: false
+                    }
+                })
+            }
             return res.status(200).json({success: true, result: deleted})
         } catch (e) {
             return res.status(500).json({success: false, result: null})

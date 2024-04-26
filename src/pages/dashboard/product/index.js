@@ -50,6 +50,8 @@ import {
 import Image from 'next/image';
 import styled from 'styled-components';
 import ProductImagesComp from '@/components/grid/Product/ProductImageComp';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Image as PrimeImage } from 'primereact/image';
 
 
 const dialogStyle = {
@@ -95,7 +97,7 @@ const columns = [
         header: 'Δεσμευμένα',
         id: 2,
     },
-    
+
     {
         header: 'Μάρκα',
         id: 4,
@@ -142,20 +144,20 @@ function Product() {
     const { data: session } = useSession()
     let user = session?.user?.user;
     const [data, setData] = useState([]);
-    const { 
-        selectedProducts, 
-        submitted, 
-        filters, 
-        category, 
-        group, 
-        subgroup, 
-        lazyState2, 
-        loading, 
-        searchTerm, 
-        sort, 
-        softoneFilter, 
-        sortAvailability, 
-        marka, 
+    const {
+        selectedProducts,
+        submitted,
+        filters,
+        category,
+        group,
+        subgroup,
+        lazyState2,
+        loading,
+        searchTerm,
+        sort,
+        softoneFilter,
+        sortAvailability,
+        marka,
         sortPrice,
         sortImpa,
     } = useSelector(store => store.products)
@@ -182,7 +184,7 @@ function Product() {
     }, [])
 
     useEffect(() => {
-         fetch()
+        fetch()
     }, [submitted])
 
 
@@ -212,7 +214,7 @@ function Product() {
 
         } catch (e) {
             console.log(e)
-           
+
         }
         dispatch(setLoading(false))
     }
@@ -233,7 +235,7 @@ function Product() {
         stateFilters,
         sortPrice,
         sortImpa
-      
+
     ])
 
 
@@ -285,7 +287,7 @@ function Product() {
     }
 
 
-    
+
 
     const RenderHeader = () => {
         const op2 = useRef(null);
@@ -300,12 +302,12 @@ function Product() {
 
         const clearAllFilters = () => {
             dispatch(resetSelectedFilters())
-            setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: '', active: true}))
+            setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: '', active: true }))
         }
 
         const makeMinimalGrid = () => {
-            if(visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
-            else   setVisibleColumns([
+            if (visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
+            else setVisibleColumns([
                 {
                     header: 'Minimized',
                     id: 15,
@@ -362,7 +364,7 @@ function Product() {
                                         className="p-column-filter grid-filter"
                                         style={{ minWidth: '14rem', fontSize: '12px' }}
                                     />
-                                    <i className="pi pi-times ml-2 cursor-pointer" onClick={() =>  dispatch(setSoftoneFilter( { name: 'Χωρίς Φίλτρο', value: null }))} ></i>
+                                    <i className="pi pi-times ml-2 cursor-pointer" onClick={() => dispatch(setSoftoneFilter({ name: 'Χωρίς Φίλτρο', value: null }))} ></i>
 
                                 </div>
 
@@ -419,10 +421,10 @@ function Product() {
 
     const rowExpansionTemplate = (data) => {
         return (
-            <div className="card p-20" style={{maxWidth: '1000px'}}>
+            <div className="card p-20" style={{ maxWidth: '1000px' }}>
                 <TabView>
                     <TabPanel header="Φωτογραφίες">
-                        <ProductImagesComp id={data._id}/>
+                        <ProductImagesComp id={data._id} />
                     </TabPanel>
                     <TabPanel header="Λεπτομέριες">
                         <ExpansionDetails data={data} />
@@ -467,14 +469,15 @@ function Product() {
 
         return (
             <div className="flex align-items-center">
-               <div className="p-input-icon-left w-full">
-                        <i className="pi pi-search" />
-                        <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={(e) => setStateFilters(prev => ({...prev, impaSearch: e.target.value}))} />
-                    </div>
+                <div className="p-input-icon-left w-full">
+                    <i className="pi pi-search" />
+                    <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={(e) => setStateFilters(prev => ({ ...prev, impaSearch: e.target.value }))} />
+                </div>
                 <div className='ml-3'>
-                        {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
-                        {sortImpa === 0 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
-                    </div>
+                    {sortImpa === 0 ? (<i className="pi pi-sort-alt" onClick={onSortImpa}></i>) : null}
+                    {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
+                    {sortImpa === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
+                </div>
             </div>
         )
     };
@@ -515,7 +518,7 @@ function Product() {
             <div className="flex align-items-center justify-content-start w-20rem ">
                 <div className="p-input-icon-left w-full">
                     <i className="pi pi-search" />
-                    <InputText value={stateFilters.codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setStateFilters(prev => ({...prev, codeSearch: e.target.value}))} />
+                    <InputText value={stateFilters.codeSearch} placeholder='Αναζήτηση Kωδικού' onChange={(e) => setStateFilters(prev => ({ ...prev, codeSearch: e.target.value }))} />
                 </div>
                 <div className='ml-3'>
                     {sort === 0 ? (<i className="pi pi-sort-alt" onClick={onSort}></i>) : null}
@@ -557,8 +560,8 @@ function Product() {
         return <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
     }
 
-   
-    
+
+
     return (
         <AdminLayout >
             <Toast ref={toast} />
@@ -579,134 +582,134 @@ function Product() {
                 setSubmitted={setSubmitted}
                 selectedProducts={selectedProducts}
                 setSelectedProducts={setSelectedProducts} />
-                <div className="dataTable">
+            <div className="dataTable">
                 <DataTable
-                header={header}
-                first={lazyState2.first}
-                lazy
-                totalRecords={totalRecords}
-                onPage={onPage}
-                className='product-datatable'
-                selectionMode={'checkbox'}
-                selection={selectedProducts}
-                onSelectionChange={onSelection}
-                paginator
-                rows={lazyState2.rows}
-                rowsPerPageOptions={[10, 50, 100, 200, 500]}
-                value={data}
-                showGridlines
-                dataKey="_id"
-                filterDisplay="row"
-                loading={loading}
-                removableSort
-                editMode="row"
-                rowExpansionTemplate={rowExpansionTemplate}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
+                    header={header}
+                    first={lazyState2.first}
+                    lazy
+                    totalRecords={totalRecords}
+                    onPage={onPage}
+                    className='product-datatable'
+                    selectionMode={'checkbox'}
+                    selection={selectedProducts}
+                    onSelectionChange={onSelection}
+                    paginator
+                    rows={lazyState2.rows}
+                    rowsPerPageOptions={[10, 50, 100, 200, 500]}
+                    value={data}
+                    showGridlines
+                    dataKey="_id"
+                    filterDisplay="row"
+                    loading={loading}
+                    removableSort
+                    editMode="row"
+                    rowExpansionTemplate={rowExpansionTemplate}
+                    expandedRows={expandedRows}
+                    onRowToggle={(e) => setExpandedRows(e.data)}
 
-            >
+                >
 
-                <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
-                <Column selectionMode="multiple" style={{ width: '30px' }} headerStyle={{ width: '30px' }}></Column>
-                {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
-                    : null}
-                <Column body={ImagesTemplate} style={{ width: '30px' }}></Column>
+                    <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
+                    <Column selectionMode="multiple" style={{ width: '30px' }} headerStyle={{ width: '30px' }}></Column>
+                    {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
+                        : null}
+                    <Column body={ImagesTemplate} style={{ width: '30px' }}></Column>
 
-                {visibleColumns.some(column => column.id === 14) && (
-                    <Column
-                        field="NAME"
-                        style={{ minWidth: '400px' }}
-                        header="Όνομα"
-                        filter
-                        showFilterMenu={false}
-                        filterElement={onSearchName}
-                        body={NameTemplate} >
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 15) && (
-                    <Column
-                        field="NAME"
-                        style={{ minWidth: '400px' }}
-                        header="Όνομα"
-                        filter
-                        showFilterMenu={false}
-                        filterElement={onSearchName}
-                        body={MinimalTemplate} >
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 6) && (
-                    <Column
-                        field="impas.code"
-                        style={{ minWidth: '250px' }}
-                        header="Κωδικός Impa"
-                        body={ImpaCode}
-                        filter
-                        filterElement={HasImpa}
-                        showFilterMenu={false}>
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 9) && (
-                    <Column
-                        field="CATEGORY_NAME"
-                        header="Εμπορική Κατηγορία"
-                        filter
-                        filterElement={OnFilterCategory}
-                        showFilterMenu={false}>
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 10) && (
-                    <Column
-                        field="GROUP_NAME"
-                        showFilterMenu={false}
-                        filter
-                        filterElement={OnFilterGroup}
-                        header="Ομάδα" >
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 11) && (
-                    <Column
-                        field="SUBGROUP_NAME"
-                        header="Υποομάδα"
-                        filter
-                        showFilterMenu={false}
-                        filterElement={OnFilterSubgroup}>
-                    </Column>
-                )}
-                {visibleColumns.some(column => column.id === 12) && (
-                    <Column
-                        field="availability.DIATHESIMA"
-                        bodyStyle={{ textAlign: 'center' }}
-                        body={productAvailabilityTemplate}
-                        style={{ width: '90px' }}
-                        header="Διαθέσιμα"
-                    ></Column>)}
-                {visibleColumns.some(column => column.id === 1) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}
-                {visibleColumns.some(column => column.id === 2) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
-                {visibleColumns.some(column => column.id === 3) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
-                {visibleColumns.some(column => column.id === 4) && (
-                    <Column
-                        field="MTRMARK_NAME"
-                        style={{ width: '300px' }}
-                        header="Όνομα Μάρκας"
-                        filter
-                        showFilterMenu={false}
-                        filterElement={OnFilterMarka}>
-                    </Column>)}
-                {visibleColumns.some(column => column.id === 5) && (<Column field="CODE1" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
-                {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
-                <Column  style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
-                {visibleColumns.some(column => column.id === 7) && <Column field="PRICER01" header="Τιμή Scroutz"></Column>}
-                {/* <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column> */}
-            </DataTable>
-                </div>
+                    {visibleColumns.some(column => column.id === 14) && (
+                        <Column
+                            field="NAME"
+                            style={{ minWidth: '400px' }}
+                            header="Όνομα"
+                            filter
+                            showFilterMenu={false}
+                            filterElement={onSearchName}
+                            body={NameTemplate} >
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 15) && (
+                        <Column
+                            field="NAME"
+                            style={{ minWidth: '400px' }}
+                            header="Όνομα"
+                            filter
+                            showFilterMenu={false}
+                            filterElement={onSearchName}
+                            body={MinimalTemplate} >
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 6) && (
+                        <Column
+                            field="impas.code"
+                            style={{ minWidth: '250px' }}
+                            header="Κωδικός Impa"
+                            body={ImpaCode}
+                            filter
+                            filterElement={HasImpa}
+                            showFilterMenu={false}>
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 9) && (
+                        <Column
+                            field="CATEGORY_NAME"
+                            header="Εμπορική Κατηγορία"
+                            filter
+                            filterElement={OnFilterCategory}
+                            showFilterMenu={false}>
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 10) && (
+                        <Column
+                            field="GROUP_NAME"
+                            showFilterMenu={false}
+                            filter
+                            filterElement={OnFilterGroup}
+                            header="Ομάδα" >
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 11) && (
+                        <Column
+                            field="SUBGROUP_NAME"
+                            header="Υποομάδα"
+                            filter
+                            showFilterMenu={false}
+                            filterElement={OnFilterSubgroup}>
+                        </Column>
+                    )}
+                    {visibleColumns.some(column => column.id === 12) && (
+                        <Column
+                            field="availability.DIATHESIMA"
+                            bodyStyle={{ textAlign: 'center' }}
+                            body={productAvailabilityTemplate}
+                            style={{ width: '90px' }}
+                            header="Διαθέσιμα"
+                        ></Column>)}
+                    {visibleColumns.some(column => column.id === 1) && <Column field="availability.SEPARAGELIA" body={productOrderedTemplate} style={{ width: '90px' }} header="Παραγγελία" ></Column>}
+                    {visibleColumns.some(column => column.id === 2) && <Column field="availability.DESVMEVMENA" body={productReservedTemplate} style={{ width: '90px' }} header="Δεσμευμένα" ></Column>}
+                    {visibleColumns.some(column => column.id === 3) && <Column field="updatedFrom" header="updatedFrom" style={{ width: '80px' }} body={UpdatedFromTemplate}></Column>}
+                    {visibleColumns.some(column => column.id === 4) && (
+                        <Column
+                            field="MTRMARK_NAME"
+                            style={{ width: '300px' }}
+                            header="Όνομα Μάρκας"
+                            filter
+                            showFilterMenu={false}
+                            filterElement={OnFilterMarka}>
+                        </Column>)}
+                    {visibleColumns.some(column => column.id === 5) && (<Column field="CODE1" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
+                    {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
+                    <Column style={{ width: '40px' }} field="PRICER" header="Τιμή λιανικής" body={PriceTemplate} filter showFilterMenu={false} filterElement={SortPrice} ></Column>
+                    {visibleColumns.some(column => column.id === 7) && <Column field="PRICER01" header="Τιμή Scroutz"></Column>}
+                    {/* <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column> */}
+                </DataTable>
+            </div>
 
-         
+
             <EditDialog
                 style={dialogStyle}
                 dialog={editDialog}
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
-                // setSubmitted={setSubmitted}
+            // setSubmitted={setSubmitted}
 
             />
             <AddDialog
@@ -727,48 +730,37 @@ function Product() {
 
 
 const ImagesTemplate = ({ _id, images }) => {
-    const router = useRouter();
+    const op = useRef(null);
     const imageOp = useRef(null)
-    const [isLoading, setIsLoading] = useState(true);
-
-    const onImageLoad = () => {
-        setIsLoading(false);
+    const confirm1 = () => {
+        confirmDialog({
+            group: 'headless',
+            // message: 'Are you sure you want to proceed?',
+            // header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+           
+        });
     };
-    let image = images[0]?.name;
-    const onClick = () => {
-        router.push(`/dashboard/images/product/${_id}`)
-    }
-    return (
-        <div className="flex justify-content-center cursor-pointer" onClick={onClick} >
-            {image ? (
-                <div onMouseEnter={(e) => imageOp.current.toggle(e)} onMouseLeave={(e) => imageOp.current.toggle(e)}>
-                    <ImageDiv  >
-                        <Image
-                            alt="product-images"
-                            src={`https://kolleris.b-cdn.net/images/${image}`}
-                            fill={true}
-                            sizes="50px"
-                            onLoad={onImageLoad}
-                        />
-                    </ImageDiv>
 
+    let image = images[0]?.name;
+
+    return (
+        <div className="flex justify-content-center cursor-pointer"   >
+            {image ? (
+                <div     style={{ height: '40px', width: '50px', overflow: 'hidden' }}   >
+                  <PrimeImage 
+                    src={`https://kolleris.b-cdn.net/images/${image}`} 
+                    alt="Image" 
+                    width="100%" 
+                    style={{ objectFit: 'contain', height: '100%'  }}
+                    preview 
+                    />
                 </div>
 
             ) : (
                 <i className="pi pi-image text-400" style={{ fontSize: '1rem' }}></i>
             )}
-            <OverlayPanel style={{ width: '200px' }} ref={imageOp}>
-                <ImageOverlay>
-                    <Image
-                        alt="product-images"
-                        src={`https://kolleris.b-cdn.net/images/${image}`}
-                        fill={true}
-                        sizes="100vw"
-                        loading="lazy"
-                    />
-                </ImageOverlay>
-            </OverlayPanel>
-            {/* <i className={`pi pi-image cursor-pointer ${hasImage ? "text-primary font-md" : "text-400"}`} style={{ fontSize: '1rem' }} onClick={onClick}></i> */}
         </div>
     )
 
@@ -783,8 +775,8 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
         <div className='flex flex-column'>
             <span className='font-semibold '>{NAME} </span>
             <span className='mb-2 text-xs' >
-               Ημ. ενημέρωσης: 
-                <span className='font-semibold text-primary'>{ ` ${formattedDate}`}</span>
+                Ημ. ενημέρωσης:
+                <span className='font-semibold text-primary'>{` ${formattedDate}`}</span>
             </span>
             <div>
                 <div className='flex align-items-center'>
@@ -803,12 +795,12 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
                     <p className='text-500'>softone</p>
                 </div>
                 {availability?.DIATHESIMA === '0' ? (
-                     <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center  mt-1' 
-                     style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px', maxWidth: '70px'}}>
-                        <p style={{marginBottom: '2px'}}>not available</p>
-                     </div>
+                    <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center  mt-1'
+                        style={{ padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize: '10px', maxWidth: '70px' }}>
+                        <p style={{ marginBottom: '2px' }}>not available</p>
+                    </div>
                 ) : null}
-               
+
             </div>
         </div>
     )
@@ -860,7 +852,7 @@ const ExpansionDetails = ({ data }) => {
                     Μάρκα
                 </label>
                 <InputText disabled value={data?.MTRMARK_NAME
-} />
+                } />
             </div>
             <div className="disabled-card">
                 <label>
@@ -942,12 +934,12 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }
                     </div>
                 ) : null}
                 {availability?.DIATHESIMA === '0' ? (
-                     <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1' 
-                     style={{padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize:'10px',  maxWidth: '70px'}}>
-                        <p style={{marginBottom: '2px'}}>not available</p>
-                     </div>
+                    <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1'
+                        style={{ padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize: '10px', maxWidth: '70px' }}>
+                        <p style={{ marginBottom: '2px' }}>not available</p>
+                    </div>
                 ) : null}
-               
+
             </div>
 
         </div>
@@ -1028,7 +1020,7 @@ const CategoriesRowFilterTemplate = ({ value, options, onChange }) => {
 
 
 const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
-    
+
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {
@@ -1065,7 +1057,7 @@ const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
 
 
 const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
-   
+
     const dispatch = useDispatch()
     useEffect(() => {
         const handleCategories = async () => {
@@ -1132,7 +1124,7 @@ const WithImages = ({ value, setState }) => {
     )
 }
 
-const IsActive= ({setState, value}) => {
+const IsActive = ({ setState, value }) => {
     const options = [
         { name: 'Ενεργό', value: true },
         { name: 'Ανενεργό', value: false },
@@ -1163,7 +1155,7 @@ const IsActive= ({setState, value}) => {
         </div>
     )
 }
-const IsSkroutz = ({setState, value}) => {
+const IsSkroutz = ({ setState, value }) => {
     const options = [
         { name: 'Είναι στο Skroutz', value: true },
         { name: 'Δεν είναι στο Skroutz', value: false },

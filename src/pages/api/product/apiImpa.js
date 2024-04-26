@@ -170,8 +170,7 @@ export default async function handler(req, res) {
 
     if(action === "deactivate") {
         const {selected} = req.body;
-        console.log('test')
-        console.log(selected)
+       
      
         let ids = selected.map(item => item._id)
         console.log(ids)

@@ -1,8 +1,8 @@
 import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import Clients from "../../../../server/models/modelClients";
-import { sendError } from "next/dist/server/api-utils";
-
+import SingleOffer from "../../../../server/models/singleOfferModel";
+import Holders from "../../../../server/models/holderModel";
 export default async function handler(req, res) {
     const action = req.body.action
  
@@ -111,10 +111,13 @@ export default async function handler(req, res) {
             }
 
             if(sortOffers !== 0 && sortOffers !== undefined) {
-                console.log('sefsefefes')
+              
                 clients = await Clients.find({}).sort({OFFERSTATUS: sortOffers}).skip(skip).limit(limit);
+               
                 totalRecords = await Clients.countDocuments({});
             }
+          
+          
           
             return res.status(200).json({ success: true, result: clients, totalRecords: totalRecords })
         } catch (e) {
