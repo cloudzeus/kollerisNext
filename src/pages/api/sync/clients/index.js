@@ -16,10 +16,10 @@ export default async function handler(req, res) {
   
   await connectMongo();
   if (req.method === 'GET') {
-     
+
         try {
             let result = await Clients.find({});
-            console.log(result)
+            // console.log(result)
             response.result = result;
             response.success = true;
             response.count = result.length;
