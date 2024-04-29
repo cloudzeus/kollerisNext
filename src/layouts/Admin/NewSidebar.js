@@ -5,28 +5,160 @@ import Link from 'next/link'
 import { toggleSidebar } from '@/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import styles from './styles.module.css'
+
+const navConfig = [
+    {
+        title: 'Πίνακας Ελέγχου',
+        href: '/dashboard',
+    }
+    ,
+    {
+        title: 'Προϊόντα',
+        href: '#',
+        children: [
+            {
+                title: 'Λίστα Προϊόντων',
+                href: '#',
+            },
+            {
+                title: 'Κατηγοροιοποίηση',
+                href: '#',
+                children: [
+                    {
+                        title: 'Εμπορικές Κατηγορίες',
+                        href: '/dashboard/product/mtrcategories',
+                    },
+                    {
+                        title: 'Ομάδες',
+                        href: '/dashboard/product/mtrgroup',
+                    },
+                    {
+                        title: 'Υποομάδες',
+                        href: '/dashboard/product/mtrsubgroup',
+                    }
+                ]
+            },
+            {
+                title: 'Μάρκες',
+                href: '/dashboard/product/brands',
+            },
+            {
+                title: 'Κατασκευαστές',
+                href: '/dashboard/product/manufacturers',
+            }
+           
+        ]
+    }
+    ,
+    {
+        title: 'Πελάτες',
+        href: '#',
+        children: [
+            {
+                title: 'Λίστα Πελατών',
+                href: '/dashboard/clients',
+            },
+            {
+                title: 'Προσφορές',
+                href: '/dashboard/offer',
+            },
+            {
+                title: 'Προσφορές Πολλαπλών Επιλογών',
+                href: '/dashboard/multi-offer',
+            }
+        ]
+    }   
+    ,
+    {
+        title: 'Προμηθευτές',
+        href: '#',
+        children: [
+            {
+                title: 'Λίστα Προμηθευτών',
+                href: '/dashboard/suppliers',
+            },
+            {
+                title: 'Picking',
+                href: '/dashboard/suppliers/picking',
+            },
+            {
+                title: 'Λίστα Παραγγελίες (Χωρίς Όριο)',
+                href: '/dashboard/suppliers/small-orders',
+            }
+        ]
+    }
+    ,
+    {
+        title: 'IMPA',
+        href: '/dashboard/info/impas',
+    },
+    {
+        title: 'Χρήστες',
+        href: '/dashboard/users',
+    }
+    ,
+   
+]
 
 const NewSidebar = () => {
     const dispatch = useDispatch()
-    const router = useRouter()
+    const [expandedItems, setExpandedItems] = useState({});
+    const toggleItem = (itemKey) => {
+        setExpandedItems((prevState) => ({
+            ...prevState,
+            [itemKey]: !prevState[itemKey],
+        }));
+    };
+
 
     const handleToggleSidebar = () => {
         dispatch(toggleSidebar())
     }
-    return (
-        <Container>
-            <div className='top'>
-                <Image src="/uploads/logoPlain.png" width={150} height={35} alt="dgsoft-logo" priority />
-                {/* <h1>Kolleris<span className='kolleris'>.</span></h1> */}
+    const renderMenuItems = (items, parentKey = '', level = 0) => {
+        return (
+            <ul>
+                {items.map((item, index) => {
+                    // Generate a unique key for each menu item based on its level and index
+                    const itemKey = `${parentKey}-${index}`;
+                    const isExpanded = expandedItems[itemKey];
 
-                <i onClick={() => handleToggleSidebar()} className="burger-close pi pi-angle-left" style={{ fontSize: '1.5rem', color: 'black' }}></i>
+                    return (
+                        <>
+                            <li 
+                            className={` ${styles.menuItem} ${styles[`menuItem${level}`]} `}
+                                key={index} onClick={(e) => {
+                                    e.preventDefault();
+                                    toggleItem(itemKey);
+                                }}
+                                >
+                                <Link href={item.href} >
+                                    {item.title}
+                                </Link>
+                                {item.children ? (<i className={` pi ${!isExpanded? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
+                        </li>
+                         {isExpanded && item.children && renderMenuItems(item.children, itemKey, level + 1)}
+                        </>
+                    );
+                })}
+            </ul>
+        );
+    };
+
+    return (    
+        <aside className={styles.container}>
+            <div className={styles.top}>
+                <Image src="/uploads/logoPlain.png" width={150} height={35} alt="dgsoft-logo" priority />
+                <i onClick={() => handleToggleSidebar()} className={`${styles.burgerClose} pi pi-angle-left`} style={{ fontSize: '1.5rem', color: 'black' }}></i>
 
             </div>
-            <div className='main'>
-                <SidebarList />
+            <div className={styles.main}>
+                {/* <SidebarList /> */}
+                {renderMenuItems(navConfig)}
+
             </div>
             <div className='bottom'></div>
-        </Container>
+        </aside>
     )
 }
 
@@ -242,7 +374,6 @@ const Container = styled.div`
     }
 
     @media (max-width: 1024px) {
-        width: 100%;
         .top {
             display: flex;
             justify-content: space-between;
