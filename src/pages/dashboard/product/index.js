@@ -52,7 +52,7 @@ import styled from 'styled-components';
 import ProductImagesComp from '@/components/grid/Product/ProductImageComp';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Image as PrimeImage } from 'primereact/image';
-
+import Link from 'next/link';
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -312,14 +312,14 @@ function Product() {
                     header: 'Minimized',
                     id: 15,
                 },
-                {
-                    header: 'Κόστος',
-                    id: 13,
-                },
-                {
-                    header: 'Διαθέσιμα',
-                    id: 12,
-                }
+                // {
+                //     header: 'Κόστος',
+                //     id: 13,
+                // },
+                // {
+                //     header: 'Διαθέσιμα',
+                //     id: 12,
+                // }
             ])
         }
         return (
@@ -423,11 +423,12 @@ function Product() {
         return (
             <div className="card p-20" style={{ maxWidth: '1000px' }}>
                 <TabView>
-                    <TabPanel header="Φωτογραφίες">
-                        <ProductImagesComp id={data._id} />
-                    </TabPanel>
+                  
                     <TabPanel header="Λεπτομέριες">
                         <ExpansionDetails data={data} />
+                    </TabPanel>
+                    <TabPanel header="Φωτογραφίες">
+                        <ProductImagesComp id={data._id} />
                     </TabPanel>
 
                 </TabView>
@@ -561,6 +562,10 @@ function Product() {
     }
 
 
+    const hanldeDownload = () => {
+        
+    }
+
 
     return (
         <AdminLayout >
@@ -570,10 +575,17 @@ function Product() {
             </div>
             <Button type="button" className='mb-3' severity="secondary" icon="pi pi-bars" label="Menu" onClick={(e) => op.current.toggle(e)} />
             <OverlayPanel ref={op}>
-                <div className='flex flex-column'>
+                <div className='flex flex-column align-center'>
                     <Button label="Προσφορές πολλαπλών επιλογών" outlined severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")} />
                     <Button label="Προσφορές σε πελάτη" outlined severity='secondary' className='mb-3 mt-1 w-20rem' onClick={() => router.push("/dashboard/offer")} />
                     < MassiveImageUpload />
+                   <div className='flex align-items-center justify-content-center'>
+                   <Link 
+                    className='underline cursor-pointer mt-2'
+                    href="/uploadImagesKoll1.xlsx">
+                        Κατεβάστε το δείγμα xlsx φωτογραφιών
+                    </Link>
+                   </div>
 
                 </div>
             </OverlayPanel>
@@ -767,7 +779,7 @@ const ImagesTemplate = ({ _id, images }) => {
 }
 
 
-const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability, updatedAt }) => {
+const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability, updatedAt, PRICER}) => {
 
     const yourDate = new Date(updatedAt);
     const formattedDate = format(yourDate, 'dd-MM-yyyy:HH:mm', { locale: el });
@@ -800,7 +812,14 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
                         <p style={{ marginBottom: '2px' }}>not available</p>
                     </div>
                 ) : null}
-
+                <div className='flex mt-2'>
+                    <span>Τιμή Λιανικής:</span>
+                    <p className='font-bold ml-1'>{PRICER}€</p>
+                </div>
+                <div className='flex '>
+                    <span className='text-sm'>Διαθέσιμα:</span>
+                    <p className='font-bold ml-1 text-sm'>{availability?.DIATHESIMA}</p>
+                </div>
             </div>
         </div>
     )
