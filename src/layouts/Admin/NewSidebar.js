@@ -22,7 +22,7 @@ const navConfig = [
                 href: '/dashboard/product',
             },
             {
-                title: 'Κατηγοροιοποίηση',
+                title: 'Κατηγοριοποίηση',
                 href: '#',
                 children: [
                     {
