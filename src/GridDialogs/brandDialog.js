@@ -5,8 +5,7 @@ import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
 import { AddMoreInput } from '@/components/Forms/PrimeAddMultiple';
 import axios from 'axios';
-import styled from 'styled-components';
-import PrimeUploads from '@/components/Forms/PrimeImagesUpload';
+
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,7 +15,6 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { TextAreaInput } from '@/components/Forms/PrimeInput';
 import { useSession } from "next-auth/react"
 import SingleImageUpload from '@/components/bunnyUpload/FileUpload';
-
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { gridRowData } = useSelector(store => store.grid)
@@ -242,6 +240,7 @@ const UploadLogo = ({ id }) => {
 
 const addSchema = yup.object().shape({
     name: yup.string().required('Συμπληρώστε το όνομα'),
+    TRDCATEGORY: yup.string().required('Συμπληρώστε την κατηγορία'),
 });
 
 
@@ -270,9 +269,9 @@ const AddDialog = ({
             officialCatalogueUrl: '',
             facebookUrl: '',
             instagramUrl: '',
+            TRDCATEGORY: null,
         }
     });
-    const [activeIndex, setActiveIndex] = useState(1);
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
@@ -306,7 +305,6 @@ const AddDialog = ({
             logo: logo[0],
         }
 
-        console.log('body')
         let createdFrom = session.user.user.lastName
         let res = await axios.post('/api/product/apiMarkes', { action: 'create', data: body, createdFrom: createdFrom })
         if (!res.data.success) return showError(res.data.softoneError)
@@ -333,6 +331,7 @@ const AddDialog = ({
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
     }
 
+   
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
@@ -348,6 +347,7 @@ const AddDialog = ({
                 onHide={hideDialog}
             >
                 <FormTitle>Λεπτομέριες</FormTitle>
+              
                 <Input
                     label={'Όνομα'}
                     name={'name'}
@@ -356,6 +356,7 @@ const AddDialog = ({
                     control={control}
                     error={errors.name}
                 />
+
                 <Input
                     label={'Περιγραφή'}
                     name={'description'}

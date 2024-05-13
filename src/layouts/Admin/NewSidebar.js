@@ -124,10 +124,10 @@ const NewSidebar = () => {
                     const isExpanded = expandedItems[itemKey];
 
                     return (
-                        <>
+                        <React.Fragment key={itemKey}>
                             <li 
-                            className={` ${styles.menuItem} ${styles[`menuItem${level}`]} `}
-                                key={index} onClick={(e) => {
+                                className={` ${styles.menuItem} ${styles[`menuItem${level}`]} `}
+                                onClick={(e) => {
                                     e.preventDefault();
                                     toggleItem(itemKey);
                                 }}
@@ -138,7 +138,7 @@ const NewSidebar = () => {
                                 {item.children ? (<i className={` pi ${!isExpanded? 'pi-angle-down' : 'pi-angle-up'}`} style={{ fontSize: '1rem' }}></i>) : null}
                         </li>
                          {isExpanded && item.children && renderMenuItems(item.children, itemKey, level + 1)}
-                        </>
+                        </React.Fragment>
                     );
                 })}
             </ul>
