@@ -67,7 +67,7 @@ export default async function handler(req, res) {
 
 
     try {
-      let products = await SoftoneProduct.find(filterConditions).limit(100);
+      let products = await SoftoneProduct.find(filterConditions);
       if(!products.length) {
         response.result = products;
        
