@@ -190,7 +190,6 @@ export default function Page() {
                 if (prev === -1) return 0;
             })
         }
-        console.log(sortOffers)
 
         return (
             <div>
@@ -260,7 +259,6 @@ export default function Page() {
     };
 
     const ActionTemplate = (rowData) => {
-        console.log(rowData)
         const op = useRef(null);
 
         return (

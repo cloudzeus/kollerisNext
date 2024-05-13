@@ -61,6 +61,9 @@ const catalogSlice = createSlice({
 			};
 			state.mongoKeys.push(payload);
 		},
+		clearMongoKeys: (state) => {
+			state.mongoKeys = [];
+		},
 		setAttribute: (state, {payload}) => {
 			console.log(payload)
 			const existingAttribute = state.attributes.find(item => item.name === payload.name);
@@ -116,6 +119,7 @@ export const {
 	setNewData,
 	setReturnedProducts,
 	setData,
+	clearMongoKeys
 } = catalogSlice.actions;
 
 export default catalogSlice.reducer;
