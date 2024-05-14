@@ -1,0 +1,47 @@
+.container {
+    width: 240px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 240px;
+    background-color: white;
+    border-right: 2px solid #EEF2F6;
+}
+.burgerClose {
+    cursor: pointer;
+    display: none;
+    color: white;
+}
+
+.top {
+    height: 70px;
+    /* background-color:#020202; */
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-bottom: 2px solid #EEF2F6;;
+}
+
+
+.main {
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+
+@media (max-width: 1024px) {
+    .top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .burgerClose {
+        display: block;
+    }
+    
+}
