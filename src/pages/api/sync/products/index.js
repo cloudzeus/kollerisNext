@@ -7,6 +7,7 @@ export const config = {
   },
 }
 export default async function handler(req, res) {
+  await connectMongo();
   let response = {
     count: 0,
     error: null,
@@ -19,6 +20,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST' && action === 'getProducts' ) {
     await connectMongo();
+
     console.log('reqbody')
     console.log(req.body)
     let {category, brand, manufacturer, group, subgroup, name, erpcode, eancode,factorycode } = req.body;
@@ -68,6 +70,8 @@ export default async function handler(req, res) {
 
     try {
       let products = await SoftoneProduct.find(filterConditions);
+      console.log(products.length)
+      console.log(products)
       if(!products.length) {
         response.result = products;
        
@@ -103,7 +107,6 @@ export default async function handler(req, res) {
     if(conditions(product, response)) {
       return res.status(400).json(response)
     }
-    await connectMongo();
     try {
      
     
@@ -128,7 +131,6 @@ export default async function handler(req, res) {
       message: 'update did not work',
       result: [],
     }
-    await connectMongo();
 
     let {findByMTRL, findByID, product} = req.body;
     
