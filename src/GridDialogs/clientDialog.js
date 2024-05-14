@@ -13,7 +13,7 @@ import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
-
+import { Dropdown } from 'primereact/dropdown';
 
 
 
@@ -23,7 +23,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+    const [selectState, setSelectState] = useState({
+        countryOptions: [],
+        country: ""
+    })
+    const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm({
         defaultValues: gridRowData
     });
 
@@ -31,8 +35,19 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
 
+    const handleFetchData = async () => {
+        const {data} = await axios.post('/api/suppliers', { action: 'getCountries' })
+        setSelectState(prev => ({ ...prev, countryOptions: data.result }))
+    }
 
+    useEffect(() => {
+        handleFetchData();
+    }, [])
 
+    useEffect(() => {
+        let value = selectState.countryOptions.find(option => option.COUNTRY == gridRowData.COUNTRY)
+        setSelectState(prev => ({ ...prev, country: value }))
+    }, [selectState.countryOptions])
     const handleEdit = async (data) => {
         // let user = session.user.user.lastName;
         console.log(data)
@@ -60,6 +75,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         hideDialog()
     }
 
+    const handleCountryChange = (e) => {
+        setSelectState(prev => ({ ...prev, country: e.target.value }))
+        setValue('COUNTRY', e.target.value.COUNTRY)
+    }
+
     const productDialogFooter = (
         <React.Fragment>
             <Button label="Ακύρωση" icon="pi pi-times" severity="info" outlined onClick={handleClose} />
@@ -83,6 +103,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                     <FormTitle>Λεπτομέριες</FormTitle>
+                    <Dropdown  
+                    className='mb-2'
+                     value={selectState.country} 
+                     onChange={ handleCountryChange} 
+                     options={selectState.countryOptions} 
+                     optionLabel="NAME"
+                   />
                     <Input
                         label={'Όνομα'}
                         name={'NAME'}
@@ -181,7 +208,6 @@ const AddDialog = ({
     const handleAdd = async (data) => {
         try {
             let res = await axios.post('/api/clients/apiClients', { action: 'addClient', data: data })
-            console.log(res)
             if (!res.data.success) {
                 showError(res.data.message)
             }
@@ -216,7 +242,6 @@ const AddDialog = ({
 
     const handleFetchData = async () => {
         const countries = await axios.post('/api/suppliers', { action: 'getCountries' })
-        console.log(countries)
         setCountries(countries.data.result)
     }
 

@@ -28,7 +28,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     });
 
     useEffect(() => {
-        console.log(gridRowData)
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
@@ -244,7 +243,6 @@ const AddDialog = ({
             sodtype: 12,
             company: 1001,
         }
-        console.log(obj)
         try {
             let res = await axios.post('/api/suppliers', { action: 'create', data: obj })
             if(!res.data.success) {
