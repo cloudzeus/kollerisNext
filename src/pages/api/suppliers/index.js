@@ -184,7 +184,7 @@ export default async function handler(req, res) {
         }
         removeUndefined(softoneObj)
 
-        console.log(softoneObj)
+        let buffer;
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/insertSupplier`;
             const result = await fetch(URL, {
@@ -195,8 +195,9 @@ export default async function handler(req, res) {
                     ...softoneObj
                 })
             });
-            let buffer = await translateData(result)
+            buffer = await translateData(result)
             console.log(buffer)
+            console.log(buffer.TRDR)
             if (!buffer.success) {
                 response.message = buffer.error;
                 return res.status(200).json(response)
@@ -209,8 +210,7 @@ export default async function handler(req, res) {
 
         try {
             await connectMongo();
-            let find = await Supplier.findOne({ TRDR: softoneObj.TRDR });
-            console.log(find)
+            let find = await Supplier.findOne({ TRDR: buffer.TRDR });
             if (find) {
                 response.success = false;
                 response.message = "Supplier already exists in MongoDB";
@@ -218,7 +218,7 @@ export default async function handler(req, res) {
             }
             let insert = await Supplier.create({
                 ...data,
-                TRDR: softoneObj.TRDR,
+                TRDR: buffer.TRDR,
             });
             response.result = insert;
             response.success = true;
@@ -299,7 +299,6 @@ export default async function handler(req, res) {
                 })
             });
             let buffer = await translateData(response)
-            console.log(buffer)
             if (!buffer) {
                 send.success = false;
                 send.message = 'No data found';
