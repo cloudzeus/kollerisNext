@@ -53,6 +53,7 @@ import ProductImagesComp from '@/components/grid/Product/ProductImageComp';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Image as PrimeImage } from 'primereact/image';
 import Link from 'next/link';
+import { Message } from 'primereact/message';
 
 const dialogStyle = {
     marginTop: '10vh', // Adjust the top margin as needed
@@ -574,6 +575,10 @@ function Product() {
                 <StepHeader text="Προϊόντα" />
             </div>
             <Button type="button" className='mb-3' severity="secondary" icon="pi pi-bars" label="Menu" onClick={(e) => op.current.toggle(e)} />
+            <div className='mb-2'>
+            <Message severity="info" text="Κάνοντας click πάνω στον πίνακα των προϊόντων, πατώντας τα βελάκια δεξί/αριστερό μπορείτε να πλοηγηθείτε στο εσωτερικό του πίνακα για να δείτε τις στήλες που δεν φαίνονται" />
+            </div>
+
             <OverlayPanel ref={op}>
                 <div className='flex flex-column align-center'>
                     <Button label="Προσφορές πολλαπλών επιλογών" outlined severity='secondary' className='mt-2 w-20rem' onClick={() => router.push("/dashboard/multi-offer")} />
