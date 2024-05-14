@@ -1,6 +1,7 @@
 import Supplier from "../../../../server/models/suppliersSchema";
 import connectMongo from "../../../../server/config";
 import translateData from "@/utils/translateDataIconv";
+import PendingOrders from "../../../../server/models/pendingOrders";
 
 export default async function handler(req, res) {
 
@@ -98,14 +99,42 @@ export default async function handler(req, res) {
             response.error = e;
 
         }
+
+        await connectMongo();
+
+        //when updating the supplier in case we update the minOrderValue in the supplier we need to update it in the pendingOrders collection
+        async function updateMinOrderValue(minOrderValue) {
+            if(!minOrderValue) return;
+            try {
+                let updatePendingOrders = await PendingOrders.findOneAndUpdate({
+                    supplierName: data.NAME,
+                }, {
+                    $set: {
+                        minOrderValue: minOrderValue
+                    }
+                }, { new: true 
+                })
+                console.log(updatePendingOrders)
+                if (!updatePendingOrders) {
+                    response.success = false;
+                    response.message = "Supplier updated in Softone but not in MongoDB pendingOrders to update Suppiers minOrderValue";
+                    return res.status(200).json(response)
+                }
+                return updatePendingOrders;
+            } catch (e) {
+                response.message = "MongoError Error updating supplier's minOrderValue";
+                response.error = e;
+                return res.status(200).json(response)
+            }
+           
+        }
+        updateMinOrderValue(data.minOrderValue);
         try {
-            await connectMongo();
             let result = await Supplier.findOneAndUpdate({ _id: data._id }, {
                 ...data,
                 updatedFrom: user
             }, { new: true })
-            console.log('mongo Result')
-            console.log(result)
+         
             if (!result) {
                 response.success = false;
                 response.message = "Supplier updated in Softone but not in MongoDB";
@@ -169,9 +198,9 @@ export default async function handler(req, res) {
             });
             let buffer = await translateData(result)
             console.log(buffer)
-            if (!buffer) {
-                response.success = false;
-                response.message = 'No data found';
+            if (!buffer.success) {
+                response.message = buffer.error;
+                return res.status(200).json(response)
             }
             response.message = "Supplier created in Softone successfully";
         } catch (e) {
@@ -181,7 +210,17 @@ export default async function handler(req, res) {
 
         try {
             await connectMongo();
-            let insert = await Supplier.create(data);
+            let find = await Supplier.findOne({ TRDR: softoneObj.TRDR });
+            console.log(find)
+            if (find) {
+                response.success = false;
+                response.message = "Supplier already exists in MongoDB";
+                return res.status(200).json(response)
+            }
+            let insert = await Supplier.create({
+                ...data,
+                TRDR: softoneObj.TRDR,
+            });
             response.result = insert;
             response.success = true;
             response.message = "Supplier created in Softone and MongoDB successfully";

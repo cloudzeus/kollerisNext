@@ -146,6 +146,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    name={'EMAIL'}
                    control={control}
                 />
+                   <Input
+                   label={'Ελάχιστη Ποσότητα Παραγγελία'}
+                   name={'minOrderValue'}
+                   control={control}
+                />
                 
                
               
