@@ -11,21 +11,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-
 import { useSession } from "next-auth/react"
+import PrimeSelect from '@/components/Forms/PrimeSelect';
 
 
-const addSchema = yup.object().shape({
-        NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
-        AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
-});
+
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -33,15 +30,15 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     useEffect(() => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
-    
- 
-   
+
+
+
     const handleEdit = async (data) => {
         // let user = session.user.user.lastName;
-         console.log(data)
-   
+        console.log(data)
+
         try {
-            await axios.post('/api/clients/apiClients', {action: "updateOne", data: data})
+            await axios.post('/api/clients/apiClients', { action: "updateOne", data: data })
             setSubmitted(true)
             hideDialog()
             showSuccess('Η εγγραφή ενημερώθηκε')
@@ -49,8 +46,8 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
             showError()
             hideDialog()
         }
-       
-       
+
+
     }
 
     const showSuccess = (message) => {
@@ -78,59 +75,58 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     visible={dialog}
                     style={{ width: '32rem', maxWidth: '80rem' }}
                     breakpoints={{ '960px': '75vw', '641px': '90vw' }}
-                    header= "Διόρθωση Πελάτη"
+                    header="Διόρθωση Πελάτη"
                     modal
                     className="p-fluid"
                     footer={productDialogFooter}
                     onHide={hideDialog}
                     maximizable
                 >
-                   <FormTitle>Λεπτομέριες</FormTitle>
-                   <Input
-                   label={'Όνομα'}
-                   name={'NAME'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'ΑΦΜ'}
-                   name={'AFM'}
-                   control={control}
-               />
-                   <Input
-                   label={'Διεύθυνση'}
-                   name={'ADDRESS'}
-                   control={control}
-               />
-               
-                   <Input
-                   label={'T.K'}
-                   name={'ZIP'}
-                   control={control}
-               />
-               
-                   <Input
-                   label={'Τηλέφωνο'}
-                   name={'PHONE01'}
-                   control={control}
-               />
-                   <Input
-                   label={'Τηλέφωνο 2'}
-                   name={'PHONE02'}
-                   control={control}
-               />
-                   <Input
-                   label={'Εmail'}
-                   name={'EMAIL'}
-                   control={control}
-                />
-                   <Input
-                   label={'DIASCODE'}
-                   name={'DIASCODE'}
-                   control={control}
-                />
-               
-              
+                    <FormTitle>Λεπτομέριες</FormTitle>
+                    <Input
+                        label={'Όνομα'}
+                        name={'NAME'}
+                        control={control}
+                        required
+                    />
+                    <Input
+                        label={'ΑΦΜ'}
+                        name={'AFM'}
+                        control={control}
+                    />
+                    <Input
+                        label={'Διεύθυνση'}
+                        name={'ADDRESS'}
+                        control={control}
+                    />
+
+                    <Input
+                        label={'T.K'}
+                        name={'ZIP'}
+                        control={control}
+                    />
+
+                    <Input
+                        label={'Τηλέφωνο'}
+                        name={'PHONE01'}
+                        control={control}
+                    />
+                    <Input
+                        label={'Τηλέφωνο 2'}
+                        name={'PHONE02'}
+                        control={control}
+                    />
+                    <Input
+                        label={'Εmail'}
+                        name={'EMAIL'}
+                        control={control}
+                    />
+                    <Input
+                        label={'DIASCODE'}
+                        name={'DIASCODE'}
+                        control={control}
+                    />
+
                 </Dialog>
             </form>
         </Container>
@@ -141,12 +137,18 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
-
+const addSchema = yup.object().shape({
+    NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
+    AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
+    code: yup.string().required('Ο κωδικός είναι υποχρεωτικός'),
+    COUNTRY: yup.object().required('Η χώρα είναι υποχρεωτική'),
+});
 const AddDialog = ({
     dialog,
     hideDialog,
     setSubmitted
 }) => {
+    const [countries, setCountries] = useState(null)
 
     const {
         control,
@@ -164,31 +166,36 @@ const AddDialog = ({
             ZIP: '',
             AFM: '',
             DIASCODE: '',
+            COUNTRY: '',
+            code: '',
         }
     });
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-   
+
     const cancel = () => {
         hideDialog()
         reset()
     }
 
     const handleAdd = async (data) => {
-        console.log(data)
         try {
             let res = await axios.post('/api/clients/apiClients', { action: 'addClient', data: data })
-            console.log(res.data)
-            setSubmitted(true)
-            hideDialog()
-            showSuccess('Επιτυχής εισαγωγή στην βάση')
-            reset();
-
+            console.log(res)
+            if (!res.data.success) {
+                showError(res.data.message)
+            }
+            else {
+                showSuccess(res.data.message)
+                hideDialog()
+                setSubmitted(true)
+                reset();
+            }
         } catch (e) {
-            showError
+            showError(e)
             hideDialog()
         }
-       
+
     }
 
 
@@ -207,6 +214,17 @@ const AddDialog = ({
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
     }
 
+    const handleFetchData = async () => {
+        const countries = await axios.post('/api/suppliers', { action: 'getCountries' })
+        console.log(countries)
+        setCountries(countries.data.result)
+    }
+
+    useEffect(() => {
+        handleFetchData();
+    }, [])
+
+
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
@@ -219,50 +237,68 @@ const AddDialog = ({
                 className="p-fluid"
                 footer={productDialogFooter}
                 onHide={hideDialog}>
-                 <Input
-                   label={'Όνομα'}
-                   name={'NAME'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'ΑΦΜ'}
-                   name={'AFM'}
-                   control={control}
-                   required
-               />
-                   <Input
-                   label={'Διεύθυνση'}
-                   name={'ADDRESS'}
-                   control={control}
-               />
-               
-                   <Input
-                   label={'T.K'}
-                   name={'ZIP'}
-                   control={control}
-               />
-               
-                   <Input
-                   label={'Τηλέφωνο'}
-                   name={'PHONE01'}
-                   control={control}
-               />
-                   <Input
-                   label={'Τηλέφωνο 2'}
-                   name={'PHONE02'}
-                   control={control}
-               />
-                   <Input
-                   label={'Εmail'}
-                   name={'EMAIL'}
-                   control={control}
+                <PrimeSelect
+                    label={'Χώρα'}
+                    name={'COUNTRY'}
+                    options={countries}
+                    optionLabel={'NAME'}
+                    control={control}
+                    required
+                    error={errors.COUNTRY}
                 />
-                   <Input
+                <Input
+                    label={'Όνομα'}
+                    name={'NAME'}
+                    control={control}
+                    required
+                    error={errors.NAME}
+                />
+                <Input
+                    label={'ΑΦΜ'}
+                    name={'AFM'}
+                    control={control}
+                    required
+                    error={errors.AFM}
+                />
+                <Input
+                    label={'Κωδικός Πελάτη'}
+                    name={'code'}
+                    control={control}
+                    required
+                    error={errors.code}
+                />
+                <Input
+                    label={'Διεύθυνση'}
+                    name={'ADDRESS'}
+                    control={control}
+                />
+
+                <Input
+                    label={'T.K'}
+                    name={'ZIP'}
+                    control={control}
+                />
+
+                <Input
+                    label={'Τηλέφωνο'}
+                    name={'PHONE01'}
+                    control={control}
+                />
+                <Input
+                    label={'Τηλέφωνο 2'}
+                    name={'PHONE02'}
+                    control={control}
+                />
+                <Input
+                    label={'Εmail'}
+                    name={'EMAIL'}
+                    control={control}
+                />
+                {/* <Input
                    label={'DIASCODE'}
                    name={'DIASCODE'}
                    control={control}
-                />
+                /> */}
             </Dialog>
         </form>
     )

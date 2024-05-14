@@ -224,7 +224,7 @@ export default function Clients() {
     const LeftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button disabled={true} label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+                <Button  label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
             </div>
         )
     }

@@ -8,15 +8,75 @@ export default async function handler(req, res) {
  
     if(action === 'addClient') {
         let {data} = req.body;
-       
+        let response = {
+            success: false,
+            message: '',
+            error: '',
+            result: [],
+        };
+
+        let softoneObj = {
+            company: 1001,
+            sodtype: 13,
+            country:parseInt(data.COUNTRY.COUNTRY),
+            SOCURRENCY: parseInt(data.COUNTRY.SOCURRENCY),
+            name: data.NAME,
+            afm: data.AFM,
+            ADDRESS: data.ADDRESS,
+            PHONE01: data.PHONE01,
+            PHONE02: data.PHONE02,
+            EMAIL: data.EMAIL,
+            code: data.code,
+        }
+        console.log(softoneObj)
+        function removeUndefined(obj) {
+            Object.keys(obj).forEach(key => obj[key] === undefined && delete obj[key])
+        }
+        removeUndefined(softoneObj)
+        console.log(softoneObj)
+        let buffer;
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/insertSupplier`;
+            const result = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    ...softoneObj
+                })
+            });
+            buffer = await translateData(result)
+            console.log('buffer')
+            console.log(buffer)
+            if (!buffer.success) {
+                response.message = buffer.error;
+                return res.status(200).json(response)
+            }
+            response.message = "Supplier created in Softone successfully";
+        } catch (e) {
+            response.message = "SoftoneError Error creating supplier";
+            response.error = e;
+            return res.status(200).json(response)
+        }
+
         try {
             await connectMongo();
+            let find = await Clients.findOne({TRDR: buffer.TRDR})
+            if(find) {
+                response.success = false;
+                response.message = "Client already exists";
+                return res.status(200).json(response)
+            }
+
             let result = await Clients.create({
                 ...data,
+                TRDR: buffer.TRDR,
                 OFFERSTATUS: false,
             })
-            console.log(result)
-            return res.status(200).json({ success: true })
+            response.success = true;
+            response.message = "Client created successfully";
+            response.result = result;
+            return res.status(200).json(response)
         } catch (e) {
             return res.status(400).json({ success: false })
         }
@@ -103,7 +163,7 @@ export default async function handler(req, res) {
             return res.status(200).json(response)
           
         } catch (e) {
-            return res.status(400).json({ success: false })
+            return res.status(400).json(response)
         }
     }
     //USE IN THE GLOBAL CUSTOMERS TABLE WHERE YOU SELECT A CUSTOMER:
