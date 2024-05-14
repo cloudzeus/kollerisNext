@@ -7,15 +7,12 @@ import axios from 'axios';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { Toast } from 'primereact/toast';
-import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
-
+import { FormTitle,Container } from '@/componentsStyles/dialogforms';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
 import { Dropdown } from 'primereact/dropdown';
-import { set } from 'mongoose';
-
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
@@ -53,7 +50,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
     const handleEdit = async (data) => {
         let user = session.user.user.lastName;
-        console.log(data)
+        
         try {
             await axios.post('/api/suppliers', {action: "updateOne", data: data, user: user})
             setSubmitted(true)
@@ -166,8 +163,8 @@ const addSchema = yup.object().shape({
     NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
     AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
     TRDCATEGORY: yup.string().required('Ο τύπος προμηθευτή είναι υποχρεωτικός'),
-    code: yup.string().required('Ο κωδικός είναι υποχρεωτικός')
- 
+    CODE: yup.string().required('Ο κωδικός είναι υποχρεωτικός'),
+    minOrderValue: yup.number().required('Η ελάχιστη ποσότητα παραγγελίας είναι υποχρεωτική')
 });
 
 const AddDialog = ({
@@ -189,11 +186,16 @@ const AddDialog = ({
             PHONE02: '',
             EMAIL: '',
             ADDRESS: '',
+            EMAILACC: '',
             ZIP: '',
             AFM: '',
             TRDCATEGORY: '',
-            country: '',
-            code: '',
+            COUNTRY: '',
+            CODE: '',
+            minOrderValue: '',
+            IRSDATA: '',
+            JOBTYPETRD: '',
+            WEBPAGE: ''
         }
     });
     const toast = useRef(null);
@@ -232,20 +234,18 @@ const AddDialog = ({
     const handleAdd = async (data) => {
         let obj = {
             ...data,
-            country: parseInt(data.country.COUNTRY),
-            SOCURRENCY: parseInt(data.country.SOCURRENCY),
+            COUNTRY: parseInt(data.COUNTRY.COUNTRY),
+            SOCURRENCY: parseInt(data.COUNTRY.SOCURRENCY),
             sodtype: 12,
             company: 1001,
         }
-
         console.log(obj)
         try {
             let res = await axios.post('/api/suppliers', { action: 'create', data: obj })
-            console.log(res.data)
             if(!res.data.success) {
-                showError('Aποτυχία εισαγωγής στη βάση')
+                showError(res.data.message)
             } else {
-                showSuccess('Επιτυχής εισαγωγή')
+                showSuccess(res.data.message)
             }
             setSubmitted(true)
             hideDialog()
@@ -299,13 +299,12 @@ const AddDialog = ({
                 />
                 <PrimeSelect 
                     label={'Χώρα'}
-                    name={'country'}
+                    name={'COUNTRY'}
                     options={countries}
                     optionLabel={'NAME'}
-                    // optionValu
                     control={control}
                     required
-                    error={errors.TRDCATEGORY}
+                    // error={errors.TRDCATEGORY}
                 />
                  <Input
                    label={'Όνομα'}
@@ -328,18 +327,24 @@ const AddDialog = ({
                />
                    <Input
                    label={'Κωδικός Προμηθευτή'}
-                   name={'code'}
+                   name={'CODE'}
                    control={control}
                    required
-                   error={errors.code}
                />
-                   {/* <Input
+                   <Input
+                   label={'Ελάχιστη Ποσότητα Παραγγελίας'}
+                   name={'minOrderValue'}
+                   control={control}
+                   required
+                   error={errors.minOrderValue}
+               />
+                   <Input
                    label={'T.K'}
                    name={'ZIP'}
                    control={control}
-               /> */}
+               />
                
-                   {/* <Input
+                   <Input
                    label={'Τηλέφωνο'}
                    name={'PHONE01'}
                    control={control}
@@ -353,7 +358,27 @@ const AddDialog = ({
                    label={'Εmail'}
                    name={'EMAIL'}
                    control={control}
-                /> */}
+                />
+                   <Input
+                   label={'Εmailcc'}
+                   name={'EMAILACC'}
+                   control={control}
+                />
+                   <Input
+                   label={'IRSDATA'}
+                   name={'IRSDATA'}
+                   control={control}
+                />
+                   <Input
+                   label={'Τύπος Εργασίας'}
+                   name={'JOBTYPETRD'}
+                   control={control}
+                />
+                   <Input
+                   label={'Ιστοσελίδα'}
+                   name={'WEBPAGE'}
+                   control={control}
+                />
                   
             </Dialog>
         </form>

@@ -20,7 +20,7 @@ export default async function handler(req, res) {
             if (searchTerm.address) filterConditions.ADDRESS = new RegExp(searchTerm.address, 'i');
 
             let query = Supplier.find(filterConditions);
-           
+
             if (sortOffers === 1) {
                 query = query.sort({ ORDERSTATUS: 1 });
             } else if (sortOffers === -1) {
@@ -48,8 +48,9 @@ export default async function handler(req, res) {
         }
         const { data, user } = req.body;
 
-    //  ACCETPED VALUES FOR SOFTONE UPDATE:
+        //  ACCETPED VALUES FOR SOFTONE UPDATE:
         let softoneObj = {
+            sodtype: 12,
             TRDR: data.TRDR,
             EMAIL: data.EMAIL,
             EMAILACC: data.EMAILACC,
@@ -72,7 +73,7 @@ export default async function handler(req, res) {
             Object.keys(obj).forEach(key => obj[key] === undefined && delete obj[key])
         }
         removeUndefined(softoneObj)
-        
+
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/updateSupplier`;
             const result = await fetch(URL, {
@@ -80,7 +81,7 @@ export default async function handler(req, res) {
                 body: JSON.stringify({
                     username: "Service",
                     password: "Service",
-                    sodtype: 12,
+                 
                     ...softoneObj
                 })
             });
@@ -88,12 +89,14 @@ export default async function handler(req, res) {
             if (!buffer) {
                 response.success = false;
                 response.message = 'No data found';
+                return res.status(200).json(response)
             }
             response.success = true;
             response.message = "Supplier updated in Softone successfully";
         } catch (e) {
             response.message = "SoftoneError Error updating supplier";
             response.error = e;
+
         }
         try {
             await connectMongo();
@@ -103,7 +106,7 @@ export default async function handler(req, res) {
             }, { new: true })
             console.log('mongo Result')
             console.log(result)
-            if(!result) {
+            if (!result) {
                 response.success = false;
                 response.message = "Supplier updated in Softone but not in MongoDB";
             }
@@ -126,27 +129,73 @@ export default async function handler(req, res) {
             message: ""
         }
         const { data } = req.body;
-        console.log(data)
-        // try {
-        //     let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/insertSupplier`;
-        //         const response = await fetch(URL, {
-        //             method: 'POST',
-        //             body: JSON.stringify({
-        //                 username: "Service",
-        //                 password: "Service",
-        //                 ...data
-        //             })
-        //         });
-        //         let buffer = await translateData(response)
-        // } catch (e) {
-        //     return res.status(400).json({ success: false })
-        // }
+        let softoneObj = {
+            TRDR: data.TRDR,
+            company: 1001,
+            sodtype: 12,
+            SOCURRENCY: data.SOCURRENCY,
+            code: data.CODE,
+            EMAIL: data.EMAIL,
+            EMAILACC: data.EMAILACC,
+            afm: data.AFM,
+            name: data.NAME,
+            PHONE01: data.PHONE01,
+            PHONE02: data.PHONE02,
+            ADDRESS: data.ADDRESS,
+            ZIP: data.ZIP,
+            CITY: data.CITY,
+            country: data.COUNTRY,
+            BRANCH: data.BRANCH,
+            IRSDATA: data.IRSDATA,
+            JOBTYPE: data.JOBTYPE,
+            ISACTIVE: data.ISACTIVE,
+          
+        }
+        function removeUndefined(obj) {
+            Object.keys(obj).forEach(key => obj[key] === undefined && delete obj[key])
+        }
+        removeUndefined(softoneObj)
 
+        console.log(softoneObj)
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/insertSupplier`;
+            const result = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    ...softoneObj
+                })
+            });
+            let buffer = await translateData(result)
+            console.log(buffer)
+            if (!buffer) {
+                response.success = false;
+                response.message = 'No data found';
+            }
+            response.message = "Supplier created in Softone successfully";
+        } catch (e) {
+            response.message = "SoftoneError Error creating supplier";
+            response.error = e;
+        }
+
+        try {
+            await connectMongo();
+            let insert = await Supplier.create(data);
+            response.result = insert;
+            response.success = true;
+            response.message = "Supplier created in Softone and MongoDB successfully";
+        } catch (e) {
+            response.message = "MongoError Error creating supplier";
+            response.error = e;
+        }
+        console.log(response)
+        return res.status(200).json(response)
     }
 
     if (action === 'saveCatalog') {
         const { catalogName, id } = req.body;
-  
+
         try {
             await connectMongo();
             let result = await Supplier.findOneAndUpdate({ _id: id }, {
@@ -178,7 +227,7 @@ export default async function handler(req, res) {
 
     if (action === "deleteBrandFromSupplier") {
         const { supplierID, brandID } = req.body;
-       
+
         try {
             await connectMongo();
             let result = await Supplier.findOneAndUpdate({ _id: supplierID }, {
