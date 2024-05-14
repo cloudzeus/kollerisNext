@@ -13,29 +13,47 @@ import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
-import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
-
+import { Dropdown } from 'primereact/dropdown';
+import { set } from 'mongoose';
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
- 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+
+    const [selectState, setSelectState] = useState({
+        countryOptions: [],
+        country: ""
+    })
+    const { control, handleSubmit, formState: { errors }, reset,  setValue } = useForm({
         defaultValues: gridRowData
     });
 
     useEffect(() => {
+        console.log(gridRowData)
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
- 
+    const handleFetchData = async () => {
+        const {data} = await axios.post('/api/suppliers', { action: 'getCountries' })
+        setSelectState(prev => ({ ...prev, countryOptions: data.result }))
+    }
+
+    useEffect(() => {
+        handleFetchData();
+    }, [])
+
    
+    useEffect(() => {
+        let value = selectState.countryOptions.find(option => option.COUNTRY == gridRowData.COUNTRY)
+        setSelectState(prev => ({ ...prev, country: value }))
+    }, [selectState.countryOptions])
+
+
     const handleEdit = async (data) => {
         let user = session.user.user.lastName;
-         console.log(data)
-   
+        console.log(data)
         try {
             await axios.post('/api/suppliers', {action: "updateOne", data: data, user: user})
             setSubmitted(true)
@@ -66,6 +84,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
         </React.Fragment>
     );
 
+
+    const handleCountryChange = (e) => {
+        setSelectState(prev => ({ ...prev, country: e.target.value }))
+        setValue('COUNTRY', e.target.value.COUNTRY)
+    }
     return (
         < Container>
             <form >
@@ -82,6 +105,14 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                    <FormTitle>Λεπτομέριες</FormTitle>
+                    <label className='mb-2 block'>Χώρα</label>
+                   <Dropdown  
+                    className='mb-2'
+                     value={selectState.country} 
+                     onChange={ handleCountryChange} 
+                     options={selectState.countryOptions} 
+                     optionLabel="NAME"
+                   />
                    <Input
                    label={'Όνομα'}
                    name={'NAME'}
@@ -98,13 +129,11 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                    name={'ADDRESS'}
                    control={control}
                />
-               
                    <Input
                    label={'T.K'}
                    name={'ZIP'}
                    control={control}
                />
-               
                    <Input
                    label={'Τηλέφωνο'}
                    name={'PHONE01'}
@@ -137,8 +166,8 @@ const addSchema = yup.object().shape({
     NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
     AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
     TRDCATEGORY: yup.string().required('Ο τύπος προμηθευτή είναι υποχρεωτικός'),
-    code: yup.number('Ο κωδικός πρέπει να είναι αριθμός')
-    .required('Ο κωδικός είναι υποχρεωτικός')
+    code: yup.string().required('Ο κωδικός είναι υποχρεωτικός')
+ 
 });
 
 const AddDialog = ({
@@ -162,45 +191,70 @@ const AddDialog = ({
             ADDRESS: '',
             ZIP: '',
             AFM: '',
-            TRDCATEGORY: null,
-            code: null,
+            TRDCATEGORY: '',
+            country: '',
+            code: '',
         }
     });
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
     const [trdCategories, setTrdCategories] = useState(null)
+    const [countries, setCountries] = useState(null)
+
+
+
     const cancel = () => {
         hideDialog()
         reset()
     }
 
 
-    //Fetch the options for the first select. When we add a new supplier the TYPE of supplier is required in the form:
-    const handleFetchTRDCATEGORIES = async () => {
-        const {data} = await axios.post('/api/suppliers', {
-            action: 'getTRDCATEGORIES'
-        })
-        setTrdCategories(data.result)
+  
 
+   
+
+
+    const handleFetchData = () => {
+        const categories = axios.post('/api/suppliers', { action: 'getTRDCATEGORIES' })
+        const countries = axios.post('/api/suppliers', { action: 'getCountries' })
+        Promise.all([categories, countries]).then((res) => {
+            setTrdCategories(res[0].data.result)
+            setCountries(res[1].data.result)
+        })
     }
+
     useEffect(() => {
-        handleFetchTRDCATEGORIES();
+        handleFetchData();
     }, [])
 
-    const handleAdd = async (data) => {
-        console.log(data)
-        // try {
-        //     let res = await axios.post('/api/suppliers', { action: 'create', data: data })
-        //     console.log(res.data)
-        //     setSubmitted(true)
-        //     hideDialog()
-        //     showSuccess('Επιτυχής εισαγωγή στην βάση')
-        //     reset();
 
-        // } catch (e) {
-        //     showError
-        //     hideDialog()
-        // }
+
+    const handleAdd = async (data) => {
+        let obj = {
+            ...data,
+            country: parseInt(data.country.COUNTRY),
+            SOCURRENCY: parseInt(data.country.SOCURRENCY),
+            sodtype: 12,
+            company: 1001,
+        }
+
+        console.log(obj)
+        try {
+            let res = await axios.post('/api/suppliers', { action: 'create', data: obj })
+            console.log(res.data)
+            if(!res.data.success) {
+                showError('Aποτυχία εισαγωγής στη βάση')
+            } else {
+                showSuccess('Επιτυχής εισαγωγή')
+            }
+            setSubmitted(true)
+            hideDialog()
+            reset();
+
+        } catch (e) {
+            showError(e)
+            hideDialog()
+        }
        
     }
 
@@ -243,6 +297,16 @@ const AddDialog = ({
                     required
                     error={errors.TRDCATEGORY}
                 />
+                <PrimeSelect 
+                    label={'Χώρα'}
+                    name={'country'}
+                    options={countries}
+                    optionLabel={'NAME'}
+                    // optionValu
+                    control={control}
+                    required
+                    error={errors.TRDCATEGORY}
+                />
                  <Input
                    label={'Όνομα'}
                    name={'NAME'}
@@ -263,19 +327,19 @@ const AddDialog = ({
                    control={control}
                />
                    <Input
-                   label={'code'}
-                   name={'Κωδικός'}
+                   label={'Κωδικός Προμηθευτή'}
+                   name={'code'}
                    control={control}
                    required
                    error={errors.code}
                />
-                   <Input
+                   {/* <Input
                    label={'T.K'}
                    name={'ZIP'}
                    control={control}
-               />
+               /> */}
                
-                   <Input
+                   {/* <Input
                    label={'Τηλέφωνο'}
                    name={'PHONE01'}
                    control={control}
@@ -289,7 +353,7 @@ const AddDialog = ({
                    label={'Εmail'}
                    name={'EMAIL'}
                    control={control}
-                />
+                /> */}
                   
             </Dialog>
         </form>

@@ -16,7 +16,8 @@ export default function PrimeSelect({
         options, 
         optionLabel, 
         optionValue,
-        placeholder
+        placeholder,
+        defaultValue
         }) {
 
     return (
