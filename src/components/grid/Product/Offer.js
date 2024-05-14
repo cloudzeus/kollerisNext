@@ -59,7 +59,6 @@ const AfterClientSelection = () => {
 
     const sendOffer = async () => {
         setLoading(true)
-        console.log('click')
         const { data } = await axios.post('/api/singleOffer', {
             action: "createOrder",
             data: mtrLines,
@@ -70,7 +69,6 @@ const AfterClientSelection = () => {
         })
 
 
-        console.log(data)
 
         if (!data.success) {
             showError(data.error)

@@ -7,7 +7,6 @@ function XLSXDownloadButton({data, fileName, disabled}) {
     const handleDownload = () => {
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.json_to_sheet(data);
-        console.log(worksheet)
         XLSX.utils.book_append_sheet(workbook, worksheet, "data");
         const date = new Date().toISOString().slice(0, 10);
         XLSX.writeFile(workbook, `${fileName}.${date}.xlsx` , { compression: true });

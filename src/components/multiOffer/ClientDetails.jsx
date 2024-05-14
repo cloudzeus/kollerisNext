@@ -11,14 +11,12 @@ import StepHeader from '../StepHeader'
 
 const ClientDetails = () => {
     const {selectedClient} = useSelector(state => state.impaoffer)
-    console.log(selectedClient)
     const [editEmail, setEditEmail] = useState(false)
     const toast = useRef(null);
     const {offerEmail} = useSelector(state => state.impaoffer)
 
 
-    console.log('offer emal')
-    console.log(offerEmail)
+
     const dispatch = useDispatch();
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Message Content', life: 3000});

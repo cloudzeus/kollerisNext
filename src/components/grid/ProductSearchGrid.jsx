@@ -70,7 +70,6 @@ const ProductSearchGrid = () => {
                 stateFilters: stateFilters,
                 
             })
-            console.log(data.result)
             setData(data.result);
             setTotalRecords(data.totalRecords)
             dispatch(setLoading(false))

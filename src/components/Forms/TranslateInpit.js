@@ -13,7 +13,6 @@ const TranslateInput = ({ label, name, state, handleState, targetLang }) => {
 
     const handleTranslate = async (value) => {
         let {data} = await axios.post('/api/deepL', { text: state, targetLang: targetLang })
-        console.log(data)
         handleState(data.translatedText)
     }
     

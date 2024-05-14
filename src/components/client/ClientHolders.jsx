@@ -12,17 +12,13 @@ import XLSXDownloadButton from '../exportCSV/Download'
 import SendMultiOfferEmail from '../emails/SendMultiOfferTemplate'
 import { setSelectedProducts } from '@/features/productsSlice'
 import { setSelectedImpa } from '@/features/impaofferSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { InputNumber } from 'primereact/inputnumber';
-import Input from '../Forms/PrimeInput'
 import { Toast } from 'primereact/toast';
-import { setPrintState } from '@/features/pdfSlice'
 
 
 const ClientHolder = ({ NAME }) => {
-    const dispatch = useDispatch();
-    const router = useRouter();
     const [expandedRows, setExpandedRows] = useState(null);
    const [loading, setLoading] = useState({
         findoc: false,
@@ -42,8 +38,7 @@ const ClientHolder = ({ NAME }) => {
     const handleFetch = async () => {
         setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/createOffer', { action: 'findClientHolder', clientName: NAME })
-        console.log('res')
-        console.log(res)
+      
         setData(res.data.result)
         setLoading(prev => ({ ...prev, grid: false }))
 
@@ -235,7 +230,6 @@ const RowExpansionGrid = ({ holders, documentID, setRefetch, refetch, TRDR,  dis
     useEffect(() => {
         const handleFooterData = async () => {
             let { data } = await axios.post('/api/createOffer', { action: 'holdersTotalPrice', documentID: documentID })
-            console.log(data.result)
             setNewTotalPrice(data.result)
         }
         handleFooterData();
@@ -465,7 +459,6 @@ const SubRowExpansionGrid = ({ documentID, holderID, isImpa, impaCode, TRDR, ref
 
         useEffect(() => {
             if (quantity === QTY1) return;
-            console.log(quantity)
             handleQuantity();
         }, [quantity])
         return (

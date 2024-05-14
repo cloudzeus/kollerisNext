@@ -34,7 +34,6 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 	}
 
 	const handleChangeClass = () => {
-		console.log(rowData)
 		dispatch(setSelectedProducts([rowData]))
 		setVisible(true)
 		setActiveIndex(1)

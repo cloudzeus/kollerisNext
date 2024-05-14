@@ -37,8 +37,7 @@ const SuppliersGrid = () => {
     }, [])
 
 
-    console.log('selected supplier')
-    console.log(selectedSupplier)
+
 
     const fetchClients = async () => {
         const isAnyFieldNotEmpty = Object.values(searchTerm).some(value => value == '');

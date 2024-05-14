@@ -189,7 +189,6 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
         
         //Turn the file into binary and use the uploadBunny function in utils to send it to bunny cdn
         for (let item of uploadedFiles) {
-            console.log(item)
             try {
                 const arrayBuffer = await readAsArrayBuffer(item.file);
                 const result = await uploadBunny(arrayBuffer, item.name);

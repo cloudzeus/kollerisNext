@@ -21,9 +21,7 @@ const CalculateTemplate = ({ PRICER, MTRL, brandName, NAME}) => {
   
     }
   
-    useEffect(() => {
-        console.log(selectedProducts)
-    }, [selectedProducts])
+  
   
   
     let total = quantity * parseFloat(PRICER)

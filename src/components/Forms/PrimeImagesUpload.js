@@ -22,7 +22,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
     const handleDeleteImage = async (name) => {
         try {
           const response = await axios.post(`/api/uploads/deleteImage`, {name: name});
-          console.log(response)
         } catch (error) {
           console.error('Failed to delete image:');
         }
@@ -39,7 +38,6 @@ export default function PrimeUploads({label, multiple, mt, mb, setState, singleU
         try {
             setDidUpload(false)
             setLoading(true)
-            console.log('form Data ' + JSON.stringify(formData))
             const response = await fetch('/api/uploads/saveImageMulter', {
                 method: 'POST',
                 body: formData,

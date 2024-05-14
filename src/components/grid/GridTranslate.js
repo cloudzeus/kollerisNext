@@ -28,7 +28,6 @@ export default function TranslateField({ value, translations, url, id, fieldName
         }
     }, [])
     const onsubmit = async () => {
-        console.log(data)
         let res = await axios.post(url, { action: 'translate', data:data, id: id, index: index, fieldName: fieldName})
         if(!res.data.success) return showError(res.data.message)
         showSuccess(res.data.message)
@@ -39,15 +38,13 @@ export default function TranslateField({ value, translations, url, id, fieldName
     
         let _data = [...data];
         let { newData, index } = e;
-        console.log(newData)
         _data[index].translation = newData.translation;
         setData(_data);
        
     };
 
     const textEditor = (options) => {
-        console.log('options')
-        console.log(options)
+       
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
 
@@ -68,7 +65,6 @@ export default function TranslateField({ value, translations, url, id, fieldName
     const DeleteLang = (rowData) => {
         const onClick = () => {
             let _data = [...data];
-            console.log(_data)
             let _translations = _data.filter(item=> item.code !== rowData.rowData.code);
             _data = _translations;
             setData(_data);
@@ -217,7 +213,6 @@ function SelectLanguage({ state, setState }) {
         let _state = [...state];
         
        
-        console.log('e.value: ' + JSON.stringify(e.value))
         if (_state.find(translation => translation.code === value.code)) {
             return;
         }

@@ -8,7 +8,6 @@ const CSVExport = ({ holders, email, name}) => {
 
 let newData = []
 holders.map((holder) => {
-   console.log(holder)
    holder.products.map((product) => {
         newData.push({
             name: name,
@@ -23,7 +22,6 @@ holders.map((holder) => {
 
    })
 })
-console.log(newData)
 const headers = [
     { label: 'Όνομα Πελάτη', key: 'name' },
     { label: 'Εmail Πελάτη', key: 'email' },

@@ -197,9 +197,7 @@ const ImageItem = ({ fileItem, index, removeImage, uploadedFiles, setUploadedFil
     const handleEdit = (e) => {
         setLocalValue(e.target.value)
         let newFiles = uploadedFiles.map(mapitem => {
-            console.log(mapitem)
             if (mapitem.file.path === fileItem.file.path) {
-                console.log('found')
                 return {
                     ...mapitem,
                     name: e.target.value

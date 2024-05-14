@@ -35,7 +35,6 @@ const CompletedOrders = ({ id }) => {
     
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
-        console.log(newData, index)
         let { data } = await axios.post('/api/createOrder', { action: 'updateStatus', status: newData.status, id: newData._id })
         setRefetch(prev => !prev)
     };
@@ -53,7 +52,6 @@ const CompletedOrders = ({ id }) => {
       
         const handleDelete = async (e) => {
              const {data} = await axios.post('/api/createOrder', {action: 'deleteCompletedOrder', id: _id, TRDR: TRDR})
-             console.log(data)
             setRefetch(prev => !prev)
         }
         return (

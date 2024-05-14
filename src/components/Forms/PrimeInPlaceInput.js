@@ -79,7 +79,6 @@ export default function InPlaceInput({
     }
 
     const onLanguageClick= () => {
-        console.log('click')
     }
     return (
         <div className="card mb-3 mt-3 surface-100 p-2">

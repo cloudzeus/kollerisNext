@@ -6,7 +6,6 @@ import { Button } from 'primereact/button';
 const GridLogoTemplate = ({ logo }) => {
     const op = useRef(null);
 
-    console.log(logo)
 
     return (
         <ImageDiv >

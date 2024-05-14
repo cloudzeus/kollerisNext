@@ -34,7 +34,6 @@ const OfferGrid = ({ clientName }) => {
         setLoading(prev => ({ ...prev, grid: true }))
         let res = await axios.post('/api/singleOffer', { action: 'findOffers', clientName: clientName })
         setData(res.data.result)
-        console.log(res.data.result)
         setLoading(prev => ({ ...prev, grid: false }))
     }
 
@@ -409,7 +408,6 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
         }, [])
 
         const onChange = async (e) => {
-            console.log(e.value)
             setValue(e.value)
         }
         return (
@@ -488,7 +486,6 @@ const RowExpansionGrid = ({ id, setRefetch, TRDR,  FINCODE }) => {
 
 
 const DiscountedPrice = ({DISCOUNTED_PRICE}) => {
-    console.log(DISCOUNTED_PRICE)
     return (
         <div>
             <p className='font-bold'>{`${DISCOUNTED_PRICE >= 0 ? DISCOUNTED_PRICE + " €": '' } `}</p>

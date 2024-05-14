@@ -17,7 +17,6 @@ const CompletedOrder = ({ mtrmark }) => {
     const [expandedRows, setExpandedRows] = useState(null);
     const handleFetch = async () => {
             const {data} = await axios.post('/api/createOrder', {action: "findCompleted", mtrmark: mtrmark})
-            console.log(data.result)
             setData(data.result)
     }
     const allowExpansion = (rowData) => {
@@ -61,7 +60,6 @@ const CompletedOrder = ({ mtrmark }) => {
     };
     const onRowEditComplete = async (e) => {
         let { newData, index } = e;
-        console.log(newData, index)
         let { data } = await axios.post('/api/createOrder', { action: 'updateStatus', status: newData.status, id: newData._id })
         setRefetch(prev => !prev)
     };

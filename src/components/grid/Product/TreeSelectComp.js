@@ -45,12 +45,9 @@ const TreeSelectComp = () => {
     
     }
 
-    useEffect(() => {
-        console.log (selectState)
-    }, [selectState])
+  
     const onSubmit = async () => {
-        console.log('selectedProducts')
-        console.log(selectState)
+    
         setLoading(true)
         let obj = {
             gridData: selectedProducts, 
@@ -61,8 +58,7 @@ const TreeSelectComp = () => {
             subgroupid: selectState.subgroup?.softOne.cccSubgroup2 || 0,
             subGroupName: selectState.subgroup?.subGroupName || ""
         }
-        console.log('update obj')
-        console.log(obj)
+       
         // setSubmitted(false)
         let res = await axios.post('/api/product/apiProduct', { 
             action: 'updateClass', 
@@ -232,8 +228,7 @@ const TreeSelectDropDown = ({
             subgroupid:subgroup?.subgroupId || 0,
             subGroupName: subgroup?.name || ""
         }
-        console.log('update obj')
-        console.log(obj)
+      
         setSubmitted(false)
         let res = await axios.post('/api/product/apiProduct', { 
             action: 'updateClass', 
@@ -275,11 +270,7 @@ const TreeSelectDropDown = ({
                     </div>
                     <CategoriesRowFilterTemplate />
                     {category ? (
-                        // <div className="card flex justify-content-center  mb-3">
-                        //     <Dropdown value={group} onChange={chooseGroup} options={groups} optionLabel="name"
-                        //         placeholder="Επιλογή Ομάδας" className="w-full" />
-
-                        // </div>
+                       
                         <GroupRowFilterTemplate category={category} options={groups} value={group} />
                     ) : null}
                     {group ? (

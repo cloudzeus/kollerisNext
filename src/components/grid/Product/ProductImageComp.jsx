@@ -28,10 +28,8 @@ const ProductImagesComp = ({ id }) => {
 
    
     const handleFetch = async () => {
-        console.log('fetch again')
         setLoading(true)
         let { data } = await axios.post('/api/product/apiProduct', { action: "getImages", id: id })
-  
         let images = data.result
         setData(images)
         setLoading(false)
@@ -40,7 +38,6 @@ const ProductImagesComp = ({ id }) => {
     const onDelete = async (name, _id) => {
         //THis is not the product id but the image id
         let { data } = await axios.post('/api/product/apiProduct', { action: "deleteImage", parentId: id, imageId: _id, name: name })
-        console.log(data)
         setRefetch(prev => !prev)
     
     }

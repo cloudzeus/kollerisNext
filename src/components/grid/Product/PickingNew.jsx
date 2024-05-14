@@ -54,7 +54,6 @@ const PickingNew = () => {
         }
         setBtnLoading(true)
         const {data} = await axios.post('/api/pickingnew', {action: "createPurDoc", ...obj})
-        console.log(data)
         if(!data.success) {
             showError(data?.message)
         } else {
