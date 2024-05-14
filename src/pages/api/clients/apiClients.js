@@ -42,27 +42,66 @@ export default async function handler(req, res) {
 
     if(action === "updateOne") {
         let {data} = req.body;
-       
+        let response = {
+            success: false,
+            message: '',
+            error: '',
+            result: [],
+        };
         try {
             await connectMongo();
-            const updateData = {
+            const softData = {
+                sodType: 13,
+                TRDR: data.TRDR,
                 CODE: data.CODE,
                 NAME: data.NAME,
                 AFM: data.AFM,
-                DIASCODE: data.DIASCODE,
                 ADDRESS: data.ADDRESS,
                 PHONE01: data.PHONE01,
                 PHONE02: data.PHONE02,
                 EMAIL: data.EMAIL,
                 ZIP: data.ZIP,
               };
+
+              let removeUndefined = Object.fromEntries(Object.entries(softData).filter(([key, value]) => value !== undefined));
+              console.log(removeUndefined)
+              try {
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/updateSupplier`;
+                const result = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        ...removeUndefined
+                    })
+                });
+                let buffer = await translateData(result)
+                console.log(buffer)
+                if (!buffer) {
+                    response.success = false;
+                    response.message = 'No data found';
+                    return res.status(200).json(response)
+                }
+                response.success = true;
+                response.message = "Supplier updated in Softone successfully";
+            } catch (e) {
+                response.message = "SoftoneError Error updating supplier";
+                response.error = e;
+    
+            }
             let result = await Clients.findOneAndUpdate(
                 {_id: data._id}, 
-                {$set: updateData},
+                {$set: data},
                 {new: true}
             )
+            console.log(result)
+            if(!result) {
+                response.error = 'Error updating client in database';
+                response.success = false;
+            }
+            response.result = result;
+            return res.status(200).json(response)
           
-            return res.status(200).json({ success: true })
         } catch (e) {
             return res.status(400).json({ success: false })
         }

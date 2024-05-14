@@ -114,7 +114,6 @@ export default async function handler(req, res) {
                     }
                 }, { new: true 
                 })
-                console.log(updatePendingOrders)
                 if (!updatePendingOrders) {
                     response.success = false;
                     response.message = "Supplier updated in Softone but not in MongoDB pendingOrders to update Suppiers minOrderValue";
