@@ -1,5 +1,7 @@
 import Supplier from "../../../../server/models/suppliersSchema";
 import connectMongo from "../../../../server/config";
+import translateData from "@/utils/translateDataIconv";
+
 export default async function handler(req, res) {
 
     const action = req.body.action;
@@ -56,8 +58,32 @@ export default async function handler(req, res) {
     }
 
     if(action === "create") {
+        let response = {
+            result: null,
+            success: false,
+            error: null,
+            message: ""
+        }
         const {data} = req.body;
         console.log(data)
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.trdr/insertSupplier`;
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: "Service",
+                        password: "Service",
+                        sodtype:12,
+                        company:1001,
+                        //this will later be changed to the selected currency:
+                        SOCURRENCY: 100,
+                        ...data
+                    })
+                });
+                let buffer = await translateData(response)
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
         // try {
         //     await connectMongo();
         //     let result = await Supplier.create(data);
@@ -116,6 +142,42 @@ export default async function handler(req, res) {
                 }
             })
             return res.status(200).json({ success: true, result: result })
+        } catch (e) {
+            return res.status(400).json({ success: false })
+        }
+    }
+
+
+    if(action === "getTRDCATEGORIES") {
+        console.log('getTRDCATEGORIES')
+        let send = {
+            result: null,
+            success: false,
+            error: null,
+            message: ""
+        }
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllTrdCategory`;
+            const response = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: "Service",
+                    password: "Service",
+                    sodtype: 12,
+                    company: 1001
+                })
+            });
+            let buffer = await translateData(response)
+            console.log(buffer)
+            if(!buffer) {
+                send.success = false;
+                send.message = 'No data found';
+                return res.status(200).json(send)
+                
+            } 
+            send.success = true;
+            send.result = buffer.result;
+            return res.status(200).json(send)
         } catch (e) {
             return res.status(400).json({ success: false })
         }

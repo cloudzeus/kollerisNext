@@ -5,7 +5,6 @@ import * as XLSX from 'xlsx';
 import { Button } from 'primereact/button';
 import styled from 'styled-components';
 import StepHeader from '@/components/StepHeader';
-import { Checkbox } from 'primereact/checkbox';
 import { Toolbar } from 'primereact/toolbar';
 import { Dropdown } from 'primereact/dropdown';
 

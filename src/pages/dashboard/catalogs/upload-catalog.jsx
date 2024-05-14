@@ -9,18 +9,16 @@ import { useRouter } from 'next/router';
 import { setGridData, setHeaders, setSelectedPriceKey, setData, setSelectedMongoKey } from '@/features/catalogSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
-import styled from 'styled-components';
 
 
 const UploadCatalog = () => {
     const [loading, setLoading] = useState(false);
-    const [selectedKey, setSelectedKey] = useState(null);
-    const fileInputRef = useRef(null);
-    const [fileLoading, setFileLoading] = useState(false)
-    const router = useRouter();
-    const { gridData, headers, data } = useSelector((state) => state.catalog)
 
-    
+    const router = useRouter();
+    const { gridData, headers } = useSelector((state) => state.catalog)
+
+
+ 
     return (
         <AdminLayout >
 

@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import Input from '@/components/Forms/PrimeInput';
-
 import axios from 'axios';
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -13,12 +12,9 @@ import { Toast } from 'primereact/toast';
 import { FormTitle, Divider, Container } from '@/componentsStyles/dialogforms';
 
 import { useSession } from "next-auth/react"
+import PrimeSelect from '@/components/Forms/PrimeSelect';
+import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 
-
-const addSchema = yup.object().shape({
-        NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
-        AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
-});
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
@@ -137,6 +133,13 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 
+const addSchema = yup.object().shape({
+    NAME: yup.string().required('Το όνομα είναι υποχρεωτικό'),
+    AFM: yup.string().required('Το ΑΦΜ είναι υποχρεωτικό'),
+    TRDCATEGORY: yup.string().required('Ο τύπος προμηθευτή είναι υποχρεωτικός'),
+    code: yup.number('Ο κωδικός πρέπει να είναι αριθμός')
+    .required('Ο κωδικός είναι υποχρεωτικός')
+});
 
 const AddDialog = ({
     dialog,
@@ -159,30 +162,45 @@ const AddDialog = ({
             ADDRESS: '',
             ZIP: '',
             AFM: '',
+            TRDCATEGORY: null,
+            code: null,
         }
     });
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
-   
+    const [trdCategories, setTrdCategories] = useState(null)
     const cancel = () => {
         hideDialog()
         reset()
     }
 
+
+    //Fetch the options for the first select. When we add a new supplier the TYPE of supplier is required in the form:
+    const handleFetchTRDCATEGORIES = async () => {
+        const {data} = await axios.post('/api/suppliers', {
+            action: 'getTRDCATEGORIES'
+        })
+        setTrdCategories(data.result)
+
+    }
+    useEffect(() => {
+        handleFetchTRDCATEGORIES();
+    }, [])
+
     const handleAdd = async (data) => {
         console.log(data)
-        try {
-            let res = await axios.post('/api/suppliers', { action: 'create', data: data })
-            console.log(res.data)
-            setSubmitted(true)
-            hideDialog()
-            showSuccess('Επιτυχής εισαγωγή στην βάση')
-            reset();
+        // try {
+        //     let res = await axios.post('/api/suppliers', { action: 'create', data: data })
+        //     console.log(res.data)
+        //     setSubmitted(true)
+        //     hideDialog()
+        //     showSuccess('Επιτυχής εισαγωγή στην βάση')
+        //     reset();
 
-        } catch (e) {
-            showError
-            hideDialog()
-        }
+        // } catch (e) {
+        //     showError
+        //     hideDialog()
+        // }
        
     }
 
@@ -202,6 +220,7 @@ const AddDialog = ({
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
     }
 
+   
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
@@ -214,24 +233,42 @@ const AddDialog = ({
                 className="p-fluid"
                 footer={productDialogFooter}
                 onHide={hideDialog}>
+                <PrimeSelect 
+                    label={'Τύπος Προμηθευτή'}
+                    name={'TRDCATEGORY'}
+                    options={trdCategories}
+                    optionLabel={'NAME'}
+                    optionValue={'TRDCATEGORY'}
+                    control={control}
+                    required
+                    error={errors.TRDCATEGORY}
+                />
                  <Input
                    label={'Όνομα'}
                    name={'NAME'}
                    control={control}
                    required
+                   error={errors.NAME}
                />
                    <Input
                    label={'ΑΦΜ'}
                    name={'AFM'}
                    control={control}
                    required
+                   error={errors.AFM}
                />
                    <Input
                    label={'Διεύθυνση'}
                    name={'ADDRESS'}
                    control={control}
                />
-               
+                   <Input
+                   label={'code'}
+                   name={'Κωδικός'}
+                   control={control}
+                   required
+                   error={errors.code}
+               />
                    <Input
                    label={'T.K'}
                    name={'ZIP'}

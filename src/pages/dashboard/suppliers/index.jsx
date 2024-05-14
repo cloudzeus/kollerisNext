@@ -190,7 +190,6 @@ export default function Page() {
                 if (prev === -1) return 0;
             })
         }
-        console.log(sortOffers)
 
         return (
             <div>
@@ -260,7 +259,6 @@ export default function Page() {
     };
 
     const ActionTemplate = (rowData) => {
-        console.log(rowData)
         const op = useRef(null);
 
         return (
@@ -284,7 +282,7 @@ export default function Page() {
     const LeftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button disabled={true} label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+                <Button  label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
             </div>
         )
     }
