@@ -1,8 +1,7 @@
 import Image from "next/image";
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { Button } from 'primereact/button';
 const GridLogoTemplate = ({ logo }) => {
     const op = useRef(null);
 

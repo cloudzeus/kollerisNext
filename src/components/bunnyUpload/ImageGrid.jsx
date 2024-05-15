@@ -78,7 +78,6 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
 
 const ImageTemplate = ({ name }) => {
 
-    const op = useRef(null);
     return (
         <div className='flex'>
              <PrimeImage 

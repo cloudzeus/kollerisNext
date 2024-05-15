@@ -4,8 +4,6 @@ import { useDropzone } from 'react-dropzone';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { deleteBunny, uploadBunny } from '@/utils/bunny_cdn';
-import Image from 'next/image';
-import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
 
 
@@ -75,7 +73,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
 
 
 
-const ImageTemplate = ({image, loading}) => {
+const ImageTemplate = ({image}) => {
     return (
         <div className='flex'>
           
@@ -221,17 +219,6 @@ const ImageItem = ({ fileItem, index, removeImage, uploadedFiles, setUploadedFil
 }
 
 
-const ImageDiv = styled.div`
-    width: 50px;
-    height: 50px;
-    position: relative;
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
-    & img {
-        object-fit: contain;
-    }
 
-`
 
 export default  SingleImageUpload;
