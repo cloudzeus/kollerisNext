@@ -1,6 +1,8 @@
 import SoftoneProduct from "../../../../../server/models/newProductModel";
 import Markes from "../../../../../server/models/markesModel";
 import connectMongo from "../../../../../server/config";
+import { MtrCategory, MtrGroup, SubMtrGroup } from "../../../../../server/models/categoriesModel";
+import Manufacturers from "../../../../../server/models/manufacturersModel";
 export const config = {
   api: {
     responseLimit: false,
@@ -128,40 +130,64 @@ export default async function handler(req, res) {
     let response = {
       error: null,
       success: false,
-      message: 'update did not work',
+      message: 'Update did not work',
       result: [],
-    }
-
-    let {findByMTRL, findByID, product} = req.body;
-    
-    //Check if the product has the required fields:
-    if(conditions(product, response)) {
-      return res.status(400).json(response)
-    }
-    
-
+    };
+  
+    let { findByMTRL, findByID, product } = req.body;
+  
     try {
-      let update = await SoftoneProduct.findOneAndUpdate({
-        $or: [
-          {MTRL: findByMTRL},
-          {_id: findByID}
-        ]
-      }, product);
-   
-      if(update) {
+      let updateFields = {...product};
+  
+      const fetchNameFromDatabase = async (model, field) => {
+        if (product[field]) {
+          let data = await model.findOne({ ['softOne.' + field]: product[field] }, { 'softOne.NAME': 1, _id: 0 }).lean();
+          return data ? data.softOne.NAME : null;
+        }
+        return null;
+      };
+      
+      if(product.MTRCATEGORY) {
+        updateFields.CATEGORY_NAME = await fetchNameFromDatabase(MtrCategory, 'MTRCATEGORY');
+
+      }
+      if(product.MTRGROUP) {
+        updateFields.GROUP_NAME = await fetchNameFromDatabase(MtrGroup, 'MTRGROUP');
+      }
+
+      if(product.MTRSUBGROUP) {
+        updateFields.SUBGROUP_NAME = await fetchNameFromDatabase(SubMtrGroup, 'MTRSUBGROUP');
+      }
+
+      if(product.MTRMARK) {
+        updateFields.MTRMARK_NAME = await fetchNameFromDatabase(Markes, 'MTRMARK');
+      }
+
+      //MONGO STRUCTURE IS DIFFERENT:
+      if(product.MTRMANFCTR) {
+        let {NAME} = await Manufacturers.findOne({ MTRMANFCTR: product.MTRMANFCTR }, { NAME: 1, _id: 0 }).lean();
+        updateFields.MANUFACTURER_NAME = NAME ;
+      }
+      
+ 
+      let update = await SoftoneProduct.findOneAndUpdate(
+        { $or: [{ MTRL: findByMTRL }, { _id: findByID }] },
+        { $set: updateFields },
+        { new: true }
+      );
+  
+      if (update) {
         response.success = true;
         response.message = 'Product updated successfully';
         response.result = update;
       } else {
-        response.success = false;
         response.message = 'Product not found';
       }
-        
-     
     } catch (e) {
       response.error = e;
     }
-    return res.status(200).json(response)
+  
+    return res.status(200).json(response);
   }
 
 
