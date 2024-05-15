@@ -12,6 +12,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { Toast } from 'primereact/toast';
+import { Image as PrimeImage } from 'primereact/image';
 
 
 
@@ -21,26 +22,12 @@ export const ImageGrid = ({ uploadedFiles, setUploadedFiles, data, onDelete, onA
     const toast = useRef(null);
   
 
-    const showSuccess = (message) => {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: message, life: 4000 });
-    }
-    const showError = (message) => {
-        toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 4000 });
-    }
 
-   
-
-  
 
     
     const handleDelete  = async (name, _id) => {
          await onDelete(name, _id)
-        // let bunny_delete = await deleteBunny(name);
-        // if(bunny_delete?.HttpCode == 200) {
-        //     showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
-        // } else {
-        //     showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
-        // }
+       
     }
     const Header = () => {
         return (
@@ -94,36 +81,14 @@ const ImageTemplate = ({ name }) => {
     const op = useRef(null);
     return (
         <div className='flex'>
-            <ImageDiv>
-                <Image
-                    alt="product-images"
-                    src={`https://kolleris.b-cdn.net/images/${name}`}
-                    fill={true}
-                    sizes="50px"
-                    quality={30} 
-                    
-
-                />
-            </ImageDiv>
-            <div className='flex align-items-center cursor-pointer ml-3'>
-                {/* <i className="pi pi-image mr-2 " style={{ fontSize: '1rem' }}></i> */}
-                <span
-                    onMouseEnter={(e) => op.current.show(e)}
-                    onMouseLeave={(e) => op.current.hide(e)}
-                    className='font-medium'>{name}</span>
-                <OverlayPanel ref={op}>
-                    <ImageOverlay>
-                        <Image
-                            alt="product-images"
-                            src={`https://kolleris.b-cdn.net/images/${name}`}
-                            fill={true}
-                            sizes="50px"
-                            
-                        />
-                    </ImageOverlay>
-
-                </OverlayPanel>
-            </div>
+             <PrimeImage 
+                    src={`https://kolleris.b-cdn.net/images/${name}`} 
+                    alt="Image" 
+                    width={60} 
+                    style={{ objectFit: 'contain', height: '100%' }}
+                    preview 
+                    />
+          
 
         </div>
     )

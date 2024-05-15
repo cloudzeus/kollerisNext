@@ -810,20 +810,8 @@ const HasImpa = ({sortImpa, stateFilters, onChange, onSortImpa}) => {
 
 // --------------------------------- TABLE TEMPLATES: ---------------------------------
 
-const ImagesTemplate = ({ _id, images }) => {
-    const op = useRef(null);
-    const imageOp = useRef(null)
-    const confirm1 = () => {
-        confirmDialog({
-            group: 'headless',
-            // message: 'Are you sure you want to proceed?',
-            // header: 'Confirmation',
-            icon: 'pi pi-exclamation-triangle',
-            defaultFocus: 'accept',
-           
-        });
-    };
-
+const ImagesTemplate = ({images }) => {
+    
     let image = images[0]?.name;
 
     return (
@@ -912,6 +900,14 @@ const Cost = ({ COST }) => {
     )
 }
 
+//GRID PRICE TEMPLATE:
+const GridPriceTemplate = ({ PRICER }) => {
+    return (
+        <p>{PRICER} €</p>
+    )
+}
+
+
 //UPDATE FROM COLUMN TEMPLATE:
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
     return (
@@ -959,6 +955,29 @@ const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }
     )
 }
 
+
+const productAvailabilityTemplate = ({ availability }) => {
+
+    return (
+        <ProductAvailability data={availability} />
+    )
+}
+
+
+
+const productOrderedTemplate = ({ availability }) => {
+
+    return (
+        <ProductOrdered data={availability} />
+    )
+}
+const productReservedTemplate = ({ availability }) => {
+
+    return (
+        <ProductReserved data={availability} />
+    )
+}
+
 //IMPA COLUMN TEMPLATE
 const ImpaCode = ({ impas }) => {
     return (
@@ -980,8 +999,7 @@ const ExpansionDetails = ({ data }) => {
             action: 'findVatName',
             VAT: data?.VAT
         })
-        console.log('vat')
-        console.log(res.data.result)
+      
         setVat(res.data.result)
     }
     useEffect(() => {
@@ -1051,40 +1069,7 @@ const ExpansionDetails = ({ data }) => {
 
 
 
-
-
-
-
-
-
-const productAvailabilityTemplate = ({ availability }) => {
-
-    return (
-        <ProductAvailability data={availability} />
-    )
-}
-
-
-
-const productOrderedTemplate = ({ availability }) => {
-
-    return (
-        <ProductOrdered data={availability} />
-    )
-}
-const productReservedTemplate = ({ availability }) => {
-
-    return (
-        <ProductReserved data={availability} />
-    )
-}
-
-
-const GridPriceTemplate = ({ PRICER }) => {
-    return (
-        <p>{PRICER} €</p>
-    )
-}
+// --------------------------------- FILTERING TEMPLATES: ---------------------------------
 
 
 const CategoriesRowFilterTemplate = ({ value, options, onChange }) => {

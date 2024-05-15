@@ -170,7 +170,6 @@ export default async function handler(req, res) {
       }
       
       
-      console.log(updateFields)
       let update = await SoftoneProduct.findOneAndUpdate(
         { $or: [{ MTRL: findByMTRL }, { _id: findByID }] },
         { $set: updateFields },
