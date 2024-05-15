@@ -1,12 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState} from 'react';
 import Image from 'next/image';
-import PrimeUploads from './Forms/PrimeImagesUpload';
-import { Toast } from 'primereact/toast';
-import axios from 'axios';
 import { Button } from 'primereact/button';
 import {
-    ActionsDiv, GalleryContainer,
-    DeleteButton,
+    GalleryContainer,
     ArrowContainer,
     Thumbnail,
     ThumbnailContainer,

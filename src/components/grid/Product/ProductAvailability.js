@@ -1,32 +1,18 @@
-import React, { useRef } from 'react'
-import styled from 'styled-components'
+import React from 'react'
 
 
 
 
 export const ProductAvailability = ({ data }) => {
-    const op = useRef(null);
-
-
-    const CircleDiv = () => {
-            return (
-                <div className={`prod_availability_circle prod_availability_circle-div ${parseInt(data?.DIATHESIMA) < 0 ? 'circle-notavailable' : null }`}></div>
-            )
-       
-       
-    }
-
     return (
-   
         <div className='prod_availability_container' >
             <div  className='prod_availability_content '>
                 <div className='prod_availability_row'>
-                    <CircleDiv />
+                <div className={`prod_availability_circle prod_availability_circle-div ${parseInt(data?.DIATHESIMA) < 0 ? 'circle-notavailable' : null }`}></div>
                     <span>Διαθεσιμα:</span>
                     <span className='prod_availability_available'>{data?.DIATHESIMA}</span>
                 </div>
             </div>
-
         </div>
     )
 }

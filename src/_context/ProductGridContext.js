@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState, createContext, useContext } from 'react'
+import React, {  useState, createContext } from 'react'
 
 export const ProductQuantityContext = createContext();
-export const ProductQuantityProvider = ({ children }) => {
-    // const [submitted, setSubmitted] = useState(false)
-    const [visible, setVisible] = useState(false)
 
-    // const [selectedProducts, setSelectedProducts] = useState(null)
+
+export const ProductQuantityProvider = ({ children }) => {
+    const [visible, setVisible] = useState(false)
     const [quantityContext, setQuantityContext] = useState(1);
-    const [mtrlines, setMtrLines] = useState([])
     const [exportWarehouse, setExportWarehouse] = useState(null)
     const [importWarehouse, setImportWarehouse] = useState(null)
     const [diathesima, setDiathesima]   = useState(null)
@@ -20,12 +18,7 @@ export const ProductQuantityProvider = ({ children }) => {
   
     return (
         <ProductQuantityContext.Provider value={{ 
-            //grid submitions to refresh it:
-            // submitted, setSubmitted,
-             //grid selected Products:
-            // selectedProducts, setSelectedProducts,
             quantityContext, setQuantityContext, 
-            // mtrlines, setMtrLines, 
             exportWarehouse, setExportWarehouse,
             importWarehouse, setImportWarehouse,
             attribute, setAttribute,

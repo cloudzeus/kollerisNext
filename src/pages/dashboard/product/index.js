@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useRef, useContext, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
@@ -47,20 +47,12 @@ import {
     setSortImpa,
     setSelectedProducts
 } from "@/features/productsSlice";
-import Image from 'next/image';
-import styled from 'styled-components';
 import ProductImagesComp from '@/components/grid/Product/ProductImageComp';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import {  confirmDialog } from 'primereact/confirmdialog';
 import { Image as PrimeImage } from 'primereact/image';
 import Link from 'next/link';
 import { Message } from 'primereact/message';
 
-const dialogStyle = {
-    marginTop: '10vh', // Adjust the top margin as needed
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-};
 
 
 
@@ -162,6 +154,7 @@ function Product() {
         sortPrice,
         sortImpa,
     } = useSelector(store => store.products)
+    const dispatch = useDispatch();
     const [totalRecords, setTotalRecords] = useState(0);
     const [editDialog, setEditDialog] = useState(false);
     const [classDialog, setClassDialog] = useState(false);
@@ -176,9 +169,8 @@ function Product() {
         active: true,
     })
 
-    useEffect(() => {
-    }, [category, group, subgroup])
-    const dispatch = useDispatch();
+ 
+  
 
     useEffect(() => {
         dispatch(setSearchTerm(''))
@@ -240,37 +232,9 @@ function Product() {
     ])
 
 
-    //Define filter actions:
-    const onFilterCategoryChange = (e) => {
-        dispatch(setCategory(e.value))
-
-    }
-    const onFilterImpa = (e) => {
-        setStateFilters(prev => ({ ...prev, impa: e.value }))
-
-    }
-    const onFilterGroupChange = (e) => {
-        dispatch(setGroup(e.value))
-    }
-    const onFilterSubGroupChange = (e) => {
-        dispatch(setSubgroup(e.value))
-    }
-
-    const onFilterMarkChange = (e) => {
-        dispatch(setMarka(e.value))
-    }
 
 
-    const editProduct = async (product) => {
-        dispatch(setSubmitted())
-        setEditDialog(true)
-        dispatch(setGridRowData(product))
-    };
-
-    const editClass = async (product) => {
-        setClassDialog(true)
-        dispatch(setGridRowData(product))
-    }
+   
 
 
     const allowExpansion = (rowData) => {
@@ -289,201 +253,91 @@ function Product() {
 
 
 
-
-    const RenderHeader = () => {
-        const op2 = useRef(null);
-        const optionsSoft = [
-            { name: 'IN softone', value: true },
-            { name: 'NOT IN softone', value: false },
-            { name: 'Χωρίς Φίλτρο', value: null }
-        ]
-        const onOptionChange = (e) => {
-            dispatch(setSoftoneFilter(e.value))
-        }
-
+        // -------------------- REDNER THE TABLE HEADER --------------------------------
         const clearAllFilters = () => {
             dispatch(resetSelectedFilters())
             setStateFilters(prev => ({ ...prev, impa: 0, images: null, codeSearch: '', active: true }))
         }
-
-        const makeMinimalGrid = () => {
-            if (visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
-            else setVisibleColumns([
-                {
-                    header: 'Minimized',
-                    id: 15,
-                },
-                // {
-                //     header: 'Κόστος',
-                //     id: 13,
-                // },
-                // {
-                //     header: 'Διαθέσιμα',
-                //     id: 12,
-                // }
-            ])
+    
+        const handleSoftoneStatusFilter = () => {
+            dispatch(setSoftoneFilter({ name: 'Χωρίς Φίλτρο', value: null }))
         }
-        return (
-            <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
+        const onSoftoneFilterChange = (e) => {
+            dispatch(setSoftoneFilter(e.value))
+        }
+    
 
-                <div className='flex'>
-                    <div>
-                        <Button type="button" size="small" className='mr-2' severity="secondary" label="Minimal Grid" onClick={makeMinimalGrid} />
-                    </div>
-                    <div className="card flex flex-column align-items-center gap-3">
-                        <span className="p-buttonset">
-                            <Button type="button" size="small" icon="pi pi-filter" onClick={(e) => op2.current.toggle(e)} />
-                            <Button type="button" size="small" className='bg-primary-400' onClick={clearAllFilters} icon="pi pi-filter-slash" />
-                        </span>
-                        <OverlayPanel ref={op2} >
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-1'>Κατηγορία:</span>
-                                <CategoriesRowFilterTemplate value={category} options={filters.category} onChange={onFilterCategoryChange} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-1'>Oμάδα:</span>
-                                <GroupRowFilterTemplate value={group} options={filters.group} onChange={onFilterGroupChange} category={category} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-1'>Yποομάδα:</span>
-                                <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-1'>Mάρκα:</span>
-                                <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-2'>SoftOne status:</span>
-                                <div className='mr-2'>
-                                    <Dropdown
-                                        size="small"
-                                        value={softoneFilter}
-                                        options={optionsSoft}
-                                        onChange={onOptionChange}
-                                        optionLabel="name"
-                                        placeholder="Φίλτρο Softone"
-                                        className="p-column-filter grid-filter"
-                                        style={{ minWidth: '14rem', fontSize: '12px' }}
-                                    />
-                                    <i className="pi pi-times ml-2 cursor-pointer" onClick={() => dispatch(setSoftoneFilter({ name: 'Χωρίς Φίλτρο', value: null }))} ></i>
+    // -------------------------- FILTERS CHANGES --------------------------------
 
-                                </div>
+    const onFilterCategoryChange = (e) => {
+        dispatch(setCategory(e.value))
 
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-2'>Φίλτρο Εικόνας:</span>
-                                <WithImages value={stateFilters.images} setState={setStateFilters} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-2'>Φίλτρο Skroutz:</span>
-                                <IsSkroutz value={stateFilters.skroutz} setState={setStateFilters} />
-                            </div>
-                            <div className='mb-2 ' >
-                                <span className='font-bold block mb-2'>Φίλτρο Ενεργού Προϊόντος:</span>
-                                <IsActive value={stateFilters.active} setState={setStateFilters} />
-                            </div>
+    }
+  
+    const onFilterGroupChange = (e) => {
+        dispatch(setGroup(e.value))
+    }
+    const onFilterSubGroupChange = (e) => {
+        dispatch(setSubgroup(e.value))
+    }
 
-                        </OverlayPanel>
-                    </div>
-                    <div className="ml-2">
-                        <MultiSelect className="w-15rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
-                    </div>
+    const onFilterMarkChange = (e) => {
+        dispatch(setMarka(e.value))
+    }
 
-                </div>
-                <div>
-                    <XLSXDownloadButton products={selectedProducts} />
-                </div>
-            </div>
+    let onSortImpa = () => {
+        dispatch(setSortImpa())
+    }
 
-        );
-    };
+    const onImpaChange = (e) => {
+        setStateFilters(prev => ({ ...prev, impaSearch: e.target.value }))
+    }
+    
 
 
-    const header = RenderHeader();
+
+    
 
 
+     // -------------------- ADD / EDIT DIALOG ACTIONS --------------------------------
     const addProduct = async (product) => {
         dispatch(setSubmitted())
         // setSubmitted(false);
         setAddDialog(true)
     }
-    const AddToCartTemplate = (rowData) => {
-
-        return (
-            <ProductActions
-                rowData={rowData}
-                onEdit={editProduct}
-                onAdd={addProduct}
-                onEditClass={editClass}
-            />
-        )
-    }
-
-
-    const rowExpansionTemplate = (data) => {
-        return (
-            <div className="card p-20" style={{ maxWidth: '1000px' }}>
-                <TabView>
-                  
-                    <TabPanel header="Λεπτομέριες">
-                        <ExpansionDetails data={data} />
-                    </TabPanel>
-                    <TabPanel header="Φωτογραφίες">
-                        <ProductImagesComp id={data._id} />
-                    </TabPanel>
-
-                </TabView>
-            </div>
-        );
+    const editProduct = async (product) => {
+        dispatch(setSubmitted())
+        setEditDialog(true)
+        dispatch(setGridRowData(product))
     };
 
-
-    useEffect(() => {
-        console.log(stateFilters)
-    }, [stateFilters])
+    const editClass = async (product) => {
+        setClassDialog(true)
+        dispatch(setGridRowData(product))
+    }
+   
 
     const hideDialog = () => {
         setEditDialog(false);
         setAddDialog(false)
         setClassDialog(false)
     };
+
+
+    
+     // -------------------- DISPATCH SELECTED PRODUCTS --------------------------------
     const onSelection = (e) => {
         dispatch(setSelectedProducts(e.value))
     }
 
-
-
+ 
+    // Pagination state changes:
     const onPage = (event) => {
         dispatch(setLazyState2({ ...lazyState2, first: event.first, rows: event.rows }))
     };
 
-
-    const HasImpa = () => {
-        let options = [
-            { name: 'Με Impa', value: 1 },
-            { name: 'Όλα', value: 0 },
-        ]
-
-
-        let onSortImpa = () => {
-            dispatch(setSortImpa())
-        }
-
-        return (
-            <div className="flex align-items-center">
-                <div className="p-input-icon-left w-full">
-                    <i className="pi pi-search" />
-                    <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={(e) => setStateFilters(prev => ({ ...prev, impaSearch: e.target.value }))} />
-                </div>
-                <div className='ml-3'>
-                    {sortImpa === 0 ? (<i className="pi pi-sort-alt" onClick={onSortImpa}></i>) : null}
-                    {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
-                    {sortImpa === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
-                </div>
-            </div>
-        )
-    };
-
+    // ----------  SORT IMPA: ---------
+   
 
 
     const onSearchName = () => {
@@ -545,27 +399,9 @@ function Product() {
     }
 
 
-    const OnFilterCategory = () => {
-        return (
-            <CategoriesRowFilterTemplate value={category} options={filters.category} onChange={onFilterCategoryChange} />
-        )
-    }
-    const OnFilterGroup = () => {
-        return <GroupRowFilterTemplate value={group} options={filters.group} onChange={onFilterGroupChange} category={category} />
-    }
+  
 
-    const OnFilterSubgroup = () => {
-        return <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
-    }
-
-    const OnFilterMarka = () => {
-        return <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
-    }
-
-
-    const hanldeDownload = () => {
-        
-    }
+  
 
 
     return (
@@ -601,7 +437,31 @@ function Product() {
                 setSelectedProducts={setSelectedProducts} />
             <div className="dataTable">
                 <DataTable
-                    header={header}
+                    header={() =>  (
+                        <RenderHeader  
+                            selectedProducts={selectedProducts}
+                            clearAllFilters={clearAllFilters}
+                            filters={filters}
+                            category={category}
+                            group={group}
+                            subgroup={subgroup}
+                            marka={marka}
+                            softoneFilter={softoneFilter}
+                            onFilterCategoryChange={onFilterCategoryChange}
+                            onFilterGroupChange={onFilterGroupChange}
+                            onFilterSubGroupChange={onFilterSubGroupChange}
+                            onFilterMarkChange={onFilterMarkChange}
+                            setVisibleColumns={setVisibleColumns}
+                            onSoftoneFilterChange={onSoftoneFilterChange}
+                            setStateFilters={setStateFilters}
+                            stateFilters={stateFilters}
+                            visibleColumns={visibleColumns}
+                            onColumnToggle={onColumnToggle}
+                            columns={columns}
+                            handleSoftoneStatusFilter={handleSoftoneStatusFilter}
+
+                        />
+                    )}
                     first={lazyState2.first}
                     lazy
                     totalRecords={totalRecords}
@@ -628,10 +488,22 @@ function Product() {
 
                     <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '40px' }} />
                     <Column selectionMode="multiple" style={{ width: '30px' }} headerStyle={{ width: '30px' }}></Column>
-                    {user?.role == "admin" ? <Column style={{ width: '60px' }} body={AddToCartTemplate} frozen={true} alignFrozen="right"></Column>
+                    {user?.role == "admin" ? (
+                        <Column 
+                        style={{ width: '60px' }} 
+                        body={(rowData) => (
+                            <ProductActions
+                            rowData={rowData}
+                            onEdit={editProduct}
+                            onAdd={addProduct}
+                            onEditClass={editClass}
+                        />
+                        )} 
+                        >
+                        </Column>
+                    )
                         : null}
                     <Column body={ImagesTemplate} style={{ width: '30px' }}></Column>
-
                     {visibleColumns.some(column => column.id === 14) && (
                         <Column
                             field="NAME"
@@ -661,7 +533,14 @@ function Product() {
                             header="Κωδικός Impa"
                             body={ImpaCode}
                             filter
-                            filterElement={HasImpa}
+                            filterElement={() => (
+                                <HasImpa 
+                                    sortImpa={sortImpa} 
+                                    stateFilters={stateFilters} 
+                                    onChange={(e) => onImpaChange(e)} 
+                                    onSortImpa={onSortImpa} 
+                                />
+                            )}
                             showFilterMenu={false}>
                         </Column>
                     )}
@@ -670,7 +549,13 @@ function Product() {
                             field="CATEGORY_NAME"
                             header="Εμπορική Κατηγορία"
                             filter
-                            filterElement={OnFilterCategory}
+                            filterElement={() => (
+                                <CategoriesRowFilterTemplate 
+                                    value={category} 
+                                    options={filters.category} 
+                                    onChange={onFilterCategoryChange} 
+                                />
+                            )}
                             showFilterMenu={false}>
                         </Column>
                     )}
@@ -679,7 +564,9 @@ function Product() {
                             field="GROUP_NAME"
                             showFilterMenu={false}
                             filter
-                            filterElement={OnFilterGroup}
+                            filterElement={() => (
+                                <GroupRowFilterTemplate value={group} options={filters.group} onChange={onFilterGroupChange} category={category} />
+                            )}
                             header="Ομάδα" >
                         </Column>
                     )}
@@ -689,7 +576,9 @@ function Product() {
                             header="Υποομάδα"
                             filter
                             showFilterMenu={false}
-                            filterElement={OnFilterSubgroup}>
+                            filterElement={() => {
+                                <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
+                            }}>
                         </Column>
                     )}
                     {visibleColumns.some(column => column.id === 12) && (
@@ -710,7 +599,9 @@ function Product() {
                             header="Όνομα Μάρκας"
                             filter
                             showFilterMenu={false}
-                            filterElement={OnFilterMarka}>
+                            filterElement={() => (
+                                <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
+                            )}>
                         </Column>)}
                     {visibleColumns.some(column => column.id === 5) && (<Column field="CODE1" header="EAN" filter showFilterMenu={false} filterElement={SearchEAN}></Column>)}
                     {visibleColumns.some(column => column.id === 13) && <Column field="COST" header="Τιμή Κόστους" body={Cost} ></Column>}
@@ -745,6 +636,173 @@ function Product() {
     );
 }
 
+
+
+const RenderHeader = ({
+    clearAllFilters, 
+    filters,
+    category,
+    group,
+    subgroup,
+    marka,
+    softoneFilter,
+    onFilterCategoryChange,
+    onFilterGroupChange,
+    onFilterSubGroupChange,
+    onFilterMarkChange,
+    setStateFilters,
+    stateFilters,
+    visibleColumns,
+    onColumnToggle,
+    columns, 
+    selectedProducts,
+    setVisibleColumns,
+    onSoftoneFilterChange,
+    handleSoftoneStatusFilter
+ }) => {
+    const ref = useRef(null);
+    const optionsSoft = [
+        { name: 'IN softone', value: true },
+        { name: 'NOT IN softone', value: false },
+        { name: 'Χωρίς Φίλτρο', value: null }
+    ]
+  
+  
+
+    const makeMinimalGrid = () => {
+        if (visibleColumns.some(column => column.id === 15)) setVisibleColumns(initialColumns)
+        else setVisibleColumns([
+            {
+                header: 'Minimized',
+                id: 15,
+            },
+            // {
+            //     header: 'Κόστος',
+            //     id: 13,
+            // },
+            // {
+            //     header: 'Διαθέσιμα',
+            //     id: 12,
+            // }
+        ])
+    }
+    return (
+        <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
+
+            <div className='flex'>
+                <div>
+                    <Button type="button" size="small" className='mr-2' severity="secondary" label="Minimal Grid" onClick={makeMinimalGrid} />
+                </div>
+                <div className="card flex flex-column align-items-center gap-3">
+                    <span className="p-buttonset">
+                        <Button type="button" size="small" icon="pi pi-filter" onClick={(e) => ref.current.toggle(e)} />
+                        <Button type="button" size="small" className='bg-primary-400' onClick={clearAllFilters} icon="pi pi-filter-slash" />
+                    </span>
+                    <OverlayPanel ref={ref} >
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-1'>Κατηγορία:</span>
+                            <CategoriesRowFilterTemplate value={category} options={filters.category} onChange={onFilterCategoryChange} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-1'>Oμάδα:</span>
+                            <GroupRowFilterTemplate value={group} options={filters.group} onChange={onFilterGroupChange} category={category} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-1'>Yποομάδα:</span>
+                            <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-1'>Mάρκα:</span>
+                            <MarkesFilter value={marka} options={filters.marka} onChange={onFilterMarkChange} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-2'>SoftOne status:</span>
+                            <div className='mr-2'>
+                                <Dropdown
+                                    size="small"
+                                    value={softoneFilter}
+                                    options={optionsSoft}
+                                    onChange={onSoftoneFilterChange}
+                                    optionLabel="name"
+                                    placeholder="Φίλτρο Softone"
+                                    className="p-column-filter grid-filter"
+                                    style={{ minWidth: '14rem', fontSize: '12px' }}
+                                />
+                                <i className="pi pi-times ml-2 cursor-pointer" onClick={handleSoftoneStatusFilter} ></i>
+
+                            </div>
+
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-2'>Φίλτρο Εικόνας:</span>
+                            <WithImages value={stateFilters.images} setState={setStateFilters} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-2'>Φίλτρο Skroutz:</span>
+                            <IsSkroutz value={stateFilters.skroutz} setState={setStateFilters} />
+                        </div>
+                        <div className='mb-2 ' >
+                            <span className='font-bold block mb-2'>Φίλτρο Ενεργού Προϊόντος:</span>
+                            <IsActive value={stateFilters.active} setState={setStateFilters} />
+                        </div>
+
+                    </OverlayPanel>
+                </div>
+                <div className="ml-2">
+                    <MultiSelect className="w-15rem" value={visibleColumns} options={columns} onChange={onColumnToggle} optionLabel="header" display="chip" />
+                </div>
+
+            </div>
+            <div>
+                <XLSXDownloadButton products={selectedProducts} />
+            </div>
+        </div>
+
+    );
+};
+
+
+// --------------------------------- TABLE EXPANSION TEMPLATE: ---------------------------------
+
+const rowExpansionTemplate = (data) => {
+    return (
+        <div className="card p-20" style={{ maxWidth: '1000px' }}>
+            <TabView>
+              
+                <TabPanel header="Λεπτομέριες">
+                    <ExpansionDetails data={data} />
+                </TabPanel>
+                <TabPanel header="Φωτογραφίες">
+                    <ProductImagesComp id={data._id} />
+                </TabPanel>
+
+            </TabView>
+        </div>
+    );
+};
+
+
+
+// --------------------------------- TABLE FILTERS: ---------------------------------
+
+const HasImpa = ({sortImpa, stateFilters, onChange, onSortImpa}) => {
+
+    return (
+        <div className="flex align-items-center">
+            <div className="p-input-icon-left w-full">
+                <i className="pi pi-search" />
+                <InputText value={stateFilters.impaSearch} placeholder='Αναζήτηση Impa' onChange={onChange} />
+            </div>
+            <div className='ml-3'>
+                {sortImpa === 0 ? (<i className="pi pi-sort-alt" onClick={onSortImpa}></i>) : null}
+                {sortImpa === 1 ? (<i className="pi pi-sort-amount-up" onClick={onSortImpa}></i>) : null}
+                {sortImpa === -1 ? (<i className="pi pi-sort-amount-down-alt" onClick={onSortImpa}></i>) : null}
+            </div>
+        </div>
+    )
+};
+
+// --------------------------------- TABLE TEMPLATES: ---------------------------------
 
 const ImagesTemplate = ({ _id, images }) => {
     const op = useRef(null);
@@ -783,7 +841,7 @@ const ImagesTemplate = ({ _id, images }) => {
 
 }
 
-
+//WHEN THE USER PRESSES MINIMAL GRID: MINIMAL GRID TEMPLATE:
 const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTONESTATUS, availability, updatedAt, PRICER}) => {
 
     const yourDate = new Date(updatedAt);
@@ -829,6 +887,8 @@ const MinimalTemplate = ({ NAME, CATEGORY_NAME, GROUP_NAME, SUBGROUP_NAME, SOFTO
         </div>
     )
 }
+
+//RRICE COLUMN TEMPLATE:
 const PriceTemplate = ({ PRICER }) => {
     return (
         <div>
@@ -837,6 +897,74 @@ const PriceTemplate = ({ PRICER }) => {
     )
 }
 
+//COST TEMPLATE:
+const Cost = ({ COST }) => {
+    return (
+        <div>
+            <p className='font-bold'>{`${COST}€`}</p>
+        </div>
+    )
+}
+
+//UPDATE FROM COLUMN TEMPLATE:
+const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
+    return (
+        <RegisterUserActions
+            actionFrom={updatedFrom}
+            at={updatedAt}
+            icon="pi pi-user"
+            color="#fff"
+            backgroundColor='var(--yellow-500)'
+        />
+
+    )
+}
+//NAME  COLUMN TEMPLATE:
+const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }) => {
+    return (
+        <div>
+            <p className='font-medium'>{NAME}</p>
+            <div className='flex border-round'>
+
+                <div className='flex align-items-center'>
+                    <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                    <p className='text-500'>softone</p>
+                </div>
+                <div className='flex align-items-center ml-2'>
+                    <div style={{ width: '5px', height: '5px' }} className={`${ISACTIVE ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
+                    <p className='text-500'>active</p>
+                </div>
+                {isSkroutz ? (
+                    <div className='flex align-items-center ml-2'>
+                        <div style={{ width: '5px', height: '5px' }} className={`bg-orange-500 border-circle mr-1 mt-1`}></div>
+                        <p className='text-500'>skroutz</p>
+                    </div>
+                ) : null}
+                {availability?.DIATHESIMA === '0' ? (
+                    <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1'
+                        style={{ padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize: '10px', maxWidth: '70px' }}>
+                        <p style={{ marginBottom: '2px' }}>not available</p>
+                    </div>
+                ) : null}
+
+            </div>
+
+        </div>
+    )
+}
+
+//IMPA COLUMN TEMPLATE
+const ImpaCode = ({ impas }) => {
+    return (
+        <div>
+            <p className='font-bold'>{impas?.code}</p>
+            <p>{impas?.englishDescription || impas?.greekDescription}</p>
+
+        </div>
+    )
+}
+
+// --------------------------------- END OF TABLE TEMPLATES: ---------------------------------
 
 
 const ExpansionDetails = ({ data }) => {
@@ -915,70 +1043,13 @@ const ExpansionDetails = ({ data }) => {
 
 
 
-const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
-    return (
-        <RegisterUserActions
-            actionFrom={updatedFrom}
-            at={updatedAt}
-            icon="pi pi-user"
-            color="#fff"
-            backgroundColor='var(--yellow-500)'
-        />
-
-    )
-}
-
-const Cost = ({ COST }) => {
-    return (
-        <div>
-            <p className='font-bold'>{`${COST}€`}</p>
-        </div>
-    )
-}
 
 
-const NameTemplate = ({ NAME, SOFTONESTATUS, isSkroutz, ISACTIVE, availability }) => {
-    return (
-        <div>
-            <p className='font-medium'>{NAME}</p>
-            <div className='flex border-round'>
 
-                <div className='flex align-items-center'>
-                    <div style={{ width: '5px', height: '5px' }} className={`${SOFTONESTATUS === true ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
-                    <p className='text-500'>softone</p>
-                </div>
-                <div className='flex align-items-center ml-2'>
-                    <div style={{ width: '5px', height: '5px' }} className={`${ISACTIVE ? "bg-green-500" : "bg-red-500"} border-circle mr-1 mt-1`}></div>
-                    <p className='text-500'>active</p>
-                </div>
-                {isSkroutz ? (
-                    <div className='flex align-items-center ml-2'>
-                        <div style={{ width: '5px', height: '5px' }} className={`bg-orange-500 border-circle mr-1 mt-1`}></div>
-                        <p className='text-500'>skroutz</p>
-                    </div>
-                ) : null}
-                {availability?.DIATHESIMA === '0' ? (
-                    <div className=' bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1'
-                        style={{ padding: '2px 4px', borderRadius: '3px', height: '18px', fontSize: '10px', maxWidth: '70px' }}>
-                        <p style={{ marginBottom: '2px' }}>not available</p>
-                    </div>
-                ) : null}
 
-            </div>
 
-        </div>
-    )
-}
 
-const ImpaCode = ({ impas }) => {
-    return (
-        <div>
-            <p className='font-bold'>{impas?.code}</p>
-            <p>{impas?.englishDescription || impas?.greekDescription}</p>
 
-        </div>
-    )
-}
 
 const productAvailabilityTemplate = ({ availability }) => {
 
@@ -986,6 +1057,9 @@ const productAvailabilityTemplate = ({ availability }) => {
         <ProductAvailability data={availability} />
     )
 }
+
+
+
 const productOrderedTemplate = ({ availability }) => {
 
     return (
@@ -1243,29 +1317,3 @@ const MarkesFilter = ({ value, options, onChange }) => {
 }
 
 
-const ImageDiv = styled.div`
-    background-color: white;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid #d9d9d8;
-    position: relative;
-    width: 50px;
-    height: 30px;
-    img {
-        object-fit: cover;
-    }
-`
-const ImageOverlay = styled.div`
-    background-color: white;
-    border-radius: 4px;
-    overflow: hidden;
-    position: unset !important;
-    width: 100%;
-    height: 100%;
-    img {
-        object-fit: contain;
-        width: 100% !important;
-        position: relative !important;
-        height: unset !important;
-    }
-`
