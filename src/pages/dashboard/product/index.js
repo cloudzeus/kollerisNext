@@ -53,6 +53,12 @@ import { Image as PrimeImage } from 'primereact/image';
 import Link from 'next/link';
 import { Message } from 'primereact/message';
 
+const dialogStyle = {
+    marginTop: '10vh', // Adjust the top margin as needed
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+};
 
 
 
