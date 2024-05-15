@@ -169,7 +169,8 @@ export default async function handler(req, res) {
         updateFields.MANUFACTURER_NAME = NAME ;
       }
       
- 
+      
+      console.log(updateFields)
       let update = await SoftoneProduct.findOneAndUpdate(
         { $or: [{ MTRL: findByMTRL }, { _id: findByID }] },
         { $set: updateFields },
