@@ -1,15 +1,10 @@
 
-import { connect } from "mongoose";
 import connectMongo from "../../../server/config";
 import SoftoneProduct from "../../../server/models/newProductModel";
-import { ConnectedOverlayScrollHandler } from "primereact/utils";
 import UploadedProduct from "../../../server/models/uploadedProductsModel";
 export default async function handler(req, res) {
     const { data,  UNIQUE_CODE } = req.body;
-    console.log('data')
-    console.log(data)
-    console.log('UNIQUE_CODE')
-    console.log(UNIQUE_CODE)
+  
  
     try {
         await connectMongo();
@@ -32,8 +27,6 @@ export default async function handler(req, res) {
             uploaded: true,
         }
 
-        console.log('productData')
-        console.log(productData)
         //CREATE THE UPLOADED PRODUCT FOR THIS SUPPLIER
         const uploadedOBJ = {
             NAME: data.NAME,
@@ -43,11 +36,9 @@ export default async function handler(req, res) {
             PRICER01: data?.PRICER01 ? parseFloat(data?.PRICER01.toFixed(2)) : 0,
             UNIQUE_CODE:  UNIQUE_CODE,
         }
-        console.log('uploadedOBJ')
-        console.log(uploadedOBJ)
+      
         let uploadedProduct = await UploadedProduct.create(uploadedOBJ)
-        console.log('uploadedProduct')
-        console.log(uploadedProduct)
+      
         //CREATE A FILTER WITH EITHER THE NAME OR THE CODE OF THE PRODUCT FROM THE UPLOADED FILE
         const filter = {
          CODE2: data.CODE2  
@@ -56,17 +47,9 @@ export default async function handler(req, res) {
 
         //IF THE PRODUCT EXIST IN SOFTONE THEN UPDATE THE PRODUCT  
        
-          
-
-          
-
-
-
-     
       
         const find = await SoftoneProduct.findOne(filter);
-        console.log('find')
-        console.log(find)
+     
         if(find) {
             if(find.MTRL) {
                 //if you find MTRL it means that the product is in softone and you need to update the prices:
@@ -81,8 +64,7 @@ export default async function handler(req, res) {
             },
                 { new: true, }
             );
-            console.log('updatedProduct')
-            console.log(product)
+           
             //UPDATE THE STATUS TO UPDATED
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {
@@ -95,8 +77,6 @@ export default async function handler(req, res) {
 
         if (!find) {
             let product = await SoftoneProduct.create(productData);
-            console.log('created product')
-            console.log(product)
             //UPDATE THE STATUS TO CRATED
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {
@@ -130,8 +110,7 @@ export default async function handler(req, res) {
                 })
             });
             let responseJSON = await response.json();
-            'sonftone update'
-            console.log(responseJSON)
+          
             await UploadedProduct.findOneAndUpdate({ _id: uploadedProduct._id }, {
                 $set: {
                     UPDATED_SOFTONE: responseJSON.success ? true : false,

@@ -582,9 +582,9 @@ function Product() {
                             header="Υποομάδα"
                             filter
                             showFilterMenu={false}
-                            filterElement={() => {
-                                <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
-                            }}>
+                            filterElement={() => (
+                                    <SubGroupsRowFilterTemplate value={subgroup} options={filters.subgroup} onChange={onFilterSubGroupChange} group={group} />
+                    )}>
                         </Column>
                     )}
                     {visibleColumns.some(column => column.id === 12) && (
