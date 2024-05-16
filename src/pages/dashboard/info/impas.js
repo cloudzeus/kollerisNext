@@ -153,7 +153,7 @@ const Impas = () => {
     }
 
     const onEdit = (rowData) => {
-        if (rowData.isActive === false) return showError('Δεν μπορείτε να επεξεργαστείτε απενεργοποιημένο impa')
+        // if (rowData.isActive === false) return showError('Δεν μπορείτε να επεξεργαστείτε απενεργοποιημένο impa')
         setSubmitted(false);
         setEditDialog(true);
         dispatch(setGridRowData(rowData))

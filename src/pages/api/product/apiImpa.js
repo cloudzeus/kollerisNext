@@ -170,10 +170,9 @@ export default async function handler(req, res) {
 
     if(action === "deactivate") {
         const {selected} = req.body;
-       
+        console.log('deactivate')
      
         let ids = selected.map(item => item._id)
-        console.log(ids)
         try {
             await connectMongo();
             let update = await ImpaCodes.updateMany(
@@ -188,6 +187,7 @@ export default async function handler(req, res) {
         }
     }
     if(action === "activate") {
+        console.log('activate')
         const {selected} = req.body;
         console.log(selected)
      

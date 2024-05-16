@@ -23,11 +23,10 @@ const addSchema = yup.object().shape({
 
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
-    const { data: session, status } = useSession()
+    const { data: session } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
 
-    console.log(gridRowData);
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: gridRowData
     });
@@ -70,16 +69,16 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     }
 
     const onStatusChange = async (action) => {
-        console.log('onStatusChange')
+        console.log(action)
         let error = 'Αποτυχία απενεργοποίησης'
         try {
-            let { data } = await axios.post('/api/product/apiImpa', { action: "deactivate", selected: [gridRowData] })
+            let { data } = await axios.post('/api/product/apiImpa', { action: action, selected: [gridRowData] })
             
             if (!data.success) {
-                console.log('why do we enter')
                 return showError(error)
             }
             setSubmitted(prev => !prev)
+            hideDialog()
         } catch (e) {
             console.log(e)
             showError('Προσπαθήστε ξανά')
@@ -145,6 +144,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
 const StatusChange = ({ isActive, onClick }) => {
+    let action = isActive ? 'deactivate' : 'activate'
     return (
         <>
             <div className="flex">
@@ -153,10 +153,10 @@ const StatusChange = ({ isActive, onClick }) => {
                     className={`${isActive ? "bg-green-500" : "bg-red-500"}  border-round flex align-items-center justify-content-center`}>
                     {isActive ? <i className="pi pi-check text-white text-xs"></i> : <i className="pi pi-times text-white text-xs"></i>}
                 </div>
-                <p className='ml-1'>Ενεργοποιημένο</p>
+                <p className='ml-1'>{isActive ?  "Ενεργοποιημένο" : "Απενεργοποιημένο"}</p>
 
             </div>
-            <p onClick={onClick} className='underline cursor-pointer text-primary text-xs'>Απενεργοποίηση</p>
+            <p onClick={() => onClick(action)} className='underline cursor-pointer text-primary text-xs'>{isActive ?  "Απενεργοποίηση" : "Ενεργοποίηση"}</p>
         </>
     )
 }
