@@ -21,8 +21,7 @@ export default async function handler(req, res) {
 
     if (action === "create") {
         const { data } = req.body;
-        console.log('create data')
-        console.log(data)
+      
         try {
             await connectMongo();
             let product = await SoftoneProduct.create({
@@ -31,11 +30,6 @@ export default async function handler(req, res) {
                 ISACTIVE: true,
                 isSkroutz: false,
                 hasImage: false,
-                availability: {
-                    DIATHESIMA: '0',
-                    SEPARAGELIA: '0',
-                    DESVMEVMENA: '0',
-                }
             });
 
             return res.status(200).json({ success: true, result: product });
@@ -150,16 +144,7 @@ export default async function handler(req, res) {
 
     }
 
-    if (action === 'search') {
-        let query = req.body.query;
-        await connectMongo();
-        // Construct a case-insensitive regex pattern for the search query
-
-        const regexPattern = new RegExp(query, 'i');
-        let search = await SoftoneProduct.find({ NAME: regexPattern })
-        return res.status(200).json({ success: true, result: search });
-    }
-
+   
     if (action === 'insert') {
         await connectMongo();
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
@@ -429,64 +414,11 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, message: message });
     }
 
-    if (action === "importCSVProducts") {
-        const { data } = req.body;
-        await connectMongo();
-        //ADD THE SOFTONE PRODUCT
-        try {
-
-            const softOneData = data.map((item) => {
-                return {
-                    NAME: item.name || '',
-                    CODE: item.CODE || '',
-                    CODE1: item.CODE1 || '',
-                    CODE2: item.CODE2 || '',
-                    VAT: item.VAT || '',
-                    COUNTRY: item.COUNTRY || '',
-                    INTRASTAT: item.INTRASTAT || '',
-                    WIDTH: item.WIDTH || '',
-                    HEIGHT: item.HEIGHT || '',
-                    LENGTH: item.LENGTH || '',
-                    GWEIGHT: item.GWEIGHT || '',
-                    VOLUME: item.VOLUME || '',
-                    STOCK: item.STOCK || '',
-                    PRICER: item.PRICER || '',
-                    PRICEW: item.PRICEW || '',
-                    PRICER05: item.PRICER05 || '',
-                }
-            })
-            let createSoftone = await SoftoneProduct.create(softOneData)
-
-            let productInsert = createSoftone.map((item) => {
-                return {
-                    name: item.NAME || '',
-                    description: item.description || '',
-                    softoneStatus: false,
-                    attributes: item.attributes || [],
-                }
-            })
-            let insert = await Product.insertMany(productInsert)
-            return res.status(200).json({ success: true, result: insert });
-
-        } catch {
-            return res.status(400).json({ success: false, error: 'error' });
-        }
-
-    }
-
+    
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
-        console.log(data)
-        console.log(mongoData)
+      
         try {
-            // const filteredObject = {};
-
-            // for (const key in data) {
-            //     if (data[key] !== '') {
-            //         filteredObject[key] = data[key];
-            //     }
-            // }
-    
             await connectMongo();
 
             async function createSoftone() {
@@ -500,8 +432,7 @@ export default async function handler(req, res) {
                     })
                 });
                 let buffer = await translateData(response)
-                console.log('buffer')
-                console.log(buffer)
+               
                 return buffer;
             }
             let response = await createSoftone();
@@ -636,8 +567,7 @@ export default async function handler(req, res) {
                 },
                 { new: true, projection: { _id: 0, NAME: 1, CODE: 1, updatedAt: 1, images: { $slice: -1 } } }
             );
-            console.log('updated')
-            console.log(updatedDocument.NAME)
+         
             let _newdoc = {
                 NAME: updatedDocument.NAME,
                 CODE: updatedDocument.CODE,
@@ -646,14 +576,16 @@ export default async function handler(req, res) {
                 updatedToTotal: `${index}/${total}`
             }
 
-            console.log(_newdoc)
             return res.status(200).json({ success: true, result: _newdoc });
         } catch (error) {
             console.error(error);
             return res.status(400).json({ success: false, result: null });
         }
     }
+    
 
+
+    // used by Kozyris:
     if (action === "update_service") {
         const { data } = req.body;
         console.log(data)

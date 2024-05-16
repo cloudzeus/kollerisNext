@@ -5,9 +5,7 @@ export default function CountriesDropdown({selectedCountry, onChangeCountry, isE
     const [options, setOptions ] = useState([])
     const [value, setValue] = useState(null)
 
-    console.log({selectedCountry})
     useEffect(() => {
-
         if(isEdit) {
             let value = options.find(option => option.COUNTRY == selectedCountry);
             setValue(value)
@@ -16,8 +14,6 @@ export default function CountriesDropdown({selectedCountry, onChangeCountry, isE
         }
     }, [options])
 
-
-  
 
 
     const onChange = (e) => {

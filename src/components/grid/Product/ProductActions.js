@@ -154,7 +154,12 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 						</div>
 					</div>
 					<div>
-						<Image src='/uploads/skroutz.png' width={50} height={15} />
+						<Image 
+							src='/uploads/skroutz.png' 
+							width={50} 
+							height={15} 
+							alt='skroutz'
+						/>
 					</div>
 					</div>
 				</Button>

@@ -248,31 +248,5 @@ const DataTableContainer  = styled.div`
     }
 
 `
-const ImageDiv = styled.div`
-    width: 50px;
-    height: 50px;
-    position: relative;
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
-    & img {
-        object-fit: contain;
-    }
 
-`
-
-const ImageOverlay = styled.div`
-    background-color: white;
-    border-radius: 4px;
-    overflow: hidden;
-    position: unset !important;
-    width: 100%;
-    height: 100%;
-    img {
-        object-fit: contain;
-        width: 100% !important;
-        position: relative !important;
-        height: unset !important;
-    }
-`
 export default ImageGrid;

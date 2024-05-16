@@ -16,7 +16,6 @@ const ProductImagesComp = ({ id }) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [refetch, setRefetch] = useState(false)
-    const dispatch = useDispatch();
 
     const createImagesURL = (files) => {
         let imagesNames = [];

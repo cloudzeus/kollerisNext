@@ -25,7 +25,6 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     });
     const { control, handleSubmit, reset, setValue,  } = methods;
     const values = methods.watch();
-    console.log({values})
     useEffect(() => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
