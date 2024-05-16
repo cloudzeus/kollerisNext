@@ -64,7 +64,7 @@ const ProductActions = ({ rowData, onEdit, onEditClass, onAdd }) => {
 		dispatch(setSelectedProducts([...selectedProducts, rowData]))
 	}
 
-
+	
 	const updateActiveMtrl  = async () => {
 		setLoading(prev => ({...prev, active: true}))
 		const ISACTIVE = rowData.ISACTIVE

@@ -476,21 +476,21 @@ export default async function handler(req, res) {
 
     if (action === "addToSoftone") {
         const { data, id, mongoData } = req.body;
-
+        console.log(data)
+        console.log(mongoData)
         try {
-            const filteredObject = {};
+            // const filteredObject = {};
 
-            for (const key in data) {
-                if (data[key] !== '') {
-                    filteredObject[key] = data[key];
-                }
-            }
-            console.log('filtered object')
-            console.log(filteredObject)
+            // for (const key in data) {
+            //     if (data[key] !== '') {
+            //         filteredObject[key] = data[key];
+            //     }
+            // }
+    
             await connectMongo();
 
             async function createSoftone() {
-                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/addNewMtrl`;
+                let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/NewMtrl`;
                 const response = await fetch(URL, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -500,8 +500,7 @@ export default async function handler(req, res) {
                     })
                 });
                 let buffer = await translateData(response)
-
-                // console.log(responseJSON)
+                console.log('buffer')
                 console.log(buffer)
                 return buffer;
             }
@@ -515,7 +514,7 @@ export default async function handler(req, res) {
                         $set: {
                             SOFTONESTATUS: true,
                             MTRL: response.MTRL,
-                            ...mongoData
+                            // ...mongoData
                         }
                     },
                     { new: true }

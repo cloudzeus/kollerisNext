@@ -40,13 +40,8 @@ const Page = () => {
         manufacturer: null,
     })  
 
-    console.log('single product')
-    console.log(singleProductForSoftone)
 
-    useEffect(() => {
-        
-        console.log(selectState)
-    }, [selectState])
+
 
     useEffect(() => {
         if(!singleProductForSoftone) {
@@ -108,8 +103,7 @@ const Page = () => {
 
 
     const handleAdd = async (data) => {
-        console.log('sefsf')
-        console.log(data)
+     
         if (!selectState.category?.softOne?.MTRCATEGORY) {
             showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Κατηγορία')
             return;

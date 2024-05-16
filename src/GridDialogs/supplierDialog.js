@@ -12,40 +12,25 @@ import { Toast } from 'primereact/toast';
 import { FormTitle,Container } from '@/componentsStyles/dialogforms';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
-import { Dropdown } from 'primereact/dropdown';
+import CountriesDropdown from '@/components/Forms/CountriesDropdown';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
     const toast = useRef(null);
     const { gridRowData } = useSelector(store => store.grid)
-
-    const [selectState, setSelectState] = useState({
-        countryOptions: [],
-        country: ""
-    })
-    const { control, handleSubmit, formState: { errors }, reset,  setValue } = useForm({
+  
+    
+    const methods = useForm({
         defaultValues: gridRowData
     });
-
+    const { control, handleSubmit, reset, setValue,  } = methods;
+    const values = methods.watch();
+    console.log({values})
     useEffect(() => {
         reset({ ...gridRowData });
     }, [gridRowData, reset]);
     
-    const handleFetchData = async () => {
-        const {data} = await axios.post('/api/suppliers', { action: 'getCountries' })
-        setSelectState(prev => ({ ...prev, countryOptions: data.result }))
-    }
-
-    useEffect(() => {
-        handleFetchData();
-    }, [])
-
-   
-    useEffect(() => {
-        let value = selectState.countryOptions.find(option => option.COUNTRY == gridRowData.COUNTRY)
-        setSelectState(prev => ({ ...prev, country: value }))
-    }, [selectState.countryOptions])
-
+    
 
     const handleEdit = async (data) => {
         let user = session.user.user.lastName;
@@ -82,8 +67,7 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
 
 
     const handleCountryChange = (e) => {
-        setSelectState(prev => ({ ...prev, country: e.target.value }))
-        setValue('COUNTRY', e.target.value.COUNTRY)
+        setValue('COUNTRY', e.target.value)
     }
     return (
         < Container>
@@ -101,13 +85,10 @@ const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
                     maximizable
                 >
                    <FormTitle>Λεπτομέριες</FormTitle>
-                    <label className='mb-2 block'>Χώρα</label>
-                   <Dropdown  
-                    className='mb-2'
-                     value={selectState.country} 
-                     onChange={ handleCountryChange} 
-                     options={selectState.countryOptions} 
-                     optionLabel="NAME"
+                   <CountriesDropdown
+                    isEdit={true}
+                    selectedCountry={values.COUNTRY} 
+                    onChangeCountry={handleCountryChange}
                    />
                    <Input
                    label={'Όνομα'}
@@ -177,12 +158,7 @@ const AddDialog = ({
     setSubmitted
 }) => {
 
-    const {
-        control,
-        formState: { errors },
-        handleSubmit,
-        reset
-    } = useForm({
+    const methods = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
             NAME: '',
@@ -202,10 +178,13 @@ const AddDialog = ({
             WEBPAGE: ''
         }
     });
+
+    const { control, handleSubmit, formState: { errors }, reset, getValues, setValue } = methods;
+    const values = methods.watch();
+
     const toast = useRef(null);
     const [disabled, setDisabled] = useState(false)
     const [trdCategories, setTrdCategories] = useState(null)
-    const [countries, setCountries] = useState(null)
 
 
 
@@ -216,17 +195,13 @@ const AddDialog = ({
 
 
   
-
    
 
 
-    const handleFetchData = () => {
-        const categories = axios.post('/api/suppliers', { action: 'getTRDCATEGORIES' })
-        const countries = axios.post('/api/suppliers', { action: 'getCountries' })
-        Promise.all([categories, countries]).then((res) => {
-            setTrdCategories(res[0].data.result)
-            setCountries(res[1].data.result)
-        })
+    const handleFetchData = async () => {
+        const {data} = await axios.post('/api/suppliers', { action: 'getTRDCATEGORIES' })
+        setTrdCategories(data.result)
+       
     }
 
     useEffect(() => {
@@ -236,6 +211,7 @@ const AddDialog = ({
 
 
     const handleAdd = async (data) => {
+      
         let obj = {
             ...data,
             COUNTRY: parseInt(data.COUNTRY.COUNTRY),
@@ -261,7 +237,7 @@ const AddDialog = ({
        
     }
 
-
+   
 
     const productDialogFooter = (
         <>
@@ -277,7 +253,11 @@ const AddDialog = ({
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Αποτυχία ενημέρωσης βάσης : ' + message, life: 5000 });
     }
 
-   
+    const handleChangeCountry = (e) => {
+        console.log(e.target.value)
+        setValue('COUNTRY', e.target.value)
+
+    }
     return (
         <form noValidate onSubmit={handleSubmit(handleAdd)}>
             <Toast ref={toast} />
@@ -300,7 +280,7 @@ const AddDialog = ({
                     required
                     error={errors.TRDCATEGORY}
                 />
-                <PrimeSelect 
+                {/* <PrimeSelect 
                     label={'Χώρα'}
                     name={'COUNTRY'}
                     options={countries}
@@ -308,7 +288,10 @@ const AddDialog = ({
                     control={control}
                     required
                     // error={errors.TRDCATEGORY}
-                />
+                /> */}
+                <CountriesDropdown 
+                    selectedCountry={values.COUNTRY} 
+                    onChangeCountry={handleChangeCountry} />
                  <Input
                    label={'Όνομα'}
                    name={'NAME'}

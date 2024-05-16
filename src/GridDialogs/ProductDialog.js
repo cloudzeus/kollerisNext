@@ -17,10 +17,7 @@ import TranslateInput from '@/components/Forms/TranslateInpit';
 import { setSubmitted } from '@/features/productsSlice';
 import PrimeInputNumber from '@/components/Forms/PrimeInputNumber';
 
-const addSchema = yup.object().shape({
-    // name: yup.string().required('Συμπληρώστε το όνομα'),
-    cost: yup.number()
-});
+
 
 
 
@@ -217,7 +214,10 @@ const EditDialog = ({ dialog, hideDialog }) => {
 }
 
 
-
+const addSchema = yup.object().shape({
+    // name: yup.string().required('Συμπληρώστε το όνομα'),
+    cost: yup.number()
+});
 
 const AddDialog = ({ dialog, hideDialog }) => {
     const dispatch = useDispatch()
@@ -251,8 +251,11 @@ const AddDialog = ({ dialog, hideDialog }) => {
 
 
     useEffect(() => {
-        reset();
-    }, [reset]);
+        // call countries api
+        return () => {
+            reset();
+        }
+    }, []);
 
 
     useEffect(() => {
