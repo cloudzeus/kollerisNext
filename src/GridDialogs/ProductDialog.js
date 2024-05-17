@@ -10,7 +10,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { Toast } from "primereact/toast";
-import { FormTitle, Divider, Container } from "@/componentsStyles/dialogforms";
+import { FormTitle, Container } from "@/componentsStyles/dialogforms";
 import { Dropdown } from "primereact/dropdown";
 import { useSession } from "next-auth/react";
 import TranslateInput from "@/components/Forms/TranslateInpit";
@@ -19,8 +19,11 @@ import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
 import CountriesDropdown from "@/components/Forms/CountriesDropdown";
 import VatDropdown from "@/components/Forms/VatDropdown";
 
+
+
+
 const EditDialog = ({ dialog, hideDialog }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const dispatch = useDispatch();
   const [englishDescription, setEnglishDescription] = useState("");
   const toast = useRef(null);
@@ -32,14 +35,16 @@ const EditDialog = ({ dialog, hideDialog }) => {
     vat: null,
   });
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
+
+  const methods = useForm({
+    resolver: yupResolver(addSchema),
     defaultValues: gridRowData,
-  });
+  })
+
+  const {control, handleSubmit, formState: {errors}, reset, setValue} = methods;
+  const values = methods.watch();
+
+
 
   const handleEnglish = async (value) => {
     setEnglishDescription(value);
@@ -67,7 +72,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
   }, [gridRowData, reset]);
 
   const handleEdit = async (data) => {
-    let user = session.user.user.lastName;
+    console.log({data})
 
     try {
       let resp = await axios.post("/api/product/apiProduct", {
@@ -78,6 +83,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
           ...selectState,
         },
       });
+      console.log({resp})
       if (!resp.data.success) {
         showError(resp.data?.error);
         return;
@@ -111,6 +117,13 @@ const EditDialog = ({ dialog, hideDialog }) => {
     hideDialog();
   };
 
+  const handleVatState = (e) => {
+    setValue("VAT", e.target.value);
+  }
+
+  const handleCountryChange = (e) => {
+    setValue("COUNTRY", e.target.value);
+  }
   const productDialogFooter = (
     <React.Fragment>
       <Button
@@ -137,7 +150,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
           visible={dialog}
           style={{ width: "32rem", maxWidth: "80rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-          header="Τροποποίηση Κατασκευαστή"
+          header="Τροποποίηση Προϊόντος"
           modal
           className="p-fluid"
           footer={productDialogFooter}
@@ -158,14 +171,28 @@ const EditDialog = ({ dialog, hideDialog }) => {
                         setState={setSelectState}
                         id={selectState.group?.softOne?.MTRGROUP}
                     /> */}
-          <OptionsVat state={selectState.vat} setState={setSelectState} />
+
           <FormTitle>Λεπτομέριες</FormTitle>
           <Input
             label={"Όνομα"}
             name={"NAME"}
             control={control}
             required
-            //    error={errors.NAME}
+            error={errors.NAME}
+          />
+          <VatDropdown
+              state={values.VAT}
+              isEdit
+              error={errors?.VAT?.NAME?.message}
+              // required
+              handleState={handleVatState}
+          />
+          <CountriesDropdown
+            selectedCountry={values.COUNTRY}
+            isEdit
+            onChangeCountry={handleCountryChange}
+            required
+            error={errors?.COUNTRY?.NAME?.message}
           />
           <TextAreaInput
             autoResize={true}
@@ -214,14 +241,18 @@ const EditDialog = ({ dialog, hideDialog }) => {
 };
 
 const addSchema = yup.object().shape({
-  // name: yup.string().required('Συμπληρώστε το όνομα'),
   NAME: yup.string().required("Συμπληρώστε το όνομα"),
-  VAT: yup.object().shape({
-    VAT: yup.string().required("Συμπληρώστε το ΦΠΑ"),
-  }),
-  COUNTRY: yup.object().shape({
-    COUNTRY: yup.string().required("Συμπληρώστε την χώρα"),
+
+  VAT: yup.lazy((value) => {
+    typeof value === "object"
+    ? yup.object().shape({
+        NAME: yup.string().required("Συμπληρώστε το ΦΠΑ"),
+        })
+        : yup.string().required("Συμπληρώστε το ΦΠΑ")
   })
+
+
+
 });
 
 const AddDialog = ({ dialog, hideDialog }) => {
@@ -256,10 +287,9 @@ const AddDialog = ({ dialog, hideDialog }) => {
     reset,
     setValue
   } = methods;
-  const values = methods.getValues();
+  const values = methods.watch();
 
   const toast = useRef(null);
-
 
 
   useEffect(() => {
@@ -275,11 +305,11 @@ const AddDialog = ({ dialog, hideDialog }) => {
       life: 4000,
     });
   };
-  const showError = () => {
+  const showError = (message) => {
     toast.current.show({
       severity: "error",
       summary: "Error",
-      detail: "Αποτυχία ενημέρωσης βάσης",
+      detail: message,
       life: 4000,
     });
   };
@@ -289,7 +319,6 @@ const AddDialog = ({ dialog, hideDialog }) => {
   };
 
   const handleAdd = async (data) => {
-
     let _data = {
         ...data,
         COUNTRY: data.COUNTRY.COUNTRY,
@@ -304,14 +333,17 @@ const AddDialog = ({ dialog, hideDialog }) => {
         DESCRIPTION_ENG: englishDescription,
 
     }
-    console.log({_data})
-    return;
+
     let res = await axios.post("/api/product/apiProduct", {
       action: "create",
       data:_data,
     });
-    console.log('data')
-    console.log(res.data)
+
+    if (!res.data.success) {
+        showError(res.data.message);
+        return;
+    }
+    showSuccess(res.data.message);
     hideDialog();
     dispatch(setSubmitted());
     reset();
@@ -381,14 +413,17 @@ const AddDialog = ({ dialog, hideDialog }) => {
             {showInputs ? (
               <div>
                 <VatDropdown 
-                    state={values.VAT} 
+                    state={values.VAT}
+                    required
                     handleState={handleVatState} 
-                    // error={errors?.VAT?.VAT}
+                    error={errors?.VAT?.NAME.message}
                     /> 
-                {/* <OptionsVat state={selectState.vat} setState={setSelectState} /> */}
+
                 <CountriesDropdown
                   selectedCountry={values.COUNTRY}
+                  required
                   onChangeCountry={handleCountryChange}
+                  error={errors?.COUNTRY?.NAME.message}
                 />
                 <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
                 <Input
@@ -539,48 +574,6 @@ const SubGroups = ({ state, setState, id }) => {
 
 
 
-const OptionsVat = ({ state, handleState }) => {
-  const [options, setOptions] = useState([]);
-//   const [data, setData] = useState([]);
 
-//   const VatTemplate = (option) => {
-//     for (let item of data) {
-//       if (item.VAT === option.VAT) {
-//         return <p>{item.NAME}</p>;
-//       }
-//     }
-
-//     return (
-//       <div className="flex align-items-center">
-//         <div>{option.VAT}</div>
-//       </div>
-//     );
-//   };
-
-  const handleFetch = async () => {
-    let { data } = await axios.post("/api/product/apiProductFilters", {
-      action: "findVats",
-    });
-    setOptions(data.result);
-  };
-  useEffect(() => {
-    handleFetch();
-  }, []);
-
-  return (
-    <div className="card mb-3">
-      <span className="mb-2 block">Aλλαγή ΦΠΑ</span>
-
-      <Dropdown
-        value={state}
-        onChange={(e) => setState((prev) => ({ ...prev, vat: e.value }))}
-        options={options}
-        optionLabel="NAME"
-        placeholder="ΦΠΑ"
-        className="w-full"
-      />
-    </div>
-  );
-};
 
 export { EditDialog, AddDialog };

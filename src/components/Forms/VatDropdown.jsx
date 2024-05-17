@@ -1,8 +1,9 @@
 import {useState, useEffect} from "react";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
+import { classNames } from 'primereact/utils';
 
-const VatDropdown = ({ state, handleState, isEdit =false, error }) => {
+const VatDropdown = ({ state, handleState, isEdit =false, error, required = false }) => {
     const [options, setOptions] = useState([]);
     const [value, setValue] = useState(null);
 
@@ -29,7 +30,7 @@ const VatDropdown = ({ state, handleState, isEdit =false, error }) => {
   
     return (
       <div className="card mb-3">
-        <span className="mb-2 block">Aλλαγή ΦΠΑ</span>
+        <label className={`mb-2 block ${error ? "text-red-500" : null}`}>Αλλαγή ΦΠΑ {required && "*"}</label>
         <Dropdown
           value={value}
           onChange={onChange}
@@ -38,7 +39,7 @@ const VatDropdown = ({ state, handleState, isEdit =false, error }) => {
           placeholder="ΦΠΑ"
           className="w-full"
         />
-        <small className="text-red-500">{error}</small>
+        <p className="text-red-500 mt-1">{error}</p>
       </div>
     );
   };

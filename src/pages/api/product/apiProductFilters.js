@@ -107,8 +107,7 @@ export default async function handler(req, res) {
       
         await connectMongo();
         let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 })
-        // console.log('response find groups')
-        // console.log(response)
+
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
@@ -120,8 +119,7 @@ export default async function handler(req, res) {
         if(!groupID) return res.status(200).json({ success: false, result: null})
         try {
             await connectMongo();
-            // console.log('id')
-            // console.log(groupID)
+
             let response = await SubMtrGroup.find({ 'softOne.MTRGROUP': groupID }, { "softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0 })
           
             return res.status(200).json({ success: true, result: response })
@@ -134,7 +132,6 @@ export default async function handler(req, res) {
         try {
             await connectMongo();
             let response = await Markes.find({},  { "softOne.MTRMARK": 1, "softOne.NAME": 1, _id: 0 })
-            console.log(response)
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
@@ -167,13 +164,11 @@ export default async function handler(req, res) {
             sortImpa,
             stateFilters,
         } = req.body;
-        console.log('subgroupID')
-        console.log(subgroupID)
+
         try {
             await connectMongo();
             
-            console.log('stateFilters')
-            console.log(stateFilters)
+
             let totalRecords;
             let sortObject = {};
             let filterConditions = {};
@@ -244,15 +239,7 @@ export default async function handler(req, res) {
             }
 
          
-              
-            console.log('filterConditions')
-            console.log(filterConditions)
-            console.log('seatchTerm')
-            console.log(searchTerm)
-            console.log('sortObject')
-            console.log(sortObject)
-            
-            console.log(stateFilters)
+
             if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
                 let regex = new RegExp(stateFilters.impaSearch, 'i');
                 let productIds = await findImpaProducts(regex);
@@ -272,9 +259,7 @@ export default async function handler(req, res) {
                 totalRecords = await SoftoneProduct.countDocuments(filterConditions);
              
             }
-            
-            console.log('totalRecords')
-            console.log(totalRecords)
+
               let softonefind = await SoftoneProduct.find(filterConditions)
                 .populate('impas')
                 .sort(sortObject)

@@ -9,23 +9,31 @@ import { Toast } from 'primereact/toast';
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import StepHeader from "@/components/StepHeader";
-import { Categories, Groups, SubGroups, Brands, VatSelect, ManufacturerSelect } from "@/components/grid/Product/ΑddProductConfig";
+import { Categories, Groups, SubGroups, ManufacturerSelect } from "@/components/grid/Product/ΑddProductConfig";
 import { FormTitle } from "@/componentsStyles/dialogforms";
 import { useRouter } from "next/router";
 import { removeProductForSoftone } from "@/features/productsSlice";
 import { Dropdown } from "primereact/dropdown";
 import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
+import CountriesDropdown from "@/components/Forms/CountriesDropdown";
+import VatDropdown from "@/components/Forms/VatDropdown";
 
 const addSchema = yup.object().shape({
     // name: yup.string().required('Συμπληρώστε το όνομα'),
     NAME: yup.string().required('Συμπληρώστε το όνομα'),
     PRICER: yup.number().required('Συμπληρώστε την τιμή λιανικής'),
     PRICEW: yup.number().required('Συμπληρώστε την τιμή αποθήκης'),
+    VAT: yup.object().shape({
+        NAME: yup.string().required("Συμπληρώστε το ΦΠΑ"),
+    }),
+    COUNTRY: yup.object().shape({
+        NAME: yup.string().required("Συμπληρώστε την χώρα"),
+    })
 });
 
 
 const Page = () => {
-    const { singleProductForSoftone, productsForSoftone } = useSelector(store => store.products)
+    const { singleProductForSoftone} = useSelector(store => store.products)
 
  
     const dispatch = useDispatch();
@@ -47,7 +55,7 @@ const Page = () => {
         if(!singleProductForSoftone) {
             router.back()
         }
-        setSelectState(prev => {
+        setSelectState( () => {
             return {
                 category: {
                     softOne: { MTRCATEGORY: singleProductForSoftone?.MTRCATEGORY },
@@ -65,27 +73,14 @@ const Page = () => {
         })
     }, [singleProductForSoftone])
 
-    const { control, formState: { errors }, handleSubmit, reset } = useForm({
+    const methods = useForm({
         resolver: yupResolver(addSchema),
         defaultValues: {
-            NAME: singleProductForSoftone?.NAME || "",
-            CODE1: singleProductForSoftone?.CODE1 || "",
-            CODE2: singleProductForSoftone?.CODE2 || "",
-            PRICER: singleProductForSoftone?.PRICER,
-            PRICEW: singleProductForSoftone?.PRICEW ,
-            PRICER05: singleProductForSoftone?.PRICER05 || 0 ,
-            DIM1: 0,
-            DIM2: 0,
-            DIM3: 0,
-            MTRUNIT1: 101,
-            MTRUNIT3: 101,
-            MTRUNIT4: 101,
-            MU31: 1,
-            MU41: 1,
-            GWEIGHT: 0,
-            // MTRMARK_NAME: singleProductForSoftone?.MTRMARK_NAME || '',	
-        }
-    });
+            singleProductForSoftone
+    }})
+    const {control, formState: { errors }, handleSubmit, setValue, } = methods
+    const values = methods.watch();
+
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Message Content', life: 3000 });
     }
@@ -115,35 +110,48 @@ const Page = () => {
         if (!selectState.group?.softOne?.MTRGROUP) {
             showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε Ομάδα')
         }
-        if (!selectState.vat?.VAT) {
-            showError('Δεν μπορείτε να προχωρήσετε: Επιλέξτε ΦΠΑ')
-        }
 
-        let obj = {
+        let _data = {
             ...data,
-            MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
-            MTRGROUP: selectState.group?.softOne?.MTRGROUP,
-            CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
-            MTRMARK: selectState.brand?.softOne?.MTRMARK,
-            MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
-            VAT: parseInt(selectState.vat?.VAT),
-           
-        }
-
-        const mongoObj = {
             MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
             CATEGORY_NAME: selectState.category?.categoryName,
             MTRGROUP: selectState.group?.softOne?.MTRGROUP,
             GROUP_NAME: selectState.group?.groupName,
             CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
             SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+            MTRMARK: selectState.brand?.softOne?.MTRMARK,
             MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
-            ...data
+            VAT: data.VAT.VAT,
+            COUNTRY: data.COUNTRY.COUNTRY,
+
         }
+        console.log({_data})
+        // let obj = {
+        //     ...data,
+        //     MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
+        //     MTRGROUP: selectState.group?.softOne?.MTRGROUP,
+        //     CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
+        //     MTRMARK: selectState.brand?.softOne?.MTRMARK,
+        //     MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
+        //     // VAT: parseInt(selectState.vat?.VAT),
+        //    VAT: data.VAT.VAT
+        // }
+        //
+        // const mongoObj = {
+        //     MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
+        //     CATEGORY_NAME: selectState.category?.categoryName,
+        //     MTRGROUP: selectState.group?.softOne?.MTRGROUP,
+        //     GROUP_NAME: selectState.group?.groupName,
+        //     CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2 || '',
+        //     SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+        //     MTRMANFCTR: parseInt(selectState.manufacturer?.MTRMANFCTR),
+        //     ...data
+        // }
+
+
         let res = await axios.post('/api/product/apiProduct', {
             action: 'addToSoftone',
-            data: obj,
-            mongoData: mongoObj,
+            data: _data,
             id: singleProductForSoftone?._id,
         })
      
@@ -161,8 +169,13 @@ const Page = () => {
 
 
 
+    const handleCountryChange = (e) => {
+        setValue('COUNTRY', e.target.value)
+    }
 
-
+    const handleVatState = (e) => {
+        setValue('VAT', e.target.value)
+    }
 
     return (
         <AdminLayout>
@@ -207,10 +220,19 @@ const Page = () => {
                             /> */}
                         <div>
                             <FormTitle>Λοιπά Υποχρεωτικά Πεδία</FormTitle>
-                            <OptionsVat
-                                    state={selectState.vat}
-                                    setState={setSelectState}
-                                />
+
+                            <VatDropdown
+                                state={values.VAT}
+                                required
+                                handleState={handleVatState}
+                                error={errors?.VAT?.NAME.message}
+                            />
+                            <CountriesDropdown
+                                selectedCountry={values.COUNTRY}
+                                required
+                                onChangeCountry={handleCountryChange}
+                                error={errors?.COUNTRY?.NAME.message}
+                            />
                             <Input
                                 label={'MTRUNIT1'}
                                 name={'MTRUNIT1'}
