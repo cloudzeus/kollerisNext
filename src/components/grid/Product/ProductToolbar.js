@@ -88,7 +88,7 @@ const LeftSide = () => {
         <>
             <Button
                 icon="pi pi-shopping-cart"
-                label="Kαλάθι λειτουργειών"
+                label="Kαλάθι Λειτουργιών"
                 className="mr-2"
                 onClick={onMultipleActions}
                 aria-controls="popup_menu_right"
@@ -201,12 +201,11 @@ const MenuBtn = ({ label, onClick }) => {
 
 
 
-const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL, _id }) => {
+const ProductBaksetTemplate = ({ name, categoryName, PRICER, MTRL}) => {
 
     const [total, setTotal] = useState(PRICER)
     const [quantity, setQuantity] = useState(1)
     const dispatch = useDispatch();
-    const {selectedProducts, mtrLines} = useSelector(state => state.products)
     
 
    
@@ -267,15 +266,6 @@ const ContainerBasket = styled.div`
 `
 
 
-const ProductBasket = styled.div`
-     display: flex;
-        align-items: center;
-        justify-content: space-between;
-    .details {
-        display: flex;
-        align-items: center;
-    }
-`
 
 
 

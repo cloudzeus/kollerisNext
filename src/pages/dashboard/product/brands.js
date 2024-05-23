@@ -71,7 +71,6 @@ export default function TemplateDemo() {
     }, []);
 
     useEffect(() => {
-        console.log('submitted: ' + submitted)
         if (submitted) handleFetch()
     }, [submitted])
 
@@ -128,7 +127,7 @@ export default function TemplateDemo() {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="Νέο" icon="pi pi-plus" severity="secondary" onClick={openNew} />
+                <Button label="Νέα Μάρκα" icon="pi pi-plus" severity="secondary" onClick={openNew} />
             </div>
         );
     };

@@ -62,3 +62,20 @@
     font-style: italic;
     color: grey;
 }
+
+
+/* GRID */
+.column_med {
+    width: 160px!important;
+    text-wrap: wrap;
+    
+}
+
+.p-inputtext.column_input_med {
+    width: 120px;
+}
+
+
+.p-dropdown.column_dropdown_med {
+    width: 130px;
+}

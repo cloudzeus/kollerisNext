@@ -137,7 +137,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
           visible={dialog}
           style={{ width: "32rem", maxWidth: "80rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-          header="Τροποποίηση Κατασκευαστή"
+          header="Τροποποίηση Προϊόντος"
           modal
           className="p-fluid"
           footer={productDialogFooter}
