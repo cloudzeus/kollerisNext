@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
-export default function FilterManufacturer({ value, onChange }) {
+export default function FilterManufacturer({ value,  onChange,  }) {
 
     const [categories, setCategories] = useState([]);
     const handleCategories = async () => {
@@ -13,12 +13,12 @@ export default function FilterManufacturer({ value, onChange }) {
         };
     
     useEffect(() => {
-      
+        
         handleCategories();
     }, []);
 
   const onDelete = () => {
-    dispatch(resetSelectedFilters());
+    onChange(null)
   };
   return (
     <div className="flex align-items-center">
@@ -26,7 +26,7 @@ export default function FilterManufacturer({ value, onChange }) {
         emptyMessage="Δεν υπάρχουν κατηγορίες"
         value={value}
         options={categories}
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value)}
         optionLabel="NAME"
         placeholder="Φίλτρο Κατηγορίας"
         //product.css

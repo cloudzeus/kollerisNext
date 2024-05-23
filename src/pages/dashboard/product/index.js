@@ -293,9 +293,10 @@ function Product() {
     setStateFilters((prev) => ({ ...prev, impaSearch: e.target.value }));
   };
 
-  const onManufacturerChange = (e) => {
-    setStateFilters(prev => ({...prev, manufacturer: e.target.value}) )
+  const onManufacturerChange = (value) => {
+    setStateFilters(prev => ({...prev, manufacturer: value}) )
   }
+
   // -------------------- ADD / EDIT DIALOG ACTIONS --------------------------------
   const addProduct = async (product) => {
     dispatch(setSubmitted());
