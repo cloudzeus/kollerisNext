@@ -12,9 +12,7 @@ export default async function handler(req, res) {
 	let action = req.body.action;
 
 	if (action === 'create') {
-		console.log('create')
 		let { data } = req.body;
-		console.log(data)
 		try {
 
 			let softoneobj = {
@@ -60,14 +58,12 @@ export default async function handler(req, res) {
 					path: 'groups',
 					populate: { path: 'subGroups' }
 				});
-            // console.log('categories 2 ' + JSON.stringify(categories))
 			return res.status(200).json({ success: true, result: categories });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
 		}
 	}
 	if(action === 'update') {
-		console.log('update')
 		const { data, updatedFrom } = req.body;
 
 		let {id} = req.body
@@ -136,12 +132,10 @@ export default async function handler(req, res) {
 	
 
 	if(action === "getImages") {
-		const {id, createNew} = req.body;
-		console.log(id)
+		const {id} = req.body;
 		try {
 			await connectMongo();
 			const category = await MtrCategory.findOne({_id: id}, {categoryImage: 1, categoryIcon: 1, _id: 0});
-			console.log(category)
 			return res.status(200).json({ success: true, result: category });
 		} catch (e) {
 
@@ -157,8 +151,7 @@ export default async function handler(req, res) {
 					categoryImage: imageName
 				}}	
 			  	);
-				console.log('add')
-			console.log(add)
+		
 			return res.status(200).json({ success: true, result: add  });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -166,7 +159,6 @@ export default async function handler(req, res) {
 	}
 	if(action === 'deleteImage') {
 		const {id} = req.body;
-		console.log(id)
 		try {
 			await connectMongo();
 			let deleted = await MtrCategory.findOneAndUpdate(
@@ -175,7 +167,6 @@ export default async function handler(req, res) {
 					categoryImage: ''
 				}}	
 			  	);
-			console.log(deleted)
 			return res.status(200).json({ success: true, result: deleted  });
 		} catch (e) {	
 			return res.status(400).json({ success: false, result: null });
@@ -200,8 +191,7 @@ export default async function handler(req, res) {
 	}
 	if(action === 'deleteLogo') {
 		const {id} = req.body;
-		console.log('delete logo')
-		console.log(id)
+	
 		try {
 			await connectMongo();
 			let deleted = await MtrCategory.findOneAndUpdate(
@@ -211,7 +201,6 @@ export default async function handler(req, res) {
 				}}	
 			  	);
 
-			console.log(deleted)
 			return res.status(200).json({ success: true, result: deleted  });
 		} catch (e) {	
 			return res.status(400).json({ success: false, result: null });

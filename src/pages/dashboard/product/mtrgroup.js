@@ -184,7 +184,7 @@ export default function Groups() {
                 value={data}
                 paginator
                 rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rowsPerPageOptions={[20, 50, 100, 200, 500]}
                 showGridlines
                 rowExpansionTemplate={RowExpansionTemplate}
                 expandedRows={expandedRows}

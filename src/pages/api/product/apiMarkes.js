@@ -13,8 +13,7 @@ export default async function handler(req, res) {
 
 
 	if (action === 'findOne') {
-		console.log('findOne')
-		console.log(req.body.id)
+	
 		try {
 			await connectMongo();
 			const markes = await Markes.find({ _id: req.body.id });
@@ -33,11 +32,9 @@ export default async function handler(req, res) {
 
 	if (action === 'findAll') {
 		try {
-			console.log('fin all markes')
 			await connectMongo();
 			const markes = await Markes.find({}).populate('supplier');
 			if (markes) {
-				// console.log(markes)
 				const arrayImages = []
 				for(let item of markes) {
 					for(let image of item?.photosPromoList ?? []) {
@@ -64,13 +61,10 @@ export default async function handler(req, res) {
 	}
 
 	if (action === 'create') {
-		console.log('test')
 		let { data } = req.body
 		let {createdFrom} = req.body
-		console.log('data: ' + JSON.stringify(data))
 		try {
 			let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrMark/createMtrMark`;
-			console.log(URL)
 			let softoneResponse = await axios.post(URL, {
 				username: 'Service',
 				password: 'Service',
@@ -78,14 +72,12 @@ export default async function handler(req, res) {
 				sodtype: '51',
 				name: data.name
 			})
-			console.log('softone response data')
-			console.log(softoneResponse.data)
+		
 			if (!softoneResponse.data.success) {
 				return res.status(200).json({ success: false, markes: null, error: 'Αποτυχία εισαγωγής στο softone', softoneError: softoneResponse.data.error });
 			}
 			
 			const SOFTONE_MTRMARK = softoneResponse.data.kollerisPim.MTRMARK
-			console.log(SOFTONE_MTRMARK)
 
 			const object = {
 				description: data.description,
@@ -114,8 +106,7 @@ export default async function handler(req, res) {
 				minItemsOrder: data.minItemsOrder,
 				minYearPurchases: data.minYearPurchases,
 			}
-			console.log('object');
-			console.log(object);
+	
 			await connectMongo();
 			const newMarkes = await Markes.create({...object});
 
@@ -135,7 +126,6 @@ export default async function handler(req, res) {
 		let {createdFrom} = req.body
 		let newArray = [];
 		for (let item of data) {
-			console.log(item)
 			const object = {
 				name: item.NAME,
 				description: '',
@@ -169,15 +159,12 @@ export default async function handler(req, res) {
 			newArray.push(object)
 		}
 
-		console.log('Array to insert in Mongo')
-		console.log(newArray)
+
 
 
 		try {
 			await connectMongo();
 			const newMarkes = await Markes.insertMany(newArray);
-
-			console.log('Softone Markes Inserted Successfully', JSON.stringify(newMarkes))
 			if (newMarkes) {
 				return res.status(200).json({ success: true, result: newMarkes });
 
@@ -209,7 +196,6 @@ export default async function handler(req, res) {
 			})
 		}
 		
-		const filter = { _id: id };
 		try {
 			await connectMongo();
 			const result = await Markes.updateOne(
@@ -239,8 +225,7 @@ export default async function handler(req, res) {
 
 				}}
 			);
-			console.log('result')
-			console.log(result)
+			
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', markes: null });
@@ -261,7 +246,6 @@ export default async function handler(req, res) {
 		try {
 			await connectMongo();
 			const result = await Markes.updateOne(filter, update);
-			console.log(result)
 			return res.status(200).json({ success: true, result: result });
 		} catch (error) {
 			return res.status(500).json({ success: false, error: 'Aποτυχία εισαγωγής', result: null});
@@ -283,7 +267,6 @@ export default async function handler(req, res) {
                 },
                 { new: true } // To return the updated document
             );
-            console.log(updatedProduct)
             return res.status(200).json({ success: true });
         } catch (error) {
             console.error(error);
@@ -300,7 +283,6 @@ export default async function handler(req, res) {
         await connectMongo()
         try {
             let result = await Markes.findOne({ _id: id }, { images: 1 });
-            console.log(result)
             return res.status(200).json({ message: "success", result: result?.images })
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -322,7 +304,6 @@ export default async function handler(req, res) {
                 },// Push only the new URLs
                 { new: true } // To return the updated document
             );
-            console.log(updatedProduct)
             return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -330,13 +311,11 @@ export default async function handler(req, res) {
     }
 	if(action === "getLogo") {
 		const {id} = req.body;
-		console.log('id')
-		console.log(id)
+	
 		try {
 			await connectMongo();
 			let response =  await Markes.findOne({_id: id}, {logo: 1});
-			console.log('result')
-			console.log(response)
+		
 			return res.status(200).json({success: true, result: response.logo});
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -344,10 +323,7 @@ export default async function handler(req, res) {
 	}
 	if(action === "addLogo") {
 		const {id, logo} = req.body;
-		console.log('id')	
-		console.log(id)
-		console.log('logo')
-		console.log(logo)
+	
 		try {
 			await connectMongo();
 			const updatedProduct = await Markes.findOneAndUpdate(
@@ -357,7 +333,6 @@ export default async function handler(req, res) {
 				},
 				{ new: true } // To return the updated document
 			);
-			console.log(updatedProduct)
 			return res.status(200).json({ success: true });
 		} catch (e) {
 			return res.status(400).json({ success: false, result: null });
@@ -376,7 +351,6 @@ export default async function handler(req, res) {
 				}}	
 			  	);
 
-			console.log(deleted)
 			return res.status(200).json({ success: true, result: deleted  });
 		} catch (e) {	
 			return res.status(400).json({ success: false, result: null });
@@ -385,8 +359,7 @@ export default async function handler(req, res) {
 
 	if(action === 'saveCatalog') {
         const {catalogName, id} = req.body;
-        console.log('catalogName')
-        console.log(catalogName)
+  
 		const now = new Date();
         const formattedDateTime = format(now, 'yyyy-MM-dd HH:mm:ss');
         try {
@@ -409,7 +382,6 @@ export default async function handler(req, res) {
 	if(action === "findBrandName") {
 		await connectMongo();
 		const {limit, skip, searchBrand} = req.body;
-		console.log(searchBrand)
 		try {
 			let searchParams;
 			if(searchBrand !== '') {
@@ -467,8 +439,7 @@ export default async function handler(req, res) {
 			}, 
 			{'catalogName': 1, 'catalogDate': 1, softOne:1})
 			.skip(skip).limit(limit);
-			console.log('result')
-			console.log(result)
+		
 			let totalRecords = await Markes.countDocuments();
 			return res.status(200).json({ success: true, result: result, totalRecords: totalRecords });
 		} catch (e) {

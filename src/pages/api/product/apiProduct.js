@@ -132,7 +132,6 @@ export default async function handler(req, res) {
                     COST: data?.COST,
                 }
             })
-            console.log(updateSoftoneProduct);
             systemMessage = 'Εγινε ενημέρωση στο σύστημα'
             return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage });
 
@@ -156,7 +155,6 @@ export default async function handler(req, res) {
             })
         });
         let buffer = await translateData(response)
-        console.log(buffer.result)
         await connectMongo();
         let insert1 = await SoftoneProduct.insertMany(buffer.result)
 
@@ -189,8 +187,7 @@ export default async function handler(req, res) {
             SUBGROUP_NAME: subGroupName,
             CCCSUBGROUP3: ""
         }
-        console.log('obj')
-        console.log(OBJ)
+    
         await connectMongo()
 
         async function updateSoft(item) {
@@ -208,8 +205,7 @@ export default async function handler(req, res) {
             });
 
             let respJSON = await response.json()
-            console.log('softone update')
-            console.log(respJSON)
+         
             return respJSON;
         }
 
@@ -218,7 +214,6 @@ export default async function handler(req, res) {
             if (gridData) {
 
                 for (let item of gridData) {
-                    console.log(item)
                     if (!item.hasOwnProperty('MTRL')) {
                         results.push({ name: item?.NAME, updated: false, mtrl: false })
                     }
@@ -243,7 +238,6 @@ export default async function handler(req, res) {
 
                 }
             }
-            // console.log(results)
             return res.status(200).json({ success: true, result: results });
 
         } catch (e) {
@@ -295,7 +289,6 @@ export default async function handler(req, res) {
                 })
             });
             let resJSON = await response.json();
-            console.log(resJSON);
             return resJSON;
         }
 
@@ -319,7 +312,6 @@ export default async function handler(req, res) {
 
     if (action === "updateActiveMtrl") {
         const { ISACTIVE, MTRL, id } = req.body;
-        console.log(MTRL, ISACTIVE)
         let _ISACTIVE = ISACTIVE ? 1 : 0;
         // const mtrl = 94273
 
@@ -384,8 +376,7 @@ export default async function handler(req, res) {
                     })
                 });
                 let buffer = await translateData(response)
-                console.log('response buffer')
-                console.log(buffer)
+          
                 return buffer.result
             }
             message = await updateSoftone();
@@ -450,8 +441,7 @@ export default async function handler(req, res) {
                     },
                     { new: true }
                 )
-                console.log('update')
-                console.log(update)
+           
             }
 
 
@@ -500,7 +490,6 @@ export default async function handler(req, res) {
                 },
                 { new: true } // To return the updated document
             );
-            console.log(updatedProduct)
             return res.status(200).json({ success: true });
         } catch (error) {
             console.error(error);
@@ -517,7 +506,6 @@ export default async function handler(req, res) {
         await connectMongo()
         try {
             let product = await SoftoneProduct.findOne({ _id: id }, { images: 1 });
-            console.log(product)
             return res.status(200).json({ message: "success", result: product?.images })
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -540,7 +528,6 @@ export default async function handler(req, res) {
                 },// Push only the new URLs
                 { new: true } // To return the updated document
             );
-            console.log(updatedProduct)
             return res.status(200).json({ success: true });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -588,7 +575,6 @@ export default async function handler(req, res) {
     // used by Kozyris:
     if (action === "update_service") {
         const { data } = req.body;
-        console.log(data)
 
         try {
             await connectMongo();
@@ -683,8 +669,7 @@ export default async function handler(req, res) {
                             COST: data.COST,
                         }
                     }, {new: true})
-                    console.log('update')
-                    console.log(update)
+                   
                     return update;
                 }
                 return res.status(200).json({ success: true, errors: errors, result: result });

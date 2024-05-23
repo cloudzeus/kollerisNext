@@ -29,7 +29,6 @@ export default async function handler(req, res) {
 
     if(action === 'findAll') {
         const {skip, limit, searchTerm, fetchActive, sortWithProducts} = req.body;
-        console.log('find all impas')
         let totalRecords;
         let impas;
         let filterConditions = {};
@@ -131,8 +130,7 @@ export default async function handler(req, res) {
                     {_id: id}, 
                     {$addToSet: {products: productID}
                 })
-                console.log('update Impa')
-                console.log(updateImpa)
+              
                 if(updateImpa.modifiedCount != 1) {
                     response.error = 'Impa not modified'
                 }
@@ -157,8 +155,7 @@ export default async function handler(req, res) {
                 let deletePromise = ImpaCodes.updateOne({_id: impaId}, {$pull: {products: id}})
                 let updatePromise = SoftoneProduct.updateOne({_id: id}, {$unset: {impas: 1}})
                 const [deleteItem, updateItem] = await Promise.all([ deletePromise,  updatePromise]);
-                console.log(deleteItem)
-                console.log(updateItem)
+            
                 
             })
            
@@ -170,7 +167,6 @@ export default async function handler(req, res) {
 
     if(action === "deactivate") {
         const {selected} = req.body;
-        console.log('deactivate')
      
         let ids = selected.map(item => item._id)
         try {
@@ -180,16 +176,13 @@ export default async function handler(req, res) {
                 {$set: {isActive: false},
             }
             )
-            console.log(update)
             return res.status(200).json({success: true})
         } catch (e) {
             return res.status(500).json({success: false})
         }
     }
     if(action === "activate") {
-        console.log('activate')
         const {selected} = req.body;
-        console.log(selected)
      
         let ids = selected.map(item => item._id)
         try {
@@ -199,7 +192,6 @@ export default async function handler(req, res) {
                 {$set: {isActive: true},
             }
             )
-            console.log(update)
             return res.status(200).json({success: true})
         } catch (e) {
             return res.status(500).json({success: false})

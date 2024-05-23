@@ -182,14 +182,15 @@ export default function Categories() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <StepHeader text="Κατηγορίες" />
+            <StepHeader text="Κατηγοριοποίηση Προϊόντων" />
             <Toolbar start={leftToolbarTemplate}></Toolbar>
             <DataTable
                 header={header}
                 value={data}
                 paginator
                 rows={8}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rowsPerPageOptions={[20, 50, 100, 200, 500]}
+
                 showGridlines
                 rowExpansionTemplate={RowExpansionTemplate}
                 expandedRows={expandedRows}

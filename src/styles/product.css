@@ -67,6 +67,7 @@
 /* GRID */
 .column_med {
     width: 160px!important;
+    max-width: 190px;
     text-wrap: wrap;
     
 }
@@ -77,5 +78,6 @@
 
 
 .p-dropdown.column_dropdown_med {
-    width: 130px;
+    max-width: 200px;
+    width: 100%;
 }

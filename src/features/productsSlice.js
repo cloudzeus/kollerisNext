@@ -10,6 +10,7 @@ const initialState = {
     sort: 0,
     sortImpa: 0,
     sortPrice: 0,
+    sortEan: 0,
     sortAvailability: 0,
     searchTerm: '',
     softoneFilter: null,
@@ -195,6 +196,20 @@ const productsSlice = createSlice({
                 return;
             };
         },
+        setSortEan: (state) => {
+            if(state.sortEan == 0) {
+                state.sortEan = 1;
+                return;
+            };
+            if(state.sortEan == 1) {
+                state.sortEan = -1;
+                return;
+            };
+            if(state.sortEan == -1) {
+                state.sortEan = 0;
+                return;
+            };
+        },
         setSortAvailability: (state) => {
             state.searchTerm = '';
           
@@ -259,6 +274,7 @@ export const {
     setSortPrice,
     setSubmitted,
     setSortImpa,
+    setSortEan,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

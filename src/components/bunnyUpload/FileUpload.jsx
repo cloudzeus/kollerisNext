@@ -29,7 +29,7 @@ const SingleImageUpload = ({ uploadedFiles, setUploadedFiles, data, onDelete, on
     const handleDelete = async (name) => {
         await onDelete()
         let bunny_delete = await deleteBunny(name);
-        if(bunny_delete.HttpCode == 200) {
+        if(bunny_delete?.HttpCode == 200) {
             showSuccess('Η φωτογραφία διαγράφηκε επιτυχώς')
         } else {
             showError('Αποτυχία διαγραφής φωτογραφίας στο bunny cdn')
@@ -134,7 +134,7 @@ const FileUpload = ({ visible, setVisible, uploadedFiles, setUploadedFiles, onAd
                 // Assume uploadBunny returns a Promise
                 const result = await uploadBunny(arrayBuffer, uploadedFiles[0].name);
       
-                if (result.HttpCode === 201 || result.Message === "File uploaded.") {
+                if (result?.HttpCode === 201 || result.Message === "File uploaded.") {
                   showSuccess('Η φωτογραφία ανέβηκε επιτυχώς');
                 }
               } catch (error) {

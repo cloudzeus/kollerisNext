@@ -21,14 +21,12 @@ export default async function handler(req, res) {
     if (action === 'create') {
         try {
             let { data } = req.body
-            console.log(data.NAME)
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrManufacture/createManufacture`;
             let addedSoftone = await axios.post(URL, {
                 username: "Service",
                 password: "Service",
                 name: data.NAME
             })
-            console.log(addedSoftone.data)
 
 
             if (!addedSoftone.data.success) return res.status(400).json({ success: false, result: null })
@@ -41,8 +39,7 @@ export default async function handler(req, res) {
                 COMPANY: "1001",
              
             })
-            console.log('inserted')
-            console.log(insert)
+       
             return res.status(200).json({ success: true, result: insert });
         } catch (e) {
             return res.status(400).json({ success: false, result: null });
@@ -50,9 +47,7 @@ export default async function handler(req, res) {
     }
 
     if (action === 'update') {
-        console.log('update')
         const { NAME, MTRMANFCTR, id, updatedFrom } = req.body;
-        console.log( NAME, MTRMANFCTR, id, updatedFrom )
 
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrManufacture/updateMtrManufacture`;
@@ -64,8 +59,7 @@ export default async function handler(req, res) {
                 mtrmanfctr: MTRMANFCTR.toString()
             })
 
-            console.log('data:')
-            console.log(updateSoftone.data)
+      
             if (!updateSoftone.data.success) return res.status(400).json({ success: false, result: null })
             await connectMongo();
 
@@ -76,8 +70,7 @@ export default async function handler(req, res) {
                     NAME: NAME
                 }}
             );
-            console.log('updated manufacturers')
-            console.log(updatedManufacturers)
+        
             return res.status(200).json({ success: true, result: updatedManufacturers, error: null });
 
         } catch (e) {
@@ -105,7 +98,6 @@ export default async function handler(req, res) {
     }
 
     if (action === 'populateDatabase') {
-        console.log('pulling manufacturers from softone')
         try {
             let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.MtrManufacture/getMtrManufactures`;
             const response = await fetch(URL, {
@@ -119,7 +111,6 @@ export default async function handler(req, res) {
             
          
             let buffer = await translateData(response)
-            console.log(buffer.result)
            await connectMongo();
             let insert = await Manufacturers.insertMany(buffer.result)
 
@@ -148,9 +139,7 @@ export default async function handler(req, res) {
                 return res.status(200).json({ success: false, result: [] });
 
             }
-            // console.log('not found')
-            // console.log(notFound)
-            // // console.log(notFoundSoftone)
+       
             return res.status(200).json({ success: true, result: notFound });
 
         } catch (e) {
@@ -160,7 +149,6 @@ export default async function handler(req, res) {
     }
 
     if (action === 'createMany') {
-        console.log('create many')
         const { data, createdFrom } = req.body;
 
         let newData = data.map(obj => ({softOne: obj, createdFrom: createdFrom, status: true}))

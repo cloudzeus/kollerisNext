@@ -44,6 +44,7 @@ import {
   resetSelectedFilters,
   setSearchTerm,
   setSort,
+  setSortEan,
   setSoftoneFilter,
   setSubmitted,
   setMarka,
@@ -52,11 +53,10 @@ import {
   setSelectedProducts,
 } from "@/features/productsSlice";
 import ProductImagesComp from "@/components/grid/Product/ProductImageComp";
-import { confirmDialog } from "primereact/confirmdialog";
 import { Image as PrimeImage } from "primereact/image";
 import Link from "next/link";
 import { Message } from "primereact/message";
-
+import FilterManufacturer from "@/components/grid/Product/FilterManufacturer";
 const dialogStyle = {
   marginTop: "10vh", // Adjust the top margin as needed
   display: "flex",
@@ -120,7 +120,7 @@ const columns = [
     id: 13,
   },
   {
-    header: "Minimized",
+    header: "Eλαχιστοποίηση",
     id: 15,
   },
 ];
@@ -155,6 +155,7 @@ function Product() {
     sortAvailability,
     marka,
     sortPrice,
+    sortEan,
     sortImpa,
   } = useSelector((store) => store.products);
   const dispatch = useDispatch();
@@ -164,13 +165,15 @@ function Product() {
   const [visibleColumns, setVisibleColumns] = useState(initialColumns);
   const [expandedRows, setExpandedRows] = useState(null);
   const [addDialog, setAddDialog] = useState(false);
+
   const [stateFilters, setStateFilters] = useState({
     impaSearch: "",
     images: null,
     codeSearch: "",
     skroutz: null,
     active: true,
-  });
+    manufacturer: null,
+   });
 
   useEffect(() => {
     dispatch(setSearchTerm(""));
@@ -194,6 +197,7 @@ function Product() {
         groupID: group?.softOne.MTRGROUP,
         subgroupID: subgroup?.softOne.cccSubgroup2,
         sort: sort,
+        sortEan: sortEan,
         sortImpa: sortImpa,
         softoneFilter: softoneFilter,
         marka: marka,
@@ -223,9 +227,15 @@ function Product() {
     submitted,
     stateFilters,
     sortPrice,
+    sortEan,
     sortImpa,
   ]);
 
+  
+
+  useEffect(() => {
+    console.log(stateFilters.manufacturer)
+  }, [stateFilters.manufacturer])
   const allowExpansion = (rowData) => {
     return rowData;
   };
@@ -283,6 +293,9 @@ function Product() {
     setStateFilters((prev) => ({ ...prev, impaSearch: e.target.value }));
   };
 
+  const onManufacturerChange = (e) => {
+    setStateFilters(prev => ({...prev, manufacturer: e.target.value}) )
+  }
   // -------------------- ADD / EDIT DIALOG ACTIONS --------------------------------
   const addProduct = async (product) => {
     dispatch(setSubmitted());
@@ -353,7 +366,7 @@ function Product() {
 
   const SearchEAN = () => {
     const onSort = () => {
-      dispatch(setSort());
+      dispatch(setSortEan());
     };
     return (
       <div className="flex align-items-center justify-content-start">
@@ -373,13 +386,13 @@ function Product() {
           />
         </div>
         <div className="ml-3">
-          {sort === 0 ? (
+          {sortEan === 0 ? (
             <i className="pi pi-sort-alt" onClick={onSort}></i>
           ) : null}
-          {sort === 1 ? (
+          {sortEan === 1 ? (
             <i className="pi pi-sort-amount-up" onClick={onSort}></i>
           ) : null}
-          {sort === -1 ? (
+          {sortEan === -1 ? (
             <i className="pi pi-sort-amount-down-alt" onClick={onSort}></i>
           ) : null}
         </div>
@@ -496,7 +509,7 @@ function Product() {
           onSelectionChange={onSelection}
           paginator
           rows={lazyState2.rows}
-          rowsPerPageOptions={[10, 50, 100, 200, 500]}
+          rowsPerPageOptions={[20, 50, 100, 200, 500]}
           value={data}
           showGridlines
           dataKey="_id"
@@ -621,6 +634,22 @@ function Product() {
                   options={filters.subgroup}
                   onChange={onFilterSubGroupChange}
                   group={group}
+                />
+              )}
+            ></Column>
+          )}
+          {visibleColumns.some((column) => column.id === 11) && (
+            <Column
+              field="MTRMARK_NAME"
+              header="Κατασκευαστής"
+              filter
+              //products.css // maxWidth: 185px
+              className="column_med"
+              showFilterMenu={false}
+              filterElement={() => (
+                <FilterManufacturer 
+                  value={stateFilters.manufacturer}
+                  onChange={onManufacturerChange}
                 />
               )}
             ></Column>
@@ -785,7 +814,7 @@ const RenderHeader = ({
             size="small"
             className="mr-2"
             severity="secondary"
-            label="Minimal Grid"
+            label="Συμπαγής Προβολή"
             onClick={makeMinimalGrid}
           />
         </div>
@@ -1445,8 +1474,8 @@ const MarkesFilter = ({ value, options, onChange }) => {
         onChange={onChange}
         optionLabel="softOne.NAME"
         placeholder="Φίλτρο Mάρκας"
-        className="p-column-filter grid-filter"
-        style={{ minWidth: "130px", fontSize: "12px" }}
+         //product.css
+         className="column_dropdown_med"
       />
       <i
         className="pi pi-times ml-2 cursor-pointer"
