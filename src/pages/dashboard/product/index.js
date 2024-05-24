@@ -189,10 +189,10 @@ function Product() {
   }, []);
 
   useEffect(() => {
-    fetch();
+    fetchProducts();
   }, [submitted]);
 
-  const fetch = async () => {
+  const fetchProducts = async () => {
     if (!searchTerm && !stateFilters.codeSearch) {
       dispatch(setLoading(true));
     }
@@ -221,7 +221,7 @@ function Product() {
     dispatch(setLoading(false));
   };
   useEffect(() => {
-    fetch();
+    fetchProducts();
   }, [
     lazyState2.rows,
     lazyState2.first,
@@ -542,7 +542,7 @@ function Product() {
             style={{ width: "30px" }}
             headerStyle={{ width: "30px" }}
           ></Column>
-          {user?.role == "admin" ? (
+          {user?.role === "admin" ? (
             <Column
               style={{ width: "60px" }}
               body={(rowData) => (
@@ -581,7 +581,8 @@ function Product() {
           {visibleColumns.some((column) => column.id === 6) && (
             <Column
               field="impas.code"
-              style={{ minWidth: "250px" }}
+              // style={{ minWidth: "250px" }}
+              className="column_med"
               header="Κωδικός Impa"
               body={ImpaCode}
               filter
@@ -670,7 +671,7 @@ function Product() {
               field="availability.DIATHESIMA"
               bodyStyle={{ textAlign: "center" }}
               body={productAvailabilityTemplate}
-              style={{ width: "90px" }}
+              style={{ width: "110px" }}
               header="Διαθέσιμα"
             ></Column>
           )}
@@ -814,8 +815,9 @@ const RenderHeader = ({
       ]);
   };
   return (
-    <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between ">
-      <div className="flex ">
+      //product.css //
+    <div className="header_container">
+      <div className="header_left ">
         <div>
           <Button
             type="button"
@@ -973,6 +975,8 @@ const HasImpa = ({ sortImpa, stateFilters, onChange, onSortImpa }) => {
         <InputText
           value={stateFilters.impaSearch}
           placeholder="Αναζήτηση Impa"
+            //product.css
+          className="column_input_med"
           onChange={onChange}
         />
       </div>
@@ -1140,11 +1144,13 @@ const NameTemplate = ({
   isSkroutz,
   ISACTIVE,
   availability,
+    impas
 }) => {
+
   return (
-    <div>
+    <div >
       <p className="font-medium">{NAME}</p>
-      <div className="flex border-round">
+      <div className="flex border-round mt-1">
         <div className="flex align-items-center">
           <div
             style={{ width: "5px", height: "5px" }}
@@ -1163,6 +1169,19 @@ const NameTemplate = ({
           ></div>
           <p className="text-500">active</p>
         </div>
+        {impas?.code ? (
+            <div className="flex align-items-center ml-2">
+              <div
+                  style={{ width: "5px", height: "5px" }}
+                  className={`${
+                      ISACTIVE ? "bg-green-500" : "bg-red-500"
+                  } border-circle mr-1 mt-1`}
+              ></div>
+              <p className="text-500 text-xs">IMPA:
+                <b className={"black"}>{impas?.code}</b>
+              </p>
+            </div>
+        ) : null}
         {isSkroutz ? (
           <div className="flex align-items-center ml-2">
             <div
@@ -1172,6 +1191,7 @@ const NameTemplate = ({
             <p className="text-500">skroutz</p>
           </div>
         ) : null}
+
         {availability?.DIATHESIMA === "0" ? (
           <div
             className=" bg-red-500 text-white p-1 flex align-items-center justify-content-center ml-2 mt-1"
@@ -1318,7 +1338,7 @@ const GroupRowFilterTemplate = ({ category, options, onChange, value }) => {
   return (
     <div className="flex align-items-center">
       <Dropdown
-        disabled={!category ? true : false}
+        disabled={!category}
         emptyMessage="Δεν υπάρχουν ομάδες"
         value={value}
         options={options}
@@ -1354,7 +1374,7 @@ const SubGroupsRowFilterTemplate = ({ value, options, group, onChange }) => {
       <Dropdown
         emptyMessage="Δεν υπάρχουν υποομάδες"
         size="small"
-        disabled={!group ? true : false}
+        disabled={!group}
         value={value}
         options={options}
         onChange={onChange}

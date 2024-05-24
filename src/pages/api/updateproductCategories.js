@@ -44,8 +44,7 @@ export default async function handler(req, res) {
         }
 
         let productUpdate = await SoftoneProduct.findOneAndUpdate({MTRL: MTRL}, updateOBJ, {new: true})
-        console.log('----- UPDATE -----')
-        console.log(productUpdate);
+
         if(productUpdate) {
             updateProducts.push({
                 id: productUpdate?._id,
@@ -56,7 +55,6 @@ export default async function handler(req, res) {
      
         
     }
-    console.log(updateProducts);
     return res.status(200).json({success: true, data: category_name});
 
 }

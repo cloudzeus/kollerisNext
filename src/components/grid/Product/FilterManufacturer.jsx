@@ -8,7 +8,7 @@ export default function FilterManufacturer({ value,  onChange,  }) {
         let { data } = await axios.post("/api/product/apiProductFilters", {
             action: "findManufacturers",
         });
-        
+        console.log({data})
         setCategories(data.result);
         };
     

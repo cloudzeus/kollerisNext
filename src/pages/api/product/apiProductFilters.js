@@ -8,25 +8,140 @@ import Markes from "../../../../server/models/markesModel";
 import Vat from "../../../../server/models/vatModel";
 import greekUtils from 'greek-utils';
 import { ImpaCodes } from "../../../../server/models/impaSchema";
+import Manufacturers from "../../../../server/models/manufacturersModel";
 
-export const config = {
-    api: {
-        responseLimit: false,
-    },
-}
 
 export default async function handler(req, res) {
     const action = req.body.action;
+    await connectMongo();
+    let response = {
+        success: false,
+        result: null,
+        error: "",
+        message: "",
+    }
+    if (action === 'productSearchGrid') {
+        const {
+            groupID,
+            categoryID,
+            subgroupID,
+            searchTerm,
+            skip,
+            limit,
+            softoneFilter,
+            sort,
+            sortEan,
+            marka,
+            sortPrice,
+            sortImpa,
+            stateFilters,
+        } = req.body;
+
+        try {
+            await connectMongo();
 
 
+            let totalRecords;
+            let sortObject = {};
+            let filterConditions = {};
+
+
+
+            //SORTING:
+            if(sort !== 0) sortObject.NAME = sort;
+            if(sortPrice !== 0) sortObject.PRICER = sortPrice;
+            if(sortImpa !== 0)  sortObject.impas = sortImpa;
+            if(sortEan !== 0) sortObject.CODE1 = sortEan;
+            if (categoryID) {
+                filterConditions.MTRCATEGORY = categoryID;
+            }
+
+
+            //FILTERS:
+            if(stateFilters.images) {
+                filterConditions.images = { $exists: true, $ne: [] };
+
+            }
+            //manufacturer:
+            if(stateFilters.manufacturer) {
+                filterConditions.MMTRMANFCTR_NAME = stateFilters.manufacturer.NAME;
+            }
+            if(stateFilters.skroutz !== null) {
+                filterConditions.isSkroutz = stateFilters.skroutz;
+            }
+            if(stateFilters.active !== null) {
+                filterConditions.ISACTIVE = stateFilters.active;
+            }
+
+            if (groupID) {
+                filterConditions.MTRGROUP = groupID;
+            }
+
+            if (subgroupID) {
+                filterConditions.CCCSUBGROUP2 = subgroupID;
+            }
+
+            if (softoneFilter === true || softoneFilter === false) {
+                filterConditions.SOFTONESTATUS = softoneFilter;
+            }
+
+            if (stateFilters.codeSearch !== '') {
+                filterConditions.CODE1 = new RegExp(stateFilters.codeSearch, 'i');
+            }
+
+            if (marka) {
+                filterConditions.MTRMARK = marka.softOne.MTRMARK;
+            }
+
+            if (searchTerm !== '') {
+                const greek = greekUtils.toGreek(searchTerm);
+                let regexSearchTerm = new RegExp( searchTerm, 'i');
+                let regexSearchGreeLish = new RegExp( greek, 'i');
+                filterConditions.NAME = {$in: [ regexSearchTerm, regexSearchGreeLish ]};
+
+            }
+
+
+
+            if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
+                let regex = new RegExp(stateFilters.impaSearch, 'i');
+                let productIds = await findImpaProducts(regex);
+                let totalRecords  = await SoftoneProduct.countDocuments({ _id: { $in: productIds } })
+
+                let products = await SoftoneProduct.find({ _id: { $in: productIds } })
+                    .populate('impas')
+                    .skip(skip)
+                    .limit(limit);
+                return res.status(200).json({ success: true, totalRecords: totalRecords, result: products });
+            }
+
+            if (Object.keys(filterConditions).length === 0) {
+                // No specific filters, fetch all products
+                totalRecords = await SoftoneProduct.countDocuments();
+            } else {
+                totalRecords = await SoftoneProduct.countDocuments(filterConditions);
+
+            }
+
+            let softonefind = await SoftoneProduct.find(filterConditions)
+                .populate('impas')
+                .sort(sortObject)
+                .skip(skip)
+                .limit(limit)
+
+
+            return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
+        } catch (e) {
+            return res.status(400).json({ success: false, error: e.message });
+        }
+    }
 
     if (action === 'filterCategories') {
-        await connectMongo();
 
-        let { groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter, mtrmark, } = req.body;
+        let { groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter } = req.body;
         let totalRecords;
         let softonefind;
-        if (!categoryID && !groupID && !subgroupID && searchTerm == '') {
+        if (!categoryID && !groupID && !subgroupID && searchTerm === '') {
             totalRecords = await SoftoneProduct.countDocuments();
             softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).populate('descriptions');
 
@@ -68,7 +183,7 @@ export default async function handler(req, res) {
 
 
         //FILTER BASED ON SOFTONE STATUS:
-        if (softoneStatusFilter === true || softoneStatusFilter === false) {
+        if (softoneStatusFilter) {
             totalRecords = await SoftoneProduct.countDocuments({
                 SOFTONESTATUS: softoneStatusFilter
             });
@@ -94,7 +209,7 @@ export default async function handler(req, res) {
         
         try {
             await connectMongo();
-            let response = await MtrCategory.find({}, { "softOne.MTRCATEGORY": 1, categoryName: 1, _id: 0 })
+            let response = await MtrCategory.find({}, { "softOne.MTRCATEGORY": 1, categoryName: 1, _id: 0 }).sort({ categoryName: 1 })
            
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
@@ -106,7 +221,7 @@ export default async function handler(req, res) {
         if(!categoryID) return res.status(200).json({ success: false, result: null})
       
         await connectMongo();
-        let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 })
+        let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 }).sort({ groupName: 1 })
 
         try {
             return res.status(200).json({ success: true, result: response })
@@ -118,9 +233,8 @@ export default async function handler(req, res) {
         let { groupID } = req.body;
         if(!groupID) return res.status(200).json({ success: false, result: null})
         try {
-            await connectMongo();
 
-            let response = await SubMtrGroup.find({ 'softOne.MTRGROUP': groupID }, { "softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0 })
+            let response = await SubMtrGroup.find({ 'softOne.MTRGROUP': groupID }, { "softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0 }).sort({ subGroupName: 1 })
           
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
@@ -130,148 +244,35 @@ export default async function handler(req, res) {
 
     if(action === 'findBrands') {
         try {
-            await connectMongo();
-            let response = await Markes.find({},  { "softOne.MTRMARK": 1, "softOne.NAME": 1, _id: 0 })
+            let response = await Markes.find({},  { "softOne.MTRMARK": 1, "softOne.NAME": 1, _id: 0 }).sort({ "softOne.NAME": 1 })
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
         }
     }
 
+
     if(action === 'findVats') {
         try {
-            await connectMongo();
             let response = await Vat.find({ISACTIVE: "1"}, {VAT: 1, NAME: 1, _id: 0})
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
         }
     }
-
-
-    if (action === 'productSearchGrid') {
-        const {
-            groupID,
-            categoryID,
-            subgroupID,
-            searchTerm,
-            skip,
-            limit,
-            softoneFilter,
-            sort,
-            marka,
-            sortPrice,
-            sortImpa,
-            stateFilters,
-        } = req.body;
-
+    if(action === 'findManufacturers') {
         try {
-            await connectMongo();
-            
-
-            let totalRecords;
-            let sortObject = {};
-            let filterConditions = {};
-            if(stateFilters.images) {
-                filterConditions.images = { $exists: true, $ne: [] };
-
-            }
-            if(stateFilters.images === false) {
-                filterConditions.hasImages === false;
-
-            }
-            if(sort !== 0) {
-                sortObject = { NAME: sort }
-            }
-
-
-            //handle impa sort and search:
-            if(sortImpa !== 0) {
-                sortObject = { impas: sortImpa }
-            }
-
-           
-
-            if(sortPrice !== 0) {
-                sortObject = { PRICER: sortPrice }
-            }
-    
-            if (categoryID) {
-                filterConditions.MTRCATEGORY = categoryID;
-            }
-   
-            if(stateFilters.skroutz !== null) {
-                filterConditions.isSkroutz = stateFilters.skroutz;
-            }
-            if(stateFilters.active !== null) {
-                filterConditions.ISACTIVE = stateFilters.active;
-            }
-            
-            
-    
-            if (groupID) {
-                filterConditions.MTRGROUP = groupID;
-            }
-    
-            if (subgroupID) {
-                filterConditions.CCCSUBGROUP2 = subgroupID;
-            }
-    
-            if (softoneFilter === true || softoneFilter === false) {
-                filterConditions.SOFTONESTATUS = softoneFilter;
-            }
-    
-            if (stateFilters.codeSearch !== '') {
-                let regexSearchTerm = new RegExp(stateFilters.codeSearch, 'i');
-                filterConditions.CODE1 = regexSearchTerm;
-            }
-    
-            if (marka) {
-                filterConditions.MTRMARK = marka.softOne.MTRMARK;
-            }
-    
-            if (searchTerm !== '') {
-                const greek = greekUtils.toGreek(searchTerm);
-                let regexSearchTerm = new RegExp( searchTerm, 'i');
-                let regexSearchGreeLish = new RegExp( greek, 'i');
-                filterConditions.NAME = {$in: [ regexSearchTerm, regexSearchGreeLish ]};
-             
-            }
-
-         
-
-            if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
-                let regex = new RegExp(stateFilters.impaSearch, 'i');
-                let productIds = await findImpaProducts(regex);
-                let totalRecords  = await SoftoneProduct.countDocuments({ _id: { $in: productIds } })
-              
-                let products = await SoftoneProduct.find({ _id: { $in: productIds } })
-                .populate('impas')
-                .skip(skip)
-                .limit(limit);
-                return res.status(200).json({ success: true, totalRecords: totalRecords, result: products });
-            }
-    
-            if (Object.keys(filterConditions).length === 0) {
-                // No specific filters, fetch all products
-                totalRecords = await SoftoneProduct.countDocuments();
-            } else {
-                totalRecords = await SoftoneProduct.countDocuments(filterConditions);
-             
-            }
-
-              let softonefind = await SoftoneProduct.find(filterConditions)
-                .populate('impas')
-                .sort(sortObject)
-                .skip(skip)
-                .limit(limit)
-          
-          
-            return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
+            response.result = await Manufacturers.find({}, { NAME: 1, _id: 0 }).sort({ NAME: 1 })
+            response.success = true;
+            return res.status(200).json(response)
         } catch (e) {
-            return res.status(400).json({ success: false, error: e.message });
+            response.error = e.message;
+            response.message = "Πρόβλημα στην ανάκτηση των κατασκευαστών."
+            return res.status(400).json(response)
         }
     }
+
+
    
 
 
