@@ -133,3 +133,11 @@
 
 
 
+/*BTN TO UPLOAD SUPPLIER CATALOGUE*/
+.upload_btn {
+    display: inline-block;
+}
+
+.upload_btn .hide {
+    display: none;
+}

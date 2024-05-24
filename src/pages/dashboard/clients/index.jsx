@@ -278,7 +278,6 @@ export default function Clients() {
                 header="Ταχ.Κώδικας"
                 style={{width: '40px'}}
             >
-
             </Column>
         </DataTable>
         <EditDialog

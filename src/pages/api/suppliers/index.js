@@ -21,11 +21,10 @@ export default async function handler(req, res) {
             if (searchTerm.address) filterConditions.ADDRESS = new RegExp(searchTerm.address, 'i');
 
             let query = Supplier.find(filterConditions);
-
-            if (sortOffers === 1) {
-                query = query.sort({ ORDERSTATUS: 1 });
-            } else if (sortOffers === -1) {
-                query = query.sort({ ORDERSTATUS: -1 });
+            if(sortOffers !== 0) {
+                query = query.sort({ ORDERSTATUS: sortOffers });
+            } else {
+                query = query.sort({ NAME: 1 });
             }
             let condition = Object.keys(filterConditions).length === 0;
             const totalRecords = await (condition
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
                 : Supplier.countDocuments(filterConditions));
 
             const suppliers = await query.skip(skip).limit(limit);
-
+            console.log({suppliers})
             return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords })
         } catch (e) {
             return res.status(400).json({ success: false })

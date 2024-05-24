@@ -10,6 +10,7 @@ import { setSelectedSupplier, setInputEmail } from '@/features/supplierOrderSlic
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/router';
 import StepHeader from '../multiOffer/StepHeader';
+import SearchInput from "@/components/Forms/SearchInput";
 
 const SuppliersGrid = () => {
     const router = useRouter();
@@ -67,41 +68,8 @@ const SuppliersGrid = () => {
         sortOffers
     ])
 
-    const SearchName = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.name} onChange={(e) => setSearchTerm(prev => ({ ...prev, name: e.target.value }))} />
-                </span>
-            </div>
-        )
-    }
-
-    const SearchAFM = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.afm} onChange={(e) => setSearchTerm(prev => ({ ...prev, afm: e.target.value }))} />
-                </span>
-            </div>
-        )
-    }
- 
-    const SearchEmail = () => {
-        return (
-            <div className="flex justify-content-start w-20rem ">
-                <span className="p-input-icon-left w-full">
-                    <i className="pi pi-search " />
-                    <InputText value={searchTerm.email} onChange={(e) => setSearchTerm(prev => ({ ...prev, email: e.target.value }))} />
-                </span>
-            </div>
-        )
-    }
 
 
-  
 
     const onSelectionChange = (e) => {
         dispatch(setSelectedSupplier(e.value))
@@ -111,21 +79,25 @@ const SuppliersGrid = () => {
         setlazyState(event);
     };
 
-   
 
-  
-    
+    const handleSearch = (e) => {
+        const { name, value } = e.target;
+        console.log({name})
+        setSearchTerm(prev => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        })
+    }
 
-
- 
-  
     return (
         <>
                 <DataTable
                     value={data}
                     paginator
                     rows={lazyState.rows}
-                    rowsPerPageOptions={[5, 10, 20, 50, 100, 200]}
+                    rowsPerPageOptions={[20, 50, 100, 200, 500]}
                     first={lazyState.first}
                     lazy
                     totalRecords={totalRecords}
@@ -140,9 +112,53 @@ const SuppliersGrid = () => {
                     showGridlines
                 >  
                     <Column selectionMode="single" ></Column>
-                <Column field="NAME" filter showFilterMenu={false} filterElement={SearchName}  header="Ονομα"></Column>
-                <Column field="AFM" filter showFilterMenu={false} filterElement={SearchAFM} header="ΑΦΜ" ></Column>
-                <Column field="EMAIL" filter showFilterMenu={false} filterElement={SearchEmail} header="Email"></Column>
+                <Column
+                    field="NAME"
+                    filter
+                    showFilterMenu={false}
+                    header="Ονομα"
+                    filterElement={() => {
+                        return <SearchInput
+                            name={"name"}
+                            value={searchTerm.name}
+                            handleSearch={handleSearch}
+                        />
+                    }}
+                >
+                </Column>
+                <Column
+                    field="AFM"
+                    header="ΑΦΜ"
+                    filter
+                    showFilterMenu={false}
+                    style={{ width: '120px' }}
+                    filterElement={() => {
+                        return <SearchInput
+                            name="afm"
+                            value={searchTerm.afm}
+                            handleSearch={handleSearch}
+                        />
+
+                    }}
+                >
+                </Column>
+                <Column
+                    field="EMAIL"
+                    filter
+                    showFilterMenu={false}
+                    header="Email"
+                    style={{ width: '120px' }}
+                    filterElement={() => {
+                        return <SearchInput
+                            name={"email"}
+                            value={searchTerm.email}
+                            handleSearch={handleSearch}
+                        />
+                    }}
+
+                >
+
+                </Column>
                 </DataTable>
         </>
     )
