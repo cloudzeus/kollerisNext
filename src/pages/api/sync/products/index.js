@@ -23,8 +23,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST' && action === 'getProducts' ) {
     await connectMongo();
 
-    console.log('reqbody')
-    console.log(req.body)
+
     let {category, brand, manufacturer, group, subgroup, name, erpcode, eancode,factorycode } = req.body;
 
     //Create and obj to filter for spesific conditions:

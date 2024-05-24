@@ -8,7 +8,7 @@ import Markes from "../../../../server/models/markesModel";
 import Vat from "../../../../server/models/vatModel";
 import greekUtils from 'greek-utils';
 import { ImpaCodes } from "../../../../server/models/impaSchema";
-import Manufacturers from "../../../../server/models/manufacturersModel";
+
 export const config = {
     api: {
         responseLimit: false,
@@ -107,8 +107,6 @@ export default async function handler(req, res) {
       
         await connectMongo();
         let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 })
-    
-
 
         try {
             return res.status(200).json({ success: true, result: response })
@@ -121,8 +119,7 @@ export default async function handler(req, res) {
         if(!groupID) return res.status(200).json({ success: false, result: null})
         try {
             await connectMongo();
-            // console.log('id')
-            // console.log(groupID)
+
             let response = await SubMtrGroup.find({ 'softOne.MTRGROUP': groupID }, { "softOne.cccSubgroup2": 1, subGroupName: 1, _id: 0 })
           
             return res.status(200).json({ success: true, result: response })
@@ -138,24 +135,6 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
             return res.status(400).json({ success: false })
-        }
-    }
-    if(action === 'findManufacturers') {
-        let result = {
-            success: false,
-            result: null,
-            message: '',
-            error: '',
-        }
-        try {
-            await connectMongo();
-            let response = await Manufacturers.find({},  { NAME: 1, _id: 0 })
-            result.success = true;
-            result.result = response;
-            return res.status(200).json(result)
-        } catch (e) {
-            result.error = e.message;
-            return res.status(400).json(result)
         }
     }
 
@@ -183,49 +162,52 @@ export default async function handler(req, res) {
             marka,
             sortPrice,
             sortImpa,
-            sortEan,
             stateFilters,
         } = req.body;
-     
+
         try {
             await connectMongo();
-         
+            
+
             let totalRecords;
             let sortObject = {};
             let filterConditions = {};
-           console.log('---------------------------------------------------------')
-           console.log('---------------------------------------------------------')
-            console.log({softoneFilter})
-
-            //handle sort state:
-            if(sort !== 0) sortObject.NAME = sort;
-            if(sortImpa !== 0) sortObject.impas = sortImpa;
-            if(sortEan !== 0) sortObject.CODE1 = sortEan;
-            if(sortPrice !== 0) sortObject.PRICER = sortPrice;
-            
-
-
             if(stateFilters.images) {
                 filterConditions.images = { $exists: true, $ne: [] };
 
             }
+            if(stateFilters.images === false) {
+                filterConditions.hasImages === false;
+
+            }
+            if(sort !== 0) {
+                sortObject = { NAME: sort }
+            }
+
+
+            //handle impa sort and search:
+            if(sortImpa !== 0) {
+                sortObject = { impas: sortImpa }
+            }
+
            
+
+            if(sortPrice !== 0) {
+                sortObject = { PRICER: sortPrice }
+            }
+    
             if (categoryID) {
                 filterConditions.MTRCATEGORY = categoryID;
             }
-            
-            if(stateFilters.manufacturer) {
-                filterConditions.MMTRMANFCTR_NAME = stateFilters.manufacturer.NAME;
-            }
-          
-            if(stateFilters.skroutz != null) {
+   
+            if(stateFilters.skroutz !== null) {
                 filterConditions.isSkroutz = stateFilters.skroutz;
             }
             if(stateFilters.active !== null) {
                 filterConditions.ISACTIVE = stateFilters.active;
             }
             
-            console.log(stateFilters)
+            
     
             if (groupID) {
                 filterConditions.MTRGROUP = groupID;
@@ -235,7 +217,7 @@ export default async function handler(req, res) {
                 filterConditions.CCCSUBGROUP2 = subgroupID;
             }
     
-            if (softoneFilter !== null) {
+            if (softoneFilter === true || softoneFilter === false) {
                 filterConditions.SOFTONESTATUS = softoneFilter;
             }
     
@@ -257,8 +239,7 @@ export default async function handler(req, res) {
             }
 
          
-              
-          
+
             if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
                 let regex = new RegExp(stateFilters.impaSearch, 'i');
                 let productIds = await findImpaProducts(regex);
@@ -278,7 +259,7 @@ export default async function handler(req, res) {
                 totalRecords = await SoftoneProduct.countDocuments(filterConditions);
              
             }
-            
+
               let softonefind = await SoftoneProduct.find(filterConditions)
                 .populate('impas')
                 .sort(sortObject)
