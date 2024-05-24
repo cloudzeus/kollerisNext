@@ -13,9 +13,9 @@ const softoneProduct = new mongoose.Schema({
     DESCRIPTION_ENG: String,
     ISACTIVE: Boolean,
     NAME: String,
-    CODE: String,
-    CODE1: String,
-    CODE2: String,
+    CODE: String, // κωδικός ERP
+    CODE1: String, // κωδικός EAN
+    CODE2: String, // Κωδικός Εργοστασίου
     MTRCATEGORY: {
         type: Number,
         default: 0

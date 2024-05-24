@@ -112,7 +112,7 @@ const columns = [
     id: 6,
   },
   {
-    header: "Τιμη Scroutz",
+    header: "Τιμή Scroutz",
     id: 7,
   },
   {
@@ -120,7 +120,7 @@ const columns = [
     id: 13,
   },
   {
-    header: "Eλαχιστοποίηση",
+    header: "Ελαχιστοποίηση",
     id: 15,
   },
   {
@@ -130,6 +130,9 @@ const columns = [
   {
     header: "Κωδικός ERP",
     id: 17,
+  },  {
+    header: "Τιμή Χονδρικής",
+    id: 18,
   },
 ];
 
@@ -174,6 +177,7 @@ function Product() {
   const [expandedRows, setExpandedRows] = useState(null);
   const [addDialog, setAddDialog] = useState(false);
 
+  console.log({expandedRows})
   const [stateFilters, setStateFilters] = useState({
     impaSearch: "",
     erpCode: "",
@@ -257,9 +261,7 @@ function Product() {
 
   
 
-  useEffect(() => {
-    console.log(stateFilters.manufacturer)
-  }, [stateFilters.manufacturer])
+
   const allowExpansion = (rowData) => {
     return rowData;
   };
@@ -543,9 +545,11 @@ function Product() {
           loading={loading}
           removableSort
           editMode="row"
+          onRowExpand={(e) => setExpandedRows({ [e.data._id]: true })}
+          onRowCollapse={(e) => setExpandedRows(null)}
           rowExpansionTemplate={rowExpansionTemplate}
           expandedRows={expandedRows}
-          onRowToggle={(e) => setExpandedRows(e.data)}
+
         >
           <Column
             bodyStyle={{ textAlign: "center" }}
@@ -743,13 +747,28 @@ function Product() {
             ></Column>
           )}
           {visibleColumns.some((column) => column.id === 13) && (
-            <Column field="COST" header="Τιμή Κόστους" body={Cost}></Column>
+            <Column
+                field="COST"
+                style={{ width: "40px", }}
+                header="Τιμή Κόστους"
+                body={Cost}>
+            </Column>
+          )}
+          {visibleColumns.some((column) => column.id === 18) && (
+            <Column
+                field="PRICEW"
+                style={{ width: "40px", }}
+                header="Τιμή Xονδρικής"
+                body={(data) => <PriceTemplate price={data.PRICEW} />}
+
+            >
+            </Column>
           )}
           <Column
-            style={{ width: "40px" }}
+            style={{ width: "40px", }}
             field="PRICER"
-            header="Τιμή λιανικής"
-            body={PriceTemplate}
+            header="Τιμή Λιανικής"
+            body={(data) => <PriceTemplate price={data.PRICER} />}
             filter
             showFilterMenu={false}
             filterElement={SortPrice}
@@ -966,6 +985,7 @@ const RenderHeader = ({
 // --------------------------------- TABLE EXPANSION TEMPLATE: ---------------------------------
 
 const rowExpansionTemplate = (data) => {
+  console.log({data})
   return (
     <div className="card p-20" style={{ maxWidth: "1000px" }}>
       <TabView>
@@ -1118,27 +1138,25 @@ const MinimalTemplate = ({
 };
 
 //RRICE COLUMN TEMPLATE:
-const PriceTemplate = ({ PRICER }) => {
+const PriceTemplate = ({ price }) => {
   return (
     <div>
-      <GridPriceTemplate PRICER={PRICER} />
+      <p>{price.toFixed(2)} €</p>
     </div>
   );
 };
 
 //COST TEMPLATE:
 const Cost = ({ COST }) => {
+
   return (
     <div>
-      <p className="font-bold">{`${COST}€`}</p>
+      <p className="font-bold">{`${COST.toFixed(2)}€`}</p>
     </div>
   );
 };
 
-//GRID PRICE TEMPLATE:
-const GridPriceTemplate = ({ PRICER }) => {
-  return <p>{PRICER} €</p>;
-};
+
 
 //UPDATE FROM COLUMN TEMPLATE:
 const UpdatedFromTemplate = ({ updatedFrom, updatedAt }) => {
@@ -1264,52 +1282,84 @@ const ExpansionDetails = ({ data }) => {
   }, []);
 
   return (
-    <DisabledDisplay>
-      <div className="disabled-card">
-        <label>Περιγραφή</label>
-        <InputTextarea autoResize disabled value={data.description} />
-      </div>
+      <div className="expansion_form">
 
-      <div className="disabled-card">
-        <label>Αγγλική Περιγραφή</label>
-        <InputTextarea autoResize disabled value={data.descriptions?.en} />
-      </div>
 
-      <div className="disabled-card">
-        <label>Μάρκα</label>
-        <InputText disabled value={data?.MTRMARK_NAME} />
+        <div className="expansion_row">
+          <div className="disabled-card">
+            <label>Κωδικός ERP</label>
+            <InputText disabled value={data?.CODE}/>
+          </div>
+          <div className="disabled-card">
+            <label>Κωδικός ΕΑΝ</label>
+            <InputText disabled value={data?.CODE1}/>
+          </div>
+          <div className="disabled-card">
+            <label>Κωδικός Εργοστασίου</label>
+            <InputText disabled value={data?.CODE2}/>
+          </div>
+        </div>
+        <div className="expansion_row">
+          <div className="disabled-card">
+            <label>Κόστος</label>
+            <InputText disabled value={data?.COST.toFixed(2)}/>
+          </div>
+          <div className="disabled-card">
+            <label>Τιμή Λιανικής</label>
+            <InputText disabled value={data?.PRICER.toFixed(2)}/>
+          </div>
+          <div className="disabled-card">
+            <label>Τιμή Χονδρικής</label>
+            <InputText disabled value={data?.PRICEW.toFixed(2)}/>
+          </div>
+        </div>
+        <div className="expansion_row">
+          <div className="disabled-card">
+            <label>Κατασκευαστής</label>
+            <InputText
+
+                disabled
+                value={data?.MMTRMANFCTR_NAME}
+            />
+          </div>
+          <div className="disabled-card">
+            <label>Μάρκα</label>
+            <InputText disabled value={data?.MTRMARK_NAME}/>
+          </div>
+        </div>
+        <div className="expansion_row">
+          <div className="disabled-card">
+            <label>Ημερομηνία Τελευταίας Τροποποίησης</label>
+            <InputText disabled value={data?.UPDDATE}/>
+          </div>
+          <div className="disabled-card">
+            <label>ΦΠΑ</label>
+            <InputText onChange={handleVat} disabled value={vat}/>
+          </div>
+
+        </div>
+        <div className="disabled-card">
+          <label>Περιγραφή</label>
+          <InputTextarea autoResize disabled value={data.description}/>
+        </div>
+
+        <div className="disabled-card">
+          <label>Αγγλική Περιγραφή</label>
+          <InputTextarea autoResize disabled value={data.descriptions?.en}/>
+        </div>
+
+
       </div>
-      <div className="disabled-card">
-        <label>Kατασκευαστής</label>
-        <InputText disabled value={data?.MMTRMANFCTR_NAME} />
-      </div>
-      <div className="disabled-card">
-        <label>ΕΑΝ</label>
-        <InputText disabled value={data?.CODE1} />
-      </div>
-      <div className="disabled-card">
-        <label>ΦΠΑ</label>
-        <InputText onChange={handleVat} disabled value={vat} />
-      </div>
-      <div className="disabled-card">
-        <label>Κωδικός Εργοστασίου</label>
-        <InputText disabled value={data?.CODE2} />
-      </div>
-      <div className="disabled-card">
-        <label>Ημερομηνία τελευταίας τροποποίησης</label>
-        <InputText disabled value={data?.UPDDATE} />
-      </div>
-    </DisabledDisplay>
   );
 };
 
 // --------------------------------- FILTERING TEMPLATES: ---------------------------------
 
-const CategoriesRowFilterTemplate = ({ value, options, onChange }) => {
+const CategoriesRowFilterTemplate = ({value, options, onChange}) => {
   const dispatch = useDispatch();
   useEffect(() => {
     const handleCategories = async () => {
-      let { data } = await axios.post("/api/product/apiProductFilters", {
+      let {data} = await axios.post("/api/product/apiProductFilters", {
         action: "findCategories",
       });
       dispatch(setFilters({ action: "category", value: data.result }));

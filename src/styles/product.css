@@ -95,3 +95,41 @@
     align-items: center;
     flex-wrap: wrap;
 }
+
+.expansion_form {
+    max-width: 600px;
+    column-gap: 10px;
+}
+
+.expansion_row {
+    display: flex;
+    column-gap: 10px;
+
+
+}
+
+@media screen and (max-width: 1040px) {
+    .expansion_row {
+        flex-direction: column;
+    }
+}
+
+.disabled-card{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 18px;
+
+}
+
+.disabled-card label {
+    margin-bottom: 5px;
+}
+
+
+.expansion_input {
+    max-width: 300px;
+}
+
+
+

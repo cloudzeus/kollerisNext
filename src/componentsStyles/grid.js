@@ -46,18 +46,7 @@ const CartDiv = styled.div`
         font-size: 14px;
     }
 `
-const  DisabledDisplay  = styled.div`
-    .disabled-card{
-        margin-bottom: 10px;
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        & label {
-            margin-bottom: 5px;
-        }
-    }
 
-`
 
 const SyncButtonContainer = styled.div`
     position: relative;
@@ -96,7 +85,6 @@ const TemplateContainer = styled.div`
 export {
     DropDownDetails,
     ActionDiv,
-    DisabledDisplay ,
     SyncButtonContainer,
     SubGridStyles,
     TemplateContainer,
