@@ -182,15 +182,14 @@ export default function Categories() {
     return (
         <AdminLayout >
             <Toast ref={toast} />
-            <StepHeader text="Κατηγοριοποίηση Προϊόντων" />
+            <StepHeader text="Εμπορικές κατηγορίες" />
             <Toolbar start={leftToolbarTemplate}></Toolbar>
             <DataTable
                 header={header}
                 value={data}
                 paginator
-                rows={8}
+                rows={20}
                 rowsPerPageOptions={[20, 50, 100, 200, 500]}
-
                 showGridlines
                 rowExpansionTemplate={RowExpansionTemplate}
                 expandedRows={expandedRows}
@@ -205,11 +204,11 @@ export default function Categories() {
                 selectOnEdit
             >
                 <Column bodyStyle={{ textAlign: 'center' }} expander={allowExpansion} style={{ width: '20px' }} />
-                <Column field="categoryIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }}></Column>
+                <Column field="categoryIcon" header="Εικονίδιο" body={logoTemplate} style={{ width: '50px' }}></Column>
                 <Column field="categoryImage" header="Φωτογραφία" body={imageTemplate} style={{ width: '50px' }} ></Column>
-                <Column field="categoryName" header="Ονομα Κατηγορίας" sortable></Column>
+                <Column field="categoryName" header="Όνομα Εμπορικής Κατηγορίας" sortable></Column>
                 <Column field="englishName" header="Mετάφραση" ></Column>
-                <Column field="updatedFrom" header="updatedFrom" body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
+                <Column field="updatedFrom" header="Τροποποιήθηκε Από" body={UpdatedFromTemplate} style={{ width: '90px' }}></Column>
                 {/* <Column field="createdFrom" sortable header="createdFrom"  body={CreatedFromTemplate} style={{ width: '90px' }}></Column> */}
                 {user?.role === 'admin' ? (
                     <Column body={actionBodyTemplate} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
@@ -283,10 +282,6 @@ const RowExpansionGrid = ({ id }) => {
     }, [submitted])
 
 
-    // useEffect(() => {
-    //     setEditData()
-
-    // }, [categoryName])
 
 
     const logoTemplate = (data) => {
@@ -349,8 +344,8 @@ const RowExpansionGrid = ({ id }) => {
                     loading={loading}
                     value={data}
                     paginator
-                    rows={8}
-                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    rows={20}
+                    rowsPerPageOptions={[20, 50, 100, 200, 500]}
                     showGridlines
                     srollable
                     dataKey="_id"
@@ -359,10 +354,10 @@ const RowExpansionGrid = ({ id }) => {
                     onRowToggle={(e) => setExpanded(e.data)}
                 >
                     <Column bodyStyle={{ textAlign: 'center' }} expander={(data) => SubRowExpansionTemplate(data)} style={{ width: '20px' }} />
-                    <Column field="groupIcon" header="Λογότυπο" body={logoTemplate} style={{ width: '50px' }} ></Column>
-                    <Column field="groupImage" header="Φωτογραφία Group" body={imageTemplate} style={{ width: '50px' }} ></Column>
+                    <Column field="groupIcon" header="Εικονίδιο" body={logoTemplate} style={{ width: '50px' }} ></Column>
+                    <Column field="groupImage" header="Φωτογραφία Ομάδας" body={imageTemplate} style={{ width: '50px' }} ></Column>
                     <Column field="groupName" header="'Ονομα"></Column>
-                    <Column field="updatedFrom" header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    <Column field="updatedFrom" header="Τροποποιήθηκε Από" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
                     <Column field="englishName" header="Μετάφραση"></Column>
                     {user?.role === 'admin' ? (
                         <Column body={Actions} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
@@ -451,7 +446,7 @@ const SubRowExpansionGrid = ({ id }) => {
         <>
             < SubGridStyles>
 
-                <span className="subgrid-title" >SubGroups:</span>
+                <span className="subgrid-title" >Υποομάδες:</span>
                 <Toolbar start={leftToolbarTemplate}></Toolbar>
                 <DataTable
                     value={data}
@@ -459,14 +454,14 @@ const SubRowExpansionGrid = ({ id }) => {
                     showGridlines
                     dataKey="_id"
                     removableSort
-                    rows={8}
-                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    rows={20}
+                    rowsPerPageOptions={[20, 50, 100, 200, 500]}
                     paginator
                 >
-                    <Column field="subGroupIcon" body={logoTemplate} header="Λογότυπο" style={{ width: '50px' }}></Column>
-                    <Column field="subGroupName" header="Softone Όνομα"></Column>
+                    <Column field="subGroupIcon" body={logoTemplate} header="Εικονίδιο" style={{ width: '50px' }}></Column>
+                    <Column field="subGroupName" header="Όνομα Υποομάδας"></Column>
                     <Column field="englishName" header="Μετάφραση"></Column>
-                    <Column field="updatedFrom" sortable header="updatedFrom" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
+                    <Column field="updatedFrom" sortable header="Τροποποιήθηκε Από" tableStyle={{ width: '5rem' }} body={UpdatedFromTemplate}></Column>
                     {user?.role === 'admin' ? (
                         <Column body={Actions} exportable={false} bodyStyle={{ textAlign: 'center' }} style={{ width: '100px' }} ></Column>
                     ) : null}

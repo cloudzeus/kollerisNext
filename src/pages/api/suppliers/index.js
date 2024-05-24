@@ -32,7 +32,6 @@ export default async function handler(req, res) {
                 : Supplier.countDocuments(filterConditions));
 
             const suppliers = await query.skip(skip).limit(limit);
-            console.log({suppliers})
             return res.status(200).json({ success: true, result: suppliers, totalRecords: totalRecords })
         } catch (e) {
             return res.status(400).json({ success: false })
