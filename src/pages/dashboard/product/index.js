@@ -123,6 +123,14 @@ const columns = [
     header: "Eλαχιστοποίηση",
     id: 15,
   },
+  {
+    header: "Κατασκευαστής",
+    id: 16,
+  },
+  {
+    header: "Κωδικός ERP",
+    id: 17,
+  },
 ];
 
 export default function ProductLayout() {
@@ -168,6 +176,7 @@ function Product() {
 
   const [stateFilters, setStateFilters] = useState({
     impaSearch: "",
+    erpCode: "",
     images: null,
     codeSearch: "",
     skroutz: null,
@@ -490,6 +499,7 @@ function Product() {
               onFilterGroupChange={onFilterGroupChange}
               onFilterSubGroupChange={onFilterSubGroupChange}
               onFilterMarkChange={onFilterMarkChange}
+              onManufacturerChange={onManufacturerChange}
               setVisibleColumns={setVisibleColumns}
               onSoftoneFilterChange={onSoftoneFilterChange}
               setStateFilters={setStateFilters}
@@ -639,7 +649,7 @@ function Product() {
               )}
             ></Column>
           )}
-          {visibleColumns.some((column) => column.id === 11) && (
+          {visibleColumns.some((column) => column.id === 16) && (
             <Column
               field="MTRMARK_NAME"
               header="Κατασκευαστής"
@@ -731,6 +741,9 @@ function Product() {
           {visibleColumns.some((column) => column.id === 7) && (
             <Column field="PRICER01" header="Τιμή Scroutz"></Column>
           )}
+          {visibleColumns.some((column) => column.id === 17) && (
+            <Column field="CODE2" header="Κωδικός ERP"></Column>
+          )}
           {/* <Column style={{ width: '40px' }} field="PRICER01" header="Τιμή Scroutz"></Column> */}
         </DataTable>
       </div>
@@ -779,6 +792,7 @@ const RenderHeader = ({
   setVisibleColumns,
   onSoftoneFilterChange,
   handleSoftoneStatusFilter,
+  onManufacturerChange,
 }) => {
   const ref = useRef(null);
   const optionsSoft = [
@@ -796,19 +810,12 @@ const RenderHeader = ({
           header: "Minimized",
           id: 15,
         },
-        // {
-        //     header: 'Κόστος',
-        //     id: 13,
-        // },
-        // {
-        //     header: 'Διαθέσιμα',
-        //     id: 12,
-        // }
+    
       ]);
   };
   return (
-    <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between">
-      <div className="flex">
+    <div className="flex lg:no-wrap  sm:flex-wrap justify-content-between ">
+      <div className="flex ">
         <div>
           <Button
             type="button"
@@ -819,7 +826,7 @@ const RenderHeader = ({
             onClick={makeMinimalGrid}
           />
         </div>
-        <div className="card flex flex-column align-items-center gap-3">
+        <div className="card flex flex-column align-items-center gap-3 ">
           <span className="p-buttonset">
             <Button
               type="button"
@@ -835,8 +842,8 @@ const RenderHeader = ({
               icon="pi pi-filter-slash"
             />
           </span>
-          <OverlayPanel ref={ref}>
-            <div className="mb-2 ">
+          <OverlayPanel ref={ref} className="h-26rem overflow-y-scroll">
+            <div className="mb-2  ">
               <span className="font-bold block mb-1">Κατηγορία:</span>
               <CategoriesRowFilterTemplate
                 value={category}
@@ -861,6 +868,13 @@ const RenderHeader = ({
                 onChange={onFilterSubGroupChange}
                 group={group}
               />
+            </div>
+            <div className="mb-2 ">
+              <span className="font-bold block mb-1">Κατασκευαστής:</span>
+              <FilterManufacturer 
+                  value={stateFilters.manufacturer}
+                  onChange={onManufacturerChange}
+                />
             </div>
             <div className="mb-2 ">
               <span className="font-bold block mb-1">Mάρκα:</span>
