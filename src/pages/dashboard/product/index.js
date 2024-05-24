@@ -184,14 +184,6 @@ function Product() {
     manufacturer: null,
    });
 
-  useEffect(() => {
-    dispatch(setSearchTerm(""));
-  }, []);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [submitted]);
-
   const fetchProducts = async () => {
     if (!searchTerm && !stateFilters.codeSearch) {
       dispatch(setLoading(true));
@@ -213,15 +205,38 @@ function Product() {
         sortPrice: sortPrice,
         stateFilters: stateFilters,
       });
-      setData(data.result);
-      setTotalRecords(data.totalRecords);
+      // setData(data.result);
+      // setTotalRecords(data.totalRecords);
+      return data;
     } catch (e) {
       console.log(e);
+    } finally {
+      dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
   };
+
   useEffect(() => {
-    fetchProducts();
+    dispatch(setSearchTerm(""));
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+       let data = await fetchProducts();
+       setData(data.result);
+       setTotalRecords(data.totalRecords);
+    })();
+
+
+  }, [submitted]);
+
+
+  useEffect(() => {
+    (async () => {
+      let data = await fetchProducts();
+        setData(data.result);
+        setTotalRecords(data.totalRecords);
+    })()
+
   }, [
     lazyState2.rows,
     lazyState2.first,

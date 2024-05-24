@@ -7,7 +7,7 @@ const initialState = {
     mtrLines: [],
     orderLines: [],
     loading: false,
-    sort: 0,
+    sort: 1,
     sortImpa: 0,
     sortPrice: 0,
     sortEan: 0,
