@@ -15,7 +15,6 @@ const StepshowData = () => {
   const [loading, setLoading] = useState(false)
   const { gridData, attributes, mongoKeys, newData, } = useSelector((state) => state.catalog)
   const [resultData, setResultData] = useState([])
-  const [dynamicColumns, setDynamicColumns] = useState([])
   const router = useRouter()
 
 
@@ -24,13 +23,20 @@ const StepshowData = () => {
     //Create a new set of data only for the selected columns.
     //Replacte the old key with the newly selected key:
     const _newData = gridData.map(row => {
-      return mongoKeys.reduce((newRow, keysObject) => {
-        if (keysObject.related !== 0) {
-           newRow[keysObject.related] = row[keysObject.oldKey]
+      const newRow = mongoKeys.reduce((acc, keyObj) => {
+        if (keyObj.related !== 0) {
+          acc[keyObj.related] = row[keyObj.oldKey];
         }
-        return newRow;
+        return acc;
       }, {});
+       // Include the attributes:
+       attributes.forEach(attribute => {
+        newRow[attribute.name] = row[attribute.oldKey];
       });
+      return newRow;
+
+    })
+    console.log({_newData})
     setResultData(_newData)
 
    
@@ -45,11 +51,11 @@ const StepshowData = () => {
         <Table
           setReturnedProducts={setReturnedProducts}
           mongoKeys={mongoKeys}
+          attributes={attributes}
           setLoading={setLoading}
           loading={loading}
           data={resultData}
           returnedProducts={returnedProducts}
-          dynamicColumns={dynamicColumns}
         />
 
     </AdminLayout>
@@ -57,7 +63,7 @@ const StepshowData = () => {
 }
 
 
-const Table = ({ data,  loading,  mongoKeys }) => {
+const Table = ({ data,  loading,  mongoKeys, attributes }) => {
   const { selectedSupplier } = useSelector(state => state.supplierOrder)
   const [newData, setNewData] = useState([])
 
@@ -117,6 +123,12 @@ const Table = ({ data,  loading,  mongoKeys }) => {
           mongoKeys.map(key => {
             if (key.related === 0) return;
             return <Column key={key.related} field={key.related} header={key.related} />
+          })
+
+        }
+        {
+          attributes.map(attribute => {
+            return <Column key={attribute.name} field={attribute.name} header={attribute.name} />
           })
         }
       </DataTable>

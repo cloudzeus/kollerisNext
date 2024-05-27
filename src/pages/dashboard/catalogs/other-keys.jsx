@@ -4,7 +4,7 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
 import { useRouter } from "next/router";
-import { clearMongoKeys } from "@/features/catalogSlice";
+import { clearMongoKeys, setAttribute } from "@/features/catalogSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown } from "primereact/dropdown";
 import { setSelectedMongoKey } from "@/features/catalogSlice";
@@ -37,7 +37,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const toast = useRef(null);
-  const { gridData, headers, mongoKeys } = useSelector(
+  const { gridData, headers, mongoKeys, attributes } = useSelector(
     (state) => state.catalog
   );
   const [newPairs, setNewPairs] = useState([]);
@@ -75,8 +75,17 @@ const Page = () => {
         header: header }));
     };
 
+    useEffect(() => {
+        console.log({attributes})
+    }, [attributes])
+    const handleCustomAttribute = () => {
+        dispatch(setAttribute({
+            name: "test",
+            oldKey: field,
+        }))
+    }
     return (
-      <div>
+      <div className="flex">
         <Dropdown
           filter
           showClear
@@ -87,6 +96,7 @@ const Page = () => {
           placeholder="Συσχέτιση"
           className="w-full"
         />
+        <Button onClick={handleCustomAttribute} icon="pi pi-plus" className="p-button-rounded p-button-text" />
       </div>
     );
   };
