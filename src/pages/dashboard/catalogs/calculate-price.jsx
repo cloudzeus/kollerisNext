@@ -1,23 +1,17 @@
-import React, { useState, useContext, useRef, useEffect } from 'react'
+import React, {  useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'primereact/button'
 import { InputNumber } from 'primereact/inputnumber';
-import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {
-  setSelectedHeaders,
-  setSelectedMongoKey,
-  setCurrentPage,
-  setAttribute,
+  
   setPricesMultiplier,
   setNewData
 } from '@/features/catalogSlice';
-import { InputText } from "primereact/inputtext";
 import StepHeader from '@/components/StepHeader';
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-// ------------------- STEP 2 -------------------
 
 
 

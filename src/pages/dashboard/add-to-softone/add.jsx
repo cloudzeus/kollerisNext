@@ -15,8 +15,8 @@ import { useRouter } from "next/router";
 import { removeProductForSoftone } from "@/features/productsSlice";
 import { Dropdown } from "primereact/dropdown";
 import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
-import CountriesDropdown from "@/components/Forms/DropdownCountries";
-import VatDropdown from "@/components/Forms/VatDropdown";
+import DropdownCountries from "@/components/Forms/DropdownCountries";
+import DropdownVat from "@/components/Forms/DropdownVat";
 
 const addSchema = yup.object().shape({
     // name: yup.string().required('Συμπληρώστε το όνομα'),
@@ -221,13 +221,13 @@ const Page = () => {
                         <div>
                             <FormTitle>Λοιπά Υποχρεωτικά Πεδία</FormTitle>
 
-                            <VatDropdown
+                            <DropdownVat
                                 state={values.VAT}
                                 required
                                 handleState={handleVatState}
                                 error={errors?.VAT?.NAME.message}
                             />
-                            <CountriesDropdown
+                            <DropdownCountries
                                 selectedCountry={values.COUNTRY}
                                 required
                                 onChangeCountry={handleCountryChange}

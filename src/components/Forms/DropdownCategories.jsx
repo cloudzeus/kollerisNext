@@ -11,7 +11,7 @@ export default function DropdownCategories ({
     required = false 
 }) {
     const [options, setOptions] = useState([]);
-
+    
     const handleFetch = async () => {
         let { data } = await axios.post("/api/product/apiProductFilters", {
           action: "findCategories",

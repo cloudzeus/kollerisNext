@@ -1,14 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import * as XLSX from 'xlsx';
 import { Button } from 'primereact/button';
 
 import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
-import { setGridData, setHeaders, setSelectedPriceKey, setData, setSelectedMongoKey } from '@/features/catalogSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown } from 'primereact/dropdown';
+import {  useSelector } from 'react-redux';
 
 
 const UploadCatalog = () => {
@@ -54,22 +51,7 @@ const UploadCatalog = () => {
 
 
 
-const ChooseKey = ({ headers, selectedKey, setSelectedKey }) => {
-    const dispatch = useDispatch();
-    const onChange = (e) => {
-        dispatch(setSelectedPriceKey(e.value.field))
-        setSelectedKey(e.value)
-        dispatch(setSelectedMongoKey({
-            oldKey: e.value.field,
-            related: 'COST'
-        }))
 
-    }
-    return (
-        <Dropdown value={selectedKey} onChange={onChange} options={headers} optionLabel="field" placeholder="Επιλογή Τιμής Κόστους"
-            filter className="w-20rem mt-2" />
-    )
-}
 
 
 export default UploadCatalog;

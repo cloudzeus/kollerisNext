@@ -9,39 +9,31 @@ import AdminLayout from '@/layouts/Admin/AdminLayout';
 import { useRouter } from 'next/router';
 import { Toolbar } from 'primereact/toolbar';
 import XLSXDownloadButton from '@/components/exportCSV/Download';
+import { mongo } from 'mongoose';
 const StepshowData = () => {
   const [returnedProducts, setReturnedProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const { gridData, attributes, mongoKeys, newData, } = useSelector((state) => state.catalog)
-  const [showData, setShowData] = useState([])
+  const [resultData, setResultData] = useState([])
   const [dynamicColumns, setDynamicColumns] = useState([])
   const router = useRouter()
 
- 
 
   useEffect(() => {
-    // console.log('new data')
-    // console.log(newData)
     if (gridData === null) return;
+    //Create a new set of data only for the selected columns.
+    //Replacte the old key with the newly selected key:
     const _newData = gridData.map(row => {
-      return mongoKeys.reduce((newRow, keyObj) => {
-        if (keyObj.related !== 0) {
-          newRow[keyObj.related] = row[keyObj.oldKey];
+      return mongoKeys.reduce((newRow, keysObject) => {
+        if (keysObject.related !== 0) {
+           newRow[keysObject.related] = row[keysObject.oldKey]
         }
         return newRow;
       }, {});
-    });
+      });
+    setResultData(_newData)
 
-    setShowData(_newData)
-    function extractKeys(dataset) {
-      return Object.keys(dataset?.[0] || {});
-    }
-    
-    const result = extractKeys(_newData);
-
-    if (result === undefined) return;
-    setDynamicColumns(result)
-
+   
 
   }, [gridData, attributes, mongoKeys, newData])
 
@@ -52,9 +44,10 @@ const StepshowData = () => {
     <AdminLayout>
         <Table
           setReturnedProducts={setReturnedProducts}
+          mongoKeys={mongoKeys}
           setLoading={setLoading}
           loading={loading}
-          showData={showData}
+          data={resultData}
           returnedProducts={returnedProducts}
           dynamicColumns={dynamicColumns}
         />
@@ -64,7 +57,7 @@ const StepshowData = () => {
 }
 
 
-const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
+const Table = ({ data,  loading,  mongoKeys }) => {
   const { selectedSupplier } = useSelector(state => state.supplierOrder)
   const [newData, setNewData] = useState([])
 
@@ -78,7 +71,6 @@ const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
     return uniqueCode;
   }
 
-
   const name = selectedSupplier?.NAME
   const trdr = selectedSupplier?.TRDR
 
@@ -90,25 +82,21 @@ const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
   const handleSubmit = async () => {
 
     const code = generateUniqueCode();
-    setLoading(true)
     // let products = [...returnedProducts]
-    for (let i = 0; i < showData.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       const { data } = await axios.post('/api/insertProductFromFile', {
-        data: showData[i],
+        data: data[i],
         action: 'importCSVProducts',
         SUPPLIER_NAME: name,
         SUPPLIER_TRDR: trdr,
         UNIQUE_CODE: code,
       })
       // products.push(data.result)
-      console.log('data')
-      console.log(data)
-      const returned =  await handleFetch(code, showData[i].NAME )
-      console.log('returned')
-      console.log( returned)
+  
+      const returned =  await handleFetch(code, data[i].NAME )
+    
     }
     // setReturnedProducts(products)
-    setLoading(false)
 
   }
 
@@ -123,27 +111,14 @@ const Table = ({ showData, dynamicColumns, loading, setLoading }) => {
         key={Math.random()}
         showGridlines
         paginator rows={10} rowsPerPageOptions={[20, 50, 100, 200]}
-        value={showData}
+        value={data}
         tableStyle={{ minWidth: '50rem' }}>
-        {dynamicColumns.map(key => {
-          if (key === "PRICER01") {
-            return <Column key={key} field={key} header={"Τιμή Scroutz"} />
-          }
-          if (key === "PRICER") {
-            return <Column key={key} field={key} header={"Τιμή Λιανικής"} />
-          }
-          if (key === "PRICEW") {
-            return <Column key={key} field={key} header={"Τιμή Χονδρικής"} />
-          }
-       
-          if (key === "CODE1") {
-            return <Column key={key} field={key} header={"EANCODE"} />
-          }
-          if (key === "CODE2") {
-            return <Column key={key} field={key} header={"Κωδικός Εργοστασίου"} />
-          }
-          return <Column key={key} field={key} header={key} />
-        })}
+        {
+          mongoKeys.map(key => {
+            if (key.related === 0) return;
+            return <Column key={key.related} field={key.related} header={key.related} />
+          })
+        }
       </DataTable>
 
       <div className='mt-3'>

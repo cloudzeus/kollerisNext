@@ -76,10 +76,10 @@ const catalogSlice = createSlice({
 			state.mongoKeys = state.mongoKeys.filter(item => item.newkey !== payload.name);
 		},
 	
-		setSelectedPriceKey: (state, {payload}) => {
-			state.selectedPriceKey = payload;
+		// setSelectedPriceKey: (state, {payload}) => {
+		// 	state.selectedPriceKey = payload;
 
-		},
+		// },
 		setPricesMultiplier: (state, {payload}) => {
 			switch (payload.type) {
 				case "PRICER":
@@ -111,11 +111,11 @@ export const {
 	setSelectedHeaders, 
 	setHeaders, 
 	setSelectedMongoKey, 
-	setCurrentPage, 
+	// setCurrentPage,
 	setDropdownValue, 
 	setAttribute, 
-	setSelectedPriceKey,
-	setPricesMultiplier,
+	// setSelectedPriceKey,
+	// setPricesMultiplier,
 	setNewData,
 	setReturnedProducts,
 	setData,
