@@ -10,10 +10,9 @@ import {setGridRowData} from "@/features/grid/gridSlice";
 import RegisterUserActions from "@/components/grid/GridRegisterUserActions";
 import {MultiSelect} from "primereact/multiselect";
 import {TabView, TabPanel} from "primereact/tabview";
-import {DisabledDisplay} from "@/componentsStyles/grid";
 import {InputTextarea} from "primereact/inputtextarea";
 import ProductActions from "@/components/grid/Product/ProductActions";
-import {EditDialog, AddDialog} from "@/GridDialogs/ProductDialog";
+import {ProductDialog} from "@/GridDialogs/ProductDialog";
 import ClassificationDialog from "@/GridDialogs/product/ClassificationDialog";
 import ProductToolbar from "@/components/grid/Product/ProductToolbar";
 import {
@@ -58,12 +57,7 @@ import Link from "next/link";
 import {Message} from "primereact/message";
 import FilterManufacturer from "@/components/grid/Product/FilterManufacturer";
 
-const dialogStyle = {
-    marginTop: "10vh", // Adjust the top margin as needed
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-};
+
 
 const initialColumns = [
     {
@@ -172,12 +166,17 @@ function Product() {
     } = useSelector((store) => store.products);
     const dispatch = useDispatch();
     const [totalRecords, setTotalRecords] = useState(0);
-    const [editDialog, setEditDialog] = useState(false);
+
     const [classDialog, setClassDialog] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState(initialColumns);
     const [expandedRows, setExpandedRows] = useState(null);
-    const [addDialog, setAddDialog] = useState(false);
-
+    //DIALOG:
+    const [dialog, setDialog] = useState({
+        state: false,
+        isEdit: false
+    })
+   
+    
     const [stateFilters, setStateFilters] = useState({
         impaSearch: "",
         erpCode: "",
@@ -209,8 +208,7 @@ function Product() {
                 sortPrice: sortPrice,
                 stateFilters: stateFilters,
             });
-            // setData(data.result);
-            // setTotalRecords(data.totalRecords);
+          
             return data;
         } catch (e) {
             console.log(e);
@@ -226,8 +224,9 @@ function Product() {
     useEffect(() => {
         (async () => {
             let data = await fetchProducts();
-            setData(data.result);
-            setTotalRecords(data.totalRecords);
+           
+            setData(data?.result);
+            setTotalRecords(data?.totalRecords);
         })();
 
 
@@ -237,8 +236,8 @@ function Product() {
     useEffect(() => {
         (async () => {
             let data = await fetchProducts();
-            setData(data.result);
-            setTotalRecords(data.totalRecords);
+            setData(data?.result);
+            setTotalRecords(data?.totalRecords);
         })()
 
     }, [
@@ -322,16 +321,18 @@ function Product() {
     }
 
     // -------------------- ADD / EDIT DIALOG ACTIONS --------------------------------
-    const addProduct = async (product) => {
+    const onAdd = async () => {
         dispatch(setSubmitted());
-        // setSubmitted(false);
-        setAddDialog(true);
+        setDialog(prev => ({...prev, state: true, isEdit: false}))
     };
-    const editProduct = async (product) => {
+   
+    const onEdit = async (product) => {
         dispatch(setSubmitted());
-        setEditDialog(true);
+        setDialog(prev => ({...prev, state: true, isEdit: true}))
         dispatch(setGridRowData(product));
     };
+
+
 
     const editClass = async (product) => {
         setClassDialog(true);
@@ -339,8 +340,11 @@ function Product() {
     };
 
     const hideDialog = () => {
-        setEditDialog(false);
-        setAddDialog(false);
+      
+        setDialog({
+            state: false,
+            isEdit: false,
+        })
         setClassDialog(false);
     };
 
@@ -564,8 +568,8 @@ function Product() {
                             body={(rowData) => (
                                 <ProductActions
                                     rowData={rowData}
-                                    onEdit={editProduct}
-                                    onAdd={addProduct}
+                                    onEdit={onEdit}
+                                    onAdd={onAdd}
                                     onEditClass={editClass}
                                 />
                             )}
@@ -780,19 +784,22 @@ function Product() {
                 </DataTable>
             </div>
 
-            <EditDialog
+            {/* <EditDialog
                 style={dialogStyle}
+             
                 dialog={editDialog}
                 setDialog={setEditDialog}
                 hideDialog={hideDialog}
                 // setSubmitted={setSubmitted}
-            />
-            <AddDialog
-                dialog={addDialog}
-                setDialog={setAddDialog}
-                hideDialog={hideDialog}
-                setSubmitted={setSubmitted}
-            />
+            /> */}
+           {dialog.state ? (
+             <ProductDialog
+             isEdit={dialog.isEdit}
+             dialog={dialog.state}
+             hideDialog={hideDialog}
+             setSubmitted={setSubmitted}
+         />
+           ) : null}
             <ClassificationDialog
                 dialog={classDialog}
                 setDialog={setClassDialog}
@@ -982,7 +989,6 @@ const RenderHeader = ({
 // --------------------------------- TABLE EXPANSION TEMPLATE: ---------------------------------
 
 const rowExpansionTemplate = (data) => {
-    console.log({data})
     return (
         <div className="card p-20" style={{maxWidth: "1000px"}}>
             <TabView>
@@ -1053,15 +1059,15 @@ const ImagesTemplate = ({images}) => {
 
 //WHEN THE USER PRESSES MINIMAL GRID: MINIMAL GRID TEMPLATE:
 const MinimalTemplate = ({
-                             NAME,
-                             CATEGORY_NAME,
-                             GROUP_NAME,
-                             SUBGROUP_NAME,
-                             SOFTONESTATUS,
-                             availability,
-                             updatedAt,
-                             PRICER,
-                         }) => {
+        NAME,
+        CATEGORY_NAME,
+        GROUP_NAME,
+        SUBGROUP_NAME,
+        SOFTONESTATUS,
+        availability,
+        updatedAt,
+        PRICER,
+}) => {
     const yourDate = new Date(updatedAt);
     const formattedDate = format(yourDate, "dd-MM-yyyy:HH:mm", {locale: el});
     return (
@@ -1138,7 +1144,7 @@ const MinimalTemplate = ({
 const PriceTemplate = ({price}) => {
     return (
         <div>
-            <p>{price.toFixed(2)} €</p>
+            <p>{price?.toFixed(2)} €</p>
         </div>
     );
 };
@@ -1148,7 +1154,7 @@ const Cost = ({COST}) => {
 
     return (
         <div>
-            <p className="font-bold">{`${COST.toFixed(2)}€`}</p>
+            <p className="font-bold">{`${COST?.toFixed(2)}€`}</p>
         </div>
     );
 };
@@ -1202,9 +1208,7 @@ const NameTemplate = ({
                     <div className="flex align-items-center ml-2">
                         <div
                             style={{width: "5px", height: "5px"}}
-                            className={`${
-                                ISACTIVE ? "bg-green-500" : "bg-red-500"
-                            } border-circle mr-1 mt-1`}
+                            className={` bg-green-500 border-circle mr-1 mt-1`}
                         ></div>
                         <p className="text-500 text-xs">IMPA:
                             <b className={"black"}>{impas?.code}</b>

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+
   images: {
     domains: ['next.mbmv.io', 'localhost', "kolleris.b-cdn.net"],
   },

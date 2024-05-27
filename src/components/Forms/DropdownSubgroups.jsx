@@ -12,35 +12,34 @@ export default function DropdownSubroups ({
     groupId,
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
-
    
     const handleFetch = async () => {
         let { data } = await axios.post("/api/product/apiProductFilters", {
             action: "findSubGroups",
             groupID: groupId,
           });
-
         setOptions(data.result);
       };
       useEffect(() => {
         (async () => {
           await  handleFetch();
         })()
-       
       }, [groupId]);
 
-    useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
-    }, [options]);
-
-    const onChange = (e) => {
-     
-      setValue(e.target.value);
-      handleState(e);
-    }
+   
+      useEffect(() => {
+        if(!options) return
+        if(isEdit) {
+          handleEdit(options);
+        }
+      }, [options, groupId]);
+  
+      const handleEdit = (options) => {
+        let option = options.find((option) => option.softOne.cccSubgroup2 == state);
+        if (option) {
+          handleState(option);
+        }
+      }
   
     return (
       <div >
@@ -50,8 +49,8 @@ export default function DropdownSubroups ({
             </label>
         <Dropdown
            filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="subGroupName"
           placeholder="Yποομάδα"

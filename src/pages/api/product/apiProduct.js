@@ -6,6 +6,7 @@ import translateData from "@/utils/translateDataIconv";
 import connectMongo from "../../../../server/config";
 import SoftoneProduct from "../../../../server/models/newProductModel"
 import { Product } from "../../../../server/models/newProductModel";
+import { removeEmptyObjectFields } from "@/utils/removeEmptyObjectFields";
 
 
 
@@ -18,41 +19,94 @@ export const config = {
 export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=10');
     const action = req.body.action;
-
+  
     if (action === "create") {
+        const { data } = req.body;
         let response = {
             success: false,
             result: null,
             error: "",
             message: ""
-        }
-        const { data } = req.body;
+        };
+    
+        const transformData = (data) => {
+            const {
+                MTRCATEGORY, MTRGROUP, CCCSUBGROUP2, MTRMARK, MTRMANFCTR,
+                INTRASTAT, VAT, COUNTRY, PRICER,
+                WIDTH, LENGTH, HEIGHT, GWEIGHT, VOLUME,
+                DIATHESIMA, SEPARAGELIA, DESVMEVMENA
+            } = data;
+    
+            return {
+                ...data,
+                // CATEGORY
+                MTRCATEGORY: MTRCATEGORY?.softOne?.MTRCATEGORY,
+                CATEGORY_NAME: MTRCATEGORY?.categoryName,
+                // GROUP
+                MTRGROUP: MTRGROUP?.softOne?.MTRGROUP,
+                GROUP_NAME: MTRGROUP?.groupName,
+                // SUBGROUP
+                CCCSUBGROUP2: CCCSUBGROUP2?.softOne?.cccSubgroup2,
+                SUBGROUP_NAME: CCCSUBGROUP2?.subGroupName,
+                // BRAND
+                MTRMARK: MTRMARK?.softOne?.MTRMARK,
+                MTRMARK_NAME: MTRMARK?.softOne?.NAME,
+                // MANUFACTURER
+                MTRMANFCTR: MTRMANFCTR?.MTRMANFCTR?.toString(),
+                MMTRMANFCTR_NAME: MTRMANFCTR?.NAME,
+                // REST
+                INTRASTAT: INTRASTAT?.INTRASTAT,
+                VAT: VAT?.VAT,
+                COUNTRY: COUNTRY?.COUNTRY,
+                PRICER: PRICER,
+                // TURN TO STRING
+                WIDTH: WIDTH?.toString(),
+                LENGTH: LENGTH?.toString(),
+                HEIGHT: HEIGHT?.toString(),
+                GWEIGHT: GWEIGHT?.toString(),
+                VOLUME: VOLUME?.toString(),
+                availability: {
+                    DIATHESIMA: DIATHESIMA?.toString(),
+                    SEPARAGELIA: SEPARAGELIA?.toString(),
+                    DESVMEVMENA: DESVMEVMENA?.toString(),
+                    date: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+                },
+                ISACTIVE: true,
+                SOFTONESTATUS: false
+            };
+        };
+    
+        const filterNull = (obj) => {
+            return Object.entries(obj).reduce((acc, [key, value]) => {
+                if (value !== null && value !== undefined && value !== "" &&
+                    key !== "DIATHESIMA" && key !== "SEPARAGELIA" && key !== "DESVMEVMENA") {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
+        };
+    
+        const newData = transformData(data);
+        const filteredData = filterNull(newData);
+    
         try {
             await connectMongo();
-            let product = await SoftoneProduct.create({
-                ...data,
-                SOFTONESTATUS: false,
-                ISACTIVE: true,
-                isSkroutz: false,
-                hasImage: false,
-            });
-            if(!product) {
-                response.message = 'Δεν δημιουργήθηκε το προϊόν'
+            let product = await SoftoneProduct.create(filteredData);
+            if (!product) {
+                response.message = 'Δεν δημιουργήθηκε το προϊόν';
                 return res.status(400).json(response);
             }
             response.success = true;
             response.result = product;
-
             return res.status(200).json(response);
-        } catch (e) {
-            response.error = e;
-            response.message = "Error creating product in the system"
+        } catch (error) {
+            response.error = error.message || error;
+            response.message = "Error creating product in the system";
             return res.status(400).json(response);
         }
     }
-
     if (action === 'update') {
-        let { data } = req.body;
+        const { data } = req.body;
         console.log({data})
         let response = {
             success: false,
@@ -60,141 +114,98 @@ export default async function handler(req, res) {
             error: "",
             message: ""
         }
-        let systemMessage = '';
-        let softoneMessage = '';
 
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/updateMtrl`;
-        let obj = {
-            MTRL: data.MTRL,
-            NAME: data.NAME,
-            CODE: data.CODE,
-            CODE1: data.CODE1,
-            CODE2: data.CODE2,
-            ISACTIVE: data.ISACTIVE ? "1" : "0",
-            MTRCATEGORY: data.category.softOne.MTRCATEGORY.toString(),
-            MTRGROUP: data.group.softOne.MTRGROUP.toString(),
-            CCCSUBGOUP2: data.subgroup.softOne.cccSubgroup2.toString(),
-            MTRMANFCTR: data.MTRMANFCTR,
-            MTRMARK: data.MTRMARK && data.MTRMARK.toString(),
-            VAT: data.vat.VAT,
-            COUNTRY: data.COUNTRY,
-            // WIDTH: data.WIDTH || '0',
-            // HEIGHT: data.HEIGHT || '0',
-            // LENGTH: data.LENGTH || '0',
-            // GWEIGHT: data.GWEIGHT || '0',
-            // VOLUME: data.VOLUME || '0',
-            // STOCK: data.STOCK || '0',
-            PRICER: data.PRICER.toString(),
-            PRICER01: data.PRICER01.toString() || '0',
-            PRICER02: data?.PRICER02 || '0',
-            PRICER03: data?.PRICER03 || '0',
-            PRICER04: data?.PRICER04 || '0',
-            PRICER05: data?.PRICER05 || '0',
-            PRICEW01: data?.PRICEW01 || '0',
-            PRICEW02: data?.PRICEW02 || '0',
-            PRICEW03: data?.PRICEW03 || '0',
-            PRICEW04: data?.PRICEW04 || '0',
-            PRICEW05: data?.PRICEW05 || '0',
-            PRICEW: data?.PRICEW.toString(),
+        // if(data.MTRL) {
+        //    let softone = await putSoftone(data)
+        //    if(!softone.success) {
+        //         response.success = false,
+        //         response.message = "Αποτυχία ενημέρωσης του SOFTONE"
+        //         return res.status(400).json(response)
+        //    }
+        // }
 
+        //Due to the format of the data from the dropdowns if the data change when the user edits we will receive and object. 
+        //If the data remains unchanged during edit it will evaluate to the right of the ternary operator
+        const systemData = {
+            //CATEGORIZATION:
+           
+            //rest:
+            
         }
+        console.log({systemData})
+        // try {
+        //     await connectMongo();
+        //     let update = await SoftoneProduct.findOneAndUpdate({
+        //         MTRL: data.MTRL
+        //     }, {
+        //         ...data
+        //     }, { new: true })
+        //     response.success = true;
+        //     response.result = update;
+        //     return res.status(200).json(response);
+        // } catch (e) {
+        //     response.error = e.message || e;
+        //     response.message = "Error updating product in the system";
+        //     return res.status(400).json(response);
+        // }
+     
 
+       
 
-        if (data.MTRL) {
+    async function putSoftone(data) {
+        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/putMtrl`;
+        let softoneData = {
+            username: "Service",
+            password: "Service",
+            MTRL: parseInt(data.MTRL),
+            COMPANY: 1001,
+            ISACTIVE: data.ISACTIVE,
+            NAME: data?.NAME,
+            CODE: data?.CODE,
+            CODE1: data?.CODE1,
+            CODE2: data?.CODE2,
+            //CATEGORIZATION:
+            MTRCATEGORY: data?.MTRCATEGORY?.toString(),
+            MTRGROUP: data?.MTRGROUP?.toString(),
+            CCCSUBGOUP2: data?.CCCSUBGOUP2?.tpString(),
+            MTRMANFCTR: data?.MTRMANFCTR,
+            MTRMARK: data?.MTRMARK?.toString(),
+            //PRICES:
+            PRICER: data?.PRICER.toString(),
+            PRICEW: data?.PRICEW.toString(),
+            PRICE02: data?.PRICE02.toString(),
+            //REST:
+            VAT: data?.VAT,
+            INTRASTAT: data?.INTRASTAT,
+            COUNTRY: data?.COUNTRY,
+          
+            VOLUME: data?.VOLUME,
+            GWEIGHT: data?.GWEIGHT,
+            HEIGHT: data?.HEIGHT,
+            LENGTH: data?.LENGTH,
+            WIDTH: data?.WIDTH,
+            
+        }
+        let _softoneData = removeEmptyObjectFields(softoneData);
+        try {
             const response = await fetch(URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    username: "Service",
-                    password: "Service",
-                    ...obj
-                })
+                body: JSON.stringify(_softoneData)
             });
-            let responseJSON = await response.json();
-
-            if (!responseJSON.success) {
-                softoneMessage = 'Δεν έγινε ενημέρωση στο softone'
-            }
-            if (responseJSON.success) {
-                softoneMessage = 'Εγινε ενημέρωση στο softone'
-            }
-
+            let buffer = await translateData(response)
+            console.log(buffer)
+            return buffer;
+        } catch(e) {
+            console.error(e)
+            return null;
         }
-        try {
-            let updateSoftoneProduct = await SoftoneProduct.updateOne({ _id: data._id }, {
-                $set: {
-                    COST: data.COST,
-                    NAME: data.NAME,
-                    CODE: data.CODE,
-                    CODE1: data.CODE1,
-                    CODE2: data.CODE2,
-                    // MTRCATEGORY: parseInt(data.category.softOne.MTRCATEGORY),
-                    // MTRGROUP: parseInt(data.group.softOne.MTRGROUP),
-                    // CCCSUBGROUP2: parseInt(data.subgroup.softOne.cccSubgroup2),
-                    MTRMANFCTR: data.MTRMANFCTR && data.MTRMANFCTR.toString(),
-                    VAT: data.vat.VAT,
-                    COUNTRY: data.COUNTRY,
-                    INTRASTAT: data.INTRASTAT,
-                    WIDTH: data.WIDTH,
-                    HEIGHT: data.HEIGHT,
-                    LENGTH: data.LENGTH,
-                    GWEIGHT: data.GWEIGHT,
-                    VOLUME: data.VOLUME,
-                    STOCK: data.STOCK,
-                    PRICER: data.PRICER,
-                    PRICEW: data.PRICEW,
-                    PRICER02: data.PRICE02 || 0,
-                    PRICER05: data.PRICER05,
-                    CATEGORY_NAME: data.category.categoryName,
-                    DESCRIPTION: data.DESCRIPTION,
-                    GROUP_NAME: data.category.groupName,
-                    SUBGROUP_NAME: data.category.subGroupName,
-                    SOFTONESTATUS: true,
-                    descriptions: data.descriptions,
-                    COST: data?.COST,
-                }
-            })
-            systemMessage = 'Εγινε ενημέρωση στο σύστημα'
-            return res.status(200).json({ success: true, systemMessage: systemMessage, softoneMessage: softoneMessage });
-
-        } catch (e) {
-            systemMessage = 'Δεν έγινε ενημέρωση στο σύστημα'
-            return res.status(400).json({ success: false, systemMessage: systemMessage, softoneMessage: softoneMessage });
-        }
+     }
 
 
     }
 
    
-    if (action === 'insert') {
-        await connectMongo();
-        let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/getMtrl`;
-        const response = await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                username: "Service",
-                password: "Service",
-            })
-        });
-        let buffer = await translateData(response)
-        await connectMongo();
-        let insert1 = await SoftoneProduct.insertMany(buffer.result)
-
-        let softone = await SoftoneProduct.find({}, { MTRL: 1, NAME: 1, _id: 1 })
-
-
-        let productsInsert = softone.map((item) => ({
-            softoneProduct: item._id,
-            name: item.NAME,
-            MTRL: item.MTRL,
-            softoneStatus: true,
-        }))
-        let insert = await Product.insertMany(productsInsert)
-
-        return res.status(200).json({ success: true, result: insert });
-
-
-
-    }
+   
 
     if (action === 'updateClass') {
         

@@ -11,7 +11,6 @@ export default function DropdownBrands({
     required = false 
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
 
   
     const handleFetch = async () => {
@@ -26,17 +25,15 @@ export default function DropdownBrands({
         })()
       }, []);
 
+  
     useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
+
+      if(!isEdit && !options) return
+        let option = options.find((option) => option.softOne.MTRMARK === state);
+        if(!option) return;
+        handleState(option);
     }, [options]);
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
-  
     return (
       <div>
         <label className={`mb-1 block ${error ? "text-red-500" : null}`}>
@@ -45,8 +42,8 @@ export default function DropdownBrands({
             </label>
         <Dropdown
           filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="softOne.NAME"
           placeholder="Μάρκα"

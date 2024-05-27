@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, use} from "react";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
 
@@ -11,7 +11,6 @@ export default function DropdownIntrastat ({
     required = false 
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
 
   
     const handleFetch = async () => {
@@ -26,16 +25,16 @@ export default function DropdownIntrastat ({
         })()
       }, []);
 
-    useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
-    }, [options]);
+    
+      useEffect(() => {
+        if(!isEdit && !options) return
+          let option = options.find((option) => option?.INTRASTAT == state);
+          if(!option) return;
+          handleState(option);
+      }, [options]);
+  
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
+ 
   
     return (
       <div>
@@ -45,8 +44,8 @@ export default function DropdownIntrastat ({
             </label>
         <Dropdown
           filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="NAME"
           placeholder="INTRASTAT"

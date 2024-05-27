@@ -15,13 +15,14 @@ import translateData from "@/utils/translateDataIconv";
 export default async function handler(req, res) {
     const action = req.body.action;
     await connectMongo();
-    let response = {
-        success: false,
-        result: null,
-        error: "",
-        message: "",
-    }
+  
     if (action === 'productSearchGrid') {
+        let response = {
+            success: false,
+            result: [],
+            error: "",
+            message: "",
+        }
         const {
             groupID,
             categoryID,
@@ -37,11 +38,10 @@ export default async function handler(req, res) {
             sortImpa,
             stateFilters,
         } = req.body;
-
+       
         try {
             await connectMongo();
-
-
+          
             let totalRecords;
             let sortObject = {};
             let filterConditions = {};
@@ -104,6 +104,7 @@ export default async function handler(req, res) {
 
 
 
+
             if (stateFilters.impaSearch !== '' && stateFilters.hasOwnProperty('impaSearch') ) {
                 let regex = new RegExp(stateFilters.impaSearch, 'i');
                 let productIds = await findImpaProducts(regex);
@@ -119,6 +120,7 @@ export default async function handler(req, res) {
             if (Object.keys(filterConditions).length === 0) {
                 // No specific filters, fetch all products
                 totalRecords = await SoftoneProduct.countDocuments();
+
             } else {
                 totalRecords = await SoftoneProduct.countDocuments(filterConditions);
 
@@ -129,82 +131,27 @@ export default async function handler(req, res) {
                 .sort(sortObject)
                 .skip(skip)
                 .limit(limit)
+            
+            if(!softonefind) {
+                response.message = "Δεν βρέθηκαν προϊόντα"
+                response.totalRecords = 0;
+                response.result = []
+                return res.status(200).json(response)
+            }
 
-
-            return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
+            response.success = true
+            response.result = softonefind
+            response.totalRecords = totalRecords
+            response.message = "Βρέθηκαν Προϊόντα"
+            return res.status(200).json(response);
         } catch (e) {
-            return res.status(400).json({ success: false, error: e.message });
+            response.error = e.message
+            response.message = "Αποτυχία"
+            return res.status(400).json(response);
         }
     }
 
-    if (action === 'filterCategories') {
-
-        let { groupID, categoryID, subgroupID, searchTerm, skip, limit, softoneStatusFilter } = req.body;
-        let totalRecords;
-        let softonefind;
-        if (!categoryID && !groupID && !subgroupID && searchTerm === '') {
-            totalRecords = await SoftoneProduct.countDocuments();
-            softonefind = await SoftoneProduct.find({}).skip(skip).limit(limit).populate('descriptions');
-
-        }
-
-        if (categoryID) {
-            totalRecords = await SoftoneProduct.countDocuments({
-                MTRCATEGORY: categoryID
-            });
-            softonefind = await SoftoneProduct.find({
-                MTRCATEGORY: categoryID
-            }).skip(skip).limit(limit).populate('descriptions');
-        }
-
-        if (categoryID && groupID) {
-            totalRecords = await SoftoneProduct.countDocuments({
-                MTRCATEGORY: categoryID,
-                MTRGROUP: groupID
-            });
-            softonefind = await SoftoneProduct.find({
-                MTRCATEGORY: categoryID,
-                MTRGROUP: groupID
-            }).skip(skip).limit(limit).populate('descriptions');
-        }
-
-        if (categoryID && groupID && subgroupID) {
-            totalRecords = await SoftoneProduct.countDocuments({
-                MTRCATEGORY: categoryID,
-                MTRGROUP: groupID,
-                CCCSUBGOUP2: subgroupID
-            });
-            softonefind = await SoftoneProduct.find({
-                MTRCATEGORY: categoryID,
-                MTRGROUP: groupID,
-                CCCSUBGOUP2: subgroupID
-            }).skip(skip).limit(limit).populate('descriptions');
-        }
-
-
-
-        //FILTER BASED ON SOFTONE STATUS:
-        if (softoneStatusFilter) {
-            totalRecords = await SoftoneProduct.countDocuments({
-                SOFTONESTATUS: softoneStatusFilter
-            });
-            softonefind = await SoftoneProduct.find({
-                SOFTONESTATUS: softoneStatusFilter
-            }).skip(skip).limit(limit).populate('descriptions');
-        }
-
-
-        let regexSearchTerm = new RegExp("^" + searchTerm, 'i');
-
-        if (searchTerm !== '') {
-            totalRecords = await SoftoneProduct.countDocuments({ NAME: regexSearchTerm });
-            softonefind = await SoftoneProduct.find({ NAME: regexSearchTerm }).skip(skip).limit(limit).populate('descriptions');
-        }
-
-
-        return res.status(200).json({ success: true, totalRecords: totalRecords, result: softonefind });
-    }
-   
+  
 
     if (action === 'findCategories') {
         
@@ -223,7 +170,7 @@ export default async function handler(req, res) {
       
         await connectMongo();
         let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 }).sort({ groupName: 1 })
-
+        console.log(response)
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {
@@ -262,6 +209,12 @@ export default async function handler(req, res) {
         }
     }
     if(action === 'findManufacturers') {
+        let response = {
+            success: false,
+            result: [],
+            error: "",
+            message: "",
+        }
         try {
             response.result = await Manufacturers.find({}, { NAME: 1, MTRMANFCTR: 1,  _id: 0 }).sort({ NAME: 1 })
             response.success = true;

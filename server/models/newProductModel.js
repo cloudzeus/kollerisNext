@@ -5,10 +5,6 @@ import { ImpaCodes } from './impaSchema';
 const softoneProduct = new mongoose.Schema({
    
     MTRL: { type: String },
-    ΑCTIVE_PRODUCT: {
-        type: Boolean,
-        default: true
-    },
     NAME_ENG: String,
     DESCRIPTION: String,
     DESCRIPTION_ENG: String,

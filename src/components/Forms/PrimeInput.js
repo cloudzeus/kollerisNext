@@ -7,6 +7,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 const Input = ({
   label,
   name,
+  id,
   control,
   required,
   error,
@@ -19,11 +20,9 @@ const Input = ({
       control={control}
       render={({ field, fieldState }) => (
 
-        <div>
-          {console.log("value")}
-          {console.log(field.value)}
+        <div className="w-full">
           <label
-            htmlFor={name}
+            htmlFor={id}
             className={`mb-1 block ${error && 'text-red-600'}` }
           >
             {label} {required && <span className="required">*</span>}
@@ -64,10 +63,9 @@ export const TextAreaInput = ({
         name={name}
         control={control}
         render={({ field, fieldState }) => (
-          <>
+          <div>
             <label
               htmlFor={name}
-            
               className={`mb-1 block ${classNames({ "p-invalid": fieldState.error })}` }
             >
               {label} {required && <span className="required">*</span>}
@@ -76,6 +74,7 @@ export const TextAreaInput = ({
               <InputTextarea
                 rows={rows}
                 cols={cols}
+                row={1}
                 disabled={disabled}
                 autoResize={autoResize}
                 id={field.name}
@@ -87,7 +86,7 @@ export const TextAreaInput = ({
             <div className="error-div">
               {error && <span className="error-text">{error.message}</span>}
             </div>
-          </>
+          </div>
         )}
       />
   );

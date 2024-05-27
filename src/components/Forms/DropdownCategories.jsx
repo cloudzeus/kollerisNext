@@ -11,9 +11,7 @@ export default function DropdownCategories ({
     required = false 
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
 
-  
     const handleFetch = async () => {
         let { data } = await axios.post("/api/product/apiProductFilters", {
           action: "findCategories",
@@ -27,15 +25,20 @@ export default function DropdownCategories ({
       }, []);
 
     useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
+      if(isEdit) {
+        handleEdit(options);
+      }
     }, [options]);
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
+
+
+    const handleEdit = (options) => {
+        let option = options.find((option) => option.softOne.MTRCATEGORY === state);
+        if (option) {
+          handleState(option);
+        }
+      }
+  
   
     return (
       <div>
@@ -45,8 +48,8 @@ export default function DropdownCategories ({
             </label>
         <Dropdown
            filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="categoryName"
           placeholder="Κατηγορία"

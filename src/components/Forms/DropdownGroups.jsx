@@ -12,31 +12,36 @@ export default function DropdownGroups ({
     categoryId
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
-
     const handleFetch = async () => {
+
         let { data } = await axios.post("/api/product/apiProductFilters", {
             action: "findGroups",
             categoryID: categoryId,
           });
         setOptions(data.result);
       };
+
+
       useEffect(() => {
+       
         (async () => {
           await  handleFetch();
         })()
+
+
       }, [categoryId]);
 
+
+
     useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
+
+      if(!isEdit && !options) return
+        let option = options.find((option) => option.softOne.MTRGROUP == state);
+        if(!option) return;
+        handleState(option);
     }, [options]);
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
+
   
     return (
       <div >
@@ -46,8 +51,8 @@ export default function DropdownGroups ({
             </label>
         <Dropdown
            filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="groupName"
           placeholder="Ομάδα"

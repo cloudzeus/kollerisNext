@@ -1,58 +1,52 @@
+"use client";
+import React from "react";
+import { Controller } from "react-hook-form";
+import { Dropdown } from "primereact/dropdown";
+import { classNames } from "primereact/utils";
 
 
-import React, { useRef, useState } from "react";
-import { useForm, Controller } from 'react-hook-form';
-import { Dropdown } from 'primereact/dropdown';
-import { Button } from 'primereact/button';
-import { Toast } from 'primereact/toast';
-import { classNames } from 'primereact/utils';
-import { InputContainer } from "./PrimeInput";
-export default function PrimeSelect({ 
-        control, 
-        label, 
-        name, 
-        required, 
-        error, 
-        options, 
-        optionLabel, 
-        optionValue,
-        placeholder,
-        defaultValue
-        }) {
-
-    return (
-        <InputContainer>
-           
-            <Controller
-                name={name}
-                control={control}
-                render={({ field, fieldState }) => {
-               
-                    return (
-                       <>
-                        <label htmlFor={name} className={classNames({ 'p-invalid': fieldState.error })} >
-                        {label } {required && <span className="required">*</span>}
-                        </label>
-                            <Dropdown
-                                id={field.name}
-                                optionLabel={optionLabel}
-                                optionValue={optionValue}
-                                options={options}
-                                placeholder={placeholder}
-                                focusInputRef={field.ref}
-                                value={field.value}
-                                className={error ? classNames({ 'p-invalid': true }) : null}
-                                onChange={(e) => {
-                                    field.onChange(e.value)
-                                }}
-                            />
-                       </>
-                    )
-                }}
+export default function PrimeSelect({
+  control,
+  label,
+  name,
+  required,
+  error,
+  options,
+  optionLabel,
+  optionValue,
+  placeholder,
+}) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => {
+        return (
+          <div>
+              <label className={`mb-1 block ${error ? "text-red-500" : null}`}>
+            {label}
+            {required && <span className="ml-1 font-bold text-red-500">*</span>}
+            </label>
+            <Dropdown
+              id={field.name}
+              name={name}
+              optionLabel={optionLabel}
+              optionValue={optionValue}
+              options={options}
+              placeholder={placeholder}
+              focusInputRef={field.ref}
+              value={field.value}
+              className={error ? classNames({ "p-invalid": true }) : null}
+              onChange={(e) => {
+                field.onChange(e.value);
+              }}
             />
             <div className="error-div">
-                {error && <span className="error-text">{error.message}</span>}
+              {error && <span className="error-text">{error.message}</span>}
             </div>
-        </InputContainer>
-    )
+          </div>
+        );
+      }}
+    />
+  );
 }

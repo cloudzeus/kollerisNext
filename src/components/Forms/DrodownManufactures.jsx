@@ -11,8 +11,6 @@ export default function DropdownManufacturers ({
     required = false 
 }) {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
-
   
     const handleFetch = async () => {
         let { data } = await axios.post("/api/product/apiProductFilters", {
@@ -26,16 +24,17 @@ export default function DropdownManufacturers ({
         })()
       }, []);
 
-    useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
-    }, [options]);
+    
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
+    
+    useEffect(() => {
+
+      if(!isEdit && !options) return
+        let option = options.find((option) => option.MTRMANFCTR == state);
+        if(!option) return;
+        handleState(option);
+    }, [options]);
+   
   
     return (
       <div>
@@ -45,8 +44,8 @@ export default function DropdownManufacturers ({
             </label>
         <Dropdown
           filter
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="NAME"
           placeholder="Κατασκευαστής"
