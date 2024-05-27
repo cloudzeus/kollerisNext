@@ -107,7 +107,6 @@ export default async function handler(req, res) {
     }
     if (action === 'update') {
         const { data } = req.body;
-        console.log({data})
         let response = {
             success: false,
             result: null,
@@ -115,39 +114,74 @@ export default async function handler(req, res) {
             message: ""
         }
 
-        // if(data.MTRL) {
-        //    let softone = await putSoftone(data)
-        //    if(!softone.success) {
-        //         response.success = false,
-        //         response.message = "Αποτυχία ενημέρωσης του SOFTONE"
-        //         return res.status(400).json(response)
-        //    }
-        // }
+        if(data.MTRL) {
+           let softone = await putSoftone(data)
+           if(!softone.success) {
+                response.success = false,
+                response.message = "Αποτυχία ενημέρωσης του SOFTONE"
+                return res.status(400).json(response)
+           }
+           response.message = "Επιτυχής ενημέρωση Softone"
+        }
 
         //Due to the format of the data from the dropdowns if the data change when the user edits we will receive and object. 
         //If the data remains unchanged during edit it will evaluate to the right of the ternary operator
         const systemData = {
+            NAME: data?.NAME,
+            NAME_ENG: data?.NAME_ENG,
+            DESCRIPTION: data?.DESCRIPTION,
+            DESCRIPTION_ENG: data?.DESCRIPTION_ENG,
             //CATEGORIZATION:
-           
-            //rest:
-            
+            MTRCATEGORY: data?.MTRCATEGORY?.softOne?.MTRCATEGORY,
+            CATEGORY_NAME: data?.MTRCATEGORY?.categoryName,
+            MTRGROUP: data?.MTRGROUP?.softOne?.MTRGROUP,
+            GROUP_NAME: data?.MTRGROUP?.groupName,
+            CCCSUBGROUP2: data?.CCCSUBGROUP2?.softOne?.cccSubgroup2,
+            SUBGROUP_NAME: data?.CCCSUBGROUP2?.subGroupName,
+            MTRMARK: data?.MTRMARK?.softOne?.MTRMARK,
+            MTRMARK_NAME: data?.MTRMARK?.softOne?.NAME,
+            MTRMANFCTR: data?.MTRMANFCTR?.MTRMANFCTR?.toString(),
+            MMTRMANFCTR_NAME: data?.MTRMANFCTR?.NAME,
+            //PRICES:
+            PRICER: data?.PRICER,
+            PRICEW: data?.PRICEW,
+            PRICER02: data?.PRICER02,
+            //CODES: 
+            CODE: data?.CODE,
+            CODE1: data?.CODE1,
+            CODE2: data?.CODE2,
+            //DETAILS:
+            INTRASTAT: data?.INTRASTAT?.INTRASTAT,
+            VAT: data?.VAT?.VAT?.toString(),
+            COUNTRY: data?.COUNTRY?.COUNTRY?.toString(),
+            //REST:
+            WIDTH: data?.WIDTH?.toString(),
+            LENGTH: data?.LENGTH?.toString(),
+            HEIGHT: data?.HEIGHT?.toString(),
+            GWEIGHT: data?.GWEIGHT?.toString(),
+            VOLUME: data?.VOLUME?.toString(),
+            ISACTIVE: data?.ISACTIVE,
+            // SOFTONESTATUS: data?.SOFTONESTATUS,
         }
-        console.log({systemData})
-        // try {
-        //     await connectMongo();
-        //     let update = await SoftoneProduct.findOneAndUpdate({
-        //         MTRL: data.MTRL
-        //     }, {
-        //         ...data
-        //     }, { new: true })
-        //     response.success = true;
-        //     response.result = update;
-        //     return res.status(200).json(response);
-        // } catch (e) {
-        //     response.error = e.message || e;
-        //     response.message = "Error updating product in the system";
-        //     return res.status(400).json(response);
-        // }
+        let _systemData = removeEmptyObjectFields(systemData);
+        console.log({_systemData})
+        try {
+            await connectMongo();
+            let update = await SoftoneProduct.findOneAndUpdate({
+                _id: data._id
+            }, {
+                $set: _systemData
+            }, { new: true})
+            response.success = true;
+            response.result = update;
+            response.message += " Επιτυχής Eνημέρωση Συστήματος"
+            return res.status(200).json(response);
+        } catch (e) {
+            console.log(e)
+            response.error = e.message ;
+            response.message = "Error updating product in the system";
+            return res.status(400).json(response);
+        }
      
 
        
@@ -155,38 +189,35 @@ export default async function handler(req, res) {
     async function putSoftone(data) {
         let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.mtrl/putMtrl`;
         let softoneData = {
-            username: "Service",
-            password: "Service",
-            MTRL: parseInt(data.MTRL),
-            COMPANY: 1001,
-            ISACTIVE: data.ISACTIVE,
-            NAME: data?.NAME,
-            CODE: data?.CODE,
-            CODE1: data?.CODE1,
-            CODE2: data?.CODE2,
-            //CATEGORIZATION:
-            MTRCATEGORY: data?.MTRCATEGORY?.toString(),
-            MTRGROUP: data?.MTRGROUP?.toString(),
-            CCCSUBGOUP2: data?.CCCSUBGOUP2?.tpString(),
-            MTRMANFCTR: data?.MTRMANFCTR,
-            MTRMARK: data?.MTRMARK?.toString(),
-            //PRICES:
-            PRICER: data?.PRICER.toString(),
-            PRICEW: data?.PRICEW.toString(),
-            PRICE02: data?.PRICE02.toString(),
-            //REST:
-            VAT: data?.VAT,
-            INTRASTAT: data?.INTRASTAT,
-            COUNTRY: data?.COUNTRY,
-          
-            VOLUME: data?.VOLUME,
-            GWEIGHT: data?.GWEIGHT,
-            HEIGHT: data?.HEIGHT,
-            LENGTH: data?.LENGTH,
-            WIDTH: data?.WIDTH,
-            
-        }
+          username: "Service",
+          password: "Service",
+          MTRL: parseInt(data.MTRL),
+          COMPANY: 1001,
+          ISACTIVE: data.ISACTIVE,
+          NAME: data?.NAME,
+          CODE: data?.CODE,
+          CODE1: data?.CODE1,
+          CODE2: data?.CODE2,
+          MTRCATEGORY: data?.MTRCATEGORY?.softOne?.MTRCATEGORY?.toString(),
+          MTRGROUP: data?.MTRGROUP?.softOne?.MTRGROUP?.toString(),
+          CCCSUBGROUP2: data?.CCCSUBGROUP2?.softOne?.cccSubgroup2?.toString(),
+          MTRMARK: data?.MTRMARK?.softOne?.MTRMARK?.toString(),
+          MTRMANFCTR:data?.MTRMANFCTR?.MTRMANFCTR?.toString(),
+          INTRASTAT: data?.INTRASTAT?.INTRASTAT.toString(),
+          VAT: data?.VAT?.VAT.toString(),
+          COUNTRY: data?.COUNTRY?.COUNTRY.toString(),
+          //PRICES:
+          PRICER: data?.PRICER?.toString(),
+          PRICEW: data?.PRICEW?.toString(),
+          PRICER02: data?.PRICER02?.toString(),
+          //REST:
+          ISACTIVE: data?.ISACTIVE ? "1" : "0",
+          VOLUME: data?.VOLUME.toString(),
+          GWEIGHT: data?.GWEIGHT.toString(),
+        
+        };
         let _softoneData = removeEmptyObjectFields(softoneData);
+        console.log({_softoneData})
         try {
             const response = await fetch(URL, {
                 method: 'POST',

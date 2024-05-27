@@ -2,25 +2,26 @@ import {use, useEffect, useState} from "react"
 import axios from "axios"
 import {Dropdown} from "primereact/dropdown"
 
-export default function CountriesDropdown({selectedCountry, onChangeCountry, isEdit = false, required, error}) {
+export default function CountriesDropdown({
+    state,
+    handleState, 
+    isEdit = false, 
+    required, 
+    error
+}) {
 
     const [options, setOptions] = useState([])
-    const [value, setValue] = useState(null)
 
+    
     useEffect(() => {
-        if (isEdit) {
-            let value = options.find(option => option.COUNTRY == selectedCountry);
-            setValue(value)
-        } else {
-            setValue(selectedCountry)
-        }
-    }, [options])
+        if(!isEdit && !options) return
+        let option = options.find(option => option.COUNTRY == state);
+        if(!option) return;
+        handleState(option);
+    }, [options]);
 
 
-    const onChange = (e) => {
-        setValue(e.target.value)
-        onChangeCountry(e)
-    }
+  
 
     const handleFetchData = async () => {
         const countries = await axios.post('/api/suppliers', {action: 'getCountries'})
@@ -32,14 +33,13 @@ export default function CountriesDropdown({selectedCountry, onChangeCountry, isE
         handleFetchData();
     }, [])
 
-    // let value = isEdit ? options.find(option => option.COUNTRY === selectedCountry) : selectedCountry
     return (
         <div className="">
             <label className={`mb-1 block ${error && "text-red-500"}`}>Χώρα {required && "*"}</label>
             <Dropdown
                 className='w-full'
-                value={value}
-                onChange={onChange}
+                value={state}
+                onChange={(e) => handleState(e.target.value)}
                 options={options}
                 optionLabel="NAME"
                 placeholder="Χώρα"

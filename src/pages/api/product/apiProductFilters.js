@@ -170,7 +170,6 @@ export default async function handler(req, res) {
       
         await connectMongo();
         let response = await MtrGroup.find({ 'softOne.MTRCATEGORY': categoryID }, { "softOne.MTRGROUP": 1, groupName: 1, _id: 0 }).sort({ groupName: 1 })
-        console.log(response)
         try {
             return res.status(200).json({ success: true, result: response })
         } catch (e) {

@@ -1,11 +1,9 @@
 import {useState, useEffect} from "react";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
-import { classNames } from 'primereact/utils';
 
 const VatDropdown = ({ state, handleState, isEdit =false, error, required = false }) => {
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(null);
 
     const handleFetch = async () => {
       let { data } = await axios.post("/api/product/apiProductFilters", {
@@ -18,22 +16,19 @@ const VatDropdown = ({ state, handleState, isEdit =false, error, required = fals
     }, []); 
 
     useEffect(() => {
-      isEdit
-        ? setValue(options.find((option) => option.VAT == state))
-        : setValue(state);
+        if(!isEdit && !options) return
+        let option = options.find((option) => option.VAT == state);
+        if(!option) return;
+        handleState(option);
     }, [options]);
 
-    const onChange = (e) => {
-        setValue(e.target.value);
-      handleState(e);
-    }
-  
+    
     return (
       <div className="">
         <label className={`mb-1 block ${error ? "text-red-500" : null}`}>Αλλαγή ΦΠΑ {required && "*"}</label>
         <Dropdown
-          value={value}
-          onChange={onChange}
+          value={state}
+          onChange={(e) => handleState(e.target.value)}
           options={options}
           optionLabel="NAME"
           placeholder="ΦΠΑ"

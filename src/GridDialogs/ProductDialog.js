@@ -14,8 +14,8 @@ import { Container } from "@/componentsStyles/dialogforms";
 import { TranslateInput } from "@/components/Forms/TranslateInput";
 import { setSubmitted } from "@/features/productsSlice";
 import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
-import CountriesDropdown from "@/components/Forms/CountriesDropdown";
-import VatDropdown from "@/components/Forms/VatDropdown";
+import DropdownCountries from "@/components/Forms/DropdownCountries";
+import DropdownVat from "@/components/Forms/DropdownVat";
 import DropdownCategories from "@/components/Forms/DropdownCategories";
 import DropdownGroups from "@/components/Forms/DropdownGroups";
 import DropdownSubroups from "@/components/Forms/DropdownSubgroups";
@@ -113,7 +113,7 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
   const showSuccess = (message) => {
     toast.current.show({
       severity: "success",
-      summary: "Success",
+      summary: "Eπιτυχία",
       detail: message,
       life: 4000,
     });
@@ -121,7 +121,7 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
   const showError = (message) => {
     toast.current.show({
       severity: "error",
-      summary: "Error",
+      summary: "Aποτυχία",
       detail: message,
       life: 4000,
     });
@@ -135,19 +135,24 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
 
 
   const handleSubmitForm = async (data) => {
-    let res = await axios.post("/api/product/apiProduct", {
-      action: !isEdit ? "create" : "update",
-      data: data,
-    });
-
-    if (!res.data.success) {
-      showError(res.data.message);
-      return;
-    }
-    showSuccess(res.data.message);
-    hideDialog();
-    dispatch(setSubmitted());
-    reset();
+        try {
+          let res = await axios.post("/api/product/apiProduct", {
+            action: !isEdit ? "create" : "update",
+            data: data,
+          });
+          console.log(res.data.message)
+          if (!res.data.success) {
+            showError(res.data.message);
+            return;
+          }
+          showSuccess(res.data.message);
+          hideDialog();
+          dispatch(setSubmitted());
+          reset();
+        } catch (e) {
+          showError(e.response.data.message );
+          return;
+        }
   };
 
   const productDialogFooter = (
@@ -183,10 +188,7 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
     setValue("MTRGROUP", value);
   };
 
-  const handleVatState = (value) => {
-    setValue("VAT", value);
-  };
-
+ 
  
 
   return (
@@ -203,7 +205,7 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
         maximizable
       >
         <form className="form" noValidate onSubmit={handleSubmit(handleSubmitForm)}>
-          {/* <Input
+          <Input
             label={"Όνομα"}
             name={"NAME"}
             control={methods.control}
@@ -217,7 +219,7 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
             name="NAME_ENG"
             label={"Όνομα Αγγλικά"}
             targetLang="en-GB"
-          /> */}
+          />
           <p className="mt-2 font-bold text-lg">Κατηγοριοποίηση</p>
           <DropdownCategories
             isEdit={isEdit}
@@ -273,18 +275,16 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
             label={"Περιγραφή Αγγλική"}
             targetLang="en-GB"
           />
-          <VatDropdown
-             isEdit={isEdit}
+          <DropdownVat
+            isEdit={isEdit}
             state={values.VAT}
-            required
-            handleState={handleVatState}
+            handleState={(e) => handleInputChange(e, "VAT")}
             error={errors?.VAT?.NAME.message}
           />
-          <CountriesDropdown
+          <DropdownCountries
              isEdit={isEdit}
-            selectedCountry={values.COUNTRY}
-            required
-            onChangeCountry={(e) => handleInputChange(e, "COUNTRY")}
+            state={values.COUNTRY}
+            handleState={(e) => handleInputChange(e, "COUNTRY")}
             error={errors?.COUNTRY?.NAME.message}
           />
 
@@ -388,18 +388,20 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
           </div>
           
             <p className="mt-2 font-bold text-lg">Διαθεσιμότητα</p>
-           {!isEdit ? (
+           
              <div className="product_form_grid_row">
              <PrimeInputNumber
                  label={"Διαθέσιμα"}
                  name={"DIATHESIMA"}
                  control={methods.control}
                  required
+                 disabled={isEdit}
                  error={errors.DIATHESIMA}
                />
              <PrimeInputNumber
                  label={"Σε παραγγελία"}
                  name={"SEPARAGELIA"}
+                 disabled={isEdit}
                  control={methods.control}
                  required
                  error={errors.SEPARAGELIA}
@@ -407,12 +409,12 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
              <PrimeInputNumber
                  label={"Δεσμευμένα"}
                  name={"DESVMEVMENA"}
+                 disabled={isEdit}
                  control={methods.control}
                  required
                  error={errors.DESVMEVMENA}
                />
              </div>
-           ) : null}
             <PrimeSelect 
               options={
                 [
@@ -422,6 +424,19 @@ export const ProductDialog = ({ dialog, hideDialog, isEdit }) => {
               }
               label="Στο Skroutz"
               name="isSkroutz"
+              optionLabel={"label"}
+              optionValue={"value"}
+              control={methods.control}
+            />
+            <PrimeSelect 
+              options={
+                [
+                  {label: "Ενεργό Προϊόν", value: true},
+                  {label: "Ανενεργό Προϊόν", value: false}
+                ]
+              }
+              label="Κατάσταση Προϊόντος"
+              name="ISACTIVE"
               optionLabel={"label"}
               optionValue={"value"}
               control={methods.control}

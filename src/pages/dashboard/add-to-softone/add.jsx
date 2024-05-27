@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { removeProductForSoftone } from "@/features/productsSlice";
 import { Dropdown } from "primereact/dropdown";
 import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
-import CountriesDropdown from "@/components/Forms/CountriesDropdown";
+import CountriesDropdown from "@/components/Forms/DropdownCountries";
 import VatDropdown from "@/components/Forms/VatDropdown";
 
 const addSchema = yup.object().shape({

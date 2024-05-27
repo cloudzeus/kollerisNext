@@ -12,7 +12,7 @@ import { Toast } from 'primereact/toast';
 import { FormTitle,Container } from '@/componentsStyles/dialogforms';
 import { useSession } from "next-auth/react"
 import PrimeSelect from '@/components/Forms/PrimeSelect';
-import CountriesDropdown from '@/components/Forms/CountriesDropdown';
+import CountriesDropdown from '@/components/Forms/DropdownCountries';
 
 const EditDialog = ({ dialog, hideDialog, setSubmitted }) => {
     const { data: session, status } = useSession()
