@@ -29,8 +29,8 @@ const VatDropdown = ({ state, handleState, isEdit =false, error, required = fals
     }
   
     return (
-      <div className="card mb-3">
-        <label className={`mb-2 block ${error ? "text-red-500" : null}`}>Αλλαγή ΦΠΑ {required && "*"}</label>
+      <div className="">
+        <label className={`mb-1 block ${error ? "text-red-500" : null}`}>Αλλαγή ΦΠΑ {required && "*"}</label>
         <Dropdown
           value={value}
           onChange={onChange}

@@ -116,3 +116,22 @@ form {
 }
 
 
+.form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 14px;
+}
+
+/* TRANSLATE INPUT */
+.translate_btn {
+    text-decoration: underline;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+
+

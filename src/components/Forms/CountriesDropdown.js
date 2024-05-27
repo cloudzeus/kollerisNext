@@ -34,14 +34,15 @@ export default function CountriesDropdown({selectedCountry, onChangeCountry, isE
 
     // let value = isEdit ? options.find(option => option.COUNTRY === selectedCountry) : selectedCountry
     return (
-        <div className="mb-2">
-            <label className={`mb-2 block ${error && "text-red-500"}`}>Χώρα {required && "*"}</label>
+        <div className="">
+            <label className={`mb-1 block ${error && "text-red-500"}`}>Χώρα {required && "*"}</label>
             <Dropdown
                 className='w-full'
                 value={value}
                 onChange={onChange}
                 options={options}
                 optionLabel="NAME"
+                placeholder="Χώρα"
             />
             <p className="text-red-500 mt-1">{error}</p>
         </div>

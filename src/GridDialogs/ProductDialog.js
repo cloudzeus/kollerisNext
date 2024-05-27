@@ -13,14 +13,17 @@ import { Toast } from "primereact/toast";
 import { FormTitle, Container } from "@/componentsStyles/dialogforms";
 import { Dropdown } from "primereact/dropdown";
 import { useSession } from "next-auth/react";
-import TranslateInput from "@/components/Forms/TranslateInpit";
+import { TranslateInput } from "@/components/Forms/TranslateInput";
 import { setSubmitted } from "@/features/productsSlice";
 import PrimeInputNumber from "@/components/Forms/PrimeInputNumber";
 import CountriesDropdown from "@/components/Forms/CountriesDropdown";
 import VatDropdown from "@/components/Forms/VatDropdown";
-
-
-
+import DropdownCategories from "@/components/Forms/DropdownCategories";
+import DropdownGroups from "@/components/Forms/DropdownGroups";
+import DropdownSubroups from "@/components/Forms/DropdownSubgroups";
+import DropdownManufacturers from "@/components/Forms/DrodownManufactures";
+import DropdownBrands from "@/components/Forms/DropdownBrands";
+import DropdownIntrastat from "@/components/Forms/DropdownIntrastat";
 
 const EditDialog = ({ dialog, hideDialog }) => {
   const { data: session } = useSession();
@@ -35,16 +38,19 @@ const EditDialog = ({ dialog, hideDialog }) => {
     vat: null,
   });
 
-
   const methods = useForm({
     resolver: yupResolver(addSchema),
     defaultValues: gridRowData,
-  })
+  });
 
-  const {control, handleSubmit, formState: {errors}, reset, setValue} = methods;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = methods;
   const values = methods.watch();
-
-
 
   const handleEnglish = async (value) => {
     setEnglishDescription(value);
@@ -72,7 +78,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
   }, [gridRowData, reset]);
 
   const handleEdit = async (data) => {
-    console.log({data})
+    console.log({ data });
 
     try {
       let resp = await axios.post("/api/product/apiProduct", {
@@ -83,7 +89,7 @@ const EditDialog = ({ dialog, hideDialog }) => {
           ...selectState,
         },
       });
-      console.log({resp})
+      console.log({ resp });
       if (!resp.data.success) {
         showError(resp.data?.error);
         return;
@@ -119,11 +125,11 @@ const EditDialog = ({ dialog, hideDialog }) => {
 
   const handleVatState = (e) => {
     setValue("VAT", e.target.value);
-  }
+  };
 
   const handleCountryChange = (e) => {
     setValue("COUNTRY", e.target.value);
-  }
+  };
   const productDialogFooter = (
     <React.Fragment>
       <Button
@@ -181,11 +187,11 @@ const EditDialog = ({ dialog, hideDialog }) => {
             error={errors.NAME}
           />
           <VatDropdown
-              state={values.VAT}
-              isEdit
-              error={errors?.VAT?.NAME?.message}
-              // required
-              handleState={handleVatState}
+            state={values.VAT}
+            isEdit
+            error={errors?.VAT?.NAME?.message}
+            // required
+            handleState={handleVatState}
           />
           <CountriesDropdown
             selectedCountry={values.COUNTRY}
@@ -200,12 +206,12 @@ const EditDialog = ({ dialog, hideDialog }) => {
             name={"DESCRIPTION"}
             control={control}
           />
-          <TranslateInput
+          {/* <TranslateTextArea
             label={"Περιγραφή Aγγλική"}
             state={englishDescription}
             handleState={handleEnglish}
             targetLang="en-GB"
-          />
+          /> */}
 
           <PrimeInputNumber
             label={"Τιμή Κόστους"}
@@ -240,62 +246,61 @@ const EditDialog = ({ dialog, hideDialog }) => {
   );
 };
 
+
+
+
+
 const addSchema = yup.object().shape({
   NAME: yup.string().required("Συμπληρώστε το όνομα"),
-
-  VAT: yup.lazy((value) => {
-    typeof value === "object"
-    ? yup.object().shape({
-        NAME: yup.string().required("Συμπληρώστε το ΦΠΑ"),
-        })
-        : yup.string().required("Συμπληρώστε το ΦΠΑ")
-  })
-
-
-
+  // MTRCATEGORY: yup.object().required("Συμπληρώστε την κατηγορία"),
+  // MTRGROUP: yup.object().required("Συμπληρώστε την ομάδα"),
+  // CCCSUBGROUP2: yup.object().required("Συμπληρώστε την υποομάδα"),
 });
 
 const AddDialog = ({ dialog, hideDialog }) => {
-  const dispatch = useDispatch();
-  const [showInputs, setShowInputs] = useState(false);
-  const [englishDescription, setEnlgishDescription] = useState("");
-  const [selectState, setSelectState] = useState({
-    category: null,
-    group: null,
-    subgroup: null,
-    vat: null,
-  });
 
+  const defaultValues = {
+    NAME: "",
+    NAME_ENG: "",
+    DESCRIPTION: "",
+    DESCRIPTION_ENG: "",
+    //DROPDOWNS:
+    MTRCATEGORY: null,
+    MTRGROUP: null,
+    CCCSUBGROUP2: null,
+    MTRMANFCTR: null,
+    MTRMARK: null,
+    INTRASTAT: null,
+    //DETAILS:
+    CODE: "",
+    CODE1: "",
+    CODE2: "",
+    PRICER: 0,
+    PRICEW: 0,
+    PRICER01: 0,
+    COST: 0,
+  }
+  const dispatch = useDispatch();
+  
+ 
   const methods = useForm({
     resolver: yupResolver(addSchema),
-    defaultValues: {
-      NAME: "",
-      DESCRIPTION: "",
-      CODE: "",
-      CODE1: "",
-      CODE2: "",
-      PRICER: 0,
-      PRICEW: 0,
-      PRICER01: 0,
-      COST: 0,
-    },
+    defaultValues: defaultValues
   });
   const {
-    control,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue
+    setValue,
   } = methods;
   const values = methods.watch();
-
   const toast = useRef(null);
 
-
   useEffect(() => {
-    if (selectState.category && selectState.group) setShowInputs(true);
-    else setShowInputs(false);
-  }, [selectState]);
+    reset(defaultValues);
+  }, [dialog]);
+
+
 
   const showSuccess = (message) => {
     toast.current.show({
@@ -319,36 +324,35 @@ const AddDialog = ({ dialog, hideDialog }) => {
   };
 
   const handleAdd = async (data) => {
+    console.log({ data });
+    return;
     let _data = {
-        ...data,
-        COUNTRY: data.COUNTRY.COUNTRY,
-        VAT: data.VAT.VAT,
-        //needs refactoring:
-        MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
-        CATEGORY_NAME: selectState.category?.categoryName,
-        MTRGROUP: selectState.group?.softOne?.MTRGROUP,
-        GROUP_NAME: selectState.group?.groupName,
-        CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2,
-        SUBGROUP_NAME: selectState.subgroup?.subGroupName,
-        DESCRIPTION_ENG: englishDescription,
-
-    }
+      ...data,
+      COUNTRY: data.COUNTRY.COUNTRY,
+      VAT: data.VAT.VAT,
+      //needs refactoring:
+      MTRCATEGORY: selectState.category?.softOne?.MTRCATEGORY,
+      CATEGORY_NAME: selectState.category?.categoryName,
+      MTRGROUP: selectState.group?.softOne?.MTRGROUP,
+      GROUP_NAME: selectState.group?.groupName,
+      CCCSUBGROUP2: selectState.subgroup?.softOne?.cccSubgroup2,
+      SUBGROUP_NAME: selectState.subgroup?.subGroupName,
+    };
 
     let res = await axios.post("/api/product/apiProduct", {
       action: "create",
-      data:_data,
+      data: _data,
     });
 
     if (!res.data.success) {
-        showError(res.data.message);
-        return;
+      showError(res.data.message);
+      return;
     }
     showSuccess(res.data.message);
     hideDialog();
     dispatch(setSubmitted());
     reset();
   };
-
 
   const productDialogFooter = (
     <React.Fragment>
@@ -368,71 +372,118 @@ const AddDialog = ({ dialog, hideDialog }) => {
     </React.Fragment>
   );
 
-  const handleEnglish = async (value) => {
-    setEnlgishDescription(value);
+ 
+  const handleTranslate = (value, name) => {
+    setValue(name, value);
+  };
+  const handleInputChange = (e, name) => {
+    setValue(name, e.target.value);
   };
 
-    const handleVatState = (e) => {
-        let value = e.target.value;
-        setValue("VAT", value);
-    }
-    const handleCountryChange = (e) => {
-      let value = e.target.value;
-      setValue("COUNTRY", value);
-    };
+  const handleCategoryChange = (e) => {
+    setValue("MTRCATEGORY", e.target.value);
+    setValue("MTRGROUP", null);
+  };
+
+  const handleGroupChange = (e) => {
+    setValue("MTRGROUP", e.target.value);
+    setValue("CCCSUBGROUP2", null);
+  };
+
+  const handleVatState = (e) => {
+    let value = e.target.value;
+    setValue("VAT", value);
+  };
 
   return (
     <Container>
-      <form noValidate onSubmit={handleSubmit(handleAdd)}>
-        <Toast ref={toast} />
-        <Dialog
-          visible={dialog}
-          style={{ width: "40rem", maxWidth: "80rem", minHeight: "40vh" }}
-          breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-          header="Προσθήκη Προϊόντος"
-          modal
-          className="p-fluid"
-          footer={productDialogFooter}
-          onHide={hideDialog}
-          maximizable
-        >
-          <FormTitle>ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ:</FormTitle>
-          <Categories state={selectState.category} setState={setSelectState} />
-          <Groups
-            state={selectState.group}
-            setState={setSelectState}
-            id={selectState.category?.softOne?.MTRCATEGORY}
+      <Toast ref={toast} />
+      <Dialog
+        visible={dialog}
+        style={{ width: "34rem", minHeight: "40vh" }}
+        header="Προσθήκη Προϊόντος"
+        modal
+        className="p-fluid"
+        footer={productDialogFooter}
+        onHide={hideDialog}
+        maximizable
+      >
+        <form className="form" noValidate onSubmit={handleSubmit(handleAdd)}>
+          <Input
+            label={"Όνομα"}
+            name={"NAME"}
+            control={methods.control}
+            required
+            error={errors.NAME}
           />
-          <SubGroups
-            state={selectState.subgroup}
-            setState={setSelectState}
-            id={selectState.group?.softOne?.MTRGROUP}
+           <TranslateInput
+            state={values.NAME_ENG}
+            textArea={false}
+            handleState={handleTranslate}
+            name="NAME_ENG"
+            label={"Όνομα Αγγλικά"}
+            targetLang="en-GB"
+          />
+          <h3 className="mt-3">
+            Κατηγοριοποίηση
+          </h3>
+          <DropdownCategories
+            state={values.MTRCATEGORY}
+            // required
+            handleState={handleCategoryChange}
+            error={errors?.MTRCATEGORY?.message}
+          />
+          <DropdownGroups
+            state={values.MTRGROUP}
+            // required
+            handleState={handleGroupChange}
+            error={errors?.MTRGROUP?.message}
+            categoryId={values.MTRCATEGORY?.softOne?.MTRCATEGORY}
+          />
+          <DropdownSubroups
+            state={values.CCCSUBGROUP2}
+            // required
+            handleState={(e) => handleInputChange(e, "CCCSUBGROUP2")}
+            error={errors?.CCCSUBGROUP2?.message}
+            groupId={values.MTRGROUP?.softOne?.MTRGROUP}
+          />
+          <DropdownManufacturers
+            state={values.MTRMANFCTR}
+            handleState={(e) => handleInputChange(e, "MTRMANFCTR")}
+            error={errors?.MTRMANFCTR}
+          />
+          <DropdownBrands 
+             state={values.MTRMARK}
+             handleState={(e) => handleInputChange(e, "MTRMARK")}
+             error={errors?.MTRMARK}
+          />
+          <DropdownIntrastat
+             state={values.INTRASTAT}
+             handleState={(e) => handleInputChange(e, "INTRASTAT")}
+             error={errors?.INTRASTAT}
           />
 
-          <div>
-            {showInputs ? (
-              <div>
-                <VatDropdown 
-                    state={values.VAT}
-                    required
-                    handleState={handleVatState} 
-                    error={errors?.VAT?.NAME.message}
-                    /> 
-
-                <CountriesDropdown
-                  selectedCountry={values.COUNTRY}
-                  required
-                  onChangeCountry={handleCountryChange}
-                  error={errors?.COUNTRY?.NAME.message}
-                />
-                <FormTitle>ΠΕΡΙΓΡΑΦΗ:</FormTitle>
-                <Input
-                  label={"Όνομα"}
-                  name={"NAME"}
-                  control={control}
-                  required
-                  error={errors.NAME}
-                />
+          <TranslateInput
+            state={values.DESCRIPTION_ENG}
+            textArea={true}
+            handleState={handleTranslate}
+            name="DESCRIPTION_ENG"
+            label={"Περιγραφή Αγγλική"}
+            targetLang="en-GB"
+          />
+          <VatDropdown
+            state={values.VAT}
+            required
+            handleState={handleVatState}
+            error={errors?.VAT?.NAME.message}
+          />
+          <CountriesDropdown
+            selectedCountry={values.COUNTRY}
+            required
+            onChangeCountry={(e) => handleInputChange(e, "COUNTRY")}
+            error={errors?.COUNTRY?.NAME.message}
+          />
+          {/*
                 <TextAreaInput
                   autoResize={true}
                   label={"Ελληνική Περιγραφή"}
@@ -440,7 +491,7 @@ const AddDialog = ({ dialog, hideDialog }) => {
                   control={control}
                 />
 
-                <TranslateInput
+                <TranslateTextArea
                   label={"Περιγραφή Aγγλική"}
                   state={englishDescription}
                   handleState={handleEnglish}
@@ -476,104 +527,12 @@ const AddDialog = ({ dialog, hideDialog }) => {
                   name={"CODE2"}
                   control={control}
                   required
-                />
-              </div>
-            ) : null}
-          </div>
-        </Dialog>
-      </form>
+                /> */}
+        </form>
+      </Dialog>
     </Container>
   );
 };
-
-const Categories = ({ state, setState }) => {
-  const [options, setOptions] = useState([]);
-  const handleFetch = async () => {
-    let { data } = await axios.post("/api/product/apiProductFilters", {
-      action: "findCategories",
-    });
-    setOptions(data.result);
-  };
-  useEffect(() => {
-    handleFetch();
-  }, []);
-
-  return (
-    <div className="card mb-3">
-      <span className="mb-2 block">Επιλογή Ομάδας</span>
-      <div className="flex align-items-center">
-        <Dropdown
-          value={state}
-          onChange={(e) => setState((prev) => ({ ...prev, category: e.value }))}
-          options={options}
-          optionLabel="categoryName"
-          placeholder="Κατηγορία"
-          className="w-full"
-        />
-      </div>
-    </div>
-  );
-};
-
-const Groups = ({ state, setState, id }) => {
-  const [groupOptions, setGroupOptions] = useState([]);
-
-  const handleFetch = async () => {
-    let { data } = await axios.post("/api/product/apiProductFilters", {
-      action: "findGroups",
-      categoryID: id,
-    });
-    setGroupOptions(data.result);
-  };
-  useEffect(() => {
-    handleFetch();
-  }, [id]);
-
-  return (
-    <div className="card mb-3">
-      <span className="mb-2 block">Επιλογή Ομάδας</span>
-      <Dropdown
-        value={state}
-        onChange={(e) => setState((prev) => ({ ...prev, group: e.value }))}
-        options={groupOptions}
-        optionLabel="groupName"
-        placeholder="Κατηγορία"
-        className="w-full"
-      />
-    </div>
-  );
-};
-const SubGroups = ({ state, setState, id }) => {
-  const [subgroupOptions, setsubGroupOptions] = useState([]);
-  const handleFetch = async () => {
-    let { data } = await axios.post("/api/product/apiProductFilters", {
-      action: "findSubGroups",
-      groupID: id,
-    });
-
-    setsubGroupOptions(data.result);
-  };
-  useEffect(() => {
-    handleFetch();
-  }, [id]);
-
-  return (
-    <div className="card mb-3">
-      <span className="mb-2 block">Επιλογή Υποομάδας</span>
-      <Dropdown
-        value={state}
-        onChange={(e) => setState((prev) => ({ ...prev, subgroup: e.value }))}
-        options={subgroupOptions}
-        optionLabel="subGroupName"
-        placeholder="Yποομάδα"
-        className="w-full"
-      />
-    </div>
-  );
-};
-
-
-
 
 
 export { EditDialog, AddDialog };

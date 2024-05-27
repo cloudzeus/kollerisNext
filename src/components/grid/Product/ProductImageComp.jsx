@@ -2,10 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { ImageGrid } from '@/components/bunnyUpload/ImageGrid';
-import { useRouter } from 'next/router';
 import { Toast } from 'primereact/toast';
-import { setSubmitted } from '@/features/productsSlice';
-import { useDispatch, useSelector } from 'react-redux';
+
 
 
 const ProductImagesComp = ({ id }) => {

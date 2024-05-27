@@ -503,11 +503,6 @@ export default async function handler(req, res) {
 
         try {
             await connectMongo();
-            // const product = await SoftoneProduct.findOne({ _id: id }, 'images'); // Fetch the document
-            //     const existingImages = product.images || [];
-            //     const removeduplicateImages = imagesURL.filter(url => existingImages.includes(url));
-
-
             const updatedProduct = await SoftoneProduct.findOneAndUpdate(
                 { _id: id }, // Using the passed 'id' variable
                 {

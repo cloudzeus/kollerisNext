@@ -11,12 +11,102 @@ import { Dropdown } from 'primereact/dropdown';
 import { setSelectedMongoKey } from '@/features/catalogSlice';
 import { Toast } from 'primereact/toast';
 import StepHeader from '@/components/StepHeader';
+
+
+const OurDatabaseKeys = [
+    {
+        key: 0,
+        value: 'Κανένα'
+    },
+    {
+        key: 'CODE2',
+        value: 'Κωδικός Εργοστασίου'
+    },
+
+    {
+        key: 'CODE1',
+        value: 'Κωδικός EAN'
+    },
+    {
+        key: 'CODE',
+        value: 'Κωδικός ERP'
+    },
+    {
+        key: 'NAME',
+        value: 'Όνομα'
+    },
+    {
+        key: "NAME_ENG",
+        value: 'Όνομα Αγγλικά'
+    },
+    {
+        key: 'PRICER',
+        value: 'ΤΙΜΗ ΧΟΝΔΡΙΚΗΣ'
+    },
+    {
+        key: 'PRICEW',
+        value: 'ΤΙΜΗ ΛΙΑΝΙΚΗΣ'
+    },
+    {
+        key: 'PRICER02',
+        value: 'ΤΙΜΗ SKROUTZ'
+    },
+    {
+        key: 'DESCRIPTION',
+        value: 'Περιγραφή'
+    },
+    {
+        key: 'DESCRIPTION_ENG',
+        value: 'Περιγραφή Αγγλικά'
+    },
+    {
+        key: 'VOLUME',
+        value: 'Όγκος'
+    },
+    {
+        key: '',
+        value: "Mάζα"
+    },
+    {
+        key: '',
+        value: "Μικτό Βάρος"
+    },
+    {
+        key: 'WIDTH',
+        value: 'Πλάτος'
+    },
+    {
+        key: 'HEIGHT',
+        value: 'Ύψος'
+    },
+    
+    {
+        key: 'LENGTH',
+        value: 'Μήκος'
+    },
+    {
+        key: 'VAT',
+        value: 'ΦΠΑ'
+    },
+    {
+        key: 'isSkroutz',
+        value: 'Συμμετέχει στο Skroutz'
+    },
+   
+    {
+        key: 'GWEIGHT',
+        value: 'GWEIGHT'
+    },
+   
+]
+
+
+
 const Page = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const toast = useRef(null);
     const { gridData, headers, mongoKeys } = useSelector((state) => state.catalog)
-    const [isSubmit, setIsSubmit] = useState(false)
 
     useEffect(() => {
         clearMongoKeys();
@@ -27,9 +117,7 @@ const Page = () => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: message, life: 6000 });
     }
 
-    console.log('mongoKeys')
-    console.log(mongoKeys)
-  
+
     
     const SelectTemplate = ({ field }) => {
         const dispatch = useDispatch()
@@ -60,21 +148,10 @@ const Page = () => {
         )
     }
 
-    // useEffect(() => {
-    //     console.log(mongoKeys)
-    //     let nameCondition = mongoKeys.some(key => key.related === 'NAME');
-    //     let codeCondition = mongoKeys.some(key => key.related === 'CODE2');
-    //     if (nameCondition && codeCondition) {
-    //         setIsSubmit(true); // Set isSubmit to true if 'name' or 'code' condition is met
-    //     } else {
-    //         setIsSubmit(false); // Set isSubmit to false if none of the conditions are met'
-    //     }
-    //     console.log(mongoKeys)
-    // }, [mongoKeys])
+ 
 
     const handleMongoKeysChange = () => {
         const codeCondition = mongoKeys.some(key => key.related === 'CODE2');
-        console.log(codeCondition)
         if(!codeCondition) {
             return false;
         }
@@ -82,7 +159,6 @@ const Page = () => {
     }
 
     const onSubmit = () => {
-        console.log(mongoKeys)
        let condition = handleMongoKeysChange();
         if (!condition) {
             showError('Πρέπει να επιλέξεις στήλη τον ΚΩΔΙΚΟ ΕΡΓΟΣΤΑΣΙΟΥ')
@@ -134,79 +210,3 @@ const Page = () => {
 export default Page;
 
 
-const OurDatabaseKeys = [
-    {
-        key: 0,
-        value: 'Κανένα'
-    },
-    {
-        key: 'NAME',
-        value: 'Όνομα'
-    },
-    {
-        key: 'PRICER',
-        value: 'ΤΙΜΗ'
-    },
-    {
-        key: 'PRICER01',
-        value: 'ΤΙΜΗ SKROUTZ'
-    },
-    {
-        key: 'PRICEW',
-        value: 'ΤΙΜΗ ΛΙΑΝΙΚΗΣ'
-    },
-    {
-        key: 'COST',
-        value: 'ΚΟΣΤΟΣ'
-    },
-    {
-        key: 'description',
-        value: 'Περιγραφή'
-    },
-  
-    {
-        key: 'CODE1',
-        value: 'EANCODE'
-    },
-    {
-        key: 'CODE2',
-        value: 'Κωδικός Εργοστασίου'
-    },
-   
-    {
-        key: 'COUNTRY',
-        value: 'Χώρα'
-    },
-
-    {
-        key: 'WIDTH',
-        value: 'Μήκος'
-    },
-
-    {
-        key: 'HEIGHT',
-        value: 'Ύψος'
-    },
-    {
-        key: 'ΠΛΑΤΟΣ',
-        value: 'Πλάτος'
-    },
-    {
-        key: 'GWEIGHT',
-        value: 'GWEIGHT'
-    },
-    {
-        key: 'STOCK',
-        value: 'STOCK'
-    },
-
-    {
-        key: 'ΑΓΓΛΙΚΗ ΠΕΡΙΓΡΑΦΗ',
-        value: 'englishDescription'
-    },
-
-
-
-
-
-]

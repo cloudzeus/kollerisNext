@@ -9,6 +9,7 @@ const softoneProduct = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    NAME_ENG: String,
     DESCRIPTION: String,
     DESCRIPTION_ENG: String,
     ISACTIVE: Boolean,

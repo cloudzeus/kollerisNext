@@ -9,6 +9,7 @@ import Vat from "../../../../server/models/vatModel";
 import greekUtils from 'greek-utils';
 import { ImpaCodes } from "../../../../server/models/impaSchema";
 import Manufacturers from "../../../../server/models/manufacturersModel";
+import translateData from "@/utils/translateDataIconv";
 
 
 export default async function handler(req, res) {
@@ -262,7 +263,7 @@ export default async function handler(req, res) {
     }
     if(action === 'findManufacturers') {
         try {
-            response.result = await Manufacturers.find({}, { NAME: 1, _id: 0 }).sort({ NAME: 1 })
+            response.result = await Manufacturers.find({}, { NAME: 1, MTRMANFCTR: 1,  _id: 0 }).sort({ NAME: 1 })
             response.success = true;
             return res.status(200).json(response)
         } catch (e) {
@@ -272,6 +273,33 @@ export default async function handler(req, res) {
         }
     }
 
+    if(action === "findIntrastat") {
+        let response = {}
+        try {
+            let URL = `${process.env.NEXT_PUBLIC_SOFTONE_URL}/JS/mbmv.utilities/getAllIntrastat`;
+            let result = await fetch(URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    username : "Service",
+                    password : "Service"
+                })
+               
+            })
+            let buffer = await translateData(result);
+            buffer.result.sort((a, b) => a.NAME.localeCompare(b.NAME))
+            response.result = buffer.result;
+            response.message = "Επιτυχής ανάκτηση δεδομένων Intrastat"
+            response.success = true;
+            return res.status(200).json(response)
+           
+        } catch (e) {
+            response.error = e.message;
+            response.message = "Πρόβλημα στην ανάκτηση δεδομένων Intrastat"
+            return res.status(400).json(response)
+        }
+     
+
+    }
 
    
 
