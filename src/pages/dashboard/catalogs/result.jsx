@@ -102,7 +102,7 @@ const StepshowData = () => {
                         return (
                             <div className="my-2" key={index}>
                                 <p className="text-sm">
-                                    Αρχικό Κλειδί: <strong>{key.oldKey}</strong>
+                                    Αρχικό Κλειδί: <strong>{key.header}</strong>
                                 </p>
                                 <p className="text-sm mt-1">
                                     Τελικό Κλειδί: <strong>{key.related}</strong>
@@ -159,23 +159,29 @@ const Table = ({data, loading, mongoKeys, attributes}) => {
 
     const handleSubmit = async () => {
 
-        const code = generateUniqueCode();
+        // const code = generateUniqueCode();
         // let products = [...returnedProducts]
-        for (let i = 0; i < data.length; i++) {
-            const {data} = await axios.post('/api/insertProductFromFile', {
-                data: data[i],
-                action: 'importCSVProducts',
-                SUPPLIER_NAME: name,
-                SUPPLIER_TRDR: trdr,
-                UNIQUE_CODE: code,
-            })
-            // products.push(data.result)
-
-            const returned = await handleFetch(code, data[i].NAME)
-
-        }
+        // for (let i = 0; i < data.length; i++) {
+        //     const {data} = await axios.post('/api/insertProductFromFile', {
+        //         data: data[i],
+        //         action: 'importCSVProducts',
+        //         SUPPLIER_NAME: name,
+        //         SUPPLIER_TRDR: trdr,
+        //         UNIQUE_CODE: code,
+        //     })
+        //     // products.push(data.result)
+        //
+        //     const returned = await handleFetch(code, data[i].NAME)
+        //
+        // }
         // setReturnedProducts(products)
 
+        const res = await axios.post('/api/insertProductFromFile', {
+            data: data,
+            // action: 'importCSVProducts',
+            SUPPLIER_NAME: name,
+            SUPPLIER_TRDR: trdr,
+        })
     }
 
 

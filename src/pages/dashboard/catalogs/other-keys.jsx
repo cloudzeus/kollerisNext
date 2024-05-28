@@ -25,9 +25,6 @@ const OUR_DATABASE_KEYS = [
     {key: "CODE", header: "Κωδικός ERP"},
     {key: "NAME", header: "Όνομα"},
     {key: "NAME_ENG", header: "Όνομα Αγγλικά"},
-    {key: "PRICER", header: "ΤΙΜΗ ΧΟΝΔΡΙΚΗΣ"},
-    {key: "PRICEW", header: "ΤΙΜΗ ΛΙΑΝΙΚΗΣ"},
-    {key: "PRICER02", header: "ΤΙΜΗ SKROUTZ"},
     {key: "DESCRIPTION", header: "Περιγραφή"},
     {key: "DESCRIPTION_ENG", header: "Περιγραφή Αγγλικά"},
     {key: "VOLUME", header: "Όγκος"},
@@ -37,6 +34,10 @@ const OUR_DATABASE_KEYS = [
     {key: "LENGTH", header: "Μήκος"},
     {key: "VAT", header: "ΦΠΑ"},
     {key: "isSkroutz", header: "Συμμετέχει στο Skroutz"},
+    {key: "INTRASTAT", header: "Κωδικός Intrastat"},
+    {key: "PRICER", header: "Τιμή Λιανικής"},
+    {key: "PRICEW", header: "Τιμή Χονδρικής"},
+    {key: "PRICER02", header: "Τιμή Scroutz"},
 ];
 
 const Page = () => {
@@ -142,7 +143,11 @@ const schema = yup.object().shape({
         ),
     header: yup.string().required("Το όνομα είναι υποχρεωτικό"),
 })
+
+
 const SelectTemplate = ({field}) => {
+
+    
     const dispatch = useDispatch();
     const [options, setOptions] = useState(OUR_DATABASE_KEYS);
     const [selectedOption, setSelectedOption] = useState(null);
